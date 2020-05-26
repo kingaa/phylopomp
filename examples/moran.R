@@ -1,0 +1,6 @@
+playMoran(n=5,mu=choose(5,2),times=1:10,t0=0,tree=TRUE) -> x
+playMoran(x,times=11:20,tree=TRUE) -> x
+treeplot(x,points=TRUE)
+
+y <- getInfo(x,prune=FALSE)
+treeplot(y,points=TRUE)
