@@ -23,7 +23,7 @@ typedef unsigned int name_t;
 
 const name_t na = name_t(R_NaInt);
 const double inf = R_PosInf;
-const double default_slate = 0;
+const double default_slate = R_NegInf;
 
 // interface with R's integer RNG
 static int random_integer (int n) {
@@ -391,17 +391,22 @@ public:
     clean();
   };
 
-  // get current time.
-  double time (void) const {
-    return _time;
-  };
-
   // is empty?
   bool empty (void) const {
     return (left == 0);
   };
 
+  // get current time.
+  double time (void) const {
+    return _time;
+  };
+
 protected:
+
+  // set current time.
+  void time (double &t) {
+    _time = t;
+  };
 
   // get anchor player
   player_t *anchor (void) const {
@@ -424,7 +429,7 @@ protected:
   player_t *parent (const player_t *p) const {
     return player[green_ball(p)->hand()];
   };
-  
+
   // get number of players
   name_t nplayers (void) const {
     return player.size();
@@ -591,7 +596,9 @@ public:
       p = anchor();
       while (p->right != 0) {
         n++;
-        if (p->right->slate < p->slate) err("times out of order"); // seating times are out of order
+        if (p->right->slate < p->slate) // seating times are out of order
+	  err("times out of order\n%s%s",p->right->describe().c_str(),
+	      p->describe().c_str());
         if (p->right->left != p) err("seven years' bad luck"); // right and left are not mirrored
         p = p->right;
       }
@@ -721,7 +728,7 @@ public:
         } else {                // live root
           ball_t *g = p->other(green_ball(p));
           if (!g->is(green)) err("impossible!\n%s",p->describe().c_str());
-          o += "," + newick(g->name,p->slate);
+          o += "," + newick(g->name,player[g->name]->slate);
         }
       }
       p = p->right;
@@ -938,23 +945,25 @@ public:
   };
 
   // graft a new lineage
-  void graft (void) {
+  ball_t* graft (void) {
     player_t *p = make_player(black);
     ball_t *a = root();
     ball_t *b = p->ball(black);
     seat(b,a);
+    return b;
   };
 
   // graft a new lineage.
   // new anchor gets state i.
   // new lead gets state s.
-  void graft (const state_t &i, const state_t &s) {
+  ball_t* graft (const state_t &i, const state_t &s) {
     player_t *p = make_player(black);
     ball_t *a = root();
     ball_t *b = p->ball(black);
     holder(a)->state = i;
     holder(b)->state = s;
     seat(b,a);
+    return b;
   };
 
   // a sample adds 2 players at the same time.
@@ -1064,8 +1073,8 @@ public:
             
             if (ppl->holds(g) && pl->slate == ppl->slate) {
               // direct descent event.
-              // place a breadcrumb on the node to right
-              // (which holds the red ball) to indicate this.
+              // place a breadcrumb on the sample node (with the red ball)
+	      // to indicate this.
               // NB: sample nodes never get breadcrumbs otherwise.
               if (notfirst) {
                 if (N > L+1)

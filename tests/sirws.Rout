@@ -80,7 +80,7 @@ Loading required package: rngtools
 # A tibble: 1 x 1
   p.value
     <dbl>
-1   0.557
+1   0.565
 > 
 > dat %>%
 +   filter(p!=0,p!=1) %>%

@@ -9,17 +9,17 @@ png(filename="moran-%02d.png",res=100)
 theme_set(theme_bw())
 
 registerDoParallel()
-registerDoRNG(805535180)
+registerDoRNG(110825570)
 
 foreach (i=1:500) %dopar% {
   playMoran(
     n=100,
     mu=100,
     t0=0,
-    times=400+cumsum(rexp(n=100)),
+    times=cumsum(rexp(n=100)),
     tree=FALSE
   ) %>%
-    getMoranInfo(tree=FALSE) -> y
+    getInfo(tree=TRUE) -> y
   y$cumhaz %>%
     as_tibble() %>%
     mutate(p=exp(-Eta)*(1-exp(-Lambda)))

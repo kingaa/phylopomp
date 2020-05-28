@@ -8,12 +8,22 @@
 \alias{getInfo.Moran_gpsim}
 \title{Moran genealogy process.}
 \usage{
-playMoran(data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE)
+playMoran(
+  data = NULL,
+  ...,
+  n,
+  mu,
+  t0 = 0,
+  times,
+  tree = FALSE,
+  stationary = TRUE
+)
 
 \method{getInfo}{Moran_gpsim}(data, prune = TRUE, tree = TRUE)
 }
 \arguments{
-\item{data}{optional data frame; output from \code{playMoran}.}
+\item{data}{optional data frame;
+output from \code{playMoran}.}
 
 \item{...}{additional arguments; ignored.}
 
@@ -25,7 +35,11 @@ playMoran(data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE)
 
 \item{times}{times at which output is requested.}
 
-\item{tree}{logical; represent the genealogical tree in Newick format?}
+\item{tree}{logical;
+represent the genealogical tree in Newick format?}
+
+\item{stationary}{logical;
+should the initial genealogy be drawn from the stationary distribution?}
 
 \item{prune}{Prune the tree?}
 }

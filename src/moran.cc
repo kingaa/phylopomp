@@ -50,10 +50,28 @@ public:
 
   moran_tableau_t (void) = default;
   // basic constructor
-  moran_tableau_t (int n, double mu, double t0 = 0) : gp_tableau_t(t0) {
+  moran_tableau_t (int n, double mu, double t0, int stationary) :
+    gp_tableau_t(t0) {
     params.n = n;
     params.mu = mu;
-    for (name_t j = 0; j < name_t(n); j++) graft();
+    if (stationary) {
+      double scale = choose(double(n),2)/mu;
+      std::vector<double> times(n,t0);
+      for (int j = 1; j < n; j++)
+	times[j] = times[j-1]+rexp(scale/choose(double(j+1),2));
+      for (int j = 0; j < n; j++)
+	times[j] += t0-times[n-1];
+      for (int j = 1; j < n; j++)
+	if (times[j] <= times[j-1]) err("yowzer!");
+      time(times[0]);
+      graft();
+      for (int j = 1; j < n; j++) {
+	time(times[j]);
+	birth(random_black_ball());
+      }
+    } else {
+      for (int j = 0; j < n; j++) graft();
+    }
     update_clocks();
     valid();
   };
@@ -146,7 +164,7 @@ extern "C" {
 
   // Sampled Moran genealogy process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP State) {
+  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP Stat, SEXP State) {
     int nprotect = 0;
     int nout = 3;
     double t = R_NaReal;
@@ -163,6 +181,8 @@ extern "C" {
       PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
       nout++;
     }
+
+    int stat = *(INTEGER(AS_INTEGER(Stat)));
 
     int *xc = INTEGER(count);
     double *xt = REAL(times);
@@ -182,7 +202,7 @@ extern "C" {
     if (isNull(State)) {        // a fresh MGP
 
       t = *(REAL(AS_NUMERIC(T0)));
-      mgp = new moran_tableau_t(n,mu,t);
+      mgp = new moran_tableau_t(n,mu,t,stat);
       mgp->valid();
 
     }  else {              // restart the MGP from the specified state

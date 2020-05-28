@@ -13,12 +13,16 @@
 ##' @include sirws.R
 ##' @inheritParams sirws
 ##' 
-##' @param data optional data frame; output from \code{playMoran}.
+##' @param data optional data frame;
+##' output from \code{playMoran}.
 ##' @param n population size
 ##' @param mu Moran event rate
 ##' @param t0 initial time
 ##' @param times times at which output is requested.
-##' @param tree logical; represent the genealogical tree in Newick format?
+##' @param tree logical;
+##' represent the genealogical tree in Newick format?
+##' @param stationary logical;
+##' should the initial genealogy be drawn from the stationary distribution?
 ##' @param ... additional arguments; ignored.
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
@@ -33,11 +37,12 @@ NULL
 
 ##' @rdname moran
 ##' @export
-playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE) {
+playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
+  stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL
   if (missing(mu)) mu <- NULL
-  x <- .Call(P_playMoran,n,mu,times,t0,tree,state)
+  x <- .Call(P_playMoran,n,mu,times,t0,tree,stationary,state)
   state <- x$state
   x$state <- NULL
   data %>%

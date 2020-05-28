@@ -50,17 +50,17 @@ Loading required package: rngtools
 > theme_set(theme_bw())
 > 
 > registerDoParallel()
-> registerDoRNG(805535180)
+> registerDoRNG(110825570)
 > 
 > foreach (i=1:500) %dopar% {
 +   playMoran(
 +     n=100,
 +     mu=100,
 +     t0=0,
-+     times=400+cumsum(rexp(n=100)),
++     times=cumsum(rexp(n=100)),
 +     tree=FALSE
 +   ) %>%
-+     getMoranInfo(tree=FALSE) -> y
++     getInfo(tree=TRUE) -> y
 +   y$cumhaz %>%
 +     as_tibble() %>%
 +     mutate(p=exp(-Eta)*(1-exp(-Lambda)))
@@ -76,7 +76,7 @@ Loading required package: rngtools
 # A tibble: 1 x 1
   p.value
     <dbl>
-1   0.863
+1  0.0593
 > 
 > dat %>%
 +   filter(p!=0,p!=1) %>%
