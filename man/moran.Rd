@@ -35,8 +35,7 @@ output from \code{playMoran}.}
 
 \item{times}{times at which output is requested.}
 
-\item{tree}{logical;
-represent the genealogical tree in Newick format?}
+\item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{stationary}{logical;
 should the initial genealogy be drawn from the stationary distribution?}

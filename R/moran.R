@@ -17,13 +17,8 @@
 ##' output from \code{playMoran}.
 ##' @param n population size
 ##' @param mu Moran event rate
-##' @param t0 initial time
-##' @param times times at which output is requested.
-##' @param tree logical;
-##' represent the genealogical tree in Newick format?
 ##' @param stationary logical;
 ##' should the initial genealogy be drawn from the stationary distribution?
-##' @param ... additional arguments; ignored.
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -61,7 +56,7 @@ utils::globalVariables("count")
 ##' @export
 getInfo.Moran_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- .Call(P_get_Moran_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- tibble(Lambda=x$cumhaz)
+  x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
   x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
   attr(x,"state") <- attr(data,"state")
   if (!all(inherits(x,c("Moran_gpsim","gpsim"),TRUE)))

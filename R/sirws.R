@@ -57,7 +57,7 @@ utils::globalVariables("count")
 ##' @export
 getInfo.SIRwS_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- .Call(P_get_SIRwS_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- tibble(Lambda=x$cumhaz)
+  x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
   x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
   attr(x,"state") <- attr(data,"state")
   if (!all(inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))

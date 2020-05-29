@@ -304,7 +304,7 @@ extern "C" {
     SEXP out, outnames;
     PROTECT(out = NEW_LIST(nout)); nprotect++;
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,times,"times",k);
+    k = set_list_elem(out,outnames,times,"time",k);
     k = set_list_elem(out,outnames,count,"count",k);
     if (do_newick) {
       k = set_list_elem(out,outnames,tree,"tree",k);

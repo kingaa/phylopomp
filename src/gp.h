@@ -870,14 +870,6 @@ private:
     while (balls[col].size() > 0) {
       unseat(balls[col].back());
     }
-    // player_t *p = lead(), *pp;
-    // while (p != 0) {
-    //   pp = p->left;
-    //   if (p->holds(col)) {
-    //  unseat(p->ball(col));
-    //   }
-    //   p = pp;
-    // }
   };
 
   // drop zero-length branches associated with samples
@@ -935,13 +927,17 @@ public:
     if (!a->is(black))
       err("in 'death': invalid ball: %s",a->describe().c_str());
     if (_use_ghosts) {
-      player_t *gh = make_player(grey);
       player_t *p = holder(a);
-      gh->slate = p->slate;
-      gh->state = p->state;
-      insert_right(gh,p);
+      swap(p->other(a),green_ball(p));
+      swap(a,balls[black].back());
+      a = balls[black].back();
+      a->color = grey;
+      a->name = balls[grey].size();
+      balls[black].pop_back();
+      balls[grey].push_back(a);
+    } else {
+      unseat(a);
     }
-    unseat(a);
   };
 
   // graft a new lineage
