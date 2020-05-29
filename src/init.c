@@ -4,7 +4,7 @@
 #include <R_ext/Rdynload.h>
 
 static const R_CallMethodDef callMethods[] = {
-  {"playSIRwS", (DL_FUNC) &playSIRwS, 10},
+  {"playSIRwS", (DL_FUNC) &playSIRwS, 9},
   {"get_SIRwS_info", (DL_FUNC) &get_SIRwS_info, 3},
   {"playMoran", (DL_FUNC) &playMoran, 7},
   {"get_Moran_info", (DL_FUNC) &get_Moran_info, 3},

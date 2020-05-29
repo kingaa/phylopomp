@@ -30,7 +30,7 @@
 ##' @example examples/moran.R
 ##'
 ##' @importFrom dplyr bind_rows filter
-##' @importFrom tibble as_tibble
+##' @importFrom tibble as_tibble tibble
 ##' @importFrom utils globalVariables
 ##'
 NULL
@@ -59,8 +59,12 @@ utils::globalVariables("count")
 
 ##' @rdname moran
 ##' @export
-getInfo.Moran_gpsim <- function (data, prune  = TRUE, tree = TRUE) {
+getInfo.Moran_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- .Call(P_get_Moran_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- as_tibble(x$cumhaz)
+  x$cumhaz <- tibble(Lambda=x$cumhaz)
+  x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
+  attr(x,"state") <- attr(data,"state")
+  if (!all(inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
+    class(x) <- c("Moran_gpsim","gpsim",class(x))
   x
 }

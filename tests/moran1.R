@@ -1,10 +1,11 @@
 library(phylopomp)
 library(tidyverse)
+library(broom)
 library(doParallel)
 library(doRNG)
 
 options(digits=3)
-png(filename="moran-%02d.png",res=100)
+png(filename="moran1-%02d.png",res=100)
 
 theme_set(theme_bw())
 
@@ -19,14 +20,12 @@ foreach (i=1:500) %dopar% {
     times=cumsum(rexp(n=100)),
     tree=FALSE
   ) %>%
-    getInfo(tree=TRUE) -> y
-  y$cumhaz %>%
-    as_tibble() %>%
-    mutate(p=exp(-Eta)*(1-exp(-Lambda)))
+    getInfo(tree=TRUE) %>% {
+      .$cumhaz %>%
+        mutate(p=exp(-Lambda))
+    }
 } %>%
   bind_rows(.id="rep") -> dat
-
-library(broom)
 
 dat %>%
   filter(p!=0,p!=1) %>%

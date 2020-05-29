@@ -60,7 +60,7 @@ protected:
 
   const bool _use_ghosts = GHOSTS;
 
-private:  
+protected:
   
   typedef std::vector<ball_t*> balls_t;
   typedef std::vector<player_t*> players_t;
@@ -994,9 +994,8 @@ public:
   virtual double clock (void) const = 0;
   // makes a move
   virtual void move (void) = 0;
-  // branching rate, immigration rate, and population
+  // branching rate and population size
   virtual double branch_rate (state_t &) const = 0;
-  virtual double immig_rate (state_t &) const = 0;
   virtual double pop (state_t &) const = 0;
 
   // run process to a specified time.
@@ -1031,7 +1030,7 @@ public:
   };
 
   // walk backward from each sample
-  void walk (double *hz1, double *hz2) const {
+  void walk (double *haz) const {
 
     valid();
 
@@ -1040,14 +1039,14 @@ public:
 
     // we walk through the tableau left to right to find the samples
     player_t *P = anchor();
-    bool notfirst = false;
+    bool keepfirst = false;
     while (P != 0) {
       if (P->holds(red)) {      // a sample!
         player_t *p = P;
         player_t *pl = p->left;
         ball_t *g = green_ball(p);
-	if (notfirst) {
-	  *hz1 = 0; *hz2 = 0;
+	if (keepfirst) {
+	  *haz = 0;
 	}
         while (pl != 0) {
           double deltat = p->slate - pl->slate;
@@ -1055,13 +1054,11 @@ public:
           double L = ell[pl->name];
           double N = pop(pl->state);
           double lambda = branch_rate(pl->state);
-          double iota = immig_rate(pl->state);
 
-          if (N < L) err("hijole!");
+	  if (N < L) err("hijole!");
 
-          if (deltat > 0 && notfirst) {
-            *hz1 += (lambda > 0 && L > 0 && N > 1) ? lambda/choose(N,2)*L*deltat : 0;
-            *hz2 += (iota > 0 && N > 0) ? iota/N*deltat : 0;
+          if (deltat > 0 && keepfirst) {
+            *haz += (lambda > 0 && L > 0 && N > 1) ? lambda/choose(N,2)*L*deltat : 0;
           }
 
           if (pl->holds(red) && !breadcrumb[pl->name]) {
@@ -1073,14 +1070,13 @@ public:
             
             if (ppl->holds(g) && pl->slate == ppl->slate) {
               // direct descent event.
-              // place a breadcrumb on the sample node (with the red ball)
-	      // to indicate this.
+              // place breadcrumb on sample node (with red ball) to indicate this.
               // NB: sample nodes never get breadcrumbs otherwise.
-              if (notfirst) {
+              if (keepfirst) {
                 if (N > L+1)
-                  *hz1 += runif(0,nug);
+                  *haz += runif(0,nug);
                 else
-                  *hz1 = inf;
+                  *haz = inf;
               }
               breadcrumb[pl->name] = true; 
             } else {
@@ -1089,8 +1085,8 @@ public:
                 err("coalescence should be assured!\n%s N=%lg L=%lg\n%s%s",
                     g->describe().c_str(),N,L,ppl->describe().c_str(),
                     pl->describe().c_str());
-              if (notfirst) {
-                *hz1 += nug;
+              if (keepfirst) {
+                *haz += nug;
               }
             }
           }
@@ -1104,11 +1100,14 @@ public:
           } else if (breadcrumb[pl->name]) {
             // an ancestor we've previously encountered, stop
             pl = 0;
-          } else if (pl->holds_own()) {
+          } else if (pl->holds(brown)) {
             // end of the line, stop walking
+	    *haz += rexp(1);
             breadcrumb[pl->name] = true;
             pl = 0;
-          } else {
+	  } else if (pl->holds_own()) {
+	    err("minchia!\n%s",pl->describe());
+	  } else {
             // an ancestor we've not yet encountered.
             // we note our encounter with a breadcrumb
             breadcrumb[pl->name] = true;
@@ -1118,10 +1117,10 @@ public:
             pl = p->left;
           }
         }
-        if (notfirst) {
-          hz1++; hz2++;
+        if (keepfirst) {
+          haz++;
         }
-        notfirst = true;
+        keepfirst = true;
       }
       P = P->right;
     }
@@ -1132,17 +1131,9 @@ public:
     SEXP out = R_NilValue;
     int n = T.nballs(blue)-1;
     if (n > 0) {
-      SEXP outnames, lambda, eta;
-      int k = 0;
-      PROTECT(lambda = NEW_NUMERIC(n));
-      PROTECT(eta = NEW_NUMERIC(n));
-      T.walk(REAL(lambda),REAL(eta));
-      PROTECT(out = NEW_LIST(2));
-      PROTECT(outnames = NEW_CHARACTER(2));
-      k = set_list_elem(out,outnames,lambda,"Lambda",k);
-      k = set_list_elem(out,outnames,eta,"Eta",k);
-      SET_NAMES(out,outnames);
-      UNPROTECT(4);
+      PROTECT(out = NEW_NUMERIC(n));
+      T.walk(REAL(out));
+      UNPROTECT(1);
     }
     return out;
   };

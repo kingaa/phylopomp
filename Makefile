@@ -1,4 +1,5 @@
 REXE = R --vanilla
+SESSION = $(REXE)
 RCMD = $(REXE) CMD
 RCMD_ALT = R --no-save --no-restore CMD
 RSCRIPT = Rscript --vanilla
@@ -32,7 +33,7 @@ check xcheck xxcheck: export FULL_TESTS=yes
 dist revdeps session tests check xcheck xxcheck: export R_KEEP_PKG_SOURCE=yes
 revdeps xcheck tests: export R_PROFILE_USER=$(CURDIR)/.Rprofile
 revdeps session xxcheck htmldocs vignettes data tests manual: export R_LIBS=$(CURDIR)/library
-session: export R_DEFAULT_PACKAGES=datasets,utils,grDevices,graphics,stats,methods,phylopomp,tidyverse
+session: export R_DEFAULT_PACKAGES=datasets,utils,grDevices,graphics,stats,tidyverse,phylopomp
 
 includes: 
 
@@ -62,7 +63,7 @@ www/NEWS.html: inst/NEWS.Rd
 	$(RCMD) Rdconv -t html inst/NEWS.Rd -o www/NEWS.html
 
 session: install
-	exec $(REXE)
+	exec $(SESSION)
 
 revdeps: install
 	mkdir -p library check

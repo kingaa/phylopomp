@@ -30,6 +30,7 @@ Registered S3 method overwritten by 'treeio':
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
+> library(broom)
 > library(doParallel)
 Loading required package: foreach
 
@@ -45,29 +46,30 @@ Loading required package: parallel
 Loading required package: rngtools
 > 
 > options(digits=3)
-> png(filename="moran-%02d.png",res=100)
+> png(filename="sirws1-%02d.png",res=100)
 > 
 > theme_set(theme_bw())
 > 
 > registerDoParallel()
-> registerDoRNG(110825570)
+> registerDoRNG(721604604)
 > 
-> foreach (i=1:500) %dopar% {
-+   playMoran(
-+     n=100,
-+     mu=100,
+> foreach (i=1:50) %dopar% {
++   playSIRwS(
++     beta=2,
++     gamma=1,
++     psi=2,
++     S0=10000,
++     I0=5,
 +     t0=0,
-+     times=cumsum(rexp(n=100)),
++     times=100,
 +     tree=FALSE
 +   ) %>%
-+     getInfo(tree=TRUE) -> y
-+   y$cumhaz %>%
-+     as_tibble() %>%
-+     mutate(p=exp(-Eta)*(1-exp(-Lambda)))
++     getInfo(tree=FALSE) %>% {
++       .$cumhaz %>%
++         mutate(p=exp(-Lambda))
++     }
 + } %>%
 +   bind_rows(.id="rep") -> dat
-> 
-> library(broom)
 > 
 > dat %>%
 +   filter(p!=0,p!=1) %>%
@@ -76,7 +78,7 @@ Loading required package: rngtools
 # A tibble: 1 x 1
   p.value
     <dbl>
-1  0.0593
+1   0.742
 > 
 > dat %>%
 +   filter(p!=0,p!=1) %>%

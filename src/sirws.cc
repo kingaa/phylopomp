@@ -19,7 +19,6 @@ private:
     double beta;                // transmission rate
     double gamma;               // recovery rate
     double psi;                 // sampling rate
-    double iota;                // immigration rate
     int S0;                     // initial susceptibles
     int I0;                     // initial infecteds
   } parameters_t;
@@ -32,14 +31,9 @@ private:
   double nextI;                 // ...infection
   double nextR;                 // ...recovery
   double nextS;                 // ...sample
-  double nextM;                 // ...import
 
   double branch_rate (state_t &s) const {
     return params.beta * s.S * s.I / params.N;
-  };
-
-  double immig_rate (state_t &s) const {
-    return params.iota * s.S;
   };
 
   double pop (state_t &s) const {
@@ -70,10 +64,10 @@ public:
 
   sirws_tableau_t (void) = default;
   // basic constructor
-  sirws_tableau_t (double beta, double gamma, double psi, double iota,
+  sirws_tableau_t (double beta, double gamma, double psi,
                    int S0, int I0, double t0 = 0) : gp_tableau_t(t0) {
     params = {
-      double(S0+I0), beta, gamma, psi, iota, S0, I0
+      double(S0+I0), beta, gamma, psi, S0, I0
     };
     initial_state = state = {double(S0), double(I0), 0};
     for (name_t j = 0; j < name_t(I0); j++)
@@ -110,6 +104,10 @@ public:
     if (params.N <= 0) err("total population size must be positive!");
     if (params.N != state.S+state.I+state.R) err("population leakage!");
     if (clock() < time()) err("invalid clock");
+    for (name_t n = 0; n < nplayers(); n++) {
+      if (player[n]->state.S+player[n]->state.I+player[n]->state.R != params.N)
+	err("invalid player state!\n%s",player[n]->describe().c_str());
+    }
   };
   
   // get transmission rate
@@ -145,17 +143,6 @@ public:
     update_clocks();
   };
 
-  // get immigration rate
-  double immigration_rate (void) const {
-    return params.iota;
-  };
-
-  // set immigration rate
-  void immigration_rate (double &iota) {
-    params.iota = iota;
-    update_clocks();
-  };
-
   void update_clocks (void) {
     double rate;
     rate = branch_rate(state);
@@ -176,44 +163,34 @@ public:
     } else {
       nextS = R_PosInf;
     }
-    rate = params.iota*state.S;
-    if (rate > 0) {
-      nextM = time()+rexp(1/rate);
-    } else {
-      nextM = R_PosInf;
-    }
   };
 
   // time to next event
   double clock (void) const {
     double next;
-    if (nextI < nextR && nextI < nextS && nextI < nextM) {
+    if (nextI < nextR && nextI < nextS) {
       next = nextI;
-    } else if (nextR < nextI && nextR < nextS && nextR < nextM) {
-      next = nextR;
-    } else if (nextS < nextI && nextS < nextR && nextS < nextM) {
+    } else if (nextS < nextI && nextS < nextR) {
       next = nextS;
+    } else if (nextR < nextI && nextR < nextS) {
+      next = nextR;
     } else {
-      next = nextM;
+      next = inf;
     }
     return next;
   };
     
   void move (void) {
-    if (nextI < nextR && nextI < nextS && nextI < nextM) {
+    if (nextI < nextR && nextI < nextS) {
       state.S -= 1.0;
       state.I += 1.0;
       birth(random_black_ball(),state);
-    } else if (nextR < nextI && nextR < nextS && nextR < nextM) {
+    } else if (nextS < nextI && nextS < nextR) {
+      sample(state);
+    } else if (nextR < nextI && nextR < nextS) {
       state.I -= 1.0;
       state.R += 1.0;
       death(random_black_ball());
-    } else if (nextS < nextI && nextS < nextR && nextS < nextM) {
-      sample(state);
-    } else {
-      state.S -= 1.0;
-      state.I += 1.0;
-      graft(initial_state,state);
     }
     update_clocks();
   };
@@ -237,7 +214,7 @@ extern "C" {
 
   // Sampled SIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP Iota, SEXP S0, SEXP I0, SEXP Times, SEXP T0, SEXP Tree, SEXP State) {
+  SEXP playSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP Times, SEXP T0, SEXP Tree, SEXP State) {
     int nprotect = 0;
     int nout = 3;
     double t = R_NaReal;
@@ -283,17 +260,12 @@ extern "C" {
       psi = *(REAL(AS_NUMERIC(Psi)));
     }
 
-    double iota = R_NaReal;     // immigration rate
-    if (!isNull(Iota)) {
-      iota = *(REAL(AS_NUMERIC(Iota)));
-    }
-
     GetRNGstate();
       
     if (isNull(State)) {        // a fresh SIR
 
       t = *(REAL(AS_NUMERIC(T0)));
-      sir = new sirws_tableau_t(beta,gamma,psi,iota,s0,i0,t);
+      sir = new sirws_tableau_t(beta,gamma,psi,s0,i0,t);
       sir->valid();
 
     }  else {              // restart the SIR from the specified state
@@ -305,7 +277,6 @@ extern "C" {
       if (!isNull(Beta)) sir->transmission_rate(beta);
       if (!isNull(Gamma)) sir->recovery_rate(gamma);
       if (!isNull(Psi)) sir->sample_rate(psi);
-      if (!isNull(Iota)) sir->immigration_rate(iota);
       
     }
 
@@ -381,7 +352,7 @@ extern "C" {
     SEXP out, outnames;
     PROTECT(out = NEW_LIST(nout)); nprotect++;
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,tout,"times",k);
+    k = set_list_elem(out,outnames,tout,"time",k);
     if (*(INTEGER(AS_INTEGER(Tree)))) {
       k = set_list_elem(out,outnames,newick(sir,false),"tree",k);
     }

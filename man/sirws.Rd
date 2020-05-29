@@ -13,7 +13,6 @@ playSIRwS(
   beta,
   gamma,
   psi,
-  iota,
   S0,
   I0,
   t0 = 0,
@@ -21,7 +20,7 @@ playSIRwS(
   tree = FALSE
 )
 
-\method{getInfo}{SIRwS_gpsim}(data, prune = TRUE, tree = TRUE)
+\method{getInfo}{SIRwS_gpsim}(data, ..., prune = TRUE, tree = TRUE)
 }
 \arguments{
 \item{data}{optional data frame; output from \code{playSIRwS}.}
@@ -33,8 +32,6 @@ playSIRwS(
 \item{gamma}{recovery rate}
 
 \item{psi}{sampling rate}
-
-\item{iota}{import rate}
 
 \item{S0}{initial size of susceptible population}
 
@@ -55,20 +52,19 @@ A \code{tibble} with \code{state} attribute.
 Run the simulator.
 }
 \examples{
-tout <- seq(0,5,by=1)
-playSIRwS(beta=2,gamma=1,psi=2,iota=0,S0=1000,I0=5,times=tout,t0=0,tree=TRUE) -> x
+playSIRwS(beta=2,gamma=1,psi=2,S0=1000,I0=5,times=0:5,t0=0,tree=TRUE) -> x
 
-playSIRwS(x,times=6:10,psi=0.1,tree=TRUE) -> x
-treeplot(x)
+playSIRwS(x,times=6:10,psi=1,tree=TRUE) -> x
+plot(x)
 
 y <- getInfo(x)
-treeplot(y,points=TRUE)
+plot(y,points=TRUE)
 
-y[c("etimes","lineages")] \%>\%
-  as_tibble() \%>\%
-  ggplot(aes(x=etimes,y=lineages))+
-  geom_step()+
-  labs(x="time")
+library(ggplot2)
+
+y$lineages \%>\%
+  ggplot(aes(x=time,y=lineages))+
+  geom_step()
 }
 \seealso{
 Other Genealogy processes: 

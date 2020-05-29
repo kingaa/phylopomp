@@ -12,7 +12,6 @@
 ##' @param beta transmission rate
 ##' @param gamma recovery rate
 ##' @param psi sampling rate
-##' @param iota import rate
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of infected population
 ##' @param t0 initial time
@@ -25,21 +24,20 @@
 ##' @example examples/sirws.R
 ##'
 ##' @importFrom dplyr bind_rows filter
-##' @importFrom tibble as_tibble
+##' @importFrom tibble as_tibble tibble
 ##' @importFrom utils globalVariables
 ##'
 ##' @rdname sirws
 ##' @export
 ##' 
-playSIRwS <- function (data = NULL, ..., beta, gamma, psi, iota, S0, I0, t0 = 0, times, tree = FALSE) {
+playSIRwS <- function (data = NULL, ..., beta, gamma, psi, S0, I0, t0 = 0, times, tree = FALSE) {
   state <- attr(data,"state")
   if (missing(beta)) beta <- NULL
   if (missing(gamma)) gamma <- NULL
   if (missing(psi)) psi <- NULL
-  if (missing(iota)) iota <- NULL
   if (missing(S0)) S0 <- NULL
   if (missing(I0)) I0 <- NULL
-  x <- .Call(P_playSIRwS,beta,gamma,psi,iota,S0,I0,times,t0,tree,state)
+  x <- .Call(P_playSIRwS,beta,gamma,psi,S0,I0,times,t0,tree,state)
   state <- x$state
   x$state <- NULL
   data %>%
@@ -57,8 +55,12 @@ utils::globalVariables("count")
 ##' @rdname sirws
 ##' @param prune Prune the tree?
 ##' @export
-getInfo.SIRwS_gpsim <- function (data, prune  = TRUE, tree = TRUE) {
+getInfo.SIRwS_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- .Call(P_get_SIRwS_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- as_tibble(x$cumhaz)
+  x$cumhaz <- tibble(Lambda=x$cumhaz)
+  x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
+  attr(x,"state") <- attr(data,"state")
+  if (!all(inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))
+    class(x) <- c("SIRwS_gpsim","gpsim",class(x))
   x
 }

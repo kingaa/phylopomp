@@ -1,36 +1,32 @@
 library(phylopomp)
 library(tidyverse)
+library(broom)
 library(doParallel)
 library(doRNG)
 
 options(digits=3)
-png(filename="sirws-%02d.png",res=100)
+png(filename="moran2-%02d.png",res=100)
 
 theme_set(theme_bw())
 
 registerDoParallel()
-registerDoRNG(405585282)
+registerDoRNG(110825570)
 
-foreach (i=1:50) %dopar% {
-  playSIRwS(
-    beta=2,
-    gamma=1,
-    psi=2,
-    iota=0,
-    S0=10000,
-    I0=5,
+foreach (i=1:500) %dopar% {
+  playMoran(
+    n=100,
+    mu=100,
     t0=0,
-    times=100,
+    stationary=FALSE,
+    times=cumsum(rexp(n=100)),
     tree=FALSE
   ) %>%
-    getInfo(tree=FALSE) -> y
-  y$cumhaz %>%
-    as_tibble() %>%
-    mutate(p=exp(-Eta)*(1-exp(-Lambda)))
+    getInfo(tree=TRUE) %>% {
+      .$cumhaz %>%
+        mutate(p=exp(-Lambda))
+    }
 } %>%
   bind_rows(.id="rep") -> dat
-
-library(broom)
 
 dat %>%
   filter(p!=0,p!=1) %>%

@@ -1,0 +1,105 @@
+
+R version 4.0.0 (2020-04-24) -- "Arbor Day"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(phylopomp)
+Registered S3 method overwritten by 'treeio':
+  method     from
+  root.phylo ape 
+> library(tidyverse)
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+✔ ggplot2 3.3.0     ✔ purrr   0.3.4
+✔ tibble  3.0.1     ✔ dplyr   0.8.5
+✔ tidyr   1.1.0     ✔ stringr 1.4.0
+✔ readr   1.3.1     ✔ forcats 0.5.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+> library(broom)
+> library(doParallel)
+Loading required package: foreach
+
+Attaching package: 'foreach'
+
+The following objects are masked from 'package:purrr':
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+> library(doRNG)
+Loading required package: rngtools
+> 
+> options(digits=3)
+> png(filename="moran1-%02d.png",res=100)
+> 
+> theme_set(theme_bw())
+> 
+> registerDoParallel()
+> registerDoRNG(110825570)
+> 
+> foreach (i=1:500) %dopar% {
++   playMoran(
++     n=100,
++     mu=100,
++     t0=0,
++     times=cumsum(rexp(n=100)),
++     tree=FALSE
++   ) %>%
++     getInfo(tree=TRUE) %>% {
++       .$cumhaz %>%
++         mutate(p=exp(-Lambda))
++     }
++ } %>%
++   bind_rows(.id="rep") -> dat
+> 
+> dat %>%
++   filter(p!=0,p!=1) %>%
++   do(tidy(ks.test(x=.$p,y=punif))) %>%
++   select(p.value)
+# A tibble: 1 x 1
+  p.value
+    <dbl>
+1  0.0582
+> 
+> dat %>%
++   filter(p!=0,p!=1) %>%
++   group_by(rep) %>%
++   do(tidy(ks.test(x=.$p,y=punif))) %>%
++   ungroup() %>%
++   select(p.value) -> pvals
+> 
+> pvals %>%
++   do(tidy(ks.test(x=.$p.value,y=punif))) %>%
++   select(p.value) -> ppval
+> 
+> dat %>%
++   filter(p!=0,p!=1) %>%
++   ggplot(aes(x=p))+
++   geom_abline(slope=1)+
++   stat_ecdf()+
++   annotate("rug",x=pvals$p.value)+
++   annotate("text",x=0.2,y=0.8,label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
++   coord_equal()+
++   labs(x=expression(italic(p)),y=expression(italic(F(p))))+
++   expand_limits(x=c(0,1),y=c(0,1))
+> 
+> dev.off()
+null device 
+          1 
+> 
