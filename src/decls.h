@@ -11,6 +11,9 @@ extern "C" {
   SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP State);
   SEXP get_Moran_info (SEXP X, SEXP Prune, SEXP Tree);
 
+  SEXP playLBDP (SEXP Lambda, SEXP Mu, SEXP Psi, SEXP N0, SEXP Times, SEXP T0, SEXP Tree, SEXP State);
+  SEXP get_LBDP_info (SEXP X, SEXP Prune, SEXP Tree);
+
 #ifdef __cplusplus
 }
 #endif

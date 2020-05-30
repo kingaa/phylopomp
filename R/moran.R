@@ -58,6 +58,7 @@ getInfo.Moran_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- .Call(P_get_Moran_info,attr(data,"state"),prune,tree)
   x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
   x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
+  x$etimes <- NULL
   attr(x,"state") <- attr(data,"state")
   if (any(wh <- !inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
     class(x) <- c(c("Moran_gpsim","gpsim")[wh],class(x))

@@ -68,6 +68,7 @@ y$lineages \%>\%
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{lbdp}},
 \code{\link{moran}}
 }
 \concept{Genealogy processes}

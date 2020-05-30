@@ -975,7 +975,7 @@ public:
     }
   };
 
-  void sample (state_t &s) {
+  void sample (const state_t &s) {
     if (nlive() > 0) {
       player_t *pr = make_player(red);
       player_t *pb = make_player(blue);
@@ -1051,7 +1051,7 @@ public:
           double N = pop(pl->state);
           double lambda = branch_rate(pl->state);
 
-	  if (N < L) err("hijole!");
+	  if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe().c_str());
 
           if (deltat > 0 && keepfirst) {
             *haz += (lambda > 0 && L > 0 && N > 1) ? lambda/choose(N,2)*L*deltat : 0;

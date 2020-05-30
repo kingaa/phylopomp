@@ -61,6 +61,7 @@ plot(y,points=TRUE)
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{lbdp}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}
