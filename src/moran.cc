@@ -22,10 +22,6 @@ private:
     return params.mu;
   };
 
-  double immig_rate (state_t &s) const {
-    return 0;
-  };
-
   double pop (state_t &s) const {
     return double(params.n);
   };

@@ -45,8 +45,8 @@ playSIRwS <- function (data = NULL, ..., beta, gamma, psi, S0, I0, t0 = 0, times
       x %>% as_tibble() %>% filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
-  if (!all(inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))
-    class(x) <- c("SIRwS_gpsim","gpsim",class(x))
+  if (any(wh <- !inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))
+    class(x) <- c(c("SIRwS_gpsim","gpsim")[wh],class(x))
   x
 }
 
@@ -60,7 +60,7 @@ getInfo.SIRwS_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
   x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
   attr(x,"state") <- attr(data,"state")
-  if (!all(inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))
-    class(x) <- c("SIRwS_gpsim","gpsim",class(x))
+  if (any(wh <- !inherits(x,c("SIRwS_gpsim","gpsim"),TRUE)))
+    class(x) <- c(c("SIRwS_gpsim","gpsim")[wh],class(x))
   x
 }

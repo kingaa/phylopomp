@@ -1072,7 +1072,7 @@ public:
                 if (N > L+1)
                   *haz += runif(0,nug);
                 else
-                  *haz = inf;
+                  *haz += rexp(1);
               }
               breadcrumb[pl->name] = true; 
             } else {

@@ -24,7 +24,7 @@
 ##'
 ##' @example examples/moran.R
 ##'
-##' @importFrom dplyr bind_rows filter
+##' @importFrom dplyr bind_rows
 ##' @importFrom tibble as_tibble tibble
 ##' @importFrom utils globalVariables
 ##'
@@ -45,8 +45,8 @@ playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
       x %>% as_tibble()
     ) -> x
   attr(x,"state") <- state
-  if (!all(inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
-    class(x) <- c("Moran_gpsim","gpsim",class(x))
+  if (any(wh <- !inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
+    class(x) <- c(c("Moran_gpsim","gpsim")[wh],class(x))
   x
 }
 
@@ -59,7 +59,7 @@ getInfo.Moran_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
   x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
   attr(x,"state") <- attr(data,"state")
-  if (!all(inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
-    class(x) <- c("Moran_gpsim","gpsim",class(x))
+  if (any(wh <- !inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
+    class(x) <- c(c("Moran_gpsim","gpsim")[wh],class(x))
   x
 }
