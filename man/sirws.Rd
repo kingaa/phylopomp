@@ -4,7 +4,6 @@
 \alias{sirws}
 \alias{playSIRwS}
 \alias{SIRwS}
-\alias{getInfo.SIRwS_gpsim}
 \title{SIR with sampling simulator.}
 \usage{
 playSIRwS(
@@ -19,8 +18,6 @@ playSIRwS(
   times,
   tree = FALSE
 )
-
-\method{getInfo}{SIRwS_gpsim}(data, ..., prune = TRUE, tree = TRUE)
 }
 \arguments{
 \item{data}{optional data frame; output from \code{playSIRwS}.}
@@ -42,8 +39,6 @@ playSIRwS(
 \item{times}{times at which output is requested.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
-
-\item{prune}{Prune the tree?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

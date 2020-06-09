@@ -45,22 +45,7 @@ playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
       x %>% as_tibble()
     ) -> x
   attr(x,"state") <- state
-  if (any(wh <- !inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
-    class(x) <- c(c("Moran_gpsim","gpsim")[wh],class(x))
-  x
-}
-
-utils::globalVariables("count")
-
-##' @rdname moran
-##' @export
-getInfo.Moran_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
-  x <- .Call(P_get_Moran_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
-  x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
-  x$etimes <- NULL
-  attr(x,"state") <- attr(data,"state")
-  if (any(wh <- !inherits(x,c("Moran_gpsim","gpsim"),TRUE)))
-    class(x) <- c(c("Moran_gpsim","gpsim")[wh],class(x))
+  attr(x,"model") <- "Moran"
+  if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))
   x
 }

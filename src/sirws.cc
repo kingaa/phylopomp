@@ -219,7 +219,7 @@ extern "C" {
     int nout = 3;
     double t = R_NaReal;
     int ntimes = LENGTH(Times);
-    sirws_tableau_t *sir;
+    sirws_tableau_t *gp;
 
     SEXP times, count;
     PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
@@ -265,31 +265,31 @@ extern "C" {
     if (isNull(State)) {        // a fresh SIR
 
       t = *(REAL(AS_NUMERIC(T0)));
-      sir = new sirws_tableau_t(beta,gamma,psi,s0,i0,t);
-      sir->valid();
+      gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,t);
+      gp->valid();
 
     }  else {              // restart the SIR from the specified state
 
-      sir = new sirws_tableau_t(RAW(State));
-      sir->valid();
-      t = sir->time();
+      gp = new sirws_tableau_t(RAW(State));
+      gp->valid();
+      t = gp->time();
       // optionally override the stored parameters
-      if (!isNull(Beta)) sir->transmission_rate(beta);
-      if (!isNull(Gamma)) sir->recovery_rate(gamma);
-      if (!isNull(Psi)) sir->sample_rate(psi);
+      if (!isNull(Beta)) gp->transmission_rate(beta);
+      if (!isNull(Gamma)) gp->recovery_rate(gamma);
+      if (!isNull(Psi)) gp->sample_rate(psi);
       
     }
 
     if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
 
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
-      if (sir->live()) {
-        *xc = sir->play(*xt);
+      if (gp->live()) {
+        *xc = gp->play(*xt);
       } else {
         *xc = R_NaInt;
       }
       if (do_newick) {
-        sirws_tableau_t U = *sir;
+        sirws_tableau_t U = *gp;
         newick(tree,k,U,true);
       }
       R_CheckUserInterrupt();
@@ -297,7 +297,7 @@ extern "C" {
       
     PutRNGstate();
 
-    sir->valid();
+    gp->valid();
     
     // pack everything up in a list
     int k = 0;
@@ -309,10 +309,10 @@ extern "C" {
     if (do_newick) {
       k = set_list_elem(out,outnames,tree,"tree",k);
     }
-    k = set_list_elem(out,outnames,serial(*sir),"state",k);
+    k = set_list_elem(out,outnames,serial(*gp),"state",k);
     SET_NAMES(out,outnames);
       
-    delete sir;
+    delete gp;
 
     UNPROTECT(nprotect);
     return out;
@@ -321,29 +321,29 @@ extern "C" {
   // extract/compute basic information.
   SEXP get_SIRwS_info (SEXP X, SEXP Prune, SEXP Tree) {
     int nprotect = 0;
-    int nout = 4;
+    int nout = 6;
 
     // reconstruct the tableau from its serialization
-    sirws_tableau_t sir(RAW(X));
+    sirws_tableau_t gp(RAW(X));
     // check validity
-    sir.valid();
+    gp.valid();
     
     // extract current time
     SEXP tout;
     PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
-    *REAL(tout) = sir.time();
+    *REAL(tout) = gp.time();
 
     // extract cumulative hazards
     SEXP cumhaz;
-    PROTECT(cumhaz = walk(sir)); nprotect++;
+    PROTECT(cumhaz = walk(gp)); nprotect++;
     nout++;
     
     // prune if requested
-    if (*(INTEGER(AS_INTEGER(Prune)))) sir.prune();
+    if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
 
     SEXP tree;
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      PROTECT(tree = newick(sir,false)); nprotect++;
+      PROTECT(tree = newick(gp,false)); nprotect++;
       nout++;
     }
 
@@ -354,12 +354,13 @@ extern "C" {
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
     k = set_list_elem(out,outnames,tout,"time",k);
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(sir,false),"tree",k);
+      k = set_list_elem(out,outnames,newick(gp,false),"tree",k);
     }
-    //    k = set_list_elem(out,outnames,describe(sir),"description",k);
-    k = set_list_elem(out,outnames,get_epochs(sir),"epochs",k);
-    k = set_list_elem(out,outnames,get_times(sir),"etimes",k);
-    k = set_list_elem(out,outnames,get_lineage_count(sir),"lineages",k);
+    k = set_list_elem(out,outnames,describe(gp),"description",k);
+    k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
+    k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
+    k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
+    k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
     k = set_list_elem(out,outnames,cumhaz,"cumhaz",k);
     SET_NAMES(out,outnames);
 

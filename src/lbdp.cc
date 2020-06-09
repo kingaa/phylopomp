@@ -321,7 +321,7 @@ extern "C" {
   // extract/compute basic information.
   SEXP get_LBDP_info (SEXP X, SEXP Prune, SEXP Tree) {
     int nprotect = 0;
-    int nout = 4;
+    int nout = 5;
 
     // reconstruct the tableau from its serialization
     lbdp_tableau_t gp(RAW(X));
@@ -360,6 +360,7 @@ extern "C" {
     k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
     k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
     k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
+    k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
     k = set_list_elem(out,outnames,cumhaz,"cumhaz",k);
     SET_NAMES(out,outnames);
 

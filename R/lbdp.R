@@ -42,25 +42,12 @@ playLBDP <- function (data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree
   x$state <- NULL
   data %>%
     bind_rows(
-      x %>% as_tibble()
+      x %>% as_tibble() %>% filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
-  if (any(wh <- !inherits(x,c("LBDP_gpsim","gpsim"),TRUE)))
-    class(x) <- c(c("LBDP_gpsim","gpsim")[wh],class(x))
+  attr(x,"model") <- "LBDP"
+  if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))
   x
 }
 
 utils::globalVariables("count")
-
-##' @rdname lbdp
-##' @export
-getInfo.LBDP_gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
-  x <- .Call(P_get_LBDP_info,attr(data,"state"),prune,tree)
-  x$cumhaz <- tibble(time=x$time,Lambda=x$cumhaz)
-  x$lineages <- tibble(time=x$etimes,lineages=x$lineages)
-  x$etimes <- NULL
-  attr(x,"state") <- attr(data,"state")
-  if (any(wh <- !inherits(x,c("LBDP_gpsim","gpsim"),TRUE)))
-    class(x) <- c(c("LBDP_gpsim","gpsim")[wh],class(x))
-  x
-}

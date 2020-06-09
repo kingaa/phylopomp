@@ -5,7 +5,6 @@
 \alias{MGP}
 \alias{mgp}
 \alias{playMoran}
-\alias{getInfo.Moran_gpsim}
 \title{Moran genealogy process.}
 \usage{
 playMoran(
@@ -18,8 +17,6 @@ playMoran(
   tree = FALSE,
   stationary = TRUE
 )
-
-\method{getInfo}{Moran_gpsim}(data, ..., prune = TRUE, tree = TRUE)
 }
 \arguments{
 \item{data}{optional data frame;
@@ -39,8 +36,6 @@ output from \code{playMoran}.}
 
 \item{stationary}{logical;
 should the initial genealogy be drawn from the stationary distribution?}
-
-\item{prune}{Prune the tree?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

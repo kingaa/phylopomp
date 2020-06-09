@@ -11,6 +11,10 @@ getInfo(data, ...)
 \item{data}{\code{gpsim} object.}
 
 \item{...}{arguments passed to specific methods.}
+
+\item{prune}{logical; prune the tree?}
+
+\item{tree}{logical; represent the genealogical tree in Newick format?}
 }
 \description{
 getInfo

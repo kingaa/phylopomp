@@ -4,12 +4,9 @@
 \alias{lbdp}
 \alias{LBDP}
 \alias{playLBDP}
-\alias{getInfo.LBDP_gpsim}
 \title{Linear birth-death process.}
 \usage{
 playLBDP(data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE)
-
-\method{getInfo}{LBDP_gpsim}(data, ..., prune = TRUE, tree = TRUE)
 }
 \arguments{
 \item{data}{optional data frame;
@@ -30,8 +27,6 @@ output from \code{playLBDP}.}
 \item{times}{times at which output is requested.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
-
-\item{prune}{Prune the tree?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
