@@ -46,28 +46,54 @@ Loading required package: parallel
 Loading required package: rngtools
 > 
 > options(digits=3)
-> png(filename="lbdp2-%02d.png",res=100)
+> png(filename="sirws3-%02d.png",res=100)
 > 
 > theme_set(theme_bw())
 > 
 > registerDoParallel()
 > registerDoRNG(721604604)
 > 
-> foreach (i=1:200) %dopar% {
-+   playLBDP(
-+     lambda=0.1,
-+     mu=0.2,
+> foreach (i=1:500) %dopar% {
++   playSIRwS(
++     beta=4,
++     gamma=1,
 +     psi=1,
-+     n0=100,
-+     times=40,
++     S0=3,
++     I0=1,
++     t0=0,
++     times=100,
 +     tree=FALSE
-+   ) %>%
++   ) %>% 
 +     getInfo(tree=FALSE) %>% {
 +       .$cumhaz %>%
 +         mutate(p=exp(-Lambda))
-+     }
++     } -> x
 + } %>%
 +   bind_rows(.id="rep") -> dat
+> 
+> ##dat %>% filter(abs(p-1/2)<1e-8) -> x
+> ##x %>% treeplot(points=T) -> pl
+> 
+> ##for (i in seq_along(pl)) {
+> ##  pl[[i]] <- pl[[i]]+geom_vline(xintercept=x %>% slice(i) %>% pull(time))
+> ##}
+> 
+> dat %>%
++   filter(!is.na(p)) %>%
++   count(p) %>%
++   filter(n>1)
+# A tibble: 9 x 2
+      p     n
+  <dbl> <int>
+1 0.222     2
+2 0.25      5
+3 0.25      2
+4 0.333    11
+5 0.444     2
+6 0.5      21
+7 0.5       4
+8 0.667    19
+9 0.75      7
 > 
 > dat %>%
 +   do(tidy(ks.test(x=.$p,y=punif))) %>%
@@ -75,7 +101,10 @@ Loading required package: rngtools
 # A tibble: 1 x 1
   p.value
     <dbl>
-1   0.776
+1  0.0131
+Warning message:
+In ks.test(x = .$p, y = punif) :
+  ties should not be present for the Kolmogorov-Smirnov test
 > 
 > dat %>%
 +   group_by(rep) %>%
@@ -86,6 +115,9 @@ Loading required package: rngtools
 > pvals %>%
 +   do(tidy(ks.test(x=.$p.value,y=punif))) %>%
 +   select(p.value) -> ppval
+Warning message:
+In ks.test(x = .$p.value, y = punif) :
+  ties should not be present for the Kolmogorov-Smirnov test
 > 
 > dat %>%
 +   ggplot(aes(x=p))+
