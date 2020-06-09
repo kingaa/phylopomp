@@ -1052,10 +1052,13 @@ public:
     drop_redundant();
   };
 
-  // walk backward from each sample
+  // walk backward from each sample.
+  // calls to the RNG are made here.
   void walk (double *haz) const {
 
     valid();
+
+    //    rprint(describe());
 
     std::vector<int> ell(nplayers(),0);
     std::vector<bool> breadcrumb(nplayers(),false);
@@ -1068,9 +1071,9 @@ public:
         player_t *p = P;
         player_t *pl = p->left;
         ball_t *g = green_ball(p);
-	if (keepfirst) {
-	  *haz = 0;
-	}
+        if (keepfirst) {
+          *haz = 0;
+        }
         while (pl != 0) {
           double deltat = p->slate - pl->slate;
           // for ease of reading:
@@ -1078,15 +1081,17 @@ public:
           double N = pop(pl->state);
           double lambda = branch_rate(pl->state);
 
-	  if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe().c_str());
+          if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe().c_str());
 
-          if (deltat > 0 && keepfirst) {
-            *haz += (lambda > 0 && L > 0 && N > 1) ? lambda/choose(N,2)*L*deltat : 0;
+	  //          Rprintf("ord\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
+
+          if (keepfirst && deltat > 0 && lambda > 0 && L > 0 && N > 1) {
+            *haz += lambda * deltat * L / choose(N,2);
           }
 
           if (pl->holds(red) && !breadcrumb[pl->name]) {
             player_t *ppl = parent(pl);
-	    double nug = 0;
+            double nug = 0;
             
             // nug = -log(1-Prob[direct descent])
             nug = (N > L+1) ? -log(1-1/(N-L)) : inf;
@@ -1096,6 +1101,7 @@ public:
               // place breadcrumb on sample node (with red ball) to indicate this.
               // NB: sample nodes never get breadcrumbs otherwise.
               if (keepfirst) {
+		//                Rprintf("dd\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
                 if (N > L+1)
                   *haz += runif(0,nug);
                 else
@@ -1104,11 +1110,12 @@ public:
               breadcrumb[pl->name] = true; 
             } else {
               // direct descent avoided.
-              if (N == L+1)
+              if (N <= L+1)
                 err("coalescence should be assured!\n%s N=%lg L=%lg\n%s%s",
                     g->describe().c_str(),N,L,ppl->describe().c_str(),
                     pl->describe().c_str());
               if (keepfirst) {
+		//                Rprintf("avoid\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
                 *haz += nug;
               }
             }
@@ -1122,15 +1129,17 @@ public:
             pl = p->left;
           } else if (breadcrumb[pl->name]) {
             // an ancestor we've previously encountered, stop
+	    //            Rprintf("coal\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
             pl = 0;
           } else if (pl->holds(brown)) {
             // end of the line, stop walking
-	    *haz += rexp(1);
+	    //            Rprintf("root\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
+            *haz += rexp(1);
             breadcrumb[pl->name] = true;
             pl = 0;
-	  } else if (pl->holds_own()) {
-	    err("minchia!\n%s",pl->describe());
-	  } else {
+          } else if (pl->holds_own()) {
+            err("minchia!\n%s",pl->describe());
+          } else {
             // an ancestor we've not yet encountered.
             // we note our encounter with a breadcrumb
             breadcrumb[pl->name] = true;
@@ -1155,7 +1164,9 @@ public:
     int n = T.nballs(blue)-1;
     if (n > 0) {
       PROTECT(out = NEW_NUMERIC(n));
+      GetRNGstate();
       T.walk(REAL(out));
+      PutRNGstate();
       UNPROTECT(1);
     }
     return out;
