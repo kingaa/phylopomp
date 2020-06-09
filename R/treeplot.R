@@ -33,7 +33,6 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
     read.tree(text=data$tree[k]) %>%
       fortify(ladderize=ladderize) %>%
       mutate(
-        x=x-max(x)+times[k],
         nodecol=factor(
           case_when(
             label=="o"~"black",

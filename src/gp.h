@@ -67,9 +67,10 @@ protected:
 
   union {player_t *left; name_t leftmost;}; // player seated farthest to left
   union {player_t *right; name_t rightmost;}; // player seated farthest to right
-  double _time;             // current time
-  players_t player;         // pointers to all players
-  balls_t balls[ncolors];   // one for each color class
+  double _t0;                                 // initial time
+  double _time;                               // current time
+  players_t player;             // pointers to all players
+  balls_t balls[ncolors];       // one for each color class
 
 protected:
 
@@ -311,7 +312,7 @@ public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = (2+ncolors)*sizeof(name_t)+sizeof(double);
+    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double);
     if (!empty()) s += nplayers()*player[0]->size();
     return s;
   };
@@ -319,13 +320,14 @@ public:
   // binary serialization
   friend raw_t* operator<< (raw_t *o, const gp_tableau_t &T) {
     name_t buf[ncolors+2], *b = buf;
+    double buf2[] = {T._t0, T._time};
     for (name_t i = 0; i < ncolors; i++, b++) {
       *b = T.nballs(static_cast<color_t>(i));
     }
     *b++ = T.left->name;
     *b++ = T.right->name;
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
-    memcpy(o,&T._time,sizeof(double)); o += sizeof(double);
+    memcpy(o,buf2,sizeof(buf2)); o += sizeof(buf2);
     for (name_t i = 0; i < T.nplayers(); i++)
       o = (o << *T.player[i]);
     return o;
@@ -334,9 +336,11 @@ public:
   // binary deserialization
   friend raw_t* operator>> (raw_t *o, gp_tableau_t &T) {
     name_t buf[ncolors+2], *b = buf;
+    double buf2[2];
     memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
     T.clean();
-    memcpy(&T._time,o,sizeof(double)); o += sizeof(double);
+    memcpy(buf2,o,sizeof(buf2)); o += sizeof(buf2);
+    T._t0 = buf2[0]; T._time = buf2[1];
     name_t np = *b++;
     for (name_t i = 1; i < ncolors; i++, b++) {
       for (name_t j = 0; j < *b; j++) {
@@ -366,7 +370,7 @@ public:
   //  t0 = initial time
   gp_tableau_t (double t0 = 0) {
     clean();
-    _time = t0;
+    _time = _t0 = t0;
   };
   // constructor from serialized binary form
   gp_tableau_t (raw_t *o) {
@@ -466,6 +470,29 @@ public:
     int nt = T.get_times();
     PROTECT(t = NEW_NUMERIC(nt));
     T.get_times(REAL(t));
+    UNPROTECT(1);
+    return t;
+  }
+
+  // report all the sample times
+  name_t get_sample_times (double *x = 0) const {
+    player_t *p = anchor();
+    name_t n = 0;
+    while (p != 0) {
+      if (p->holds(blue)) {
+        n++;
+        if (x != 0) *(x++) = p->slate;
+      }
+      p = p->right;
+    }
+    return n;
+  };
+
+  friend SEXP get_sample_times (const gp_tableau_t & T) {
+    SEXP t;
+    int nt = T.get_sample_times();
+    PROTECT(t = NEW_NUMERIC(nt));
+    T.get_sample_times(REAL(t));
     UNPROTECT(1);
     return t;
   }
@@ -597,8 +624,8 @@ public:
       while (p->right != 0) {
         n++;
         if (p->right->slate < p->slate) // seating times are out of order
-	  err("times out of order\n%s%s",p->right->describe().c_str(),
-	      p->describe().c_str());
+          err("times out of order\n%s%s",p->right->describe().c_str(),
+              p->describe().c_str());
         if (p->right->left != p) err("seven years' bad luck"); // right and left are not mirrored
         p = p->right;
       }
@@ -636,7 +663,7 @@ public:
 private:
 
   // recursive function to put genealogy into Newick format.
-  std::string newick (name_t &name, double &tpar) const {
+  std::string newick (name_t &name, const double &tpar) const {
 
     std::string o;
     player_t *p = player[name];
@@ -722,13 +749,13 @@ public:
     std::string o = "(i:0.0,i:0.0";
     player_t *p = anchor();
     while (p != 0) {
-      if (p->holds_own()) {
-        if (p->holds(brown)) { // dead root
+      if (p->holds(brown)) {
+        if (p->holds_own()) {   // dead root
           o += ",b:0.0";
         } else {                // live root
-          ball_t *g = p->other(green_ball(p));
+          ball_t *g = p->other(p->ball(brown));
           if (!g->is(green)) err("impossible!\n%s",p->describe().c_str());
-          o += "," + newick(g->name,player[g->name]->slate);
+          o += "," + newick(g->name,p->slate);
         }
       }
       p = p->right;
