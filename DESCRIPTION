@@ -24,6 +24,7 @@ Collate:
     'sirws.R'
     'lbdp.R'
     'moran.R'
+    'newick2df.R'
     'pipe.R'
     'print.R'
     'treeplot.R'

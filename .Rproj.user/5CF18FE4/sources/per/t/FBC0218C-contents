@@ -1,0 +1,37 @@
+##' Tree in newick to dataframe
+##'
+##' Covert a tree in newick to a data frame, containing event times, number of lineages, sample indicator, direct descent indicator, and coalescent indicator.
+##'
+##' @include package.R
+##'
+##' @param tree tree data in newick format.
+##'
+##' @return A data frame could be used as \code{pomp} input.
+##' 
+##' @example examples/newick2df.R
+##'
+##' @importFrom ape read.tree
+##' @importFrom ggplot2 fortify
+##' @importFrom dplyr mutate arrange transmute
+##' @importFrom tidyr replace_na
+##'
+##' @name newick2df
+##' @rdname newick2df
+##' @export
+##' 
+newick2df <- function(tree) {
+  if(is.null(tree))
+    stop(sQuote("tree")," contains no variable ",call.=FALSE)
+  
+  read.tree(text=tree) %>%
+    fortify(ladderize=TRUE) %>%
+    arrange(x) %>%
+    mutate(sample=as.numeric(isTip & x!= 0.0),
+           inter=table(parent)[as.character(node)] %>% replace_na(0),
+           dd=as.numeric(inter==1), 
+           coal=as.numeric(inter==2),
+           lineages=sum(x==0.00)+cumsum(coal)-cumsum(sample)) %>%
+    transmute(time=x,lineages=lineages,dd=dd,coal=coal,sample=sample) -> df
+  
+  df
+}

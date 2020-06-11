@@ -1,0 +1,1193 @@
+[
+    {
+        "definitions" : [
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/decls.h",
+        "file_last_write" : 1591057154.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/defines.h",
+        "file_last_write" : 1590761442.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 21,
+                "name" : "raw_t",
+                "parent_name" : "",
+                "usr" : "c:gp.h@T@raw_t"
+            },
+            {
+                "column" : 22,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 22,
+                "name" : "name_t",
+                "parent_name" : "",
+                "usr" : "c:gp.h@T@name_t"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 6,
+                "line" : 29,
+                "name" : "random_integer(int)",
+                "parent_name" : "",
+                "usr" : "c:gp.h@F@random_integer#I#"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 6,
+                "line" : 34,
+                "name" : "set_list_elem(SEXP, SEXP, SEXP, const char *, int)",
+                "parent_name" : "",
+                "usr" : "c:gp.h@F@set_list_elem#*$@S@SEXPREC#S0_#S0_#*1C#I#"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 45,
+                "name" : "green",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@green"
+            },
+            {
+                "column" : 26,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 45,
+                "name" : "black",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@black"
+            },
+            {
+                "column" : 37,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 45,
+                "name" : "brown",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@brown"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 46,
+                "name" : "blue",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@blue"
+            },
+            {
+                "column" : 25,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 46,
+                "name" : "red",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@red"
+            },
+            {
+                "column" : 34,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 5,
+                "line" : 46,
+                "name" : "grey",
+                "parent_name" : "",
+                "usr" : "c:@EA@color_t@grey"
+            },
+            {
+                "column" : 44,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 46,
+                "name" : "color_t",
+                "parent_name" : "",
+                "usr" : "c:@T@color_t"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 2,
+                "line" : 53,
+                "name" : "gp_tableau_t<STATE, GHOSTS>",
+                "parent_name" : "",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t"
+            },
+            {
+                "column" : 17,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 57,
+                "name" : "state_t",
+                "parent_name" : "",
+                "usr" : "c:gp.h@ST>2#T#Nb@gp_tableau_t@T@state_t"
+            },
+            {
+                "column" : 32,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 65,
+                "name" : "balls_t",
+                "parent_name" : "",
+                "usr" : "c:gp.h@ST>2#T#Nb@gp_tableau_t@T@balls_t"
+            },
+            {
+                "column" : 34,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 8,
+                "line" : 66,
+                "name" : "players_t",
+                "parent_name" : "",
+                "usr" : "c:gp.h@ST>2#T#Nb@gp_tableau_t@T@players_t"
+            },
+            {
+                "column" : 9,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 2,
+                "line" : 82,
+                "name" : "ball_t",
+                "parent_name" : "",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 105,
+                "name" : "hand",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@hand#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 109,
+                "name" : "hand(name_t &)",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@hand#&i#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 112,
+                "name" : "is(color_t)",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@is#$@EA@color_t#1"
+            },
+            {
+                "column" : 17,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 116,
+                "name" : "color_name",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@color_name#1"
+            },
+            {
+                "column" : 17,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 120,
+                "name" : "describe",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@describe#1"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 124,
+                "name" : "size",
+                "parent_name" : "ball_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@ball_t@F@size#1"
+            },
+            {
+                "column" : 9,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 2,
+                "line" : 149,
+                "name" : "player_t",
+                "parent_name" : "",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 189,
+                "name" : "holds(gp_tableau_t::ball_t *)",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@holds#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 193,
+                "name" : "holds(color_t)",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@holds#$@EA@color_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 196,
+                "name" : "holds_own",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@holds_own#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 200,
+                "name" : "is_root",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@is_root#1"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 207,
+                "name" : "ball(color_t)",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@ball#$@EA@color_t#"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 221,
+                "name" : "other(const gp_tableau_t::ball_t *)",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@other#*1$@ST>2#T#Nb@gp_tableau_t@S@ball_t#1"
+            },
+            {
+                "column" : 17,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 229,
+                "name" : "describe",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@describe#1"
+            },
+            {
+                "column" : 12,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 236,
+                "name" : "size",
+                "parent_name" : "player_t",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@S@player_t@F@size#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 265,
+                "name" : "draw_one(name_t, name_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@draw_one#i#*i#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 269,
+                "name" : "draw_two(name_t, name_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@draw_two#i#*i#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 276,
+                "name" : "swap(gp_tableau_t::ball_t *, gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@swap#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#S0_#"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 296,
+                "name" : "make_player(color_t)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@make_player#$@EA@color_t#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 301,
+                "name" : "clean",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@clean#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 314,
+                "name" : "size",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@size#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 399,
+                "name" : "empty",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@empty#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 404,
+                "name" : "time",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@time#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 411,
+                "name" : "time(double &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@time#&d#"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 416,
+                "name" : "anchor",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@anchor#1"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 421,
+                "name" : "lead",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@lead#1"
+            },
+            {
+                "column" : 11,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 425,
+                "name" : "green_ball(const gp_tableau_t::player_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@green_ball#*1$@ST>2#T#Nb@gp_tableau_t@S@player_t#1"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 429,
+                "name" : "holder(const gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@holder#*1$@ST>2#T#Nb@gp_tableau_t@S@ball_t#1"
+            },
+            {
+                "column" : 13,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 433,
+                "name" : "parent(const gp_tableau_t::player_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@parent#*1$@ST>2#T#Nb@gp_tableau_t@S@player_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 438,
+                "name" : "nplayers",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@nplayers#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 443,
+                "name" : "nballs(const color_t &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@nballs#&1$@EA@color_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 448,
+                "name" : "nlive",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@nlive#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 455,
+                "name" : "get_times(double *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@get_times#*d#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 478,
+                "name" : "get_sample_times(double *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@get_sample_times#*d#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 501,
+                "name" : "get_lineage_count(int *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@get_lineage_count#*I#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 524,
+                "name" : "get_epochs(double *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@get_epochs#*d#1"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 547,
+                "name" : "describe",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@describe#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 568,
+                "name" : "valid",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@valid#1"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 666,
+                "name" : "newick(name_t &, const double &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@newick#&i#&1d#1"
+            },
+            {
+                "column" : 15,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 746,
+                "name" : "newick(bool)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@newick#b#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 786,
+                "name" : "insert_right(gp_tableau_t::player_t *, gp_tableau_t::player_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@insert_right#*$@ST>2#T#Nb@gp_tableau_t@S@player_t#S0_#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 806,
+                "name" : "insert_left(gp_tableau_t::player_t *, gp_tableau_t::player_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@insert_left#*$@ST>2#T#Nb@gp_tableau_t@S@player_t#S0_#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 825,
+                "name" : "extract(gp_tableau_t::player_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@extract#*$@ST>2#T#Nb@gp_tableau_t@S@player_t#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 854,
+                "name" : "seat(const gp_tableau_t::ball_t *, gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@seat#*1$@ST>2#T#Nb@gp_tableau_t@S@ball_t#*S1_#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 865,
+                "name" : "unseat(gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@unseat#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#"
+            },
+            {
+                "column" : 11,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 886,
+                "name" : "root",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@root#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 896,
+                "name" : "drop(color_t)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@drop#$@EA@color_t#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 903,
+                "name" : "drop_redundant",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@drop_redundant#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 915,
+                "name" : "drop_dead",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@drop_dead#"
+            },
+            {
+                "column" : 11,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 929,
+                "name" : "random_black_ball",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@random_black_ball#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 936,
+                "name" : "birth(gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@birth#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 944,
+                "name" : "birth(gp_tableau_t::ball_t *, const gp_tableau_t::state_t &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@birth#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#&1t0.0#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 953,
+                "name" : "death(gp_tableau_t::ball_t *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@death#*$@ST>2#T#Nb@gp_tableau_t@S@ball_t#"
+            },
+            {
+                "column" : 11,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 971,
+                "name" : "graft",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@graft#"
+            },
+            {
+                "column" : 11,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 982,
+                "name" : "graft(const gp_tableau_t::state_t &, const gp_tableau_t::state_t &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@graft#&1t0.0#S0_#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 996,
+                "name" : "sample",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@sample#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 1005,
+                "name" : "sample(const gp_tableau_t::state_t &)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@sample#&1t0.0#"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 1026,
+                "name" : "play(double)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@play#d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 1042,
+                "name" : "play1",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@play1#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 1049,
+                "name" : "prune",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@prune#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+                "kind" : 7,
+                "line" : 1057,
+                "name" : "walk(double *)",
+                "parent_name" : "gp_tableau_t<STATE, GHOSTS>",
+                "usr" : "c:@ST>2#T#Nb@gp_tableau_t@F@walk#*d#1"
+            }
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/gp.h",
+        "file_last_write" : 1591732032.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 6,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/init.c",
+                "kind" : 6,
+                "line" : 16,
+                "name" : "R_init_phylopomp(DllInfo *)",
+                "parent_name" : "",
+                "usr" : "c:@F@R_init_phylopomp"
+            }
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/init.c",
+        "file_last_write" : 1591057154.000000
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/internal.h",
+        "file_last_write" : 1590761442.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 29,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 8,
+                "line" : 5,
+                "name" : "lbdp_state_t",
+                "parent_name" : "",
+                "usr" : "c:@T@lbdp_state_t"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 2,
+                "line" : 7,
+                "name" : "lbdp_tableau_t",
+                "parent_name" : "",
+                "usr" : "c:@S@lbdp_tableau_t"
+            },
+            {
+                "column" : 5,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 8,
+                "line" : 16,
+                "name" : "parameters_t",
+                "parent_name" : "",
+                "usr" : "c:lbdp.cc@S@lbdp_tableau_t@T@parameters_t"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 27,
+                "name" : "branch_rate(gp_tableau_t<lbdp_state_t, true>::state_t &)",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@branch_rate#&$@SA@lbdp_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 31,
+                "name" : "pop(gp_tableau_t<lbdp_state_t, true>::state_t &)",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@pop#&$@SA@lbdp_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 37,
+                "name" : "size",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@size#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 94,
+                "name" : "valid",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@valid#1"
+            },
+            {
+                "column" : 18,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 109,
+                "name" : "state",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@state#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 114,
+                "name" : "birth_rate",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@birth_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 119,
+                "name" : "birth_rate(double &)",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@birth_rate#&d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 125,
+                "name" : "death_rate",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@death_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 130,
+                "name" : "death_rate(double &)",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@death_rate#&d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 136,
+                "name" : "sampling_rate",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@sampling_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 141,
+                "name" : "sampling_rate(double &)",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@sampling_rate#&d#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 146,
+                "name" : "update_clocks",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@update_clocks#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 169,
+                "name" : "clock",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@clock#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 183,
+                "name" : "move",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@move#"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+                "kind" : 7,
+                "line" : 198,
+                "name" : "live",
+                "parent_name" : "lbdp_tableau_t",
+                "usr" : "c:@S@lbdp_tableau_t@F@live#1"
+            }
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/lbdp.cc",
+        "file_last_write" : 1591732032.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 20,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 8,
+                "line" : 5,
+                "name" : "moran_state_t",
+                "parent_name" : "",
+                "usr" : "c:@T@moran_state_t"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 2,
+                "line" : 7,
+                "name" : "moran_tableau_t",
+                "parent_name" : "",
+                "usr" : "c:@S@moran_tableau_t"
+            },
+            {
+                "column" : 5,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 8,
+                "line" : 14,
+                "name" : "parameters_t",
+                "parent_name" : "",
+                "usr" : "c:moran.cc@S@moran_tableau_t@T@parameters_t"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 21,
+                "name" : "branch_rate(gp_tableau_t<moran_state_t, false>::state_t &)",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@branch_rate#&$@SA@moran_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 25,
+                "name" : "pop(gp_tableau_t<moran_state_t, false>::state_t &)",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@pop#&$@SA@moran_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 31,
+                "name" : "size",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@size#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 98,
+                "name" : "valid",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@valid#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 106,
+                "name" : "moran_rate",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@moran_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 111,
+                "name" : "moran_rate(double &)",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@moran_rate#&d#"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 117,
+                "name" : "popsize",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@popsize#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 122,
+                "name" : "popsize(int &)",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@popsize#&I#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 127,
+                "name" : "update_clocks",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@update_clocks#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 138,
+                "name" : "clock",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@clock#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+                "kind" : 7,
+                "line" : 142,
+                "name" : "move",
+                "parent_name" : "moran_tableau_t",
+                "usr" : "c:@S@moran_tableau_t@F@move#"
+            }
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/moran.cc",
+        "file_last_write" : 1591732032.000000
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 3,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 8,
+                "line" : 9,
+                "name" : "sir_state_t",
+                "parent_name" : "",
+                "usr" : "c:@T@sir_state_t"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 2,
+                "line" : 13,
+                "name" : "sirws_tableau_t",
+                "parent_name" : "",
+                "usr" : "c:@S@sirws_tableau_t"
+            },
+            {
+                "column" : 5,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 8,
+                "line" : 24,
+                "name" : "parameters_t",
+                "parent_name" : "",
+                "usr" : "c:sirws.cc@S@sirws_tableau_t@T@parameters_t"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 35,
+                "name" : "branch_rate(gp_tableau_t<sir_state_t, true>::state_t &)",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@branch_rate#&$@SA@sir_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 39,
+                "name" : "pop(gp_tableau_t<sir_state_t, true>::state_t &)",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@pop#&$@SA@sir_state_t#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 45,
+                "name" : "size",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@size#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 102,
+                "name" : "valid",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@valid#1"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 114,
+                "name" : "transmission_rate",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@transmission_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 119,
+                "name" : "transmission_rate(double &)",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@transmission_rate#&d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 125,
+                "name" : "recovery_rate",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@recovery_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 130,
+                "name" : "recovery_rate(double &)",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@recovery_rate#&d#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 136,
+                "name" : "sample_rate",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@sample_rate#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 141,
+                "name" : "sample_rate(double &)",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@sample_rate#&d#"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 146,
+                "name" : "update_clocks",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@update_clocks#"
+            },
+            {
+                "column" : 10,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 169,
+                "name" : "clock",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@clock#1"
+            },
+            {
+                "column" : 8,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 183,
+                "name" : "move",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@move#"
+            },
+            {
+                "column" : 7,
+                "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+                "kind" : 7,
+                "line" : 198,
+                "name" : "live",
+                "parent_name" : "sirws_tableau_t",
+                "usr" : "c:@S@sirws_tableau_t@F@live#1"
+            }
+        ],
+        "file" : "/Users/qianyinglin/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/src/sirws.cc",
+        "file_last_write" : 1591732032.000000
+    }
+]

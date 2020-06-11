@@ -1,0 +1,21 @@
+{
+    "args" : [
+        "-isystem",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
+        "-I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/11.0.3/include",
+        "-I/usr/local/Cellar/gcc/HEAD-2221fb6_1/lib/gcc/HEAD/gcc/x86_64-apple-darwin19/11.0.0/../../../../../../include/c++/11.0.0",
+        "-I/usr/local/Cellar/gcc/HEAD-2221fb6_1/lib/gcc/HEAD/gcc/x86_64-apple-darwin19/11.0.0/../../../../../../include/c++/11.0.0/x86_64-apple-darwin19",
+        "-I/usr/local/Cellar/gcc/HEAD-2221fb6_1/lib/gcc/HEAD/gcc/x86_64-apple-darwin19/11.0.0/../../../../../../include/c++/11.0.0/backward",
+        "-I/usr/local/Cellar/gcc/HEAD-2221fb6_1/lib/gcc/HEAD/gcc/x86_64-apple-darwin19/11.0.0/include",
+        "-I/usr/local/Cellar/gcc/HEAD-2221fb6_1/lib/gcc/HEAD/gcc/x86_64-apple-darwin19/11.0.0/include-fixed",
+        "-I/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include",
+        "-I/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/System/Library/Frameworks",
+        "-I/Library/Frameworks/R.framework/Resources/include",
+        "-DNDEBUG",
+        "-I/usr/local/include",
+        "-fPIC"
+    ],
+    "hash" : "1591732032",
+    "is_cpp" : true,
+    "pch" : ""
+}

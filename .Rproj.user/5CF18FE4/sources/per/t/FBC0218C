@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1591894598017.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2883111163",
+    "id" : "FBC0218C",
+    "lastKnownWriteTime" : 1591903613,
+    "last_content_update" : 1591903613823,
+    "path" : "~/Dropbox/genetic/pomp_gene/phylopomp/Rpkg/R/newick2df.R",
+    "project_path" : "R/newick2df.R",
+    "properties" : {
+        "cursorPosition" : "11,3",
+        "scrollLine" : "1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
