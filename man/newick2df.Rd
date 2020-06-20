@@ -2,22 +2,25 @@
 % Please edit documentation in R/newick2df.R
 \name{newick2df}
 \alias{newick2df}
-\title{Tree in newick to dataframe}
+\title{Convert a tree in Newick format to data frame}
 \usage{
 newick2df(tree)
 }
 \arguments{
-\item{tree}{tree data in newick format.}
+\item{tree}{tree data in Newick format.}
 }
 \value{
-A data frame could be used as \code{pomp} input.
+A data frame suitable for use as \code{pomp} input.
 }
 \description{
-Covert a tree in newick to a data frame, containing event times, number of lineages, sample indicator, direct descent indicator, and coalescent indicator.
+Convert a genealogical tree in Newick format to a data frame, containing event times, number of lineages, sample indicator, direct-descent indicator, and coalescent indicator.
 }
 \examples{
 playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=5,t0=0,tree=TRUE) -> x
 y <- getInfo(x)
 newick2df(y$tree) -> z
 head(z)
+
+# compare to y
+head(y$lineages)
 }
