@@ -1,5 +1,5 @@
 
-R version 4.0.0 (2020-04-24) -- "Arbor Day"
+R version 4.0.1 (2020-06-06) -- "See Things Now"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -34,9 +34,9 @@ Registered S3 method overwritten by 'treeio':
 > library(doParallel)
 Loading required package: foreach
 
-Attaching package: 'foreach'
+Attaching package: ‘foreach’
 
-The following objects are masked from 'package:purrr':
+The following objects are masked from ‘package:purrr’:
 
     accumulate, when
 
@@ -75,7 +75,7 @@ Loading required package: rngtools
 # A tibble: 1 x 1
   p.value
     <dbl>
-1   0.942
+1   0.284
 > 
 > dat %>%
 +   group_by(rep) %>%

@@ -30,6 +30,13 @@ foreach (i=1:50) %dopar% {
 } %>%
   bind_rows(.id="rep") -> dat
 
+stopifnot(
+  `ties in KS test`=dat %>%
+    count(p) %>%
+    filter(n>1) %>%
+    nrow()==0
+)
+
 dat %>%
   do(tidy(ks.test(x=.$p,y=punif))) %>%
   select(p.value)

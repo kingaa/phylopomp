@@ -1,5 +1,5 @@
 
-R version 4.0.0 (2020-04-24) -- "Arbor Day"
+R version 4.0.1 (2020-06-06) -- "See Things Now"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -34,9 +34,9 @@ Registered S3 method overwritten by 'treeio':
 > library(doParallel)
 Loading required package: foreach
 
-Attaching package: 'foreach'
+Attaching package: ‘foreach’
 
-The following objects are masked from 'package:purrr':
+The following objects are masked from ‘package:purrr’:
 
     accumulate, when
 
@@ -51,81 +51,60 @@ Loading required package: rngtools
 > theme_set(theme_bw())
 > 
 > registerDoParallel()
-> registerDoRNG(721604604)
+> registerDoRNG(1234166095)
 > 
-> foreach (i=1:500) %dopar% {
-+   playSIRwS(
-+     beta=4,
-+     gamma=1,
-+     psi=1,
-+     S0=3,
-+     I0=1,
-+     t0=0,
-+     times=100,
-+     tree=FALSE
-+   ) %>% 
-+     getInfo(tree=FALSE) %>% {
-+       .$cumhaz %>%
-+         mutate(p=exp(-Lambda))
-+     } -> x
+> expand_grid(
++   beta=4,
++   gamma=1,
++   psi=1,
++   I0=1,
++   S0=c(1,2),
++   rep=1:2000
++ ) -> pars
+> 
+> foreach (par=iter(pars,"row")) %dopar% {
++   library(phylopomp)
++   library(tidyverse)
++   par %$%
++     playSIRwS(
++       beta=beta,gamma=gamma,psi=psi,
++       S0=S0,I0=I0,t0=0,times=100,
++       tree=FALSE
++     ) %>%
++     getInfo(tree=FALSE) -> x
++   bind_cols(par,x$cumhaz)
 + } %>%
-+   bind_rows(.id="rep") -> dat
++   bind_rows() %>%
++   filter(!is.na(Lambda)) %>%
++   mutate(p=exp(-Lambda)) %>%
++   arrange(beta,gamma,psi,S0,I0,rep,time) -> dat
 > 
-> ##dat %>% filter(abs(p-1/2)<1e-8) -> x
-> ##x %>% treeplot(points=T) -> pl
-> 
-> ##for (i in seq_along(pl)) {
-> ##  pl[[i]] <- pl[[i]]+geom_vline(xintercept=x %>% slice(i) %>% pull(time))
-> ##}
-> 
-> dat %>%
-+   filter(!is.na(p)) %>%
-+   count(p) %>%
-+   filter(n>1)
-# A tibble: 9 x 2
-      p     n
-  <dbl> <int>
-1 0.222     2
-2 0.25      5
-3 0.25      2
-4 0.333    11
-5 0.444     2
-6 0.5      21
-7 0.5       4
-8 0.667    19
-9 0.75      7
+> stopifnot(
++   `ties in KS test`=dat %>%
++     count(p) %>%
++     filter(n>1) %>%
++     nrow()==0
++ )
 > 
 > dat %>%
++   group_by(S0) %>%
 +   do(tidy(ks.test(x=.$p,y=punif))) %>%
-+   select(p.value)
-# A tibble: 1 x 1
-  p.value
-    <dbl>
-1  0.0131
-Warning message:
-In ks.test(x = .$p, y = punif) :
-  ties should not be present for the Kolmogorov-Smirnov test
++   select(p.value) -> pval
+Adding missing grouping variables: `S0`
+> pval
+# A tibble: 2 x 2
+# Groups:   S0 [2]
+     S0 p.value
+  <dbl>   <dbl>
+1     1   0.927
+2     2   0.858
 > 
 > dat %>%
-+   group_by(rep) %>%
-+   do(tidy(ks.test(x=.$p,y=punif))) %>%
-+   ungroup() %>%
-+   select(p.value) -> pvals
-> 
-> pvals %>%
-+   do(tidy(ks.test(x=.$p.value,y=punif))) %>%
-+   select(p.value) -> ppval
-Warning message:
-In ks.test(x = .$p.value, y = punif) :
-  ties should not be present for the Kolmogorov-Smirnov test
-> 
-> dat %>%
-+   ggplot(aes(x=p))+
++   ggplot(aes(x=p,group=S0,color=as.factor(S0)))+
 +   geom_abline(slope=1)+
 +   stat_ecdf()+
-+   annotate("rug",x=pvals$p.value)+
-+   annotate("text",x=0.2,y=0.8,
-+     label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
++   annotate("text",x=0.2,y=0.8+c(0,-0.1),
++     label=sprintf("P==%3.2f",pval$p.value),parse=TRUE)+
 +   coord_equal()+
 +   labs(x=expression(italic(p)),y=expression(italic(F(p))))+
 +   expand_limits(x=c(0,1),y=c(0,1))
