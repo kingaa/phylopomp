@@ -48,8 +48,7 @@ typedef enum {green = 0, black = 1, brown = 2,
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
 // STATE is a datatype that holds the state of the Markov process.
-// GHOSTS = TRUE introduces 'ghosts', preserving information about death events.
-template <class STATE, bool GHOSTS>
+template <class STATE>
 class gp_tableau_t  {
 
 protected:
@@ -57,8 +56,6 @@ protected:
   typedef STATE state_t;
   class ball_t;
   class player_t;
-
-  const bool _use_ghosts = GHOSTS;
 
 protected:
   
@@ -86,7 +83,7 @@ protected:
     name_t name;
     color_t color;
     // basic constructor
-    ball_t (color_t col = red, name_t nom = na, name_t who = na) {
+    ball_t (color_t col = blue, name_t nom = na, name_t who = na) {
       color = col;
       name = nom;
       _hand = who;
@@ -525,7 +522,7 @@ public:
     player_t *p = anchor();
     name_t n = 0;
     while (p != 0) {
-      if (p->holds(red)) {
+      if (p->holds(blue)) {
         n++;
         if (x != 0) *(x++) = p->slate;
       }
@@ -548,6 +545,7 @@ public:
     player_t *p = anchor();
     std::string o = "";
     while (p != 0) {
+      o += "pop = " + std::to_string(pop(p->state)) + " ";
       o += p->describe();
       p = p->right;
     }
@@ -577,7 +575,7 @@ public:
       player_t *p = 0;
 
       if (nplayers() != nballs(green)) err("ai yi yi!");
-      if (nballs(black)+nballs(blue)+nballs(red)+nballs(brown)+nballs(grey) != nplayers()) err("caramba!");
+      if (nballs(black)+nballs(red)+nballs(blue)+nballs(brown)+nballs(grey) != nplayers()) err("caramba!");
 
       // check each player
       for (name_t j = 0; j < nplayers(); j++) {
@@ -634,11 +632,6 @@ public:
       while (p->left != 0) {
         n--;
         if (p->left->right != p) err("seven more years!"); // right and left are not mirrored
-        // check that direct descents are proper, i.e.:
-        //   p->left->slate == p->slate && p->holds(blue) => parent(p) == p->left
-        // if (p->holds(blue) && p->left->slate == p->slate && p->left != parent(p))
-        //   err("inconceivable!! bad sample:\n%s%s",
-        //       p->left->describe().c_str(),p->describe().c_str());
         p = p->left;
       }
       if (n != 1) err("cannot traverse left %d",n);
@@ -649,10 +642,6 @@ public:
         // parent of every brown-ball holder must hold his own green ball
         if (p->holds(brown) && !parent(p)->holds_own()) { 
           err("rotten root!\n%s%s",parent(p)->describe().c_str(),p->describe().c_str());
-        }
-        // ghosts must hold their own green balls
-        if (p->holds(grey) && !p->holds_own()) { 
-          err("nasty ghost!\n%%s%s",p->describe().c_str());
         }
         p = p->right;
       }
@@ -665,20 +654,19 @@ private:
   // recursive function to put genealogy into Newick format.
   std::string newick (name_t &name, const double &tpar) const {
 
-    std::string o;
+    std::string o = "";
     player_t *p = player[name];
     ball_t *a, *b;
 
     if (p->holds(blue)) { // a sample
       
-      o = "";
       a = p->ball(blue);
       b = p->ballB;
       switch (b->color) {
       case green:
         o += "(" + newick(b->name,p->slate) + ")";
         break;
-      case red: case brown:
+      case blue: case brown: case red:
         break;
       default:
         err("INCONceivABLE!",b->describe().c_str());
@@ -687,9 +675,9 @@ private:
       
       o += std::to_string(a->name) + ":" + std::to_string(p->slate - tpar);
       
-    } else if (p->holds(brown)) {      // a root node
+    } else if (p->holds(brown)) { // a root node
       
-      o = "(";
+      o += "(";
       a = p->ball(brown);
       b = p->ballB;
       switch (b->color) {
@@ -707,7 +695,7 @@ private:
 
     } else {                    // a branch point
     
-      o = "(";
+      o += "(";
       a = p->ballA;
       b = p->ballB;
       switch (a->color) {
@@ -743,9 +731,8 @@ public:
 
   // put genealogy at current time into Newick format.
   // this damages the tableau.
-  std::string newick (bool pr = true) {
-    if (pr) prune();
-    else drop(grey);
+  std::string newick (void) {
+    prune();
     std::string o = "(i:0.0,i:0.0";
     player_t *p = anchor();
     while (p != 0) {
@@ -766,13 +753,13 @@ public:
 
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, gp_tableau_t &T, bool prune) {
-    SET_STRING_ELT(x,k,mkChar(T.newick(prune).c_str()));
+  friend void newick (SEXP x, int k, gp_tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.newick().c_str()));
   }
 
-  friend SEXP newick (gp_tableau_t &T, bool prune = true) {
+  friend SEXP newick (gp_tableau_t &T) {
     SEXP x;
-    std::string s = T.newick(prune);
+    std::string s = T.newick();
     PROTECT(x = NEW_CHARACTER(1));
     SET_STRING_ELT(x,0,mkChar(s.c_str()));
     UNPROTECT(1);
@@ -882,13 +869,17 @@ private:
     delete p;
   };
 
-  // seat a root player
-  ball_t *root (void) {
-    player_t *p = make_player(brown);
-    ball_t *b = p->ball(brown);
-    p->slate = default_slate;
-    insert_left(p);
-    return b;
+  // change a ball's color
+  void change (ball_t *b, color_t to) {
+    color_t from = b->color;
+    if (from == green || to == green)
+      err("green balls cannot change color.");
+    ball_t *a = balls[from].back();
+    swap(b,a);
+    a->color = to;
+    a->name = balls[to].size();
+    balls[from].pop_back();
+    balls[to].push_back(a);
   };
 
   // successively drop all players holding the given color.
@@ -923,8 +914,6 @@ private:
     }
   };
 
-public:
-
   // draw random black ball
   ball_t *random_black_ball (void) {
     name_t draw;
@@ -932,84 +921,40 @@ public:
     return balls[black][draw];
   };
 
-  // player holding ball a gives birth
-  void birth (ball_t *a) {
-    if (!a->is(black))
-      err("in 'birth': invalid ball: %s",a->describe().c_str());
-    player_t *p = make_player(black);
-    seat(p->ball(black),a);
-  };
+public:
 
-  // player holding ball a gives birth
-  void birth (ball_t *a, const state_t &s) {
-    if (!a->is(black))
-      err("in 'birth': invalid ball: %s",a->describe().c_str());
+  void birth (const state_t &s) {
+    ball_t *a = random_black_ball();
     player_t *p = make_player(black);
     p->state = s;
     seat(p->ball(black),a);
   };
 
-  // player holding black ball a dies
-  void death (ball_t *a) {
-    if (!a->is(black))
-      err("in 'death': invalid ball: %s",a->describe().c_str());
-    if (_use_ghosts) {
-      player_t *p = holder(a);
-      swap(p->other(a),green_ball(p));
-      swap(a,balls[black].back());
-      a = balls[black].back();
-      a->color = grey;
-      a->name = balls[grey].size();
-      balls[black].pop_back();
-      balls[grey].push_back(a);
-    } else {
-      unseat(a);
-    }
+  void death (const state_t &s) {
+    ball_t *a = random_black_ball();
+    player_t *p = make_player(grey);
+    p->state = s;
+    seat(p->ball(grey),a);
+    change(a,grey);
   };
 
-  // graft a new lineage
-  ball_t* graft (void) {
+  // graft a new lineage:
+  // one player at left, one player at right.
+  void graft (const state_t &s) {
+    player_t *r = make_player(brown);
     player_t *p = make_player(black);
-    ball_t *a = root();
-    ball_t *b = p->ball(black);
-    seat(b,a);
-    return b;
-  };
-
-  // graft a new lineage.
-  // new anchor gets state i.
-  // new lead gets state s.
-  ball_t* graft (const state_t &i, const state_t &s) {
-    player_t *p = make_player(black);
-    ball_t *a = root();
-    ball_t *b = p->ball(black);
-    holder(a)->state = i;
-    holder(b)->state = s;
-    seat(b,a);
-    return b;
-  };
-
-  // a sample adds 2 players at the same time.
-  // The first ends up holding the random black ball plus
-  // the green ball of the second player.
-  // The second player ends up holding a blue ball and a red ball.
-  void sample (void) {
-    if (nlive() > 0) {
-      player_t *pr = make_player(red);
-      player_t *pb = make_player(blue);
-      seat(pb->ball(blue),random_black_ball());
-      seat(pr->ball(red),pb->ball(blue));
-    }
+    r->slate = default_slate;
+    r->state = s;
+    insert_left(r);
+    p->state = s;
+    seat(p->ball(black),r->ball(brown));
   };
 
   void sample (const state_t &s) {
     if (nlive() > 0) {
-      player_t *pr = make_player(red);
-      player_t *pb = make_player(blue);
-      seat(pb->ball(blue),random_black_ball());
-      seat(pr->ball(red),pb->ball(blue));
-      pb->state = s;
-      pr->state = s;
+      player_t *p = make_player(blue);
+      p->state = s;
+      seat(p->ball(blue),random_black_ball());
     }
   };
 
@@ -1047,9 +992,21 @@ public:
 
   // prune the tree
   void prune (void) {
-    drop(black); drop(grey);
+    // for every sample, insert a new player
+    for (name_t k = 0; k < balls[blue].size(); k++) {
+      ball_t *a = balls[blue][k];
+      player_t *p = make_player(red);
+      player_t *q = holder(a);
+      insert_right(p,q);
+      swap(a,green_ball(p));
+      p->slate = q->slate;
+      p->state = q->state;
+    }
+    drop(black);
+    drop(grey);
     drop_dead();
     drop_redundant();
+    valid();
   };
 
   // walk backward from each sample.
@@ -1058,100 +1015,76 @@ public:
 
     valid();
 
-    //    rprint(describe());
-
     std::vector<int> ell(nplayers(),0);
-    std::vector<bool> breadcrumb(nplayers(),false);
+    std::vector<int> breadcrumb(nplayers(),0);
 
     // we walk through the tableau left to right to find the samples
     player_t *P = anchor();
     bool keepfirst = false;
     while (P != 0) {
-      if (P->holds(red)) {      // a sample!
+      if (P->holds(blue)) {      // a sample!
         player_t *p = P;
         player_t *pl = p->left;
         ball_t *g = green_ball(p);
-        if (keepfirst) {
-          *haz = 0;
-        }
+
+        *haz = 0;
+        
         while (pl != 0) {
-          double deltat = p->slate - pl->slate;
           // for ease of reading:
           double L = ell[pl->name];
           double N = pop(pl->state);
-          double lambda = branch_rate(pl->state);
 
           if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe().c_str());
 
-	  //          Rprintf("ord\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
-
-          if (keepfirst && deltat > 0 && lambda > 0 && L > 0 && N > 1) {
-            *haz += lambda * deltat * L / choose(N,2);
-          }
-
-          if (pl->holds(red) && !breadcrumb[pl->name]) {
-            player_t *ppl = parent(pl);
-            double nug = 0;
+          if (keepfirst) {
             
-            // nug = -log(1-Prob[direct descent])
-            nug = (N > L+1) ? -log(1-1/(N-L)) : inf;
-            
-            if (ppl->holds(g) && pl->slate == ppl->slate) {
-              // direct descent event.
-              // place breadcrumb on sample node (with red ball) to indicate this.
-              // NB: sample nodes never get breadcrumbs otherwise.
-              if (keepfirst) {
-		//                Rprintf("dd\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
-                if (N > L+1)
-                  *haz += runif(0,nug);
-                else
-                  *haz += rexp(1);
-              }
-              breadcrumb[pl->name] = true; 
-            } else {
-              // direct descent avoided.
-              if (N <= L+1)
-                err("coalescence should be assured!\n%s N=%lg L=%lg\n%s%s",
-                    g->describe().c_str(),N,L,ppl->describe().c_str(),
-                    pl->describe().c_str());
-              if (keepfirst) {
-		//                Rprintf("avoid\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
-                *haz += nug;
+            if (pl->holds(blue) && breadcrumb[pl->name] < 1) {
+              if (N <= L) err("hijole madre! %lg %lg\n%s",N,L,pl->describe().c_str());
+              double nug = 1/(N-L); // Prob[direct descent]
+              if (pl->holds(g)) { // direct descent event
+                breadcrumb[pl->name]++;
+                *haz -= log(1-runif(0,nug));
+              } else if (nug < 1) {            // direct descent avoided
+                *haz -= log(1-nug);
+              } else {
+                err("coalescence should have been assured! (1)");
               }
             }
-          }
 
+            if (N >1 && L > 0) {
+              *haz += L/choose(N,2)*branch_rate(pl->state) * (p->slate - pl->slate);
+            }
+          }
+          
           ell[pl->name]++;
 
           if (!pl->holds(g)) {
             // no ancestor, keep walking
             p = pl;
             pl = p->left;
-          } else if (breadcrumb[pl->name]) {
+          } else if (breadcrumb[pl->name] > 0) {
             // an ancestor we've previously encountered, stop
-	    //            Rprintf("coal\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
             pl = 0;
           } else if (pl->holds(brown)) {
             // end of the line, stop walking
-	    //            Rprintf("root\n%s%s%sN=%lg L=%lg lambda=%lg\n",P->describe().c_str(),p->describe().c_str(),pl->describe().c_str(),N,L,lambda);
-            *haz += rexp(1);
-            breadcrumb[pl->name] = true;
+            if (keepfirst) {
+              *haz += rexp(1);
+            }
+            breadcrumb[pl->name]++;
             pl = 0;
           } else if (pl->holds_own()) {
-            err("minchia!\n%s",pl->describe());
+            err("minchia!\n%s",pl->describe().c_str());
           } else {
             // an ancestor we've not yet encountered.
             // we note our encounter with a breadcrumb
-            breadcrumb[pl->name] = true;
+            breadcrumb[pl->name]++;
             // and proceed to the next generation.
             g = green_ball(pl);
             p = pl;
             pl = p->left;
           }
         }
-        if (keepfirst) {
-          haz++;
-        }
+        if (keepfirst) haz++;
         keepfirst = true;
       }
       P = P->right;

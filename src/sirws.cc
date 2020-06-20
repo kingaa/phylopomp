@@ -10,7 +10,7 @@ typedef struct {
 
 const sir_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
 
-class sirws_tableau_t : public gp_tableau_t<sir_state_t,true> {
+class sirws_tableau_t : public gp_tableau_t<sir_state_t> {
 
 private:
 
@@ -24,7 +24,6 @@ private:
   } parameters_t;
 
   parameters_t params;
-  sir_state_t initial_state;
   sir_state_t state;
 
   // clocks: times to next...
@@ -33,7 +32,7 @@ private:
   double nextS;                 // ...sample
 
   double branch_rate (state_t &s) const {
-    return params.beta * s.S * s.I / params.N;
+    return params.beta * (s.S+1) * (s.I-1) / params.N;
   };
 
   double pop (state_t &s) const {
@@ -48,14 +47,12 @@ protected:
 
   friend raw_t* operator<< (raw_t *o, const sirws_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(o,&T.initial_state,sizeof(state_t)); o += sizeof(state_t);
     memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     return o << *dynamic_cast<const gp_tableau_t*>(&T);
   };
 
   friend raw_t* operator>> (raw_t *o, sirws_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(&T.initial_state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     return o >> *dynamic_cast<gp_tableau_t*>(&T);
   };
@@ -69,9 +66,8 @@ public:
     params = {
       double(S0+I0), beta, gamma, psi, S0, I0
     };
-    initial_state = state = {double(S0), double(I0), 0};
-    for (name_t j = 0; j < name_t(I0); j++)
-      graft(initial_state,state);
+    state = {double(S0), double(I0), 0};
+    for (name_t j = 0; j < name_t(I0); j++) graft(state);
     update_clocks();
     valid();
   };
@@ -145,7 +141,7 @@ public:
 
   void update_clocks (void) {
     double rate;
-    rate = branch_rate(state);
+    rate = params.beta * state.S * state.I / params.N;
     if (rate > 0) {
       nextI = time()+rexp(1/rate);
     } else {
@@ -184,13 +180,13 @@ public:
     if (nextI < nextR && nextI < nextS) {
       state.S -= 1.0;
       state.I += 1.0;
-      birth(random_black_ball(),state);
+      birth(state);
     } else if (nextS < nextI && nextS < nextR) {
       sample(state);
     } else if (nextR < nextI && nextR < nextS) {
       state.I -= 1.0;
       state.R += 1.0;
-      death(random_black_ball());
+      death(state);
     }
     update_clocks();
   };
@@ -290,7 +286,7 @@ extern "C" {
       }
       if (do_newick) {
         sirws_tableau_t U = *gp;
-        newick(tree,k,U,true);
+        newick(tree,k,U);
       }
       R_CheckUserInterrupt();
     }
@@ -321,7 +317,7 @@ extern "C" {
   // extract/compute basic information.
   SEXP get_SIRwS_info (SEXP X, SEXP Prune, SEXP Tree) {
     int nprotect = 0;
-    int nout = 6;
+    int nout = 7;
 
     // reconstruct the tableau from its serialization
     sirws_tableau_t gp(RAW(X));
@@ -333,19 +329,10 @@ extern "C" {
     PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
     *REAL(tout) = gp.time();
 
-    // extract cumulative hazards
-    SEXP cumhaz;
-    PROTECT(cumhaz = walk(gp)); nprotect++;
-    nout++;
-    
+    if (*(INTEGER(AS_INTEGER(Tree)))) nout++;
+
     // prune if requested
     if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
-
-    SEXP tree;
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      PROTECT(tree = newick(gp,false)); nprotect++;
-      nout++;
-    }
 
     // pack up return values in a list
     int k = 0;
@@ -353,15 +340,15 @@ extern "C" {
     PROTECT(out = NEW_LIST(nout)); nprotect++;
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
     k = set_list_elem(out,outnames,tout,"time",k);
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp,false),"tree",k);
-    }
     k = set_list_elem(out,outnames,describe(gp),"description",k);
     k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
     k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
     k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
     k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
-    k = set_list_elem(out,outnames,cumhaz,"cumhaz",k);
+    k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
+    if (*(INTEGER(AS_INTEGER(Tree)))) {
+      k = set_list_elem(out,outnames,newick(gp),"tree",k);
+    }
     SET_NAMES(out,outnames);
 
     UNPROTECT(nprotect);

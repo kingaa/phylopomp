@@ -4,7 +4,7 @@
 
 typedef struct { } moran_state_t;
 
-class moran_tableau_t : public gp_tableau_t<moran_state_t,false> {
+class moran_tableau_t : public gp_tableau_t<moran_state_t> {
 
 private:
 
@@ -14,7 +14,8 @@ private:
   } parameters_t;
 
   parameters_t params;
-
+  state_t state;
+  
   // clock: times to next event
   double _next;
 
@@ -60,13 +61,13 @@ public:
       for (int j = 1; j < n; j++)
 	if (times[j] <= times[j-1]) err("yowzer!");
       time(times[0]);
-      graft();
+      graft(state);
       for (int j = 1; j < n; j++) {
 	time(times[j]);
-	birth(random_black_ball());
+	birth(state);
       }
     } else {
-      for (int j = 0; j < n; j++) graft();
+      for (int j = 0; j < n; j++) graft(state);
     }
     update_clocks();
     valid();
@@ -124,6 +125,10 @@ public:
     update_clocks();
   };
 
+  void sample (void) {
+    this->gp_tableau_t::sample(state);
+  }
+
   void update_clocks (void) {
     double rate;
     rate = moran_rate();
@@ -140,8 +145,8 @@ public:
   };
     
   void move (void) {
-    death(random_black_ball());
-    birth(random_black_ball());
+    death(state);
+    birth(state);
     update_clocks();
   };
 
@@ -219,7 +224,7 @@ extern "C" {
       gp->sample();
       if (do_newick) {
         moran_tableau_t U = *gp;
-        newick(tree,k,U,true);
+        newick(tree,k,U);
       }
       R_CheckUserInterrupt();
     }
@@ -272,7 +277,7 @@ extern "C" {
 
     SEXP tree;
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      PROTECT(tree = newick(gp,false)); nprotect++;
+      PROTECT(tree = newick(gp)); nprotect++;
       nout++;
     }
 
@@ -283,7 +288,7 @@ extern "C" {
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
     k = set_list_elem(out,outnames,tout,"time",k);
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp,false),"tree",k);
+      k = set_list_elem(out,outnames,newick(gp),"tree",k);
     }
     k = set_list_elem(out,outnames,describe(gp),"description",k);
     k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);

@@ -4,7 +4,7 @@
 
 typedef struct {double n; } lbdp_state_t;
 
-class lbdp_tableau_t : public gp_tableau_t<lbdp_state_t,true> {
+class lbdp_tableau_t : public gp_tableau_t<lbdp_state_t> {
   
 private:
 
@@ -12,12 +12,11 @@ private:
     double n0;                  // initial population size
     double lambda;              // birth rate
     double mu;                  // death rate
-    double psi;			// sampling rate
+    double psi;                 // sampling rate
   } parameters_t;
 
   parameters_t params;
-  state_t _initial_state;
-  state_t _state;
+  state_t state;
 
   // clock: times to next event
   double nextB;
@@ -25,7 +24,7 @@ private:
   double nextS;
 
   double branch_rate (state_t &s) const {
-    return params.lambda * s.n;
+    return params.lambda * (s.n-1);
   };
 
   double pop (state_t &s) const {
@@ -40,15 +39,13 @@ protected:
 
   friend raw_t* operator<< (raw_t *o, const lbdp_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(o,&T._initial_state,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(o,&T._state,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     return o << *dynamic_cast<const gp_tableau_t*>(&T);
   };
 
   friend raw_t* operator>> (raw_t *o, lbdp_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(&T._initial_state,o,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(&T._state,o,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     return o >> *dynamic_cast<gp_tableau_t*>(&T);
   };
 
@@ -61,9 +58,8 @@ public:
     params = {
       double(n0), lambda, mu, psi
     };
-    _initial_state.n = _state.n = double(n0);
-    for (int j = 0; j < n0; j++)
-      graft(_initial_state,_state);
+    state.n = double(n0);
+    for (int j = 0; j < n0; j++) graft(state);
     update_clocks();
     valid();
   };
@@ -96,7 +92,7 @@ public:
     if (params.lambda < 0) err("negative birth rate!");
     if (params.mu < 0) err("negative death rate!");
     if (params.psi < 0) err("negative sampling rate!");
-    if (_state.n < 0) err("negative population!");
+    if (state.n < 0) err("negative population!");
     if (clock() < time()) err("invalid clock");
     for (name_t i = 0; i < nplayers(); i++) {
       if (player[i]->state.n < 0 || (player[i]->state.n != floor(player[i]->state.n)))
@@ -105,11 +101,6 @@ public:
     this->gp_tableau_t::valid();
   };
   
-  // get state
-  const state_t& state (void) const {
-    return _state;
-  };
-
   // get birth rate
   double birth_rate (void) const {
     return params.lambda;
@@ -145,19 +136,19 @@ public:
 
   void update_clocks (void) {
     double rate;
-    rate = params.lambda*_state.n;
+    rate = params.lambda*state.n;
     if (rate > 0) {
       nextB = time()+rexp(1/rate);
     } else {
       nextB = R_PosInf;
     }
-    rate = params.mu*_state.n;
+    rate = params.mu*state.n;
     if (rate > 0) {
       nextD = time()+rexp(1/rate);
     } else {
       nextD = R_PosInf;
     }
-    rate = params.psi*_state.n;
+    rate = params.psi*state.n;
     if (rate > 0) {
       nextS = time()+rexp(1/rate);
     } else {
@@ -182,13 +173,13 @@ public:
     
   void move (void) {
     if (nextB < nextD && nextB < nextS) {
-      _state.n += 1.0;
-      birth(random_black_ball(),_state);
+      state.n += 1.0;
+      birth(state);
     } else if (nextD < nextB && nextD < nextS) {
-      _state.n -= 1.0;
-      death(random_black_ball());
+      state.n -= 1.0;
+      death(state);
     } else if (nextS < nextB && nextS < nextD) {
-      sample(_state);
+      sample(state);
     } else {
       err("there's no place like home");
     }
@@ -196,7 +187,7 @@ public:
   };
 
   int live (void) const {
-    return (_state.n > 0);
+    return (state.n > 0);
   }
 
   // create the serialized state:
@@ -290,7 +281,7 @@ extern "C" {
       }
       if (do_newick) {
         lbdp_tableau_t U = *gp;
-        newick(tree,k,U,true);
+        newick(tree,k,U);
       }
       R_CheckUserInterrupt();
     }
@@ -343,7 +334,7 @@ extern "C" {
 
     SEXP tree;
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      PROTECT(tree = newick(gp,false)); nprotect++;
+      PROTECT(tree = newick(gp)); nprotect++;
       nout++;
     }
 
@@ -354,7 +345,7 @@ extern "C" {
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
     k = set_list_elem(out,outnames,tout,"time",k);
     if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp,false),"tree",k);
+      k = set_list_elem(out,outnames,newick(gp),"tree",k);
     }
     //    k = set_list_elem(out,outnames,describe(gp),"description",k);
     k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
