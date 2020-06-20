@@ -3,9 +3,12 @@
 \name{getInfo}
 \alias{getInfo}
 \alias{getinfo}
+\alias{getInfo.gpsim}
 \title{Retrieve information from genealogy process simulation}
 \usage{
 getInfo(data, ...)
+
+\method{getInfo}{gpsim}(data, ..., prune = TRUE, tree = TRUE)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}

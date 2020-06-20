@@ -11,6 +11,7 @@
 ##' @param tree logical; represent the genealogical tree in Newick format?
 ##'
 ##' @include package.R
+##' @importFrom tibble as_tibble
 ##' 
 ##' @example examples/moran.R
 ##'
@@ -20,6 +21,7 @@ getInfo <- function (data, ...) {
   UseMethod("getInfo",data)
 }
 
+##' @rdname getinfo
 ##' @export
 getInfo.gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
   x <- switch(
@@ -29,18 +31,22 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
     LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune,tree),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
-  x$cumhaz <- tibble(
-    time=x$stimes[-1],
-    Lambda=if (length(x$cumhaz)>0) x$cumhaz else NA
-  )
-  x$lineages <- tibble(
-    time=x$etimes,
-    lineages=x$lineages
-  )
+  if (length(x$cumhaz) > 0) {
+    x$cumhaz <- data.frame(time=x$stimes[-1],Lambda=x$cumhaz)
+  } else {
+    x$cumhaz <- data.frame(time=NA,Lambda=NA)
+  }
+  x$cumhaz <- as_tibble(x$cumhaz)
+  if (length(x$lineages) > 0) {
+    x$lineages <- data.frame(time=x$etimes,lineages=x$lineages)
+  } else {
+    x$lineages <- data.frame(time=NA,lineages=NA)
+  }
+  x$lineages <- as_tibble(x$lineages)
   x$stimes <- NULL
   x$etimes <- NULL
-  class(x) <- class(data)
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")
+  class(x) <- c("gpsim",class(x))
   x
 }

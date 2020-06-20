@@ -23,8 +23,8 @@
 ##'
 ##' @example examples/lbdp.R
 ##'
-##' @importFrom dplyr bind_rows
-##' @importFrom tibble as_tibble tibble
+##' @importFrom dplyr bind_rows filter
+##' @importFrom tibble as_tibble
 ##' @importFrom utils globalVariables
 ##'
 NULL

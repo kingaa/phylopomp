@@ -24,7 +24,7 @@
 ##' @example examples/sirws.R
 ##'
 ##' @importFrom dplyr bind_rows filter
-##' @importFrom tibble as_tibble tibble
+##' @importFrom tibble as_tibble
 ##' @importFrom utils globalVariables
 ##'
 ##' @rdname sirws

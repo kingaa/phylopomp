@@ -25,7 +25,7 @@
 ##' @example examples/moran.R
 ##'
 ##' @importFrom dplyr bind_rows
-##' @importFrom tibble as_tibble tibble
+##' @importFrom tibble as_tibble
 ##' @importFrom utils globalVariables
 ##'
 NULL
