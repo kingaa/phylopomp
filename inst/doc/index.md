@@ -92,7 +92,7 @@ dt {
 }
 </style>
 
-- [Some vignette here.](https://kingaa.github.io/pomp/vignettes/C_API.html)
+- [Verifying the predicted formulae for the SIRwS model.](./testing.html)
 
 - <a href="#" onclick="goBack()">Back to the **phylopomp** package index</a>
 

@@ -169,14 +169,14 @@ inst/doc/*.html: install
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\")"
+	$(RSCRIPT) -e "rmarkdown::render(\"$*.Rmd\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\")"
+	$(RSCRIPT) -e "rmarkdown::render(\"$*.md\")"
 
 %.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
 clean:
 	$(RM) -r check

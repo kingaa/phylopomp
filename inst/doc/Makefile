@@ -1,9 +1,11 @@
+REXE = R --vanilla
+RSCRIPT = Rscript --vanilla
 RM = rm -f
 CP = cp
 TOUCH = touch
 INSTALL = install
 
-default: index.html
+default: index.html testing.html
 
 %.tex: %.Rnw
 	$(RSCRIPT) -e "library(knitr); knit(\"$*.Rnw\")"
@@ -29,14 +31,14 @@ default: index.html
 
 %.html: %.Rmd
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
+	$(RSCRIPT) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
 
 %.html: %.md
 	PATH=/usr/lib/rstudio/bin/pandoc:$$PATH \
-	Rscript --vanilla -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
+	$(RSCRIPT) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
 %.R: %.Rmd
-	Rscript --vanilla -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
+	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
 clean:
 	$(RM) -r figure cache
