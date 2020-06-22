@@ -229,8 +229,6 @@ extern "C" {
       R_CheckUserInterrupt();
     }
       
-    PutRNGstate();
-
     gp->valid();
     
     // pack everything up in a list
@@ -247,6 +245,8 @@ extern "C" {
     SET_NAMES(out,outnames);
 
     delete gp;
+
+    PutRNGstate();
 
     UNPROTECT(nprotect);
     return out;

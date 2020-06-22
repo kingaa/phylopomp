@@ -1018,6 +1018,7 @@ public:
   void walk (double *haz) const {
 
     valid();
+    GetRNGstate();
 
     std::vector<int> ell(nplayers(),0);
     std::vector<int> breadcrumb(nplayers(),0);
@@ -1093,6 +1094,7 @@ public:
       }
       P = P->right;
     }
+    PutRNGstate();
   };
 
   // create the serialized state:
@@ -1101,9 +1103,7 @@ public:
     int n = T.nballs(blue)-1;
     if (n > 0) {
       PROTECT(out = NEW_NUMERIC(n));
-      GetRNGstate();
       T.walk(REAL(out));
-      PutRNGstate();
       UNPROTECT(1);
     }
     return out;

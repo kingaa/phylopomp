@@ -98,6 +98,7 @@ public:
   void valid (void) const {
     this->gp_tableau_t::valid();
     if (params.N <= 0) err("total population size must be positive!");
+    if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
     if (params.N != state.S+state.I+state.R) err("population leakage!");
     if (clock() < time()) err("invalid clock");
     for (name_t n = 0; n < nplayers(); n++) {
