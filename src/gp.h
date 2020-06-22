@@ -24,6 +24,7 @@ typedef unsigned int name_t;
 const name_t na = name_t(R_NaInt);
 const double inf = R_PosInf;
 const double default_slate = R_NegInf;
+const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
 
 // interface with R's integer RNG
 static int random_integer (int n) {
@@ -291,6 +292,9 @@ private:
   };
   
   player_t* make_player (color_t col) {
+    static size_t maxq = MEMORY_MAX/(sizeof(player_t)+2*sizeof(ball_t));
+    if (player.size() >= maxq) 
+      err("maximum tableau size (%d players) exceeded!",maxq);
     return new player_t(col,this);
   };
   

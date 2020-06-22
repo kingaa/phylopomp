@@ -266,11 +266,6 @@ extern "C" {
       
     }
 
-    {
-      double estsize = n0*exp((gp->birth_rate())*REAL(times)[ntimes-1]);
-      if (estsize > 1e6) err("too big!");
-    }
-
     if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
 
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
