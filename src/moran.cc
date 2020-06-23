@@ -52,14 +52,14 @@ public:
     params.n = n;
     params.mu = mu;
     if (stationary) {
-      double scale = choose(double(n),2)/mu;
-      std::vector<double> times(n,t0);
-      for (int j = 1; j < n; j++)
-	times[j] = times[j-1]+rexp(scale/choose(double(j+1),2));
-      for (int j = 0; j < n; j++)
-	times[j] += t0-times[n-1];
-      for (int j = 1; j < n; j++)
-	if (times[j] <= times[j-1]) err("yowzer!");
+      double scale = 1/mu;
+      std::vector<double> times(n,0);
+      times[n-1] = t0;
+      for (int j = n-1; j > 0; j--) {
+	// scale = choose(n,2)/choose(j+1,2)/mu
+	times[j-1] = times[j] - rexp(scale);
+	scale *= double(j+1)/double(j-1);
+      }
       time(times[0]);
       graft(state);
       for (int j = 1; j < n; j++) {
