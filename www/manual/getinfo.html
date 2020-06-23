@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Retrieve information from genealogy process simulation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for getInfo {phylopomp}"><tr><td>getInfo {phylopomp}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Retrieve information from genealogy process simulation</h2>
+
+<h3>Description</h3>
+
+<p>getInfo
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+getInfo(data, ...)
+
+## S3 method for class 'gpsim'
+getInfo(data, ..., prune = TRUE, tree = TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p><code>gpsim</code> object.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments passed to specific methods.</p>
+</td></tr>
+<tr valign="top"><td><code>prune</code></td>
+<td>
+<p>logical; prune the tree?</p>
+</td></tr>
+<tr valign="top"><td><code>tree</code></td>
+<td>
+<p>logical; represent the genealogical tree in Newick format?</p>
+</td></tr>
+</table>
+
+
+<h3>Examples</h3>
+
+<pre>
+playMoran(n=5,mu=5,times=1:10,t0=0,tree=TRUE) -&gt; x
+playMoran(x,times=11:20,tree=TRUE) -&gt; x
+plot(x)
+
+playMoran(n=20,mu=20,times=1:20,stationary=FALSE,tree=TRUE) -&gt; x
+plot(x)
+
+y &lt;- getInfo(x,prune=FALSE)
+plot(y,points=TRUE)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.4.0 <a href="00Index.html">Index</a>]</div>
+</body></html>

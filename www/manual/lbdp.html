@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Linear birth-death process.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for lbdp {phylopomp}"><tr><td>lbdp {phylopomp}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Linear birth-death process.</h2>
+
+<h3>Description</h3>
+
+<p>Run the LBDP simulator.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+playLBDP(data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>optional data frame;
+output from <code>playLBDP</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments; ignored.</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+<p>birth rate</p>
+</td></tr>
+<tr valign="top"><td><code>mu</code></td>
+<td>
+<p>death rate</p>
+</td></tr>
+<tr valign="top"><td><code>n0</code></td>
+<td>
+<p>initial population size</p>
+</td></tr>
+<tr valign="top"><td><code>psi</code></td>
+<td>
+<p>sampling rate</p>
+</td></tr>
+<tr valign="top"><td><code>t0</code></td>
+<td>
+<p>initial time</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>times at which output is requested.</p>
+</td></tr>
+<tr valign="top"><td><code>tree</code></td>
+<td>
+<p>logical; represent the genealogical tree in Newick format?</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>A <code>tibble</code> with <code>state</code> attribute.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Other Genealogy processes: 
+<code><a href="moran.html">moran</a></code>,
+<code><a href="sirws.html">sirws</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+playLBDP(lambda=1,mu=0.5,psi=1,n0=3,times=seq(0,4,by=0.2),tree=TRUE) -&gt; x
+plot(x,points=TRUE)
+
+y &lt;- getInfo(x,prune=FALSE)
+plot(y,points=TRUE)
+
+library(ggplot2)
+y$lineages %&gt;%
+  ggplot(aes(x=time,y=lineages))+
+  geom_step()+
+  geom_vline(xintercept=y$etimes,alpha=0.1)
+
+y$cumhaz %&gt;%
+  ggplot(aes(x=exp(-Lambda)))+
+  stat_ecdf()+
+  geom_abline(slope=1)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.4.0 <a href="00Index.html">Index</a>]</div>
+</body></html>

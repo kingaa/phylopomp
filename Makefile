@@ -46,7 +46,7 @@ htmldocs: inst/doc/*.html
 
 htmlhelp: install
 	rsync -avz library/phylopomp/html/ www/manual
-	(cd www/manual;	patch -p2 < links.patch)
+	(cd www/manual;	(cat links.ed && echo w ) | ed - 00Index.html)
 	$(CP) www/_includes/pompstyle.css www/manual/R.css
 
 vignettes: manual install
@@ -181,6 +181,6 @@ inst/doc/*.html: install
 clean:
 	$(RM) -r check
 	$(RM) src/*.o src/*.so src/symbols.rds www/vignettes/Rplots.*
-	$(RM) -r inst/doc/figure inst/doc/cache
+	make -C	inst/doc clean
 	$(RM) -r *-Ex.Rout *-Ex.timings *-Ex.pdf
 	$(RM) *.tar.gz $(PKGVERS).zip $(PKGVERS).tgz $(PKG).pdf

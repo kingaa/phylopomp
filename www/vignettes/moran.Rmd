@@ -1,5 +1,5 @@
 ---
-title: "SIRwS Model: Numerical tests"
+title: "Numerical tests"
 author: "Aaron A. King"
 output:
   html_document:
@@ -13,7 +13,7 @@ output:
       collapsed: yes
       smooth_scroll: yes
 params:
-  prefix: "sirws"
+  prefix: "moran"
 ---
 
 ```{r include=FALSE,purl=FALSE,cache=FALSE}
@@ -56,34 +56,24 @@ set.seed(407643109L)
 We investigate the distributions of the cumulative hazards of the conditional attachment process.
 These should be perfectly distributed according to the standard exponential distribution.
 
-```{r cluster,include=FALSE,cache=FALSE}
-#if (file.exists("CLUSTER.R")) {
-#  source("CLUSTER.R")
-#} else {
-  library(doParallel)
-  registerDoParallel()
-#}
-```
-
 ```{r hazards,echo=TRUE,cache=TRUE}
+library(doParallel)
 library(doRNG)
-registerDoRNG(438529913)
+registerDoParallel()
+registerDoRNG(133513345)
 
 expand_grid(
-  beta=1,
-  gamma=c(0.2,0.5,1,2,5),
-  psi=c(0.2,1,5),
-  N=c(10,100,1000),
-  I0=c(1,10,100),
-  rep=1:10
+  mu=1,
+  psi=c(0.1,1,10),
+##  N=c(10,100,1000,10000),
+  N=c(2,3,5,10),
+  rep=1:500
 ) %>%
   group_by(rep) %>%
   mutate(
-    case=seq_len(n()),
-    S0=N-I0
+    case=seq_len(n())
   ) %>%
   ungroup() %>%
-  filter(S0>=0) %>%
   arrange(rep,case) -> pars
 
 foreach (par=iter(pars,"row"),.inorder=FALSE) %dopar%
@@ -91,9 +81,11 @@ foreach (par=iter(pars,"row"),.inorder=FALSE) %dopar%
     library(phylopomp)
     library(tidyverse)
     par %$%
-      playSIRwS(
-        beta=beta,gamma=gamma,psi=psi,
-        S0=S0,I0=I0,t0=0,times=100,
+      playMoran(
+        mu=mu,n=N,
+        t0=0,
+        times=cumsum(rexp(n=5,rate=psi)),
+        stationary=TRUE,
         tree=FALSE
       ) %>%
       getInfo(tree=FALSE) -> x
@@ -102,10 +94,7 @@ foreach (par=iter(pars,"row"),.inorder=FALSE) %dopar%
   bind_rows() %>%
   filter(!is.na(Lambda)) %>%
   mutate(p=exp(-Lambda)) %>%
-  arrange(case,rep,time) %>%
-  group_by(case,rep) %>%
-  mutate(sampleno=row_number()) %>%
-  ungroup() -> dat
+  arrange(case,rep,time) -> dat
 ```
 
 We use Kolmogorov-Smirnov to test the hypothesis that the cumulative hazards are distributed as expected.
@@ -113,43 +102,19 @@ We use Kolmogorov-Smirnov to test the hypothesis that the cumulative hazards are
 ```{r ks_tests,echo=TRUE,fig.width=8,fig.height=8,purl=FALSE}
 library(broom)
 
-stopifnot(
-  `ties in KS test`=dat %>%
-    count(p) %>%
-    filter(n>1) %>%
-    nrow()==0
-)
-
 dat %>%
-  group_by(sampleno) %>%
-  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
-  select(sampleno,n,p.value) %>%
-  filter(n>100) -> snp
-snp %>%
-  ggplot(aes(x=p.value))+
-  stat_ecdf()
-snp %>%
-  ggplot(aes(x=sampleno,y=p.value))+
-  geom_point()
-
-dat %>%
-  group_by(R0=beta/gamma) %>%
-  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
-  select(R0,n,p.value)
-
-dat %>%
-  group_by(nsamp=psi/gamma) %>%
+  group_by(nsamp=psi/mu) %>%
   summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
   select(nsamp,n,p.value)
 
 dat %>%
-  mutate(nsamp=factor(psi/gamma)) %>%
+  mutate(nsamp=factor(psi/mu)) %>%
   ggplot(aes(x=p,group=nsamp,color=nsamp))+
   geom_abline(slope=1)+
   stat_ecdf()+
   coord_equal()+
   labs(
-    color=expression(psi/gamma),
+    color=expression(psi/mu),
     x=expression(italic(p)),
     y=expression(italic(F(p)))
   )+
@@ -166,25 +131,7 @@ dat %>%
   stat_ecdf()+
   coord_equal()+
   labs(
-    color=expression(N),
-    x=expression(italic(p)),
-    y=expression(italic(F(p)))
-  )+
-  expand_limits(x=c(0,1),y=c(0,1))
-
-dat %>%
-  group_by(f=I0/(I0+S0)) %>%
-  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
-  select(f,n,p.value)
-
-dat %>%
-  mutate(f=factor(I0/N)) %>%
-  ggplot(aes(x=p,group=f,color=f))+
-  geom_abline(slope=1)+
-  stat_ecdf()+
-  coord_equal()+
-  labs(
-    color=expression(over(I[0],N)),
+    color=expression(n),
     x=expression(italic(p)),
     y=expression(italic(F(p)))
   )+
