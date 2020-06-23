@@ -186,10 +186,6 @@ public:
     update_clocks();
   };
 
-  int live (void) const {
-    return (state.n > 0);
-  }
-
   // create the serialized state:
   friend SEXP serial (const lbdp_tableau_t &T) {
     SEXP out;
@@ -269,11 +265,7 @@ extern "C" {
     if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
 
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
-      if (gp->live()) {
-        *xc = gp->play(*xt);
-      } else {
-        *xc = R_NaInt;
-      }
+      *xc = gp->play(*xt);
       if (do_newick) {
         lbdp_tableau_t U = *gp;
         newick(tree,k,U);

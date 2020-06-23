@@ -1,8 +1,10 @@
-library(phylopomp)
-library(tidyverse)
-library(broom)
-library(doParallel)
-library(doRNG)
+suppressPackageStartupMessages({
+  library(phylopomp)
+  library(tidyverse)
+  library(broom)
+  library(doParallel)
+  library(doRNG)
+})
 
 options(digits=3)
 png(filename="sirws1-%02d.png",res=100)

@@ -100,7 +100,7 @@ public:
     this->gp_tableau_t::valid();
     if (params.n <= 0) err("'n' must be positive!");
     if (params.mu <= 0) err("'mu' must be positive!");
-    if (clock() < time()) err("invalid clock");
+    if (clock() < time()) err("invalid clock %lg %lg",clock(),time());
   };
   
   // get transmission rate

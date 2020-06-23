@@ -292,9 +292,8 @@ private:
   };
   
   player_t* make_player (color_t col) {
-    static size_t maxq = MEMORY_MAX/(sizeof(player_t)+2*sizeof(ball_t));
-    if (player.size() >= maxq) 
-      err("maximum tableau size (%d players) exceeded!",maxq);
+    if (max_size_exceeded(1))
+      err("maximum tableau size exceeded!");
     return new player_t(col,this);
   };
   
@@ -451,6 +450,10 @@ protected:
   };
   
 public:
+
+  bool live (void) const {
+    return (balls[black].size() > 0 && !max_size_exceeded());
+  }
 
   // report all the seating times
   name_t get_times (double *x = 0) const {
@@ -925,6 +928,11 @@ private:
     return balls[black][draw];
   };
 
+  bool max_size_exceeded (size_t grace = 0) const {
+    static size_t maxq = MEMORY_MAX/(sizeof(player_t)+2*sizeof(ball_t));
+    return (player.size() > maxq+grace);
+  };
+
 public:
 
   void birth (const state_t &s) {
@@ -955,7 +963,7 @@ public:
   };
 
   void sample (const state_t &s) {
-    if (nlive() > 0) {
+    if (live()) {
       player_t *p = make_player(blue);
       p->state = s;
       seat(p->ball(blue),random_black_ball());
@@ -973,16 +981,24 @@ public:
   // run process to a specified time.
   // return number of events that have occurred.
   int play (double tfin) {
-    int count = 0;
+    int count = R_NaInt;
+
+    if (max_size_exceeded())
+      warn("maximum tableau size reached.");
+    
+    if (!live()) return count;
+
     double next = clock();
-    while (next < tfin) {
+
+    count = 0;
+    while (next < tfin && live()) {
       _time = next;
       move();
       next = clock();
       count++;
     }
-    _time = tfin;               // relies on Markov property
-    
+    if (next > tfin)  _time = tfin; // relies on Markov property
+
     return count;
   };
 
@@ -990,7 +1006,9 @@ public:
   // return new time.
   double play1 (void) {
     _time = clock();
-    move();
+    if (live()) {
+      move();
+    }
     return _time;
   };
 
