@@ -54,7 +54,7 @@ Type 'q()' to quit R.
 # A tibble: 1 x 1
   p.value
     <dbl>
-1  0.0577
+1   0.422
 > 
 > dat %>%
 +   group_by(rep) %>%
