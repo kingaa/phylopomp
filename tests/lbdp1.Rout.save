@@ -1,5 +1,5 @@
 
-R version 4.0.1 (2020-06-06) -- "See Things Now"
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -55,7 +55,7 @@ Type 'q()' to quit R.
 # A tibble: 1 x 1
   p.value
     <dbl>
-1   0.284
+1   0.243
 > 
 > dat %>%
 +   group_by(rep) %>%

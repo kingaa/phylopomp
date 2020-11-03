@@ -254,7 +254,7 @@ extern "C" {
   // extract/compute basic information.
   SEXP get_Moran_info (SEXP X, SEXP Prune, SEXP Tree) {
     int nprotect = 0;
-    int nout = 6;
+    int nout = 7;
 
     // reconstruct the tableau from its serialization
     moran_tableau_t gp(RAW(X));
@@ -266,19 +266,10 @@ extern "C" {
     PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
     *REAL(tout) = gp.time();
 
-    // extract cumulative hazards
-    SEXP cumhaz;
-    PROTECT(cumhaz = walk(gp)); nprotect++;
-    nout++;
-    
     // prune if requested
     if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
 
-    SEXP tree;
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      PROTECT(tree = newick(gp)); nprotect++;
-      nout++;
-    }
+    if (*(INTEGER(AS_INTEGER(Tree)))) nout++;
 
     // pack up return values in a list
     int k = 0;
@@ -286,15 +277,15 @@ extern "C" {
     PROTECT(out = NEW_LIST(nout)); nprotect++;
     PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
     k = set_list_elem(out,outnames,tout,"time",k);
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp),"tree",k);
-    }
     k = set_list_elem(out,outnames,describe(gp),"description",k);
     k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
     k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
     k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
     k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
-    k = set_list_elem(out,outnames,cumhaz,"cumhaz",k);
+    k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
+    if (*(INTEGER(AS_INTEGER(Tree)))) {
+      k = set_list_elem(out,outnames,newick(gp),"tree",k);
+    }
     SET_NAMES(out,outnames);
 
     UNPROTECT(nprotect);

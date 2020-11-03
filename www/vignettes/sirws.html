@@ -1287,21 +1287,21 @@ window.initializeCodeFolding = function(show) {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    show = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (show) div.addClass('in');
+    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    if (showThis) div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
     $(this).detach().appendTo(div);
 
     // add a show code button right above
-    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Code') + '</span>');
     var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
     showCodeButton.append(showCodeText);
     showCodeButton
         .attr('data-toggle', 'collapse')
         .attr('data-target', '#' + id)
-        .attr('aria-expanded', show)
+        .attr('aria-expanded', showThis)
         .attr('aria-controls', id);
 
     var buttonRow = $('<div class="row"></div>');
@@ -2610,6 +2610,54 @@ window.onload = function() {
   PagedTableDoc.initAll();
 };
 </script>
+<style type="text/css">
+a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
+a.anchor-section::before {content: '#';}
+.hasAnchor:hover a.anchor-section {visibility: visible;}
+</style>
+<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
+document.addEventListener('DOMContentLoaded', function() {
+  // Do nothing if AnchorJS is used
+  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
+    return;
+  }
+
+  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+
+  // Do nothing if sections are already anchored
+  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
+    return null;
+  }
+
+  // Use section id when pandoc runs with --section-divs
+  const section_id = function(x) {
+    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
+            ? x.id : '');
+  };
+
+  // Add anchors
+  h.forEach(function(x) {
+    const id = x.id || section_id(x.parentElement);
+    if (id === '') {
+      return null;
+    }
+    let anchor = document.createElement('a');
+    anchor.href = '#' + id;
+    anchor.classList = ['anchor-section'];
+    x.classList.add('hasAnchor');
+    x.appendChild(anchor);
+  });
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
@@ -3111,16 +3159,16 @@ div.tocify {
 </div>
 <div id="session-info" class="section level2">
 <h2>Session Info</h2>
-<pre><code>## R version 4.0.1 (2020-06-06)
+<pre><code>## R version 4.0.3 (2020-10-10)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 18.04.4 LTS
+## Running under: Ubuntu 18.04.5 LTS
 ## 
 ## Matrix products: default
 ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
 ## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8    LC_NUMERIC=C            LC_TIME=en_US.UTF-8    
+##  [1] LC_CTYPE=en_US.UTF-8    LC_NUMERIC=C            LC_TIME=en_GB.UTF-8    
 ##  [4] LC_COLLATE=C            LC_MONETARY=en_US.UTF-8 LC_MESSAGES=en_US.UTF-8
 ##  [7] LC_PAPER=en_US.UTF-8    LC_NAME=C               LC_ADDRESS=C           
 ## [10] LC_TELEPHONE=C          LC_MEASUREMENT=C        LC_IDENTIFICATION=C    
@@ -3130,34 +3178,34 @@ div.tocify {
 ## [8] base     
 ## 
 ## other attached packages:
-##  [1] broom_0.5.6       doRNG_1.8.2       rngtools_1.5      doParallel_1.0.15
-##  [5] iterators_1.0.12  foreach_1.5.0     forcats_0.5.0     stringr_1.4.0    
-##  [9] dplyr_1.0.0       purrr_0.3.4       readr_1.3.1       tidyr_1.1.0      
-## [13] tibble_3.0.1      ggplot2_3.3.2     tidyverse_1.3.0   phylopomp_0.0.5.0
-## [17] knitr_1.28       
+##  [1] broom_0.7.2       doRNG_1.8.2       rngtools_1.5      doParallel_1.0.16
+##  [5] iterators_1.0.13  foreach_1.5.1     forcats_0.5.0     stringr_1.4.0    
+##  [9] dplyr_1.0.2       purrr_0.3.4       readr_1.4.0       tidyr_1.1.2      
+## [13] tibble_3.0.4      ggplot2_3.3.2     tidyverse_1.3.0   phylopomp_0.0.6.0
+## [17] knitr_1.30       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.4.6        lubridate_1.7.9     ape_5.4            
-##  [4] lattice_0.20-41     assertthat_0.2.1    digest_0.6.25      
-##  [7] R6_2.4.1            cellranger_1.1.0    backports_1.1.8    
-## [10] reprex_0.3.0        evaluate_0.14       httr_1.4.1         
-## [13] pillar_1.4.4        rlang_0.4.6         lazyeval_0.2.2     
-## [16] readxl_1.3.1        rstudioapi_0.11     blob_1.2.1         
-## [19] rmarkdown_2.3       labeling_0.3        munsell_0.5.0      
-## [22] compiler_4.0.1      modelr_0.1.8        xfun_0.15          
-## [25] pkgconfig_2.0.3     htmltools_0.5.0     tidyselect_1.1.0   
-## [28] codetools_0.2-16    fansi_0.4.1         withr_2.2.0        
-## [31] crayon_1.3.4        dbplyr_1.4.4        grid_4.0.1         
-## [34] nlme_3.1-148        jsonlite_1.6.1      gtable_0.3.0       
-## [37] lifecycle_0.2.0     DBI_1.1.0           magrittr_1.5       
-## [40] scales_1.1.1        tidytree_0.3.3      cli_2.0.2          
-## [43] stringi_1.4.6       farver_2.0.3        fs_1.4.1           
-## [46] ggtree_2.2.0        xml2_1.3.2          ellipsis_0.3.1     
-## [49] rvcheck_0.1.8       generics_0.0.2      vctrs_0.3.1        
-## [52] tools_4.0.1         treeio_1.12.0       glue_1.4.1         
-## [55] hms_0.5.3           yaml_2.2.1          colorspace_1.4-1   
-## [58] BiocManager_1.30.10 aplot_0.0.4         rvest_0.3.5        
-## [61] haven_2.3.1         patchwork_1.0.0</code></pre>
+##  [1] Rcpp_1.0.5          lubridate_1.7.9     ape_5.4-1          
+##  [4] lattice_0.20-41     ps_1.4.0            assertthat_0.2.1   
+##  [7] digest_0.6.27       R6_2.4.1            cellranger_1.1.0   
+## [10] backports_1.1.10    reprex_0.3.0        evaluate_0.14      
+## [13] httr_1.4.2          pillar_1.4.6        rlang_0.4.8        
+## [16] lazyeval_0.2.2      readxl_1.3.1        rstudioapi_0.11    
+## [19] blob_1.2.1          rmarkdown_2.5       labeling_0.4.2     
+## [22] munsell_0.5.0       compiler_4.0.3      modelr_0.1.8       
+## [25] xfun_0.18           pkgconfig_2.0.3     htmltools_0.5.0    
+## [28] tidyselect_1.1.0    codetools_0.2-16    fansi_0.4.1        
+## [31] withr_2.3.0         crayon_1.3.4        dbplyr_1.4.4       
+## [34] grid_4.0.3          nlme_3.1-150        jsonlite_1.7.1     
+## [37] gtable_0.3.0        lifecycle_0.2.0     DBI_1.1.0          
+## [40] magrittr_1.5        scales_1.1.1        tidytree_0.3.3     
+## [43] cli_2.1.0           stringi_1.5.3       farver_2.0.3       
+## [46] fs_1.5.0            ggtree_2.2.0        xml2_1.3.2         
+## [49] ellipsis_0.3.1      rvcheck_0.1.8       generics_0.0.2     
+## [52] vctrs_0.3.4         tools_4.0.3         treeio_1.12.0      
+## [55] glue_1.4.2          hms_0.5.3           yaml_2.2.1         
+## [58] colorspace_1.4-1    BiocManager_1.30.10 aplot_0.0.6        
+## [61] rvest_0.3.6         haven_2.3.1         patchwork_1.0.1</code></pre>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
@@ -3174,7 +3222,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

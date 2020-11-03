@@ -14,8 +14,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{foreach}{\code{\link[foreach]{\%dopar\%}}, \code{\link[foreach]{foreach}}, \code{\link[foreach]{registerDoSEQ}}}
+  \item{foreach}{\code{\link[foreach:foreach]{\%dopar\%}}, \code{\link[foreach]{foreach}}, \code{\link[foreach]{registerDoSEQ}}}
 
-  \item{magrittr}{\code{\link[magrittr]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
 }}
 

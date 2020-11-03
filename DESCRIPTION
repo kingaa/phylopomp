@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.0.5.0
-Date: 2020-06-24
+Version: 0.0.6.0
+Date: 2020-11-03
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
 	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
@@ -15,7 +15,7 @@ License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1.9000
 Collate: 
     'package.R'
     'aaa.R'
