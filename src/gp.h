@@ -1074,7 +1074,7 @@ public:
               }
             }
 
-            if (N >1 && L > 0) {
+            if (N > 1 && L > 0) {
               *haz += L/choose(N,2)*branch_rate(pl->state) * (p->slate - pl->slate);
             }
           }
