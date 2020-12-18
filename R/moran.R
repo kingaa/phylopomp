@@ -19,6 +19,8 @@
 ##' @param mu Moran event rate
 ##' @param stationary logical;
 ##' should the initial genealogy be drawn from the stationary distribution?
+##' @param ill logical;
+##' return an illustration?
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -33,11 +35,11 @@ NULL
 ##' @rdname moran
 ##' @export
 playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
-  stationary = TRUE) {
+  ill = FALSE, stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL
   if (missing(mu)) mu <- NULL
-  x <- .Call(P_playMoran,n,mu,times,t0,tree,stationary,state)
+  x <- .Call(P_playMoran,n,mu,times,t0,tree,ill,stationary,state)
   state <- x$state
   x$state <- NULL
   data %>%

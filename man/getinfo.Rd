@@ -8,7 +8,7 @@
 \usage{
 getInfo(data, ...)
 
-\method{getInfo}{gpsim}(data, ..., prune = TRUE, tree = TRUE)
+\method{getInfo}{gpsim}(data, ..., prune = TRUE)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}
@@ -16,18 +16,16 @@ getInfo(data, ...)
 \item{...}{arguments passed to specific methods.}
 
 \item{prune}{logical; prune the tree?}
-
-\item{tree}{logical; represent the genealogical tree in Newick format?}
 }
 \description{
 getInfo
 }
 \examples{
-playMoran(n=5,mu=5,times=1:10,t0=0,tree=TRUE) -> x
+playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -> x
 playMoran(x,times=11:20,tree=TRUE) -> x
 plot(x)
 
-playMoran(n=20,mu=20,times=1:20,stationary=FALSE,tree=TRUE) -> x
+playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x)
 
 y <- getInfo(x,prune=FALSE)

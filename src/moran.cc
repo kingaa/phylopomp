@@ -48,7 +48,7 @@ public:
   moran_tableau_t (void) = default;
   // basic constructor
   moran_tableau_t (int n, double mu, double t0, int stationary) :
-    gp_tableau_t(t0) {
+    gp_tableau_t(t0,false) {
     params.n = n;
     params.mu = mu;
     if (stationary) {
@@ -164,7 +164,8 @@ extern "C" {
 
   // Sampled Moran genealogy process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP Stat, SEXP State) {
+  // optionally return state in illustrable form ('ill = TRUE').
+  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
     int nprotect = 0;
     int nout = 3;
     double t = R_NaReal;
@@ -179,6 +180,12 @@ extern "C" {
     int do_newick = *(INTEGER(AS_INTEGER(Tree)));
     if (do_newick) {
       PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
+      nout++;
+    }
+    SEXP ill = R_NilValue;
+    int do_ill = *(INTEGER(AS_INTEGER(Ill)));
+    if (do_ill) {
+      PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
       nout++;
     }
 
@@ -221,10 +228,8 @@ extern "C" {
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
       *xc = gp->play(*xt);
       gp->sample();
-      if (do_newick) {
-        moran_tableau_t U = *gp;
-        newick(tree,k,U);
-      }
+      if (do_newick) newick(tree,k,*gp);
+      if (do_ill) illustrate(ill,k,*gp);
       R_CheckUserInterrupt();
     }
       
@@ -240,6 +245,9 @@ extern "C" {
     if (do_newick) {
       k = set_list_elem(out,outnames,tree,"tree",k);
     }
+    if (do_ill) {
+      k = set_list_elem(out,outnames,ill,"illustration",k);
+    }
     k = set_list_elem(out,outnames,serial(*gp),"state",k);
     SET_NAMES(out,outnames);
 
@@ -252,9 +260,9 @@ extern "C" {
   }
 
   // extract/compute basic information.
-  SEXP get_Moran_info (SEXP X, SEXP Prune, SEXP Tree) {
+  SEXP get_Moran_info (SEXP X, SEXP Prune) {
     int nprotect = 0;
-    int nout = 7;
+    int nout = 9;
 
     // reconstruct the tableau from its serialization
     moran_tableau_t gp(RAW(X));
@@ -269,8 +277,6 @@ extern "C" {
     // prune if requested
     if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
 
-    if (*(INTEGER(AS_INTEGER(Tree)))) nout++;
-
     // pack up return values in a list
     int k = 0;
     SEXP out, outnames;
@@ -283,9 +289,8 @@ extern "C" {
     k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
     k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
     k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp),"tree",k);
-    }
+    k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+    k = set_list_elem(out,outnames,newick(gp),"tree",k);
     SET_NAMES(out,outnames);
 
     UNPROTECT(nprotect);

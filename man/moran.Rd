@@ -15,6 +15,7 @@ playMoran(
   t0 = 0,
   times,
   tree = FALSE,
+  ill = FALSE,
   stationary = TRUE
 )
 }
@@ -34,6 +35,9 @@ output from \code{playMoran}.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
+\item{ill}{logical;
+return an illustration?}
+
 \item{stationary}{logical;
 should the initial genealogy be drawn from the stationary distribution?}
 }
@@ -44,11 +48,11 @@ A \code{tibble} with \code{state} attribute.
 Run the MGP simulator.
 }
 \examples{
-playMoran(n=5,mu=5,times=1:10,t0=0,tree=TRUE) -> x
+playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -> x
 playMoran(x,times=11:20,tree=TRUE) -> x
 plot(x)
 
-playMoran(n=20,mu=20,times=1:20,stationary=FALSE,tree=TRUE) -> x
+playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x)
 
 y <- getInfo(x,prune=FALSE)

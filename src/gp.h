@@ -69,6 +69,7 @@ protected:
   double _time;                               // current time
   players_t player;             // pointers to all players
   balls_t balls[ncolors];       // one for each color class
+  bool use_ghosts;
 
 protected:
 
@@ -117,6 +118,10 @@ protected:
     // human-readable info
     std::string describe (void) const {
       return color_name() + "(" + std::to_string(name) + ")";
+    };
+    // machine-readable description
+    std::string illustrate (void) const {
+      return color_name() + "," + std::to_string(name);
     };
     // size of binary serialization
     size_t size (void) const {
@@ -230,6 +235,13 @@ protected:
         + ballB->describe() + "}, t = "
         + std::to_string(slate) + "\n";
     };
+    // machine-readable info
+    std::string illustrate (void) const {
+      return std::to_string(name) + ","
+        + ballA->illustrate() + ","
+        + ballB->illustrate() + ","
+        + std::to_string(slate);
+    };
     // size of binary serialization
     size_t size (void) const {
       return 3*sizeof(name_t)+sizeof(double)+sizeof(state_t)+2*ballA->size();
@@ -312,7 +324,7 @@ public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double);
+    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double)+sizeof(bool);
     if (!empty()) s += nplayers()*player[0]->size();
     return s;
   };
@@ -321,6 +333,7 @@ public:
   friend raw_t* operator<< (raw_t *o, const gp_tableau_t &T) {
     name_t buf[ncolors+2], *b = buf;
     double buf2[] = {T._t0, T._time};
+    bool buf3[] = {T.use_ghosts};
     for (name_t i = 0; i < ncolors; i++, b++) {
       *b = T.nballs(static_cast<color_t>(i));
     }
@@ -328,6 +341,7 @@ public:
     *b++ = T.right->name;
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,buf2,sizeof(buf2)); o += sizeof(buf2);
+    memcpy(o,buf3,sizeof(buf3)); o += sizeof(buf3);
     for (name_t i = 0; i < T.nplayers(); i++)
       o = (o << *T.player[i]);
     return o;
@@ -337,10 +351,13 @@ public:
   friend raw_t* operator>> (raw_t *o, gp_tableau_t &T) {
     name_t buf[ncolors+2], *b = buf;
     double buf2[2];
+    bool buf3[1];
     memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
     T.clean();
     memcpy(buf2,o,sizeof(buf2)); o += sizeof(buf2);
     T._t0 = buf2[0]; T._time = buf2[1];
+    memcpy(buf3,o,sizeof(buf3)); o += sizeof(buf3);
+    T.use_ghosts = buf3[0];
     name_t np = *b++;
     for (name_t i = 1; i < ncolors; i++, b++) {
       for (name_t j = 0; j < *b; j++) {
@@ -368,9 +385,10 @@ public:
   
   // basic constructor
   //  t0 = initial time
-  gp_tableau_t (double t0 = 0) {
+  gp_tableau_t (double t0 = 0, bool ghosts = true) {
     clean();
     _time = _t0 = t0;
+    use_ghosts = ghosts;
   };
   // constructor from serialized binary form
   gp_tableau_t (raw_t *o) {
@@ -432,6 +450,11 @@ protected:
 
   player_t *parent (const player_t *p) const {
     return player[green_ball(p)->hand()];
+  };
+
+  player_t *child (const ball_t *g) const {
+    if (!g->is(green)) err("in 'child'");
+    return player[g->name];
   };
 
   // get number of players
@@ -560,11 +583,37 @@ public:
     return o;
   };
 
+  // machine-readable info
+  std::string illustrate (void) const {
+    player_t *p = anchor();
+    std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
+    while (p != 0) {
+      if (!p->holds(grey)) {
+        o += p->illustrate() + "," + std::to_string(time()) + "\n";
+      }
+      p = p->right;
+    }
+    return o;
+  };
+
   // create a human-readable description
   friend SEXP describe (const gp_tableau_t &T) {
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
     SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
+    UNPROTECT(1);
+    return out;
+  }
+
+  // create a machine-readable description
+  friend void illustrate (SEXP x, int k, const gp_tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.illustrate().c_str()));
+  }
+
+  friend SEXP illustrate (const gp_tableau_t &T) {
+    SEXP out;
+    PROTECT(out = NEW_CHARACTER(1));
+    SET_STRING_ELT(out,0,mkChar(T.illustrate().c_str()));
     UNPROTECT(1);
     return out;
   }
@@ -665,71 +714,55 @@ private:
     player_t *p = player[name];
     ball_t *a, *b;
 
-    if (p->holds(blue)) { // a sample
-      
-      a = p->ball(blue);
-      b = p->ballB;
-      switch (b->color) {
-      case green:
-        o += "(" + newick(b->name,p->slate) + ")";
-        break;
-      case blue: case brown: case red:
-        break;
-      default:
-        err("INCONceivABLE!",b->describe().c_str());
-        break;
-      }
-      
-      o += std::to_string(a->name) + ":" + std::to_string(p->slate - tpar);
-      
-    } else if (p->holds(brown)) { // a root node
-      
-      o += "(";
+    if (p->holds(brown)) {
       a = p->ball(brown);
       b = p->ballB;
-      switch (b->color) {
-      case green:
-        o += newick(b->name,p->slate) + ")";
-        break;
-      case black:
-        o += "o:" + std::to_string(_time - p->slate) + ")";
-        break;
-      default:
-        err("inconceivABLE!",b->describe().c_str());
-      }
-
-      o += "b:" + std::to_string(p->slate - tpar);
-
-    } else {                    // a branch point
-    
-      o += "(";
+    } else {
       a = p->ballA;
       b = p->ballB;
-      switch (a->color) {
-      case black:
-        o += "o:" + std::to_string(_time - p->slate) + ",";
-        break;
-      case green:
-        o += newick(a->name,p->slate) + ",";
-        break;
-      default:
-        err("inconceivAble!",a->describe().c_str());
-        break;
-      }
-      
-      switch (b->color) {
-      case black:
-        o += "o:" + std::to_string(_time - p->slate);
-        break;
-      case green:
-        o  += newick(b->name,p->slate);
-        break;
-      default:
-        err("inconceivaBle!",b->describe().c_str());
-        break;
-      }
-      o += ")g:" + std::to_string(p->slate - tpar);
     }
+
+    o = "(";
+
+    switch (a->color) {
+    case black:
+      o += "o_" + std::to_string(a->name) + ":" + std::to_string(_time - p->slate) + ",";
+      break;
+    case red:
+      o += "r_" + std::to_string(a->name) + ":0.0,";
+      break;
+    case blue:
+      o += "b_" + std::to_string(a->name) + ":0.0,";
+      break;
+    case green:
+      o += newick(a->name,p->slate) + ",";
+      break;
+    case brown:
+      break;
+    default:
+      err("InCoNcEiVaBlE!");
+      break;
+    }
+
+    switch (b->color) {
+    case black:
+      o += "o_" + std::to_string(b->name) + ":" + std::to_string(_time - p->slate);
+      break;
+    case red:
+      o += "r_" + std::to_string(b->name) + ":0.0";
+      break;
+    case blue:
+      o += "b_" + std::to_string(b->name) + ":0.0";
+      break;
+    case green:
+      o += newick(b->name,p->slate);
+      break;
+    default:
+      err("InCoNcEiVaBlE!");
+      break;
+    }
+
+    o += ")g_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
 
     return o;
   };
@@ -737,34 +770,29 @@ private:
 public:
 
   // put genealogy at current time into Newick format.
-  // this damages the tableau.
-  std::string newick (void) {
-    prune();
-    std::string o = "(i:0.0,i:0.0";
+  std::string newick (void) const {
+    valid();
+    std::string o = "(i_:0.0,i_:0.0";
     player_t *p = anchor();
     while (p != 0) {
-      if (p->holds(brown)) {
-        if (p->holds_own()) {   // dead root
-          o += ",b:0.0";
-        } else {                // live root
-          ball_t *g = p->other(p->ball(brown));
-          if (!g->is(green)) err("impossible!\n%s",p->describe().c_str());
-          o += "," + newick(g->name,p->slate);
-        }
+      if (p->holds_own() && !p->holds(grey)) {
+	ball_t *b = p->other(green_ball(p));
+	if (b->is(green))
+	  o += "," + newick(b->name,child(b)->slate);
       }
       p = p->right;
     }
-    o += ")i;";
+    o += ")i_;";
     return o;
   };
 
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, gp_tableau_t &T) {
+  friend void newick (SEXP x, int k, const gp_tableau_t &T) {
     SET_STRING_ELT(x,k,mkChar(T.newick().c_str()));
   }
 
-  friend SEXP newick (gp_tableau_t &T) {
+  friend SEXP newick (const gp_tableau_t &T) {
     SEXP x;
     std::string s = T.newick();
     PROTECT(x = NEW_CHARACTER(1));
@@ -899,13 +927,9 @@ private:
 
   // drop zero-length branches associated with samples
   void drop_redundant (void) {
-    player_t *p = lead(), *pp;
-    while (p != 0) {
-      pp = p->left;
-      if (p->holds(red) && parent(p) == pp && p->slate == pp->slate) {
-        unseat(p->ball(red));
-      }
-      p = pp;
+    for (name_t j = 0; j < nballs(red); j++) {
+      ball_t *r = balls[red][j];
+      if (holder(r)->holds(green)) unseat(r);
     }
   };
 
@@ -944,10 +968,13 @@ public:
 
   void death (const state_t &s) {
     ball_t *a = random_black_ball();
-    player_t *p = make_player(grey);
-    p->state = s;
-    seat(p->ball(grey),a);
-    change(a,grey);
+    unseat(a);
+    if (use_ghosts) {
+      player_t *p = make_player(grey);
+      p->slate = _time;
+      p->state = s;
+      insert_right(p);
+    }
   };
 
   // graft a new lineage:
@@ -964,9 +991,12 @@ public:
 
   void sample (const state_t &s) {
     if (live()) {
+      ball_t *a = random_black_ball();
       player_t *p = make_player(blue);
-      p->state = s;
-      seat(p->ball(blue),random_black_ball());
+      player_t *q = make_player(red);
+      q->state = p->state = s;
+      seat(p->ball(blue),a);
+      seat(q->ball(red),a);
     }
   };
 
@@ -1014,16 +1044,6 @@ public:
 
   // prune the tree
   void prune (void) {
-    // for every sample, insert a new player
-    for (name_t k = 0; k < balls[blue].size(); k++) {
-      ball_t *a = balls[blue][k];
-      player_t *p = make_player(red);
-      player_t *q = holder(a);
-      insert_right(p,q);
-      swap(a,green_ball(p));
-      p->slate = q->slate;
-      p->state = q->state;
-    }
     drop(black);
     drop(grey);
     drop_dead();

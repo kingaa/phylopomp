@@ -1,6 +1,7 @@
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
+  library(magrittr)
   library(broom)
   library(doParallel)
   library(doRNG)
@@ -26,13 +27,14 @@ expand_grid(
 foreach (par=iter(pars,"row")) %dopar% {
   library(phylopomp)
   library(tidyverse)
+  library(magrittr)
   par %$%
     playSIRwS(
       beta=beta,gamma=gamma,psi=psi,
       S0=S0,I0=I0,t0=0,times=100,
       tree=FALSE
     ) %>%
-    getInfo(tree=FALSE) -> x
+    getInfo() -> x
   bind_cols(par,x$cumhaz)
 } %>%
   bind_rows() %>%

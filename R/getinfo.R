@@ -8,7 +8,6 @@
 ##' @param data \code{gpsim} object.
 ##' @param ... arguments passed to specific methods.
 ##' @param prune logical; prune the tree?
-##' @param tree logical; represent the genealogical tree in Newick format?
 ##'
 ##' @include package.R
 ##' @importFrom tibble as_tibble
@@ -23,12 +22,12 @@ getInfo <- function (data, ...) {
 
 ##' @rdname getinfo
 ##' @export
-getInfo.gpsim <- function (data, ..., prune  = TRUE, tree = TRUE) {
+getInfo.gpsim <- function (data, ..., prune  = TRUE) {
   x <- switch(
     attr(data,"model"),
-    SIRwS = .Call(P_get_SIRwS_info,attr(data,"state"),prune,tree),
-    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune,tree),
-    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune,tree),
+    SIRwS = .Call(P_get_SIRwS_info,attr(data,"state"),prune),
+    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune),
+    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
   if (length(x$cumhaz) > 0) {

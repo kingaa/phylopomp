@@ -16,6 +16,8 @@
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous scale_color_manual guides fortify
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
 ##' @importFrom dplyr mutate case_when
+##' @importFrom tidyr separate
+##' @importFrom stringi stri_replace_all_fixed
 ##' @importFrom utils globalVariables
 ##'
 ##' @name treeplot
@@ -29,27 +31,24 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
   if (length(times)==1) times <- rep(times,length(data$tree))
   if (length(times)!=length(data$tree))
     stop(sQuote("times")," must have length 1 or equal to ",sQuote("data$tree"),call.=FALSE)
+  data$tree %>%
+    stri_replace_all_fixed(
+      c("inf","nan","-nan"),
+      "0.0",
+      vectorize_all=FALSE
+    ) -> data$tree
   foreach (k=seq_along(data$tree)) %dopar% {
     read.tree(text=data$tree[k]) %>%
       fortify(ladderize=ladderize) %>%
+      separate(label,into=c("nodecol","label")) %>%
       mutate(
-        nodecol=factor(
-          case_when(
-            label=="o"~"black",
-            label=="g"~"green",
-            label=="b"~"brown",
-            label=="i"~"invisible",
-            TRUE~"blue"
-          )
-        ),
-        tipcol=factor(
-          case_when(
-            label=="o"~"black",
-            label=="g"~"green",
-            label=="b"~"brown",
-            label=="i"~"invisible",
-            TRUE~"red"
-          )
+        nodecol=case_when(
+          nodecol=="o"~"black",
+          nodecol=="g"~"green",
+          nodecol=="b"~"blue",
+          nodecol=="r"~"red",
+          nodecol=="n"~"brown",
+          TRUE~"invisible"
         )
       ) %>%
       ggplot(aes(x=x,y=y))+
@@ -60,10 +59,16 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
     if (points) {
       pl+
         geom_nodepoint(aes(color=nodecol))+
-        geom_tippoint(aes(color=tipcol))+
+        geom_tippoint(aes(color=nodecol))+
         scale_color_manual(
-          values=c(brown="brown",green="darkgreen",blue="blue",black="black",red="red",
-            invisible=alpha("black",0))
+          values=c(
+            brown="brown",
+            green="darkgreen",
+            blue="blue",
+            black="black",
+            red="red",
+            invisible=alpha("black",0)
+          )
         )+
         guides(color=FALSE) -> pl
     }
@@ -71,7 +76,7 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
   }
 }
 
-utils::globalVariables(c("case_when","nodecol","tipcol","%dopar%","k","x","y"))
+utils::globalVariables(c("case_when","label","nodecol","%dopar%","k","x","y"))
 
 ##' @export
 plot.gpsim <- function (x, y, ...) {

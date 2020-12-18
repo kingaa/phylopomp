@@ -308,9 +308,9 @@ extern "C" {
   }
 
   // extract/compute basic information.
-  SEXP get_SIRwS_info (SEXP X, SEXP Prune, SEXP Tree) {
+  SEXP get_SIRwS_info (SEXP X, SEXP Prune) {
     int nprotect = 0;
-    int nout = 7;
+    int nout = 9;
 
     // reconstruct the tableau from its serialization
     sirws_tableau_t gp(RAW(X));
@@ -321,8 +321,6 @@ extern "C" {
     SEXP tout;
     PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
     *REAL(tout) = gp.time();
-
-    if (*(INTEGER(AS_INTEGER(Tree)))) nout++;
 
     // prune if requested
     if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
@@ -339,9 +337,8 @@ extern "C" {
     k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
     k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
     k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
-    if (*(INTEGER(AS_INTEGER(Tree)))) {
-      k = set_list_elem(out,outnames,newick(gp),"tree",k);
-    }
+    k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+    k = set_list_elem(out,outnames,newick(gp),"tree",k);
     SET_NAMES(out,outnames);
 
     UNPROTECT(nprotect);
