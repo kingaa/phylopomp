@@ -15,7 +15,7 @@
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous scale_color_manual guides fortify
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate case_when
+##' @importFrom dplyr mutate
 ##' @importFrom tidyr separate
 ##' @importFrom stringi stri_replace_all_fixed
 ##' @importFrom utils globalVariables
@@ -41,16 +41,7 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
     read.tree(text=data$tree[k]) %>%
       fortify(ladderize=ladderize) %>%
       separate(label,into=c("nodecol","label")) %>%
-      mutate(
-        nodecol=case_when(
-          nodecol=="o"~"black",
-          nodecol=="g"~"green",
-          nodecol=="b"~"blue",
-          nodecol=="r"~"red",
-          nodecol=="n"~"brown",
-          TRUE~"invisible"
-        )
-      ) %>%
+      mutate(nodecol=ball_colors[nodecol]) %>%
       ggplot(aes(x=x,y=y))+
       geom_tree(layout="rectangular")+
       expand_limits(x=c(0,times))+
@@ -60,23 +51,28 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
       pl+
         geom_nodepoint(aes(color=nodecol))+
         geom_tippoint(aes(color=nodecol))+
-        scale_color_manual(
-          values=c(
-            brown="brown",
-            green="darkgreen",
-            blue="blue",
-            black="black",
-            red="red",
-            invisible=alpha("black",0)
-          )
-        )+
+        scale_color_identity()+
         guides(color=FALSE) -> pl
     }
     pl
   }
 }
 
-utils::globalVariables(c("case_when","label","nodecol","%dopar%","k","x","y"))
+ball_colors <- c(
+  g="darkgreen",
+  b="blue",
+  r="red",
+  n="brown",
+  o="black",
+  green="darkgreen",
+  blue="blue",
+  red="red",
+  brown="brown",
+  black="black",
+  i=alpha("white",0)
+)
+
+utils::globalVariables(c("label","nodecol","%dopar%","k","x","y"))
 
 ##' @export
 plot.gpsim <- function (x, y, ...) {

@@ -30,4 +30,9 @@ plot(x)
 
 y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
+
+library(dplyr)
+playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),stationary=FALSE,ill=TRUE) \%>\%
+  mutate(grob=diagram(illustration)) -> x
+
 }

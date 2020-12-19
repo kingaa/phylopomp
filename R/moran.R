@@ -34,7 +34,7 @@ NULL
 
 ##' @rdname moran
 ##' @export
-playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
+playMoran <- function (data = NULL, ..., n, mu = n, t0 = 0, times, tree = FALSE,
   ill = FALSE, stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL

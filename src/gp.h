@@ -585,10 +585,10 @@ public:
 
   // machine-readable info
   std::string illustrate (void) const {
-    player_t *p = anchor();
     std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
+    player_t *p = anchor();
     while (p != 0) {
-      if (!p->holds(grey)) {
+      if (!p->holds_own()) {
         o += p->illustrate() + "," + std::to_string(time()) + "\n";
       }
       p = p->right;
@@ -772,7 +772,7 @@ public:
   // put genealogy at current time into Newick format.
   std::string newick (void) const {
     valid();
-    std::string o = "(i_:0.0,i_:0.0";
+    std::string o = std::to_string(time()) + "(i_:0.0,i_:0.0";
     player_t *p = anchor();
     while (p != 0) {
       if (p->holds_own() && !p->holds(grey)) {
