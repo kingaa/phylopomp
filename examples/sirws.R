@@ -7,7 +7,6 @@ y <- getInfo(x)
 plot(y,points=TRUE)
 
 library(ggplot2)
-
 y$lineages %>%
   ggplot(aes(x=time,y=lineages))+
   geom_step()

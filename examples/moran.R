@@ -3,24 +3,23 @@ playMoran(x,times=11:20,tree=TRUE) -> x
 plot(x)
 
 playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x)
+plot(x,points=TRUE)
 
 y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
 
 library(tidyverse)
-library(cowplot)
 playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
   stationary=FALSE,ill=TRUE,tree=TRUE) %>%
   mutate(grob=diagram(illustration,fontsize=9)) -> x
 plot(x[5,],points=TRUE)[[1]]+
   annotation_custom(x$grob[[5]],xmin=0,xmax=150,ymin=12,ymax=16)
 
+library(cowplot)
 playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) %>%
   mutate(grob=diagram(illustration)) -> x
-plot(x,points=TRUE)
-cowplot::plot_grid(plotlist=x$grob,ncol=1)
+plot_grid(plotlist=c(x$grob,treeplot(x,points=TRUE)),ncol=2,byrow=FALSE)
 
-playMoran(n=5,mu=5,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) %>%
+playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) %>%
   mutate(grob=diagram(illustration)) -> x
 plot(x,points=TRUE)

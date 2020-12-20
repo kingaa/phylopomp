@@ -20,11 +20,11 @@
 ##' @rdname newick2df
 ##' @export
 ##' 
-newick2df <- function(tree) {
+newick2df <- function (tree) {
   if(is.null(tree))
     stop(sQuote("tree")," contains no variable ",call.=FALSE)
   
-  read.tree(text=gsub("\\w+:0.0,","",tree)) %>%
+  read.tree(text=tree) %>%
     fortify(ladderize=TRUE) %>%
     arrange(x) %>%
     mutate(

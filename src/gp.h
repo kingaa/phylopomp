@@ -42,9 +42,9 @@ static int set_list_elem (SEXP list, SEXP names, SEXP element,
 // BALL COLORS
 // green must be first, numbers in sequence.
 static const name_t ncolors = 6;
-static const char *colores[] = {"green", "black", "brown", "blue", "red", "grey"};
-static const char *colorsymb[] = {"g", "o", "n", "b", "r", "z"};
-typedef enum {green = 0, black = 1, brown = 2, blue = 3, red = 4, grey = 5} color_t;
+static const char *colores[] = {"green", "black", "blue", "red", "grey"};
+static const char *colorsymb[] = {"g", "o", "b", "r", "z"};
+typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;
 
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
@@ -205,7 +205,7 @@ protected:
         (ballB->is(green) && ballB->name == name);
     };
     bool is_root (void) const {
-      return holds_own() && ballA->is(green) && ballB->is(green);
+      return (holds_own() && !holds(grey));
     };
     // retrieve the first ball of the specified color.
     // if necessary, ballA and ballB are swapped so that
@@ -461,7 +461,7 @@ protected:
     return player[g->name];
   };
 
-  double earliest_slate (void) const {
+  double dawn (void) const {
     player_t *p = anchor();
     while (p != 0 && !R_FINITE(p->slate)) p = p->right;
     return (p != 0) ? p->slate : R_NaReal;
@@ -598,9 +598,7 @@ public:
     std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
     player_t *p = anchor();
     while (p != 0) {
-      if (!p->holds_own()) {
-        o += p->illustrate() + "," + std::to_string(time()) + "\n";
-      }
+      o += p->illustrate() + "," + std::to_string(time()) + "\n";
       p = p->right;
     }
     return o;
@@ -641,7 +639,7 @@ public:
       player_t *p = 0;
 
       if (nplayers() != nballs(green)) err("ai yi yi!");
-      if (nballs(black)+nballs(red)+nballs(blue)+nballs(brown)+nballs(grey) != nplayers()) err("caramba!");
+      if (nballs(black)+nballs(red)+nballs(blue)+nballs(grey) != nplayers()) err("caramba!");
 
       // check each player
       for (name_t j = 0; j < nplayers(); j++) {
@@ -703,15 +701,6 @@ public:
       if (n != 1) err("cannot traverse left %d",n);
       if (p != left) err("leftmost player is not leftmost");
 
-      p = anchor();
-      while (p != 0) {
-        // parent of every brown-ball holder must hold his own green ball
-        if (p->holds(brown) && !parent(p)->holds_own()) { 
-          err("rotten root!\n%s%s",parent(p)->describe().c_str(),p->describe().c_str());
-        }
-        p = p->right;
-      }
-
     }
   };
 
@@ -720,23 +709,24 @@ private:
   // recursive function to put genealogy into Newick format.
   std::string newick (name_t &name, const double &tpar) const {
 
-    std::string o = "";
+    std::string o = "(";
     player_t *p = player[name];
     ball_t *a, *b;
-
-    if (p->holds(brown)) {
-      a = p->ball(brown);
-      b = p->ballB;
+    double t;
+    
+    if (p->holds_own()) {
+      a = green_ball(p);
+      b = p->other(a);
+      t = dawn();
     } else {
       a = p->ballA;
       b = p->ballB;
+      t = p->slate;
     }
-
-    o = "(";
 
     switch (a->color) {
     case black:
-      o += "o_" + std::to_string(a->name) + ":" + std::to_string(_time - p->slate) + ",";
+      o += "o_" + std::to_string(a->name) + ":" + std::to_string(_time - t) + ",";
       break;
     case red:
       o += "r_" + std::to_string(a->name) + ":0.0,";
@@ -745,9 +735,9 @@ private:
       o += "b_" + std::to_string(a->name) + ":0.0,";
       break;
     case green:
-      o += newick(a->name,p->slate) + ",";
-      break;
-    case brown:
+      if (a->name != p->name) {
+	o += newick(a->name,t) + ",";
+      }
       break;
     default:
       err("InCoNcEiVaBlE!");
@@ -756,7 +746,7 @@ private:
 
     switch (b->color) {
     case black:
-      o += "o_" + std::to_string(b->name) + ":" + std::to_string(_time - p->slate);
+      o += "o_" + std::to_string(b->name) + ":" + std::to_string(_time - t);
       break;
     case red:
       o += "r_" + std::to_string(b->name) + ":0.0";
@@ -765,14 +755,14 @@ private:
       o += "b_" + std::to_string(b->name) + ":0.0";
       break;
     case green:
-      o += newick(b->name,p->slate);
+      o += newick(b->name,t);
       break;
     default:
       err("InCoNcEiVaBlE!");
       break;
     }
 
-    o += ")g_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+    o += ")g_" + std::to_string(p->name) + ":" + std::to_string(t - tpar);
 
     return o;
   };
@@ -784,11 +774,10 @@ public:
     valid();
     std::string o = std::to_string(time()) + "(i_:0.0,i_:0.0";
     player_t *p = anchor();
+    double te = dawn();
     while (p != 0) {
-      if (p->holds_own() && !p->holds(grey)) {
-	ball_t *b = p->other(green_ball(p));
-	if (b->is(green))
-	  o += "," + newick(b->name,child(b)->slate);
+      if (p->is_root()) {
+	o += ",(" + newick(p->name,te) + ")i_:0.0";
       }
       p = p->right;
     }
@@ -943,18 +932,6 @@ private:
     }
   };
 
-  // drop dead roots
-  void drop_dead (void) {
-    player_t *p = lead(), *pp;
-    while (p != 0) {
-      pp = p->left;
-      if (p->holds(brown) && p->holds_own()) {
-        unseat(p->ball(brown));
-      }
-      p = pp;
-    }
-  };
-
   // draw random black ball
   ball_t *random_black_ball (void) {
     name_t draw;
@@ -987,16 +964,12 @@ public:
     }
   };
 
-  // graft a new lineage:
-  // one player at left, one player at right.
+  // graft a new lineage
   void graft (const state_t &s) {
-    player_t *r = make_player(brown);
     player_t *p = make_player(black);
-    r->slate = default_slate;
-    r->state = s;
-    insert_left(r);
+    p->slate = _time;
     p->state = s;
-    seat(p->ball(black),r->ball(brown));
+    insert_right(p);
   };
 
   void sample (const state_t &s) {
@@ -1056,7 +1029,6 @@ public:
   void prune (void) {
     drop(black);
     drop(grey);
-    drop_dead();
     drop_redundant();
     valid();
   };
@@ -1127,15 +1099,13 @@ public:
           } else if (breadcrumb[pl->name] > 0) {
             // an ancestor we've previously encountered, stop
             pl = 0;
-          } else if (pl->holds(brown)) {
+          } else if (pl->holds_own()) {
             // end of the line, stop walking
             if (keepfirst) {
               *haz += rexp(1);
             }
             breadcrumb[pl->name]++;
             pl = 0;
-          } else if (pl->holds_own()) {
-            err("minchia!\n%s",pl->describe().c_str());
           } else {
             // an ancestor we've not yet encountered.
             // we note our encounter with a breadcrumb

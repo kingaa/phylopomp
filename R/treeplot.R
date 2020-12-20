@@ -14,7 +14,7 @@
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous scale_color_manual guides fortify
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate
+##' @importFrom dplyr mutate group_by ungroup
 ##' @importFrom tidyr separate
 ##' @importFrom stringi stri_replace_all_fixed
 ##' @importFrom utils globalVariables
@@ -26,28 +26,28 @@
 treeplot <- function (data, ladderize = TRUE, points = FALSE) {
   if (is.null(data$tree))
     stop(sQuote("data")," contains no variable ",sQuote("tree"),call.=FALSE)
-  ## data$tree %>%
-  ##   stri_replace_all_fixed(
-  ##     c("inf","nan","-nan"),
-  ##     "0.0",
-  ##     vectorize_all=FALSE
-  ##   ) -> data$tree
-  times <- data$time
-  if (length(times) != length(data$tree))
-    stop("in ",sQuote("treeplot"),", ",sQuote("data")," must have a ",
-      sQuote("time")," column.",call.=FALSE)
-  foreach (k=seq_along(data$tree)) %dopar% {
-    read.tree(text=data$tree[k]) %>%
-      fortify(ladderize=ladderize) %>%
-      separate(label,into=c("nodecol","label")) %>%
-      mutate(
-        x=x+times[k]-max(x),
-        nodecol=ball_colors[nodecol]
-      ) %>%
+  read.tree(text=data$tree) %>%
+    fortify(ladderize=ladderize) %>%
+    separate(label,into=c("nodecol","label")) -> dat
+  if (length(data$tree)==1) dat$.id <- data$time
+  dat %>%
+    group_by(.id) %>%
+    mutate(
+      time=as.double(as.character(.id)),
+      x=x-max(x)+time,
+      vis=nodecol != "i",
+      nodecol=ball_colors[nodecol]
+    ) %>%
+    ungroup(.id) -> dat
+  foreach (d=split(dat,dat$.id)) %dopar% {
+    attr(d,"layout") <- "rectangular"
+    d %>%
       ggplot(aes(x=x,y=y))+
-      geom_tree(layout="rectangular")+
-      expand_limits(x=times)+
+      geom_tree(aes(alpha=vis))+
+      expand_limits(x=data$time)+
       scale_x_continuous()+
+      scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
+      guides(alpha=FALSE)+
       theme_tree2() -> pl
     if (points) {
       pl+
@@ -69,7 +69,9 @@ ball_colors <- c(
   i=alpha("white",0)
 )
 
-utils::globalVariables(c("label","nodecol","%dopar%","k","x","y"))
+utils::globalVariables(
+         c("label","nodecol","%dopar%","x","y",".id","vis")
+       )
 
 ##' @export
 plot.gpsim <- function (x, y, ...) {
