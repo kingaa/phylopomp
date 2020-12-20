@@ -4,12 +4,10 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(data, times = data$time, ladderize = TRUE, points = FALSE)
+treeplot(data, ladderize = TRUE, points = FALSE)
 }
 \arguments{
 \item{data}{Output of one of the \code{play} functions.}
-
-\item{times}{Vector of times.}
 
 \item{ladderize}{Ladderize?}
 

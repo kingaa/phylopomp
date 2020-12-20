@@ -16,7 +16,7 @@
 ##' @param data optional data frame;
 ##' output from \code{playMoran}.
 ##' @param n population size
-##' @param mu Moran event rate
+##' @param mu Moran event rate.
 ##' @param stationary logical;
 ##' should the initial genealogy be drawn from the stationary distribution?
 ##' @param ill logical;
@@ -34,11 +34,15 @@ NULL
 
 ##' @rdname moran
 ##' @export
-playMoran <- function (data = NULL, ..., n, mu = n, t0 = 0, times, tree = FALSE,
+playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, tree = FALSE,
   ill = FALSE, stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL
   if (missing(mu)) mu <- NULL
+  if (is.null(data) && is.null(n))
+    stop("in ",sQuote("playMoran"),", ",sQuote("n")," is a required argument.",call.=FALSE)
+  if (is.null(data) && is.null(mu))
+    stop("in ",sQuote("playMoran"),", ",sQuote("mu")," is a required argument.",call.=FALSE)
   x <- .Call(P_playMoran,n,mu,times,t0,tree,ill,stationary,state)
   state <- x$state
   x$state <- NULL

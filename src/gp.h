@@ -43,8 +43,8 @@ static int set_list_elem (SEXP list, SEXP names, SEXP element,
 // green must be first, numbers in sequence.
 static const name_t ncolors = 6;
 static const char *colores[] = {"green", "black", "brown", "blue", "red", "grey"};
-typedef enum {green = 0, black = 1, brown = 2,
-              blue = 3, red = 4, grey = 5} color_t;
+static const char *colorsymb[] = {"g", "o", "n", "b", "r", "z"};
+typedef enum {green = 0, black = 1, brown = 2, blue = 3, red = 4, grey = 5} color_t;
 
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
@@ -115,13 +115,17 @@ protected:
     std::string color_name (void) const {
       return colores[color];
     };
+    // machine-readable color symbols
+    std::string color_symbol (void) const {
+      return colorsymb[color];
+    };
     // human-readable info
     std::string describe (void) const {
       return color_name() + "(" + std::to_string(name) + ")";
     };
     // machine-readable description
     std::string illustrate (void) const {
-      return color_name() + "," + std::to_string(name);
+      return color_symbol() + "," + std::to_string(name);
     };
     // size of binary serialization
     size_t size (void) const {
@@ -455,6 +459,12 @@ protected:
   player_t *child (const ball_t *g) const {
     if (!g->is(green)) err("in 'child'");
     return player[g->name];
+  };
+
+  double earliest_slate (void) const {
+    player_t *p = anchor();
+    while (p != 0 && !R_FINITE(p->slate)) p = p->right;
+    return (p != 0) ? p->slate : R_NaReal;
   };
 
   // get number of players
@@ -1051,6 +1061,13 @@ public:
     valid();
   };
 
+  // prune the tree
+  friend gp_tableau_t& prune (const gp_tableau_t &T) {
+    gp_tableau_t U = T;
+    U.prune();
+    return U;
+  };
+
   // walk backward from each sample.
   // calls to the RNG are made here.
   void walk (double *haz) const {
@@ -1060,6 +1077,8 @@ public:
 
     std::vector<int> ell(nplayers(),0);
     std::vector<int> breadcrumb(nplayers(),0);
+
+    if (empty()) return;
 
     // we walk through the tableau left to right to find the samples
     player_t *P = anchor();

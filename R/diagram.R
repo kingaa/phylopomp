@@ -6,9 +6,7 @@
 ##'
 ##' @param illustration character;
 ##' illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.
-##' @param gp An object of class \code{gpar}, typically the output from a call to the function \code{\link[grid:gpar]{gpar}}.
-##' This is basically a list of graphical parameter settings.
-##' @param ... additional arguments; ignored.
+##' @param ... graphical parameter settings. See \code{\link[grid:gpar]{gpar}}.
 ##' 
 ##' @return A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
 ##'
@@ -22,21 +20,20 @@
 ##' 
 ##' @export
 ##'
-diagram <- function (illustration, ..., gp = gpar()) {
+diagram <- function (illustration, ...) {
   dat <- lapply(illustration,read_csv)
   nmax <- max(sapply(dat,nrow)) # longest tableau
-  vp <- viewport(height=0.95,width=0.95,gp=gp)
+  vp <- viewport(height=0.95,width=0.95,gp=gpar(...))
   tg <- lapply(
     dat,
-    function (d, ...) {
-      tableauGrob(d,n=nmax,...,vp=vp)
-    },
-    ...
+    function (d) {
+      tableauGrob(d,n=nmax,vp=vp)
+    }
   )
   invisible(tg)
 }
 
-tableauGrob <- function (data, n, ..., vp = NULL) {
+tableauGrob <- function (data, n, vp = NULL) {
   gbb <- gList()
   for (k in seq_len(n)) {
     gb <- playerGrob(
@@ -56,7 +53,7 @@ tableauGrob <- function (data, n, ..., vp = NULL) {
   )
 }
 
-playerGrob <- function (name, ballA, ballAcol, ballB, ballBcol, slate, ..., vp = NULL) {
+playerGrob <- function (name, ballA, ballAcol, ballB, ballBcol, slate, vp = NULL) {
   rr <- roundrectGrob(vp=vp)
   lg <- linesGrob(x=c(0,1),y=25/32,vp=vp)
   nm <- textGrob(label=name,y=7/8,vp=vp)

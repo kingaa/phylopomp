@@ -1,7 +1,6 @@
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
-  library(magrittr)
   library(broom)
   library(doParallel)
   library(doRNG)
@@ -27,7 +26,6 @@ expand_grid(
 foreach (par=iter(pars,"row")) %dopar% {
   library(phylopomp)
   library(tidyverse)
-  library(magrittr)
   par %$%
     playSIRwS(
       beta=beta,gamma=gamma,psi=psi,

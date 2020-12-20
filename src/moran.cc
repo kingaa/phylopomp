@@ -56,13 +56,13 @@ public:
       double scale = 1/mu;
       times[n-1] = t0;
       for (int j = n-1; j > 0; j--) {
-	// scale = choose(n,2)/choose(j+1,2)/mu
-	times[j-1] = times[j] - rexp(scale);
-	scale *= double(j+1)/double(j-1);
+        // scale = choose(n,2)/choose(j+1,2)/mu
+        times[j-1] = times[j] - rexp(scale);
+        scale *= double(j+1)/double(j-1);
       }
       time(R_NegInf); graft(state);
       for (int j = 0; j < n-1; j++) {
-	time(times[j]); birth(state);
+        time(times[j]); birth(state);
       }
     } else {
       for (int j = 0; j < n; j++) graft(state);
@@ -97,8 +97,8 @@ public:
 
   void valid (void) const {
     this->gp_tableau_t::valid();
-    if (params.n <= 0) err("'n' must be positive!");
-    if (params.mu <= 0) err("'mu' must be positive!");
+    if (params.n == R_NaInt || params.n <= 0) err("'n' must be positive!");
+    if (!R_FINITE(params.mu) || params.mu <= 0) err("'mu' must be positive!");
     if (clock() < time()) err("invalid clock %lg %lg",clock(),time());
   };
   
@@ -199,7 +199,7 @@ extern "C" {
       n = *(INTEGER(AS_INTEGER(N)));
     }
 
-    double mu = R_NaReal;     // Moran rate
+    double mu = R_NaReal;       // Moran rate
     if (!isNull(Mu)) {
       mu = *(REAL(AS_NUMERIC(Mu)));
     }

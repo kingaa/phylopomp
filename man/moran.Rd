@@ -11,7 +11,7 @@ playMoran(
   data = NULL,
   ...,
   n,
-  mu = n,
+  mu,
   t0 = 0,
   times,
   tree = FALSE,
@@ -27,7 +27,7 @@ output from \code{playMoran}.}
 
 \item{n}{population size}
 
-\item{mu}{Moran event rate}
+\item{mu}{Moran event rate.}
 
 \item{t0}{initial time}
 
@@ -58,10 +58,22 @@ plot(x)
 y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
 
-library(dplyr)
-playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),stationary=FALSE,ill=TRUE) \%>\%
-  mutate(grob=diagram(illustration)) -> x
+library(tidyverse)
+library(cowplot)
+playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
+  stationary=FALSE,ill=TRUE,tree=TRUE) \%>\%
+  mutate(grob=diagram(illustration,fontsize=9)) -> x
+plot(x[5,],points=TRUE)[[1]]+
+  annotation_custom(x$grob[[5]],xmin=0,xmax=150,ymin=12,ymax=16)
 
+playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) \%>\%
+  mutate(grob=diagram(illustration)) -> x
+plot(x,points=TRUE)
+cowplot::plot_grid(plotlist=x$grob,ncol=1)
+
+playMoran(n=5,mu=5,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) \%>\%
+  mutate(grob=diagram(illustration)) -> x
+plot(x,points=TRUE)
 }
 \seealso{
 Other Genealogy processes: 

@@ -5,7 +5,6 @@
 ##' @include package.R
 ##'
 ##' @param data Output of one of the \code{play} functions.
-##' @param times Vector of times.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
 ##'
@@ -24,27 +23,30 @@
 ##' @rdname treeplot
 ##' @export
 ##' 
-treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE) {
+treeplot <- function (data, ladderize = TRUE, points = FALSE) {
   if (is.null(data$tree))
     stop(sQuote("data")," contains no variable ",sQuote("tree"),call.=FALSE)
-  if (is.null(times)) times <- 0
-  if (length(times)==1) times <- rep(times,length(data$tree))
-  if (length(times)!=length(data$tree))
-    stop(sQuote("times")," must have length 1 or equal to ",sQuote("data$tree"),call.=FALSE)
-  data$tree %>%
-    stri_replace_all_fixed(
-      c("inf","nan","-nan"),
-      "0.0",
-      vectorize_all=FALSE
-    ) -> data$tree
+  ## data$tree %>%
+  ##   stri_replace_all_fixed(
+  ##     c("inf","nan","-nan"),
+  ##     "0.0",
+  ##     vectorize_all=FALSE
+  ##   ) -> data$tree
+  times <- data$time
+  if (length(times) != length(data$tree))
+    stop("in ",sQuote("treeplot"),", ",sQuote("data")," must have a ",
+      sQuote("time")," column.",call.=FALSE)
   foreach (k=seq_along(data$tree)) %dopar% {
     read.tree(text=data$tree[k]) %>%
       fortify(ladderize=ladderize) %>%
       separate(label,into=c("nodecol","label")) %>%
-      mutate(nodecol=ball_colors[nodecol]) %>%
+      mutate(
+        x=x+times[k]-max(x),
+        nodecol=ball_colors[nodecol]
+      ) %>%
       ggplot(aes(x=x,y=y))+
       geom_tree(layout="rectangular")+
-      expand_limits(x=c(0,times))+
+      expand_limits(x=times)+
       scale_x_continuous()+
       theme_tree2() -> pl
     if (points) {
@@ -60,15 +62,10 @@ treeplot <- function (data, times = data$time, ladderize = TRUE, points = FALSE)
 
 ball_colors <- c(
   g="darkgreen",
-  b="blue",
-  r="red",
-  n="brown",
+  b="royalblue4",
+  r="red2",
+  n="saddlebrown",
   o="black",
-  green="darkgreen",
-  blue="blue",
-  red="red",
-  brown="brown",
-  black="black",
   i=alpha("white",0)
 )
 

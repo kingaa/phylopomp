@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.0.7.0
-Date: 2020-12-19
+Version: 0.0.8.0
+Date: 2020-12-20
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
 	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
@@ -10,7 +10,7 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 Description: Tools for phylodynamic analysis.
 Depends: R(>= 4.0.0)
 Imports: ggtree, ggplot2, ape, magrittr, dplyr, tibble, foreach, tidyr, stringi, readr
-Suggests: tidyverse, doParallel, doRNG, broom
+Suggests: tidyverse, doParallel, doRNG, broom, cowplot
 License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu

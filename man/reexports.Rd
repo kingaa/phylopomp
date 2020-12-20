@@ -7,6 +7,7 @@
 \alias{\%dopar\%}
 \alias{registerDoSEQ}
 \alias{\%>\%}
+\alias{\%$\%}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -16,6 +17,6 @@ below to see their documentation.
 \describe{
   \item{foreach}{\code{\link[foreach:foreach]{\%dopar\%}}, \code{\link[foreach]{foreach}}, \code{\link[foreach]{registerDoSEQ}}}
 
-  \item{magrittr}{\code{\link[magrittr:pipe]{\%>\%}}}
+  \item{magrittr}{\code{\link[magrittr:exposition]{\%$\%}}, \code{\link[magrittr:pipe]{\%>\%}}}
 }}
 

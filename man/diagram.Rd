@@ -4,16 +4,13 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(illustration, ..., gp = gpar())
+diagram(illustration, ...)
 }
 \arguments{
 \item{illustration}{character;
 illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.}
 
-\item{...}{additional arguments; ignored.}
-
-\item{gp}{An object of class \code{gpar}, typically the output from a call to the function \code{\link[grid:gpar]{gpar}}.
-This is basically a list of graphical parameter settings.}
+\item{...}{graphical parameter settings. See \code{\link[grid:gpar]{gpar}}.}
 }
 \value{
 A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
