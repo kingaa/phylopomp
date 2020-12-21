@@ -162,10 +162,11 @@ public:
 
 extern "C" {
 
-  // Sampled Moran genealogy process.
+  // (Sampled or unsampled) Moran genealogy process.
+  // If 'sample = TRUE', one sample is taken at each timepoint.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  // optionally return state in illustrable form ('ill = TRUE').
-  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
+  // optionally return state in diagrammable form ('ill = TRUE').
+  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Sample, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
     int nprotect = 0;
     int nout = 3;
     double t = R_NaReal;
@@ -175,6 +176,8 @@ extern "C" {
     SEXP times, count;
     PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
     PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
+
+    int do_sample = *(INTEGER(AS_INTEGER(Sample)));
 
     SEXP tree = R_NilValue;
     int do_newick = *(INTEGER(AS_INTEGER(Tree)));
@@ -227,7 +230,7 @@ extern "C" {
 
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
       *xc = gp->play(*xt);
-      gp->sample();
+      if (do_sample) gp->sample();
       if (do_newick) newick(tree,k,*gp);
       if (do_ill) illustrate(ill,k,*gp);
       R_CheckUserInterrupt();
@@ -261,40 +264,7 @@ extern "C" {
 
   // extract/compute basic information.
   SEXP get_Moran_info (SEXP X, SEXP Prune) {
-    int nprotect = 0;
-    int nout = 9;
-
-    // reconstruct the tableau from its serialization
-    moran_tableau_t gp(RAW(X));
-    // check validity
-    gp.valid();
-    
-    // extract current time
-    SEXP tout;
-    PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
-    *REAL(tout) = gp.time();
-
-    // prune if requested
-    if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
-
-    // pack up return values in a list
-    int k = 0;
-    SEXP out, outnames;
-    PROTECT(out = NEW_LIST(nout)); nprotect++;
-    PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,tout,"time",k);
-    k = set_list_elem(out,outnames,describe(gp),"description",k);
-    k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
-    k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
-    k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
-    k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
-    k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
-    k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
-    k = set_list_elem(out,outnames,newick(gp),"tree",k);
-    SET_NAMES(out,outnames);
-
-    UNPROTECT(nprotect);
-    return out;
+    return get_info<moran_tableau_t>(X,Prune);
   }
 
 }

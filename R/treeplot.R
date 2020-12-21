@@ -44,7 +44,7 @@ treeplot <- function (data, ladderize = TRUE, points = FALSE) {
     d %>%
       ggplot(aes(x=x,y=y))+
       geom_tree(aes(alpha=vis))+
-      expand_limits(x=data$time)+
+      expand_limits(x=dat$x)+
       scale_x_continuous()+
       scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
       guides(alpha=FALSE)+

@@ -277,10 +277,7 @@ extern "C" {
 
     for (int k = 0; k < ntimes; k++, xc++, xt++) {
       *xc = gp->play(*xt);
-      if (do_newick) {
-        sirws_tableau_t U = *gp;
-        newick(tree,k,U);
-      }
+      if (do_newick) newick(tree,k,*gp);
       R_CheckUserInterrupt();
     }
       
@@ -309,40 +306,7 @@ extern "C" {
 
   // extract/compute basic information.
   SEXP get_SIRwS_info (SEXP X, SEXP Prune) {
-    int nprotect = 0;
-    int nout = 9;
-
-    // reconstruct the tableau from its serialization
-    sirws_tableau_t gp(RAW(X));
-    // check validity
-    gp.valid();
-    
-    // extract current time
-    SEXP tout;
-    PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
-    *REAL(tout) = gp.time();
-
-    // prune if requested
-    if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
-
-    // pack up return values in a list
-    int k = 0;
-    SEXP out, outnames;
-    PROTECT(out = NEW_LIST(nout)); nprotect++;
-    PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,tout,"time",k);
-    k = set_list_elem(out,outnames,describe(gp),"description",k);
-    k = set_list_elem(out,outnames,get_epochs(gp),"epochs",k);
-    k = set_list_elem(out,outnames,get_times(gp),"etimes",k);
-    k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
-    k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
-    k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
-    k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
-    k = set_list_elem(out,outnames,newick(gp),"tree",k);
-    SET_NAMES(out,outnames);
-
-    UNPROTECT(nprotect);
-    return out;
+    return get_info<sirws_tableau_t>(X,Prune);
   }
 
 }

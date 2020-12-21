@@ -14,6 +14,7 @@ playMoran(
   mu,
   t0 = 0,
   times,
+  sample = TRUE,
   tree = FALSE,
   ill = FALSE,
   stationary = TRUE
@@ -32,6 +33,9 @@ output from \code{playMoran}.}
 \item{t0}{initial time}
 
 \item{times}{times at which output is requested.}
+
+\item{sample}{logical;
+if \code{sample=TRUE}, a sample is taken at each of the specified times.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
@@ -58,20 +62,7 @@ plot(x,points=TRUE)
 y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
 
-library(tidyverse)
-playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
-  stationary=FALSE,ill=TRUE,tree=TRUE) \%>\%
-  mutate(grob=diagram(illustration,fontsize=9)) -> x
-plot(x[5,],points=TRUE)[[1]]+
-  annotation_custom(x$grob[[5]],xmin=0,xmax=150,ymin=12,ymax=16)
-
-library(cowplot)
-playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) \%>\%
-  mutate(grob=diagram(illustration)) -> x
-plot_grid(plotlist=c(x$grob,treeplot(x,points=TRUE)),ncol=2,byrow=FALSE)
-
-playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) \%>\%
-  mutate(grob=diagram(illustration)) -> x
+playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x,points=TRUE)
 }
 \seealso{

@@ -467,6 +467,15 @@ protected:
     return (p != 0) ? p->slate : R_NaReal;
   };
 
+  double dusk (void) const {
+    player_t *p = lead();
+    if (p != 0) {
+      return (p->holds(black)) ? _time : p->slate;
+    } else {
+      return R_NaReal;
+    }
+  };
+
   // get number of players
   name_t nplayers (void) const {
     return player.size();
@@ -486,29 +495,6 @@ public:
 
   bool live (void) const {
     return (balls[black].size() > 0 && !max_size_exceeded());
-  }
-
-  // report all the seating times
-  name_t get_times (double *x = 0) const {
-    player_t *p = anchor();
-    name_t n = 0;
-    while (p != 0) {
-      if (!p->holds_own()) {
-        n++;
-        if (x != 0) *(x++) = p->slate;
-      }
-      p = p->right;
-    }
-    return n;
-  };
-
-  friend SEXP get_times (const gp_tableau_t & T) {
-    SEXP t;
-    int nt = T.get_times();
-    PROTECT(t = NEW_NUMERIC(nt));
-    T.get_times(REAL(t));
-    UNPROTECT(1);
-    return t;
   }
 
   // report all the sample times
@@ -534,52 +520,48 @@ public:
     return t;
   }
 
-  // count the number of extant sample lineages on each interval.
-  void get_lineage_count (int *x) const {
-    player_t *p;
-    int count = 0;
-    p = anchor();
-    while (p != 0) {
-      if (p->ballA->is(green)) count++;
-      if (p->ballB->is(green)) count++;
-      count--;
-      if (!p->holds_own()) *(x++) = count;
-      p = p->right;
-    }
-  };
-
-  friend SEXP get_lineage_count (const gp_tableau_t & T) {
-    SEXP ell;
-    int nt = T.get_times();
-    PROTECT(ell = NEW_INTEGER(nt));
-    T.get_lineage_count(INTEGER(ell));
-    UNPROTECT(1);
-    return ell;
-  }
-
-  // report the times of live samples
-  name_t get_epochs (double *x = 0) const {
+  // report all the seating times and lineage count
+  name_t get_lineage_count (double *t = 0, int *ct = 0) const {
     player_t *p = anchor();
     name_t n = 0;
+    int count = 0;
     while (p != 0) {
-      if (p->holds(blue)) {
-        n++;
-        if (x != 0) *(x++) = p->slate;
+      if (!p->holds(grey)) {
+        if (t != 0) *t = p->slate;
+        if (ct != 0) {
+	  count--;
+	  if (p->ballA->is(green)) count++;
+	  if (p->ballB->is(green)) count++;
+	  *ct = count;
+	}
+	if (!p->holds_own()) {
+	  n++;
+	  if (t != 0) t++;
+	  if (ct != 0) ct++;
+	}
       }
       p = p->right;
     }
     return n;
   };
 
-  friend SEXP get_epochs (const gp_tableau_t & T) {
-    SEXP e;
-    int n = T.get_epochs();
-    PROTECT(e = NEW_NUMERIC(n));
-    T.get_epochs(REAL(e));
-    UNPROTECT(1);
-    return e;
+  friend SEXP get_lineage_count (const gp_tableau_t & T) {
+    SEXP t, ct, rv, rvn;
+    int nt = T.get_lineage_count();
+    PROTECT(t = NEW_NUMERIC(nt));
+    PROTECT(ct = NEW_INTEGER(nt));
+    PROTECT(rv = NEW_LIST(2));
+    PROTECT(rvn = NEW_CHARACTER(2));
+    SET_STRING_ELT(rvn,0,mkChar("time"));
+    SET_STRING_ELT(rvn,1,mkChar("lineages"));
+    SET_NAMES(rv,rvn);
+    SET_ELEMENT(rv,0,t);
+    SET_ELEMENT(rv,1,ct);
+    T.get_lineage_count(REAL(t),INTEGER(ct));
+    UNPROTECT(4);
+    return rv;
   }
-  
+
   // human-readable info
   std::string describe (void) const {
     player_t *p = anchor();
@@ -926,9 +908,13 @@ private:
 
   // drop zero-length branches associated with samples
   void drop_redundant (void) {
-    for (name_t j = 0; j < nballs(red); j++) {
-      ball_t *r = balls[red][j];
-      if (holder(r)->holds(green)) unseat(r);
+    player_t *p = lead();
+    while (p != 0) {
+      player_t *pp = p->left;
+      if (p->holds(red) && p->holds(green)) {
+	unseat(p->ball(red));
+      }
+      p = pp;
     }
   };
 
@@ -1137,5 +1123,42 @@ public:
   };
 
 };
+
+// extract/compute basic information.
+template <class TABLEAU>
+SEXP get_info (SEXP X, SEXP Prune) {
+  int nprotect = 0;
+  int nout = 7;
+
+  // reconstruct the tableau from its serialization
+  TABLEAU gp(RAW(X));
+  // check validity
+  gp.valid();
+    
+  // extract current time
+  SEXP tout;
+  PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
+  *REAL(tout) = gp.time();
+
+  // prune if requested
+  if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
+
+  // pack up return values in a list
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout)); nprotect++;
+  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,tout,"time",k);
+  k = set_list_elem(out,outnames,describe(gp),"description",k);
+  k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
+  k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
+  k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
+  k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+  k = set_list_elem(out,outnames,newick(gp),"tree",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(nprotect);
+  return out;
+}
 
 #endif

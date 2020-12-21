@@ -11,16 +11,23 @@ newick2df(tree)
 }
 \value{
 A data frame suitable for use as \code{pomp} input.
+This data frame will have three columns:
+\describe{
+  \item{time}{numeric}
+  \item{lineages}{integer; the lineage-count function}
+  \item{code}{integer; a code describing the nature of the event.
+  0 indicates a coalescence; 1 indicates a dead sample; 2 indicates a live sample.}
+}
 }
 \description{
 Convert a genealogical tree in Newick format to a data frame, containing event times, number of lineages, sample indicator, direct-descent indicator, and coalescent indicator.
 }
 \examples{
-playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=5,t0=0,tree=TRUE) -> x
+playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=c(0,5),t0=0,tree=TRUE) -> x
 y <- getInfo(x)
 newick2df(y$tree) -> z
-head(z)
 
-# compare to y
-head(y$lineages)
+# compare to y$lineages
+y$lineages \%>\%
+  all.equal(tail(z,-1)[,1:2],tolerance=1e-5)
 }

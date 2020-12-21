@@ -10,6 +10,8 @@
 ##' 
 ##' @return A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
 ##'
+##' @example examples/diagram.R
+##'
 ##' @importFrom grid textGrob circleGrob roundrectGrob linesGrob viewport
 ##' gpar grobTree gList gTree
 ##' @importFrom dplyr if_else

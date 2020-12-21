@@ -36,14 +36,8 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE) {
     x$cumhaz <- data.frame(time=NA,Lambda=NA)
   }
   x$cumhaz <- as_tibble(x$cumhaz)
-  if (length(x$lineages) > 0) {
-    x$lineages <- data.frame(time=x$etimes,lineages=x$lineages)
-  } else {
-    x$lineages <- data.frame(time=NA,lineages=NA)
-  }
   x$lineages <- as_tibble(x$lineages)
   x$stimes <- NULL
-  x$etimes <- NULL
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")
   class(x) <- c("gpsim",class(x))
