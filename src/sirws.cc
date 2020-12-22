@@ -101,7 +101,7 @@ public:
     if (clock() < time()) err("invalid clock");
     for (name_t n = 0; n < nplayers(); n++) {
       if (player[n]->state.S+player[n]->state.I+player[n]->state.R != params.N)
-	err("invalid player state!\n%s",player[n]->describe().c_str());
+	err("invalid player state!\n%s",player[n]->describe(this).c_str());
     }
   };
   

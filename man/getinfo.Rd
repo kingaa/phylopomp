@@ -54,10 +54,10 @@ playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) \%>\
   pull(diag) \%>\%
   plot_grid(plotlist=.,ncol=1)
 
-playMoran(n=8,mu=1,times=0:5,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) -> x
-x \%>\%
+playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) \%>\%
+  playMoranWChain(ntimes=40) \%>\%
   mutate(diag=diagram(illustration)) \%>\%
   pull(diag) \%>\%
+  magrittr::extract(35:40) \%>\%
   plot_grid(plotlist=.,ncol=1)
-
 }

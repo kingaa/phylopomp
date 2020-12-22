@@ -63,6 +63,7 @@ protected:
   typedef std::vector<ball_t*> balls_t;
   typedef std::vector<player_t*> players_t;
 
+  name_t _unique;			    // next unique name
   union {player_t *left; name_t leftmost;}; // player seated farthest to left
   union {player_t *right; name_t rightmost;}; // player seated farthest to right
   double _t0;                                 // initial time
@@ -121,12 +122,20 @@ protected:
       return colorsymb[color];
     };
     // human-readable info
-    std::string describe (void) const {
-      return color_name() + "(" + std::to_string(name) + ")";
+    std::string describe (const gp_tableau_t *T) const {
+      if (color==green) {
+	return color_name() + "(" + std::to_string(T->player[name]->uniq) + ")";
+      } else {
+	return color_name() + "(" + std::to_string(name) + ")";
+      }
     };
     // machine-readable description
-    std::string illustrate (void) const {
-      return color_symbol() + "," + std::to_string(name);
+    std::string illustrate (const gp_tableau_t *T) const {
+      if (color==green) {
+	return color_symbol() + "," + std::to_string(T->player[name]->uniq);
+      } else {
+	return color_symbol() + "," + std::to_string(name);
+      }
     };
     // size of binary serialization
     size_t size (void) const {
@@ -158,7 +167,7 @@ protected:
 
   public:
     
-    name_t name;
+    name_t uniq, name;
     ball_t *ballA, *ballB;
     union {player_t *left; name_t lname;};
     union {player_t *right; name_t rname;};
@@ -176,6 +185,7 @@ protected:
       left = 0;
       right = 0;
       slate = default_slate;
+      uniq = T->unique();
       T->balls[green].push_back(ballA);
       T->balls[col].push_back(ballB);
       T->player.push_back(this);
@@ -221,7 +231,7 @@ protected:
         ballB = ballA;
         ballA = b;
       } else {
-        err("no ball of color %s: %s",colores[c],this->describe().c_str());
+        err("no ball of color %s",colores[c]);
       }
       return b;
     };
@@ -234,27 +244,27 @@ protected:
       return o;
     };
     // human-readable info
-    std::string describe (void) const {
-      return "player(" + std::to_string(name) + ") {"
-        + ballA->describe() + ","
-        + ballB->describe() + "}, t = "
+    std::string describe (const gp_tableau_t *T) const {
+      return "player(" + std::to_string(uniq) + ") {"
+        + ballA->describe(T) + ","
+        + ballB->describe(T) + "}, t = "
         + std::to_string(slate) + "\n";
     };
     // machine-readable info
-    std::string illustrate (void) const {
-      return std::to_string(name) + ","
-        + ballA->illustrate() + ","
-        + ballB->illustrate() + ","
+    std::string illustrate (const gp_tableau_t *T) const {
+      return std::to_string(uniq) + ","
+        + ballA->illustrate(T) + ","
+        + ballB->illustrate(T) + ","
         + std::to_string(slate);
     };
     // size of binary serialization
     size_t size (void) const {
-      return 3*sizeof(name_t)+sizeof(double)+sizeof(state_t)+2*ballA->size();
+      return 4*sizeof(name_t)+sizeof(double)+sizeof(state_t)+2*ballA->size();
     };
     // binary serialization
     friend raw_t* operator<< (raw_t *o, const player_t &p) {
       name_t buf[] = {
-        p.name, 
+        p.uniq, p.name, 
         (p.left != 0)  ? p.left->name  : na,
         (p.right != 0) ? p.right->name : na
       };
@@ -265,17 +275,23 @@ protected:
     };
     // binary deserialization
     friend raw_t* operator>> (raw_t *o, player_t &p) {
-      name_t buf[3], *b = buf;
+      name_t buf[4], *b = buf;
       memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
       memcpy(&p.slate,o,sizeof(double)); o += sizeof(double);
       memcpy(&p.state,o,sizeof(state_t)); o += sizeof(state_t);
-      p.name = *b++; p.lname = *b++; p.rname = *b++;
+      p.uniq = *b++; p.name = *b++; p.lname = *b++; p.rname = *b++;
       return o >> *p.ballA >> *p.ballB;
     };
   };
 
 private:
 
+  // get the next unique name and generate a new one
+  name_t unique (void) {
+    name_t u = _unique;
+    _unique++;
+    return u;
+  };
   // draw a random integer in the interval [0,n-1]
   void draw_one (name_t n, name_t *x) const {
     *x = random_integer(n);
@@ -323,20 +339,21 @@ private:
     left = 0;
     right = 0;
     _time = default_slate;
+    _unique = 0;
   };
 
 public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double)+sizeof(bool)+sizeof(state_t);
+    size_t s = (3+ncolors)*sizeof(name_t)+2*sizeof(double)+sizeof(bool)+sizeof(state_t);
     if (!empty()) s += nplayers()*player[0]->size();
     return s;
   };
 
   // binary serialization
   friend raw_t* operator<< (raw_t *o, const gp_tableau_t &T) {
-    name_t buf[ncolors+2], *b = buf;
+    name_t buf[ncolors+3], *b = buf;
     double buf2[] = {T._t0, T._time};
     bool buf3[] = {T.use_ghosts};
     for (name_t i = 0; i < ncolors; i++, b++) {
@@ -344,6 +361,7 @@ public:
     }
     *b++ = T.left->name;
     *b++ = T.right->name;
+    *b++ = T._unique;
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,buf2,sizeof(buf2)); o += sizeof(buf2);
     memcpy(o,buf3,sizeof(buf3)); o += sizeof(buf3);
@@ -355,7 +373,7 @@ public:
 
   // binary deserialization
   friend raw_t* operator>> (raw_t *o, gp_tableau_t &T) {
-    name_t buf[ncolors+2], *b = buf;
+    name_t buf[ncolors+3], *b = buf;
     double buf2[2];
     bool buf3[1];
     memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
@@ -373,6 +391,7 @@ public:
     }
     T.leftmost  = *b++;
     T.rightmost = *b++;
+    T._unique = *b++;
     T.left  = (T.leftmost  != na) ? T.player[T.leftmost]  : 0;
     T.right = (T.rightmost != na) ? T.player[T.rightmost] : 0;
     for (name_t i = 0; i < np; i++) {
@@ -547,7 +566,7 @@ public:
     std::string o = "";
     while (p != 0) {
       o += "pop = " + std::to_string(pop(p->state)) + " ";
-      o += p->describe();
+      o += p->describe(this);
       p = p->right;
     }
     o += "time = " + std::to_string(time()) + "\n";
@@ -559,7 +578,7 @@ public:
     std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
     player_t *p = anchor();
     while (p != 0) {
-      o += p->illustrate() + "," + std::to_string(time()) + "\n";
+      o += p->illustrate(this) + "," + std::to_string(time()) + "\n";
       p = p->right;
     }
     return o;
@@ -608,11 +627,11 @@ public:
         if (p->name != j)
           err("player %d has incorrect name (%d)",j,p->name);
         if (p->ballA->hand() != j)
-          err("ballA is not in hand (%d)\n%s",p->ballA->hand(),p->describe().c_str());
+          err("ballA is not in hand (%d)\n%s",p->ballA->hand(),p->describe(this).c_str());
         if (p->ballB->hand() != j)
-          err("ballB is not in hand (%d)\n%s",p->ballB->hand(),p->describe().c_str());
+          err("ballB is not in hand (%d)\n%s",p->ballB->hand(),p->describe(this).c_str());
         if (p->left==0 && p->right==0 && !p->holds_own())
-          err("zombie player!\n%s",p->describe().c_str());
+          err("zombie player!\n%s",p->describe(this).c_str());
       }
 
       // check each color-class of balls
@@ -632,14 +651,14 @@ public:
       // the rightmost player is the "lead"
       p = lead();
       if (p->right != 0)
-        err("invalid lead:\n%s\n%s",p->describe().c_str(),describe().c_str());
+        err("invalid lead:\n%s\n%s",p->describe(this).c_str(),describe().c_str());
       if (_time < p->slate)
         err("invalid 'time': %le < %le",_time,p->slate);
 
       // the leftmost player is the "anchor"
       p = anchor();
       if (p->left != 0)
-        err("invalid anchor:\n%s\n%s",p->describe().c_str(),describe().c_str());
+        err("invalid anchor:\n%s\n%s",p->describe(this).c_str(),describe().c_str());
 
       // check seating arrangement
       name_t n = 1;
@@ -647,8 +666,8 @@ public:
       while (p->right != 0) {
         n++;
         if (p->right->slate < p->slate) // seating times are out of order
-          err("times out of order\n%s%s",p->right->describe().c_str(),
-              p->describe().c_str());
+          err("times out of order\n%s%s",p->right->describe(this).c_str(),
+              p->describe(this).c_str());
         if (p->right->left != p) err("seven years' bad luck"); // right and left are not mirrored
         p = p->right;
       }
@@ -712,7 +731,7 @@ private:
       break;
     }
 
-    o += ")g_" + std::to_string(p->name) + ":" + std::to_string(t - tpar);
+    o += ")g_" + std::to_string(p->uniq) + ":" + std::to_string(t - tpar);
 
     return o;
   };
@@ -854,7 +873,7 @@ private:
   // remove a player from the seating queue
   void extract (player_t *p) {
     if (!p->holds_own())
-      err("cannot extract player:\n%s",p->describe().c_str());
+      err("cannot extract player:\n%s",p->describe(this).c_str());
     ball_t *pg = green_ball(p);
     ball_t *po = p->other(pg);
     if (po->is(green)) err("naughty kitty!");
@@ -885,23 +904,23 @@ private:
     if (a->is(green)) err("do not seat by green ball!");
     player_t *p = holder(a);
     ball_t *g = green_ball(p);
-    if (!p->holds(g)) err("cannot seat player:\n%s",p->describe().c_str());
+    if (!p->holds(g)) err("cannot seat player:\n%s",p->describe(this).c_str());
     swap(g,b);
     insert_right(p);
     p->slate = _time;
   };
 
-  // unseat the player holding ball a.
-  void unseat (ball_t *a) {
-    if (a->is(green)) err("do not unseat by green ball!");
-    player_t *p = holder(a);
-    player_t *q = player.back();
+  void drop_player (player_t *p) {
+    if (!p->holds_own())
+      err("cannot drop a player that does not hold his own ball.");
     ball_t *g = green_ball(p);
-    name_t n = p->name;
-    swap(p->other(a),g);
-    extract(p);
+    ball_t *a = p->other(g);
+    if (a->is(green))
+      err("cannot drop a player holding two green balls.");
     swap(a,balls[a->color].back());
     swap(g,balls[green].back());
+    player_t *q = player.back();
+    name_t n = p->name;
     p->name = q->name; q->name = n;
     q->ballA->hand(q->name);
     q->ballB->hand(q->name);
@@ -910,6 +929,16 @@ private:
     balls[a->color].pop_back();
     player.pop_back();
     delete p;
+  }
+
+  // unseat the player holding ball a.
+  void unseat (ball_t *a) {
+    if (a->is(green)) err("do not unseat by green ball!");
+    player_t *p = holder(a);
+    ball_t *g = green_ball(p);
+    swap(p->other(a),g);
+    extract(p);
+    drop_player(p);
   };
 
   // change a ball's color
@@ -1080,12 +1109,12 @@ public:
           double L = ell[pl->name];
           double N = pop(pl->state);
 
-          if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe().c_str());
+          if (N < L) err("hijole! %lg %lg\n%s",N,L,pl->describe(this).c_str());
 
           if (keepfirst) {
             
             if (pl->holds(blue) && breadcrumb[pl->name] < 1) {
-              if (N <= L) err("hijole madre! %lg %lg\n%s",N,L,pl->describe().c_str());
+              if (N <= L) err("hijole madre! %lg %lg\n%s",N,L,pl->describe(this).c_str());
               double nug = 1/(N-L); // Prob[direct descent]
               if (pl->holds(g)) { // direct descent event
                 breadcrumb[pl->name]++;

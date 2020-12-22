@@ -94,7 +94,7 @@ public:
     if (clock() < time()) err("invalid clock");
     for (name_t i = 0; i < nplayers(); i++) {
       if (player[i]->state.n < 0 || (player[i]->state.n != floor(player[i]->state.n)))
-        err("invalid player state! n=%lg\n%s",player[i]->state.n,player[i]->describe().c_str());
+        err("invalid player state! n=%lg\n%s",player[i]->state.n,player[i]->describe(this).c_str());
     }
     this->gp_tableau_t::valid();
   };
