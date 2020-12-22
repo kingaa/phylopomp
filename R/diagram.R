@@ -12,8 +12,8 @@
 ##'
 ##' @example examples/diagram.R
 ##'
-##' @importFrom grid textGrob circleGrob roundrectGrob linesGrob viewport
-##' gpar grobTree gList gTree
+##' @importFrom grid textGrob circleGrob roundrectGrob linesGrob nullGrob
+##' viewport gpar grobTree gList gTree
 ##' @importFrom dplyr if_else
 ##' @importFrom readr read_csv
 ##'
@@ -37,7 +37,7 @@ diagram <- function (illustration, ...) {
 
 tableauGrob <- function (data, n, vp = NULL) {
   gbb <- gList()
-  for (k in seq_len(n)) {
+  for (k in seq_along(data$player)) {
     gb <- playerGrob(
       name=data$player[k],
       ballA=data$ballA[k],
@@ -59,13 +59,21 @@ playerGrob <- function (name, ballA, ballAcol, ballB, ballBcol, slate, vp = NULL
   rr <- roundrectGrob(vp=vp)
   lg <- linesGrob(x=c(0,1),y=25/32,vp=vp)
   nm <- textGrob(label=name,y=7/8,vp=vp)
-  bt1 <- textGrob(label=ballA,y=5/8,gp=gpar(col="white"),vp=vp)
+  if (ballAcol=="g") {
+    bt1 <- textGrob(label=ballA,y=5/8,gp=gpar(col="white"),vp=vp)
+  } else {
+    bt1 <- nullGrob()
+  }
   cg1 <- circleGrob(
     y=5/8,r=unit(0.45,"native"),
     gp=gpar(fill=ball_colors[ballAcol],col=ball_colors[ballAcol]),
     vp=vp
   )
-  bt2 <- textGrob(label=ballB,y=3/8,gp=gpar(col="white"),vp=vp)
+  if (ballBcol=="g") {
+    bt2 <- textGrob(label=ballB,y=3/8,gp=gpar(col="white"),vp=vp)
+  } else {
+    bt2 <- nullGrob()
+  }
   cg2 <- circleGrob(
     y=3/8,r=unit(0.45,"native"),
     gp=gpar(fill=ball_colors[ballBcol],col=ball_colors[ballBcol]),
