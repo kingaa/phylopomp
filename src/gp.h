@@ -70,8 +70,8 @@ protected:
   double _time;                               // current time
   players_t player;             // pointers to all players
   balls_t balls[ncolors];       // one for each color class
-  bool use_ghosts;
-  state_t state;
+  bool use_ghosts;              // insert a ghost to track state after death?
+  state_t state;                // current state of the GP
 
 protected:
 
@@ -738,7 +738,7 @@ private:
 
   std::string compact_newick (name_t &name, const double &tpar) const {
 
-    std::string o;
+    std::string o = "";
     player_t *p = player[name];
     ball_t *a = p->ballA;
     ball_t *b = p->ballB;
@@ -986,7 +986,7 @@ private:
     return (player.size() > maxq+grace);
   };
 
-public:
+private:
 
   void birth (const state_t &s) {
     ball_t *a = random_black_ball();
@@ -1025,17 +1025,35 @@ public:
     }
   };
 
-  void sample (void) {
-    sample(state);
+public:
+
+  void birth (void) {
+    birth(this->state);
   };
 
+  void death (void) {
+    death(this->state);
+  };
+
+  void graft (void) {
+    graft(this->state);
+  };
+
+  void sample (void) {
+    sample(this->state);
+  };
+  
   // returns time of next event
   virtual double clock (void) const = 0;
+  // updates clocks
+  virtual void update_clocks (void) = 0;
   // makes a move
   virtual void move (void) = 0;
   // branching rate and population size
   virtual double branch_rate (state_t &) const = 0;
   virtual double pop (state_t &) const = 0;
+
+public:
 
   // run process to a specified time.
   // return number of events that have occurred.
@@ -1187,14 +1205,16 @@ public:
 
   template <class GPTYPE>
   friend void comp_newick (SEXP x, int k, const GPTYPE &T) {
-    GPTYPE U = T;
-    SET_STRING_ELT(x,k,mkChar(U.prune().compact_newick().c_str()));
+    SEXP s;
+    PROTECT(s = comp_newick(T));
+    SET_STRING_ELT(x,k,s);
+    UNPROTECT(1);
   }
 
   template <class GPTYPE>
   friend SEXP comp_newick (const GPTYPE &T) {
     GPTYPE U = T;
-    std::string s = U.prune().compact_newick();
+    std::string s = U.compact_newick();
     SEXP x;
     PROTECT(x = NEW_CHARACTER(1));
     SET_STRING_ELT(x,0,mkChar(s.c_str()));
@@ -1218,12 +1238,12 @@ SEXP serial (const GPTYPE &T) {
 template <class GPTYPE>
 SEXP get_info (SEXP X, SEXP Prune) {
   int nprotect = 0;
-
+  
   // reconstruct the tableau from its serialization
   GPTYPE gp(RAW(X));
   // check validity
   gp.valid();
-    
+  
   // extract current time
   SEXP tout;
   PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
@@ -1251,10 +1271,10 @@ SEXP get_info (SEXP X, SEXP Prune) {
   return out;
 }
 
-// play a (sampled or unsampled) genealogy process
+// play a genealogy process
 // this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
-SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Sample, SEXP Tree, SEXP Ill) {
+SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
   int nprotect = 0;
   int nout = 3;
   int ntimes = LENGTH(Times);
@@ -1264,8 +1284,6 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Sample, SEXP Tree, SEXP Ill) {
   SEXP times, count;
   PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
   PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
-
-  int do_sample = *(INTEGER(AS_INTEGER(Sample)));
 
   SEXP tree = R_NilValue;
   int do_tree = *(INTEGER(AS_INTEGER(Tree)));
@@ -1288,7 +1306,69 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Sample, SEXP Tree, SEXP Ill) {
 
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
-    if (do_sample) gp->sample();
+    if (do_tree) newick(tree,k,*gp);
+    if (do_ill) illustrate(ill,k,*gp);
+    R_CheckUserInterrupt();
+  }
+      
+  gp->valid();
+    
+  // pack everything up in a list
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout)); nprotect++;
+  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,times,"time",k);
+  k = set_list_elem(out,outnames,count,"count",k);
+  if (do_tree) {
+    k = set_list_elem(out,outnames,tree,"tree",k);
+  }
+  if (do_ill) {
+    k = set_list_elem(out,outnames,ill,"illustration",k);
+  }
+  k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(nprotect);
+  return out;
+}
+
+// play a sampled  genealogy process
+// this requires that the RNG state has been handled elsewhere
+template<class GPTYPE>
+SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
+  int nprotect = 0;
+  int nout = 3;
+  int ntimes = LENGTH(Times);
+
+  gp->valid();
+
+  SEXP times, count;
+  PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
+  PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
+
+  SEXP tree = R_NilValue;
+  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
+  if (do_tree) {
+    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  SEXP ill = R_NilValue;
+  int do_ill = *(INTEGER(AS_INTEGER(Ill)));
+  if (do_ill) {
+    PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  int *xc = INTEGER(count);
+  double *xt = REAL(times);
+
+  if (gp->time() > xt[0]) err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
+
+  for (int k = 0; k < ntimes; k++, xc++, xt++) {
+    *xc = gp->play(*xt);
+    gp->sample();
     if (do_tree) newick(tree,k,*gp);
     if (do_ill) illustrate(ill,k,*gp);
     R_CheckUserInterrupt();

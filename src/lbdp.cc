@@ -57,7 +57,7 @@ public:
       double(n0), lambda, mu, psi
     };
     state.n = double(n0);
-    for (int j = 0; j < n0; j++) graft(state);
+    for (int j = 0; j < n0; j++) graft();
     update_clocks();
     valid();
   };
@@ -172,12 +172,12 @@ public:
   void move (void) {
     if (nextB < nextD && nextB < nextS) {
       state.n += 1.0;
-      birth(state);
+      birth();
     } else if (nextD < nextB && nextD < nextS) {
       state.n -= 1.0;
-      death(state);
+      death();
     } else if (nextS < nextB && nextS < nextD) {
-      sample(state);
+      sample();
     } else {
       err("there's no place like home");
     }
@@ -238,7 +238,7 @@ extern "C" {
     SEXP out = R_NilValue;
     GetRNGstate();
     lbdp_tableau_t *gp = makeLBDP(Lambda,Mu,Psi,N0,T0,State);
-    PROTECT(out = playSGP<lbdp_tableau_t>(gp,Times,falseSEXP(),Tree,Ill));
+    PROTECT(out = playGP<lbdp_tableau_t>(gp,Times,Tree,Ill));
     PutRNGstate();
     delete gp;
     UNPROTECT(1);

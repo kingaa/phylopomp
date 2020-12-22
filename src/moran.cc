@@ -59,12 +59,12 @@ public:
         times[j-1] = times[j] - rexp(scale);
         scale *= double(j+1)/double(j-1);
       }
-      time(R_NegInf); graft(state);
+      time(R_NegInf); graft();
       for (int j = 0; j < n-1; j++) {
-        time(times[j]); birth(state);
+        time(times[j]); birth();
       }
     } else {
-      for (int j = 0; j < n; j++) graft(state);
+      for (int j = 0; j < n; j++) graft();
     }
     time(t0);
     update_clocks();
@@ -139,8 +139,8 @@ public:
   };
     
   void move (void) {
-    death(state);
-    birth(state);
+    death();
+    birth();
     update_clocks();
   };
 
@@ -174,7 +174,11 @@ extern "C" {
     SEXP out = R_NilValue;
     GetRNGstate();
     gp = makeGP(N,Mu,T0,Stat,State);
-    PROTECT(out = playSGP<moran_tableau_t>(gp,Times,Sample,Tree,Ill));
+    if (*INTEGER(AS_INTEGER(Sample))) {
+      PROTECT(out = playSGP<moran_tableau_t>(gp,Times,Tree,Ill));
+    } else {
+      PROTECT(out = playGP<moran_tableau_t>(gp,Times,Tree,Ill));
+    }
     PutRNGstate();
     delete gp;
     UNPROTECT(1);

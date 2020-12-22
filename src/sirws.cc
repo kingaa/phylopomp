@@ -25,7 +25,7 @@ private:
   } parameters_t;
 
   parameters_t params;
-
+  
   // clocks: times to next...
   double nextI;                 // ...infection
   double nextR;                 // ...recovery
@@ -65,7 +65,7 @@ public:
       double(S0+I0), beta, gamma, psi, S0, I0
     };
     state = {double(S0), double(I0), 0};
-    for (name_t j = 0; j < name_t(I0); j++) graft(state);
+    for (name_t j = 0; j < name_t(I0); j++) graft();
     update_clocks();
     valid();
   };
@@ -179,13 +179,13 @@ public:
     if (nextI < nextR && nextI < nextS) {
       state.S -= 1.0;
       state.I += 1.0;
-      birth(state);
+      birth();
     } else if (nextS < nextI && nextS < nextR) {
-      sample(state);
+      sample();
     } else if (nextR < nextI && nextR < nextS) {
       state.I -= 1.0;
       state.R += 1.0;
-      death(state);
+      death();
     }
     update_clocks();
   };
@@ -249,7 +249,7 @@ extern "C" {
     SEXP out = R_NilValue;
     GetRNGstate();
     sirws_tableau_t *gp = makeSIRwS(Beta,Gamma,Psi,S0,I0,T0,State);
-    PROTECT(out = playSGP<sirws_tableau_t>(gp,Times,falseSEXP(),Tree,Ill));
+    PROTECT(out = playGP<sirws_tableau_t>(gp,Times,Tree,Ill));
     PutRNGstate();
     delete gp;
     UNPROTECT(1);
