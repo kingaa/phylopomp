@@ -14,7 +14,6 @@ private:
   } parameters_t;
 
   parameters_t params;
-  state_t state;
   
   // clock: times to next event
   double _next;
@@ -27,7 +26,7 @@ private:
     return double(params.n);
   };
 
-protected:
+public:
 
   size_t size (void) const {
     return sizeof(parameters_t) + this->gp_tableau_t::size();
@@ -124,10 +123,6 @@ public:
     update_clocks();
   };
 
-  void sample (void) {
-    this->gp_tableau_t::sample(state);
-  }
-
   void update_clocks (void) {
     double rate;
     rate = moran_rate();
@@ -149,16 +144,24 @@ public:
     update_clocks();
   };
 
-  // create the serialized state:
-  friend SEXP serial (const moran_tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_RAW(T.size()));
-    RAW(out) << T;
-    UNPROTECT(1);
-    return out;
-  }
-
 };
+
+moran_tableau_t *makeGP (SEXP N, SEXP Mu, SEXP T0, SEXP Stat, SEXP State) {
+  moran_tableau_t *gp;
+  if (isNull(State)) {		// a fresh GP
+    double t0 = *REAL(AS_NUMERIC(T0));
+    int stat = *INTEGER(AS_INTEGER(Stat));
+    GetRNGstate();
+    gp = new moran_tableau_t(*INTEGER(AS_INTEGER(N)),*REAL(AS_NUMERIC(Mu)),t0,stat);
+    PutRNGstate();
+  }  else {		    // restart the GP from the specified state
+    gp = new moran_tableau_t(RAW(State));
+    // optionally override the stored parameters
+    if (!isNull(N)) gp->popsize(*INTEGER(AS_INTEGER(N)));
+    if (!isNull(Mu)) gp->moran_rate(*REAL(AS_NUMERIC(Mu)));
+  }
+  return gp;
+}
 
 extern "C" {
 
@@ -167,98 +170,29 @@ extern "C" {
   // optionally compute genealogies in Newick form ('tree = TRUE').
   // optionally return state in diagrammable form ('ill = TRUE').
   SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Sample, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
-    int nprotect = 0;
-    int nout = 3;
-    double t = R_NaReal;
-    int ntimes = LENGTH(Times);
     moran_tableau_t *gp;
-
-    SEXP times, count;
-    PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
-    PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
-
-    int do_sample = *(INTEGER(AS_INTEGER(Sample)));
-
-    SEXP tree = R_NilValue;
-    int do_newick = *(INTEGER(AS_INTEGER(Tree)));
-    if (do_newick) {
-      PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-      nout++;
-    }
-    SEXP ill = R_NilValue;
-    int do_ill = *(INTEGER(AS_INTEGER(Ill)));
-    if (do_ill) {
-      PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
-      nout++;
-    }
-
-    int stat = *(INTEGER(AS_INTEGER(Stat)));
-
-    int *xc = INTEGER(count);
-    double *xt = REAL(times);
-
-    int n = na;                 // population size
-    if (!isNull(N)) {
-      n = *(INTEGER(AS_INTEGER(N)));
-    }
-
-    double mu = R_NaReal;       // Moran rate
-    if (!isNull(Mu)) {
-      mu = *(REAL(AS_NUMERIC(Mu)));
-    }
-
+    SEXP out = R_NilValue;
     GetRNGstate();
-      
-    if (isNull(State)) {        // a fresh GP
-
-      t = *(REAL(AS_NUMERIC(T0)));
-      gp = new moran_tableau_t(n,mu,t,stat);
-      gp->valid();
-
-    }  else {              // restart the GP from the specified state
-
-      gp = new moran_tableau_t(RAW(State));
-      gp->valid();
-      t = gp->time();
-      // optionally override the stored parameters
-      if (!isNull(N)) gp->popsize(n);
-      if (!isNull(Mu)) gp->moran_rate(mu);
-      
-    }
-
-    if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
-
-    for (int k = 0; k < ntimes; k++, xc++, xt++) {
-      *xc = gp->play(*xt);
-      if (do_sample) gp->sample();
-      if (do_newick) newick(tree,k,*gp);
-      if (do_ill) illustrate(ill,k,*gp);
-      R_CheckUserInterrupt();
-    }
-      
-    gp->valid();
-    
-    // pack everything up in a list
-    int k = 0;
-    SEXP out, outnames;
-    PROTECT(out = NEW_LIST(nout)); nprotect++;
-    PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,times,"time",k);
-    k = set_list_elem(out,outnames,count,"count",k);
-    if (do_newick) {
-      k = set_list_elem(out,outnames,tree,"tree",k);
-    }
-    if (do_ill) {
-      k = set_list_elem(out,outnames,ill,"illustration",k);
-    }
-    k = set_list_elem(out,outnames,serial(*gp),"state",k);
-    SET_NAMES(out,outnames);
-
-    delete gp;
-
+    gp = makeGP(N,Mu,T0,Stat,State);
+    PROTECT(out = playSGP<moran_tableau_t>(gp,Times,Sample,Tree,Ill));
     PutRNGstate();
+    delete gp;
+    UNPROTECT(1);
+    return out;
+  }
 
-    UNPROTECT(nprotect);
+  // Play unsampled Moran W chain
+  // optionally compute genealogies in Newick form ('tree = TRUE').
+  // optionally return state in diagrammable form ('ill = TRUE').
+  SEXP playMoranWChain (SEXP N, SEXP Mu, SEXP Ntimes, SEXP T0, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
+    moran_tableau_t *gp;
+    SEXP out = R_NilValue;
+    GetRNGstate();
+    gp = makeGP(N,Mu,T0,Stat,State);
+    PROTECT(out = playWChain<moran_tableau_t>(gp,Ntimes,Tree,Ill));
+    PutRNGstate();
+    delete gp;
+    UNPROTECT(1);
     return out;
   }
 

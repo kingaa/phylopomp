@@ -30,11 +30,6 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE) {
     LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
-  if (length(x$cumhaz) > 0) {
-    x$cumhaz <- data.frame(time=x$stimes[-1],Lambda=x$cumhaz)
-  } else {
-    x$cumhaz <- data.frame(time=NA,Lambda=NA)
-  }
   x$cumhaz <- as_tibble(x$cumhaz)
   x$lineages <- as_tibble(x$lineages)
   x$stimes <- NULL

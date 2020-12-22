@@ -6,11 +6,21 @@
 \alias{playLBDP}
 \title{Linear birth-death process.}
 \usage{
-playLBDP(data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE)
+playLBDP(
+  data = NULL,
+  ...,
+  lambda,
+  mu,
+  n0,
+  psi,
+  t0 = 0,
+  times,
+  tree = FALSE,
+  ill = FALSE
+)
 }
 \arguments{
-\item{data}{optional data frame;
-output from \code{playLBDP}.}
+\item{data}{optional data frame; output from \code{playLBDP}.}
 
 \item{...}{additional arguments; ignored.}
 
@@ -27,6 +37,8 @@ output from \code{playLBDP}.}
 \item{times}{times at which output is requested.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
+
+\item{ill}{logical; return an illustration?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

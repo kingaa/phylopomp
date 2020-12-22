@@ -1,6 +1,7 @@
 // SIR with Sampling Genealogy Process Simulator (C++)
 
 #include "gp.h"
+#include "internal.h"
 
 typedef struct {
   double S;             // number of susceptibles
@@ -24,7 +25,6 @@ private:
   } parameters_t;
 
   parameters_t params;
-  sir_state_t state;
 
   // clocks: times to next...
   double nextI;                 // ...infection
@@ -39,21 +39,19 @@ private:
     return s.I;
   };
 
-protected:
+public:
 
   size_t size (void) const {
-    return sizeof(parameters_t) + 2*sizeof(state_t) + this->gp_tableau_t::size();
+    return sizeof(parameters_t) + this->gp_tableau_t::size();
   };
 
   friend raw_t* operator<< (raw_t *o, const sirws_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     return o << *dynamic_cast<const gp_tableau_t*>(&T);
   };
 
   friend raw_t* operator>> (raw_t *o, sirws_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     return o >> *dynamic_cast<gp_tableau_t*>(&T);
   };
 
@@ -192,115 +190,69 @@ public:
     update_clocks();
   };
 
-  // create the serialized state:
-  friend SEXP serial (const sirws_tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_RAW(T.size()));
-    RAW(out) << T;
-    UNPROTECT(1);
-    return out;
-  }
-
 };
 
-extern "C" {
+sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP T0, SEXP State) {
+  sirws_tableau_t *gp;
+  
+  double beta = R_NaReal;     // transmission rate
+  if (!isNull(Beta)) {
+    beta = *(REAL(AS_NUMERIC(Beta)));
+  }
 
-  // Sampled SIR process.
-  // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP Times, SEXP T0, SEXP Tree, SEXP State) {
-    int nprotect = 0;
-    int nout = 3;
-    double t = R_NaReal;
-    int ntimes = LENGTH(Times);
-    sirws_tableau_t *gp;
+  double gamma = R_NaReal;    // recovery rate
+  if (!isNull(Gamma)) {
+    gamma = *(REAL(AS_NUMERIC(Gamma)));
+  }
 
-    SEXP times, count;
-    PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
-    PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
+  double psi = R_NaReal;      // sampling rate
+  if (!isNull(Psi)) { 
+    psi = *(REAL(AS_NUMERIC(Psi)));
+  }
 
-    SEXP tree = R_NilValue;
-    int do_newick = *(INTEGER(AS_INTEGER(Tree)));
-    if (do_newick) {
-      PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-      nout++;
-    }
+  if (isNull(State)) {        // a fresh SIR
 
-    int *xc = INTEGER(count);
-    double *xt = REAL(times);
+    double t0 = *(REAL(AS_NUMERIC(T0)));
 
     int s0 = na;                // initial susceptible pool
     if (!isNull(S0)) {
       s0 = *(INTEGER(AS_INTEGER(S0)));
     }
-
+    
     int i0 = na;                // initial number of infections
     if (!isNull(I0)) {
       i0 = *(INTEGER(AS_INTEGER(I0)));
     }
 
-    double beta = R_NaReal;     // transmission rate
-    if (!isNull(Beta)) {
-      beta = *(REAL(AS_NUMERIC(Beta)));
-    }
+    gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,t0);
 
-    double gamma = R_NaReal;    // recovery rate
-    if (!isNull(Gamma)) {
-      gamma = *(REAL(AS_NUMERIC(Gamma)));
-    }
+  }  else {              // restart the SIR from the specified state
 
-    double psi = R_NaReal;      // sampling rate
-    if (!isNull(Psi)) { 
-      psi = *(REAL(AS_NUMERIC(Psi)));
-    }
-
-    GetRNGstate();
+    gp = new sirws_tableau_t(RAW(State));
+    // optionally override the stored parameters
+    if (!isNull(Beta)) gp->transmission_rate(beta);
+    if (!isNull(Gamma)) gp->recovery_rate(gamma);
+    if (!isNull(Psi)) gp->sample_rate(psi);
       
-    if (isNull(State)) {        // a fresh SIR
+  }
 
-      t = *(REAL(AS_NUMERIC(T0)));
-      gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,t);
-      gp->valid();
-
-    }  else {              // restart the SIR from the specified state
-
-      gp = new sirws_tableau_t(RAW(State));
-      gp->valid();
-      t = gp->time();
-      // optionally override the stored parameters
-      if (!isNull(Beta)) gp->transmission_rate(beta);
-      if (!isNull(Gamma)) gp->recovery_rate(gamma);
-      if (!isNull(Psi)) gp->sample_rate(psi);
-      
-    }
-
-    if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
-
-    for (int k = 0; k < ntimes; k++, xc++, xt++) {
-      *xc = gp->play(*xt);
-      if (do_newick) newick(tree,k,*gp);
-      R_CheckUserInterrupt();
-    }
-      
-    PutRNGstate();
-
-    gp->valid();
+  gp->valid();
     
-    // pack everything up in a list
-    int k = 0;
-    SEXP out, outnames;
-    PROTECT(out = NEW_LIST(nout)); nprotect++;
-    PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,times,"time",k);
-    k = set_list_elem(out,outnames,count,"count",k);
-    if (do_newick) {
-      k = set_list_elem(out,outnames,tree,"tree",k);
-    }
-    k = set_list_elem(out,outnames,serial(*gp),"state",k);
-    SET_NAMES(out,outnames);
-      
-    delete gp;
+  return gp;
+}
 
-    UNPROTECT(nprotect);
+extern "C" {
+
+  // Sampled SIR process.
+  // optionally compute genealogies in Newick form ('tree = TRUE').
+  SEXP playSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
+    SEXP out = R_NilValue;
+    GetRNGstate();
+    sirws_tableau_t *gp = makeSIRwS(Beta,Gamma,Psi,S0,I0,T0,State);
+    PROTECT(out = playSGP<sirws_tableau_t>(gp,Times,falseSEXP(),Tree,Ill));
+    PutRNGstate();
+    delete gp;
+    UNPROTECT(1);
     return out;
   }
 

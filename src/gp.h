@@ -70,6 +70,7 @@ protected:
   players_t player;             // pointers to all players
   balls_t balls[ncolors];       // one for each color class
   bool use_ghosts;
+  state_t state;
 
 protected:
 
@@ -328,7 +329,7 @@ public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double)+sizeof(bool);
+    size_t s = (2+ncolors)*sizeof(name_t)+2*sizeof(double)+sizeof(bool)+sizeof(state_t);
     if (!empty()) s += nplayers()*player[0]->size();
     return s;
   };
@@ -346,6 +347,7 @@ public:
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,buf2,sizeof(buf2)); o += sizeof(buf2);
     memcpy(o,buf3,sizeof(buf3)); o += sizeof(buf3);
+    memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     for (name_t i = 0; i < T.nplayers(); i++)
       o = (o << *T.player[i]);
     return o;
@@ -362,6 +364,7 @@ public:
     T._t0 = buf2[0]; T._time = buf2[1];
     memcpy(buf3,o,sizeof(buf3)); o += sizeof(buf3);
     T.use_ghosts = buf3[0];
+    memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     name_t np = *b++;
     for (name_t i = 1; i < ncolors; i++, b++) {
       for (name_t j = 0; j < *b; j++) {
@@ -468,9 +471,10 @@ protected:
   };
 
   double dusk (void) const {
-    player_t *p = lead();
-    if (p != 0) {
-      return (p->holds(black)) ? _time : p->slate;
+    if (nballs(black) > 0) {
+      return _time;
+    } else if (nballs(blue) > 0) {
+      return holder(balls[blue].back())->slate;
     } else {
       return R_NaReal;
     }
@@ -497,31 +501,8 @@ public:
     return (balls[black].size() > 0 && !max_size_exceeded());
   }
 
-  // report all the sample times
-  name_t get_sample_times (double *x = 0) const {
-    player_t *p = anchor();
-    name_t n = 0;
-    while (p != 0) {
-      if (p->holds(blue)) {
-        n++;
-        if (x != 0) *(x++) = p->slate;
-      }
-      p = p->right;
-    }
-    return n;
-  };
-
-  friend SEXP get_sample_times (const gp_tableau_t & T) {
-    SEXP t;
-    int nt = T.get_sample_times();
-    PROTECT(t = NEW_NUMERIC(nt));
-    T.get_sample_times(REAL(t));
-    UNPROTECT(1);
-    return t;
-  }
-
   // report all the seating times and lineage count
-  name_t get_lineage_count (double *t = 0, int *ct = 0) const {
+  name_t lineage_count (double *t = 0, int *ct = 0) const {
     player_t *p = anchor();
     name_t n = 0;
     int count = 0;
@@ -529,35 +510,33 @@ public:
       if (!p->holds(grey)) {
         if (t != 0) *t = p->slate;
         if (ct != 0) {
-	  count--;
-	  if (p->ballA->is(green)) count++;
-	  if (p->ballB->is(green)) count++;
-	  *ct = count;
-	}
-	if (!p->holds_own()) {
-	  n++;
-	  if (t != 0) t++;
-	  if (ct != 0) ct++;
-	}
+          count--;
+          if (p->ballA->is(green)) count++;
+          if (p->ballB->is(green)) count++;
+          *ct = count;
+        }
+        if (!p->holds_own()) {
+          n++;
+          if (t != 0) t++;
+          if (ct != 0) ct++;
+        }
       }
       p = p->right;
     }
     return n;
   };
 
-  friend SEXP get_lineage_count (const gp_tableau_t & T) {
+  friend SEXP lineage_count (const gp_tableau_t & T) {
     SEXP t, ct, rv, rvn;
-    int nt = T.get_lineage_count();
+    int nt = T.lineage_count();
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(ct = NEW_INTEGER(nt));
     PROTECT(rv = NEW_LIST(2));
     PROTECT(rvn = NEW_CHARACTER(2));
-    SET_STRING_ELT(rvn,0,mkChar("time"));
-    SET_STRING_ELT(rvn,1,mkChar("lineages"));
+    set_list_elem(rv,rvn,t,"time",0);
+    set_list_elem(rv,rvn,ct,"lineages",1);
     SET_NAMES(rv,rvn);
-    SET_ELEMENT(rv,0,t);
-    SET_ELEMENT(rv,1,ct);
-    T.get_lineage_count(REAL(t),INTEGER(ct));
+    T.lineage_count(REAL(t),INTEGER(ct));
     UNPROTECT(4);
     return rv;
   }
@@ -693,18 +672,9 @@ private:
 
     std::string o = "(";
     player_t *p = player[name];
-    ball_t *a, *b;
-    double t;
-    
-    if (p->holds_own()) {
-      a = green_ball(p);
-      b = p->other(a);
-      t = dawn();
-    } else {
-      a = p->ballA;
-      b = p->ballB;
-      t = p->slate;
-    }
+    ball_t *a = p->ballA;
+    ball_t *b = p->ballB;
+    double t = p->slate;
 
     switch (a->color) {
     case black:
@@ -717,9 +687,7 @@ private:
       o += "b_" + std::to_string(a->name) + ":0.0,";
       break;
     case green:
-      if (a->name != p->name) {
-	o += newick(a->name,t) + ",";
-      }
+      o += newick(a->name,t) + ",";
       break;
     default:
       err("InCoNcEiVaBlE!");
@@ -749,17 +717,51 @@ private:
     return o;
   };
 
+  std::string compact_newick (name_t &name, const double &tpar) const {
+
+    std::string o;
+    player_t *p = player[name];
+    ball_t *a = p->ballA;
+    ball_t *b = p->ballB;
+    
+    if ((a->is(blue) && b->is(red)) || (a->is(red) && b->is(blue))) {
+      o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+    } else if (a->is(green) && b->is(blue)) {
+      o = "(" + compact_newick(a->name,p->slate) + ")b_" + std::to_string(p->name) + ":" +
+        std::to_string(p->slate - tpar);
+    } else if (a->is(blue) && b->is(green)) {
+      o = "(" + compact_newick(b->name,p->slate) + ")b_" + std::to_string(p->name) + ":" +
+        std::to_string(p->slate - tpar);
+    } else if (a->is(green) && b->is(green)) {
+      o = "(" + compact_newick(a->name,p->slate) + "," + compact_newick(b->name,p->slate) + ")g_" +
+        std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+    }
+
+    return o;
+  };
+
 public:
 
   // put genealogy at current time into Newick format.
   std::string newick (void) const {
     valid();
-    std::string o = std::to_string(time()) + "(i_:0.0,i_:0.0";
     player_t *p = anchor();
-    double te = dawn();
+    double te = dawn(), tl = dusk();
+    std::string o = std::to_string(tl) + "(i_:0.0,i_:0.0";
     while (p != 0) {
       if (p->is_root()) {
-	o += ",(" + newick(p->name,te) + ")i_:0.0";
+        ball_t *b = p->other(green_ball(p));
+        switch (b->color) {
+        case green:
+          o += ",((" + newick(b->name,te) + ")g_" + std::to_string(p->name) + ":0.0)i_:0.0";
+          break;
+        case black:
+          o += ",o_" + std::to_string(b->name) + ":" + std::to_string(tl-te);
+          break;
+        default:
+          err("c'est impossible!");
+          break;
+        }
       }
       p = p->right;
     }
@@ -781,6 +783,31 @@ public:
     UNPROTECT(1);
     return x;
   }
+
+protected:
+
+  // put genealogy at current time into compact Newick format.
+  std::string compact_newick (void) const {
+    player_t *p = anchor();
+    double te = dawn(), tl = dusk();
+    std::string o = std::to_string(tl) + "(i_:0.0,i_:0.0";
+    while (p != 0) {
+      if (p->is_root()) {
+        ball_t *b = p->other(green_ball(p));
+        switch (b->color) {
+        case green:
+          o += ",((" + compact_newick(b->name,te) + ")g_" + std::to_string(p->name) + ":0.0)i_:0.0";
+          break;
+        default:
+          err("c'est impossible!");
+          break;
+        }
+      }
+      p = p->right;
+    }
+    o += ")i_;";
+    return o;
+  };
 
 private:
 
@@ -912,7 +939,7 @@ private:
     while (p != 0) {
       player_t *pp = p->left;
       if (p->holds(red) && p->holds(green)) {
-	unseat(p->ball(red));
+        unseat(p->ball(red));
       }
       p = pp;
     }
@@ -969,6 +996,10 @@ public:
     }
   };
 
+  void sample (void) {
+    sample(state);
+  };
+
   // returns time of next event
   virtual double clock (void) const = 0;
   // makes a move
@@ -1012,23 +1043,17 @@ public:
   };
 
   // prune the tree
-  void prune (void) {
+  gp_tableau_t &prune (void) {
     drop(black);
     drop(grey);
     drop_redundant();
     valid();
-  };
-
-  // prune the tree
-  friend gp_tableau_t& prune (const gp_tableau_t &T) {
-    gp_tableau_t U = T;
-    U.prune();
-    return U;
+    return *this;
   };
 
   // walk backward from each sample.
   // calls to the RNG are made here.
-  void walk (double *haz) const {
+  void walk (double *t, double *haz) const {
 
     valid();
     GetRNGstate();
@@ -1046,8 +1071,9 @@ public:
         player_t *p = P;
         player_t *pl = p->left;
         ball_t *g = green_ball(p);
-
+        
         *haz = 0;
+        *t = P->slate;
         
         while (pl != 0) {
           // for ease of reading:
@@ -1102,7 +1128,10 @@ public:
             pl = p->left;
           }
         }
-        if (keepfirst) haz++;
+        if (keepfirst) {
+          t++;
+          haz++;
+        }
         keepfirst = true;
       }
       P = P->right;
@@ -1112,26 +1141,57 @@ public:
 
   // create the serialized state:
   friend SEXP walk (const gp_tableau_t &T) {
-    SEXP out = R_NilValue;
+    SEXP t, L, rvn, rv = R_NilValue;
     int n = T.nballs(blue)-1;
-    if (n > 0) {
-      PROTECT(out = NEW_NUMERIC(n));
-      T.walk(REAL(out));
-      UNPROTECT(1);
-    }
-    return out;
+    n = (n > 0) ? n : 0;
+    PROTECT(t = NEW_NUMERIC(n));
+    PROTECT(L = NEW_NUMERIC(n));
+    PROTECT(rv = NEW_LIST(2));
+    PROTECT(rvn = NEW_CHARACTER(2));
+    set_list_elem(rv,rvn,t,"time",0);
+    set_list_elem(rv,rvn,L,"Lambda",1);
+    SET_NAMES(rv,rvn);
+    T.walk(REAL(t),REAL(L));
+    UNPROTECT(4);
+    return rv;
   };
+
+  template <class GPTYPE>
+  friend void comp_newick (SEXP x, int k, const GPTYPE &T) {
+    GPTYPE U = T;
+    SET_STRING_ELT(x,k,mkChar(U.prune().compact_newick().c_str()));
+  }
+
+  template <class GPTYPE>
+  friend SEXP comp_newick (const GPTYPE &T) {
+    GPTYPE U = T;
+    std::string s = U.prune().compact_newick();
+    SEXP x;
+    PROTECT(x = NEW_CHARACTER(1));
+    SET_STRING_ELT(x,0,mkChar(s.c_str()));
+    UNPROTECT(1);
+    return x;
+  }
 
 };
 
+// create the serialized state:
+template <class GPTYPE>
+SEXP serial (const GPTYPE &T) {
+  SEXP out;
+  PROTECT(out = NEW_RAW(T.size()));
+  RAW(out) << T;
+  UNPROTECT(1);
+  return out;
+}
+
 // extract/compute basic information.
-template <class TABLEAU>
+template <class GPTYPE>
 SEXP get_info (SEXP X, SEXP Prune) {
   int nprotect = 0;
-  int nout = 7;
 
   // reconstruct the tableau from its serialization
-  TABLEAU gp(RAW(X));
+  GPTYPE gp(RAW(X));
   // check validity
   gp.valid();
     
@@ -1144,17 +1204,140 @@ SEXP get_info (SEXP X, SEXP Prune) {
   if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
 
   // pack up return values in a list
+  int nout = 7;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout)); nprotect++;
   PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(gp),"description",k);
-  k = set_list_elem(out,outnames,get_lineage_count(gp),"lineages",k);
-  k = set_list_elem(out,outnames,get_sample_times(gp),"stimes",k);
-  k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
   k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
+  k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
   k = set_list_elem(out,outnames,newick(gp),"tree",k);
+  //  k = set_list_elem(out,outnames,comp_newick(gp),"compact_tree",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(nprotect);
+  return out;
+}
+
+// play a (sampled or unsampled) genealogy process
+// this requires that the RNG state has been handled elsewhere
+template<class GPTYPE>
+SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Sample, SEXP Tree, SEXP Ill) {
+  int nprotect = 0;
+  int nout = 3;
+  int ntimes = LENGTH(Times);
+
+  gp->valid();
+
+  SEXP times, count;
+  PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
+  PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
+
+  int do_sample = *(INTEGER(AS_INTEGER(Sample)));
+
+  SEXP tree = R_NilValue;
+  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
+  if (do_tree) {
+    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  SEXP ill = R_NilValue;
+  int do_ill = *(INTEGER(AS_INTEGER(Ill)));
+  if (do_ill) {
+    PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  int *xc = INTEGER(count);
+  double *xt = REAL(times);
+
+  if (gp->time() > xt[0]) err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
+
+  for (int k = 0; k < ntimes; k++, xc++, xt++) {
+    *xc = gp->play(*xt);
+    if (do_sample) gp->sample();
+    if (do_tree) newick(tree,k,*gp);
+    if (do_ill) illustrate(ill,k,*gp);
+    R_CheckUserInterrupt();
+  }
+      
+  gp->valid();
+    
+  // pack everything up in a list
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout)); nprotect++;
+  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,times,"time",k);
+  k = set_list_elem(out,outnames,count,"count",k);
+  if (do_tree) {
+    k = set_list_elem(out,outnames,tree,"tree",k);
+  }
+  if (do_ill) {
+    k = set_list_elem(out,outnames,ill,"illustration",k);
+  }
+  k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(nprotect);
+  return out;
+}
+
+template<class GPTYPE>
+SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
+  int nprotect = 0;
+  int nout = 2;
+  int ntimes = *(INTEGER(AS_INTEGER(N)));
+
+  gp->valid();
+
+  SEXP times;
+  PROTECT(times = NEW_NUMERIC(ntimes)); nprotect++;
+
+  SEXP tree = R_NilValue;
+  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
+  if (do_tree) {
+    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  SEXP ill = R_NilValue;
+  int do_ill = *(INTEGER(AS_INTEGER(Ill)));
+  if (do_ill) {
+    PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
+    nout++;
+  }
+
+  double *xt = REAL(times);
+
+  GetRNGstate();
+  for (int k = 0; k < ntimes; k++, xt++) {
+    *xt = gp->play1();
+    if (do_tree) newick(tree,k,*gp);
+    if (do_ill) illustrate(ill,k,*gp);
+    R_CheckUserInterrupt();
+  }
+  PutRNGstate();
+      
+  gp->valid();
+    
+  // pack everything up in a list
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout)); nprotect++;
+  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,times,"time",k);
+  if (do_tree) {
+    k = set_list_elem(out,outnames,tree,"tree",k);
+  }
+  if (do_ill) {
+    k = set_list_elem(out,outnames,ill,"illustration",k);
+  }
+  k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);

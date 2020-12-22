@@ -5,15 +5,12 @@
 ##' @name lbdp
 ##' @aliases LBDP
 ##' @rdname lbdp
-##' @include getinfo.R
+##' @include getinfo.R sirws.R
 ##'
 ##' @family Genealogy processes
 ##'
-##' @include sirws.R
-##' @inheritParams sirws
-##' 
-##' @param data optional data frame;
-##' output from \code{playLBDP}.
+##' @inheritParams moran
+##' @param data optional data frame; output from \code{playLBDP}.
 ##' @param lambda birth rate
 ##' @param mu death rate
 ##' @param psi sampling rate
@@ -31,13 +28,14 @@ NULL
 
 ##' @rdname lbdp
 ##' @export
-playLBDP <- function (data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE) {
+playLBDP <- function (data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times,
+  tree = FALSE, ill = FALSE) {
   state <- attr(data,"state")
   if (missing(n0)) n0 <- NULL
   if (missing(lambda)) lambda <- NULL
   if (missing(mu)) mu <- NULL
   if (missing(psi)) psi <- NULL
-  x <- .Call(P_playLBDP,lambda,mu,psi,n0,times,t0,tree,state)
+  x <- .Call(P_playLBDP,lambda,mu,psi,n0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
   data %>%

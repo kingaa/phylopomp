@@ -16,7 +16,8 @@ playSIRwS(
   I0,
   t0 = 0,
   times,
-  tree = FALSE
+  tree = FALSE,
+  ill = FALSE
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ playSIRwS(
 \item{times}{times at which output is requested.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
+
+\item{ill}{logical; return an illustration?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -48,9 +51,11 @@ Run the simulator.
 }
 \examples{
 playSIRwS(beta=2,gamma=1,psi=2,S0=1000,I0=5,times=0:5,t0=0,tree=TRUE) -> x
-
 playSIRwS(x,times=6:10,psi=1,tree=TRUE) -> x
 plot(x)
+
+playSIRwS(beta=3,gamma=1,psi=2,S0=10,I0=5,times=0:5,t0=-1,tree=TRUE) -> x
+plot(x,points=TRUE)
 
 y <- getInfo(x)
 plot(y,points=TRUE)

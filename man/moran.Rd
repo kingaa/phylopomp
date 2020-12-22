@@ -5,6 +5,7 @@
 \alias{MGP}
 \alias{mgp}
 \alias{playMoran}
+\alias{playMoranWChain}
 \title{Moran genealogy process.}
 \usage{
 playMoran(
@@ -19,10 +20,21 @@ playMoran(
   ill = FALSE,
   stationary = TRUE
 )
+
+playMoranWChain(
+  data = NULL,
+  ...,
+  n,
+  mu,
+  t0 = 0,
+  ntimes,
+  tree = TRUE,
+  ill = TRUE,
+  stationary = TRUE
+)
 }
 \arguments{
-\item{data}{optional data frame;
-output from \code{playMoran}.}
+\item{data}{optional data frame; output from \code{playMoran} or \code{playMoranWChain}}
 
 \item{...}{additional arguments; ignored.}
 
@@ -39,11 +51,12 @@ if \code{sample=TRUE}, a sample is taken at each of the specified times.}
 
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
-\item{ill}{logical;
-return an illustration?}
+\item{ill}{logical; return an illustration?}
 
 \item{stationary}{logical;
 should the initial genealogy be drawn from the stationary distribution?}
+
+\item{ntimes}{integer; number of timesteps to advance the chain.}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -52,9 +65,18 @@ A \code{tibble} with \code{state} attribute.
 Run the MGP simulator.
 }
 \examples{
+library(tidyverse)
+library(cowplot)
+
 playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -> x
 playMoran(x,times=11:20,tree=TRUE) -> x
 plot(x)
+
+playMoran(n=5,mu=10,times=0:10,t0=-3) \%>\%
+  getInfo() -> y
+plot(y,points=TRUE)[[1]]+
+  annotation_custom(diagram(y$illustration,fontsize=8)[[1]],0,10,-9,0)+
+  expand_limits(y=-9)
 
 playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x,points=TRUE)
@@ -64,6 +86,24 @@ plot(y,points=TRUE)
 
 playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x,points=TRUE)
+
+y <- getInfo(x)
+plot(y,points=TRUE)[[1]]+
+  annotation_custom(diagram(y$illustration)[[1]],0,3,-5,0)+
+  expand_limits(y=-5)
+
+playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) \%>\%
+  playMoranWChain(ntimes=4) \%>\%
+  mutate(diag=diagram(illustration)) \%>\%
+  pull(diag) \%>\%
+  plot_grid(plotlist=.,ncol=1)
+
+playMoran(n=8,mu=1,times=0:5,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) -> x
+x \%>\%
+  mutate(diag=diagram(illustration)) \%>\%
+  pull(diag) \%>\%
+  plot_grid(plotlist=.,ncol=1)
+
 }
 \seealso{
 Other Genealogy processes: 

@@ -1,6 +1,7 @@
 // Linear birth-death Genealogy Process with Sampling Simulator (C++)
 
 #include "gp.h"
+#include "internal.h"
 
 typedef struct {double n; } lbdp_state_t;
 
@@ -16,7 +17,6 @@ private:
   } parameters_t;
 
   parameters_t params;
-  state_t state;
 
   // clock: times to next event
   double nextB;
@@ -31,21 +31,19 @@ private:
     return s.n;
   };
 
-protected:
+public:
 
   size_t size (void) const {
-    return sizeof(parameters_t) + 2*sizeof(state_t) + this->gp_tableau_t::size();
+    return sizeof(parameters_t) + this->gp_tableau_t::size();
   };
 
   friend raw_t* operator<< (raw_t *o, const lbdp_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     return o << *dynamic_cast<const gp_tableau_t*>(&T);
   };
 
   friend raw_t* operator>> (raw_t *o, lbdp_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     return o >> *dynamic_cast<gp_tableau_t*>(&T);
   };
 
@@ -186,110 +184,64 @@ public:
     update_clocks();
   };
 
-  // create the serialized state:
-  friend SEXP serial (const lbdp_tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_RAW(T.size()));
-    RAW(out) << T;
-    UNPROTECT(1);
-    return out;
-  }
-
 };
 
-extern "C" {
+lbdp_tableau_t *makeLBDP (SEXP Lambda, SEXP Mu, SEXP Psi, SEXP N0, SEXP T0, SEXP State) {
+  lbdp_tableau_t *gp;
 
-  // BD process
-  // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playLBDP (SEXP Lambda, SEXP Mu, SEXP Psi, SEXP N0, SEXP Times, SEXP T0, SEXP Tree, SEXP State) {
-    int nprotect = 0;
-    int nout = 3;
-    double t = R_NaReal;
-    int ntimes = LENGTH(Times);
-    lbdp_tableau_t *gp;
+  double lambda = R_NaReal;   // birth rate
+  if (!isNull(Lambda)) {
+    lambda = *(REAL(AS_NUMERIC(Lambda)));
+  }
 
-    SEXP times, count;
-    PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
-    PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
+  double mu = R_NaReal;       // death rate
+  if (!isNull(Mu)) {
+    mu = *(REAL(AS_NUMERIC(Mu)));
+  }
 
-    SEXP tree = R_NilValue;
-    int do_newick = *(INTEGER(AS_INTEGER(Tree)));
-    if (do_newick) {
-      PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-      nout++;
-    }
+  double psi = R_NaReal;       // sampling rate
+  if (!isNull(Psi)) {
+    psi = *(REAL(AS_NUMERIC(Psi)));
+  }
 
-    int *xc = INTEGER(count);
-    double *xt = REAL(times);
+  if (isNull(State)) {        // a fresh GP
 
+    double t0 = *REAL(AS_NUMERIC(T0));
+    
     int n0 = na;                // initial number of infections
     if (!isNull(N0)) {
       n0 = *(INTEGER(AS_INTEGER(N0)));
     }
 
-    double lambda = R_NaReal;   // birth rate
-    if (!isNull(Lambda)) {
-      lambda = *(REAL(AS_NUMERIC(Lambda)));
-    }
+    gp = new lbdp_tableau_t(lambda,mu,psi,n0,t0);
 
-    double mu = R_NaReal;       // death rate
-    if (!isNull(Mu)) {
-      mu = *(REAL(AS_NUMERIC(Mu)));
-    }
+  }  else {              // restart the GP from the specified state
 
-    double psi = R_NaReal;       // sampling rate
-    if (!isNull(Psi)) {
-      psi = *(REAL(AS_NUMERIC(Psi)));
-    }
+    gp = new lbdp_tableau_t(RAW(State));
+    // optionally override the stored parameters
+    if (!isNull(Lambda)) gp->birth_rate(lambda);
+    if (!isNull(Mu)) gp->death_rate(mu);
+    if (!isNull(Psi)) gp->sampling_rate(psi);
 
-    GetRNGstate();
-      
-    if (isNull(State)) {        // a fresh GP
+  }
 
-      t = *(REAL(AS_NUMERIC(T0)));
-      gp = new lbdp_tableau_t(lambda,mu,psi,n0,t);
-      gp->valid();
-
-    }  else {              // restart the GP from the specified state
-
-      gp = new lbdp_tableau_t(RAW(State));
-      gp->valid();
-      t = gp->time();
-      // optionally override the stored parameters
-      if (!isNull(Lambda)) gp->birth_rate(lambda);
-      if (!isNull(Mu)) gp->death_rate(mu);
-      if (!isNull(Psi)) gp->sampling_rate(psi);
-      
-    }
-
-    if (t > xt[0]) err("must not have t0 = %lg > %g = times[1]!",t,xt[0]);
-
-    for (int k = 0; k < ntimes; k++, xc++, xt++) {
-      *xc = gp->play(*xt);
-      if (do_newick) newick(tree,k,*gp);
-      R_CheckUserInterrupt();
-    }
-      
-    PutRNGstate();
-
-    gp->valid();
+  gp->valid();
     
-    // pack everything up in a list
-    int k = 0;
-    SEXP out, outnames;
-    PROTECT(out = NEW_LIST(nout)); nprotect++;
-    PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-    k = set_list_elem(out,outnames,times,"time",k);
-    k = set_list_elem(out,outnames,count,"count",k);
-    if (do_newick) {
-      k = set_list_elem(out,outnames,tree,"tree",k);
-    }
-    k = set_list_elem(out,outnames,serial(*gp),"state",k);
-    SET_NAMES(out,outnames);
-      
-    delete gp;
+  return gp;
+}
 
-    UNPROTECT(nprotect);
+extern "C" {
+
+  // BD process
+  // optionally compute genealogies in Newick form ('tree = TRUE').
+  SEXP playLBDP (SEXP Lambda, SEXP Mu, SEXP Psi, SEXP N0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
+    SEXP out = R_NilValue;
+    GetRNGstate();
+    lbdp_tableau_t *gp = makeLBDP(Lambda,Mu,Psi,N0,T0,State);
+    PROTECT(out = playSGP<lbdp_tableau_t>(gp,Times,falseSEXP(),Tree,Ill));
+    PutRNGstate();
+    delete gp;
+    UNPROTECT(1);
     return out;
   }
 
