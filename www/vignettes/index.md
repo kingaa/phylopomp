@@ -92,7 +92,11 @@ dt {
 }
 </style>
 
-- [Verifying the predicted formulae for the SIRwS model.](./testing.html)
+### Checking the theoretical formulae for several models.
+
+- [Moran process](./moran.html)
+- [Linear birth-death process](./lbdp.html)
+- [SIR with sampling (SIRwS)](./sirws.html)
 
 - <a href="#" onclick="goBack()">Back to the **phylopomp** package index</a>
 

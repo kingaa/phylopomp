@@ -3,7 +3,6 @@
 ##' getInfo
 ##'
 ##' @name getInfo
-##' @aliases getinfo
 ##' 
 ##' @param data \code{gpsim} object.
 ##' @param ... arguments passed to specific methods.

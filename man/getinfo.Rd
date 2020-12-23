@@ -2,7 +2,6 @@
 % Please edit documentation in R/getinfo.R
 \name{getInfo}
 \alias{getInfo}
-\alias{getinfo}
 \alias{getInfo.gpsim}
 \title{Retrieve information from genealogy process simulation}
 \usage{

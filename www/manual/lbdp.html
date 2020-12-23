@@ -16,7 +16,18 @@
 <h3>Usage</h3>
 
 <pre>
-playLBDP(data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE)
+playLBDP(
+  data = NULL,
+  ...,
+  lambda,
+  mu,
+  n0,
+  psi,
+  t0 = 0,
+  times,
+  tree = FALSE,
+  ill = FALSE
+)
 </pre>
 
 
@@ -25,8 +36,7 @@ playLBDP(data = NULL, ..., lambda, mu, n0, psi, t0 = 0, times, tree = FALSE)
 <table summary="R argblock">
 <tr valign="top"><td><code>data</code></td>
 <td>
-<p>optional data frame;
-output from <code>playLBDP</code>.</p>
+<p>optional data frame; output from <code>playLBDP</code>.</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
@@ -59,6 +69,10 @@ output from <code>playLBDP</code>.</p>
 <tr valign="top"><td><code>tree</code></td>
 <td>
 <p>logical; represent the genealogical tree in Newick format?</p>
+</td></tr>
+<tr valign="top"><td><code>ill</code></td>
+<td>
+<p>logical; return an illustration?</p>
 </td></tr>
 </table>
 
@@ -98,5 +112,5 @@ y$cumhaz %&gt;%
   geom_abline(slope=1)
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.4.0 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.8.2 <a href="00Index.html">Index</a>]</div>
 </body></html>

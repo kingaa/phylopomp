@@ -41,4 +41,4 @@ default: index.html
 	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
 clean:
-	$(RM) -r figure cache
+	$(RM) -r tmp

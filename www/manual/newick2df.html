@@ -33,20 +33,32 @@ newick2df(tree)
 <h3>Value</h3>
 
 <p>A data frame suitable for use as <code>pomp</code> input.
+This data frame will have three columns:
 </p>
+
+<dl>
+<dt>time</dt><dd><p>numeric</p>
+</dd>
+<dt>lineages</dt><dd><p>integer; the lineage-count function</p>
+</dd>
+<dt>code</dt><dd><p>integer; a code describing the nature of the event.
+0 indicates a coalescence; 1 indicates a dead sample; 2 indicates a live sample.</p>
+</dd>
+</dl>
+
 
 
 <h3>Examples</h3>
 
 <pre>
-playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=5,t0=0,tree=TRUE) -&gt; x
+playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=c(0,5),t0=0,tree=TRUE) -&gt; x
 y &lt;- getInfo(x)
 newick2df(y$tree) -&gt; z
-head(z)
 
-# compare to y
-head(y$lineages)
+# compare to y$lineages
+y$lineages %&gt;%
+  all.equal(tail(z,-1)[,1:2],tolerance=1e-5)
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.4.0 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.8.2 <a href="00Index.html">Index</a>]</div>
 </body></html>

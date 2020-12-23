@@ -23,7 +23,21 @@ playMoran(
   mu,
   t0 = 0,
   times,
+  sample = TRUE,
   tree = FALSE,
+  ill = FALSE,
+  stationary = TRUE
+)
+
+playMoranWChain(
+  data = NULL,
+  ...,
+  n,
+  mu,
+  t0 = 0,
+  ntimes,
+  tree = TRUE,
+  ill = TRUE,
   stationary = TRUE
 )
 </pre>
@@ -34,8 +48,7 @@ playMoran(
 <table summary="R argblock">
 <tr valign="top"><td><code>data</code></td>
 <td>
-<p>optional data frame;
-output from <code>playMoran</code>.</p>
+<p>optional data frame; output from <code>playMoran</code> or <code>playMoranWChain</code></p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
@@ -47,7 +60,7 @@ output from <code>playMoran</code>.</p>
 </td></tr>
 <tr valign="top"><td><code>mu</code></td>
 <td>
-<p>Moran event rate</p>
+<p>Moran event rate.</p>
 </td></tr>
 <tr valign="top"><td><code>t0</code></td>
 <td>
@@ -57,14 +70,27 @@ output from <code>playMoran</code>.</p>
 <td>
 <p>times at which output is requested.</p>
 </td></tr>
+<tr valign="top"><td><code>sample</code></td>
+<td>
+<p>logical;
+if <code>sample=TRUE</code>, a sample is taken at each of the specified times.</p>
+</td></tr>
 <tr valign="top"><td><code>tree</code></td>
 <td>
 <p>logical; represent the genealogical tree in Newick format?</p>
+</td></tr>
+<tr valign="top"><td><code>ill</code></td>
+<td>
+<p>logical; return an illustration?</p>
 </td></tr>
 <tr valign="top"><td><code>stationary</code></td>
 <td>
 <p>logical;
 should the initial genealogy be drawn from the stationary distribution?</p>
+</td></tr>
+<tr valign="top"><td><code>ntimes</code></td>
+<td>
+<p>integer; number of timesteps to advance the chain.</p>
 </td></tr>
 </table>
 
@@ -86,16 +112,49 @@ should the initial genealogy be drawn from the stationary distribution?</p>
 <h3>Examples</h3>
 
 <pre>
-playMoran(n=5,mu=5,times=1:10,t0=0,tree=TRUE) -&gt; x
+library(tidyverse)
+library(cowplot)
+
+playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -&gt; x
 playMoran(x,times=11:20,tree=TRUE) -&gt; x
 plot(x)
 
-playMoran(n=20,mu=20,times=1:20,stationary=FALSE,tree=TRUE) -&gt; x
-plot(x)
+playMoran(n=5,mu=10,times=0:10,t0=-3) %&gt;%
+  getInfo() -&gt; y
+plot(y,points=TRUE,diagram=TRUE)
+
+playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -&gt; x
+plot(x,points=TRUE)
 
 y &lt;- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
+
+playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -&gt; x
+plot(x,points=TRUE,diagram=TRUE)
+
+y &lt;- getInfo(x)
+plot(y,points=TRUE,diagram=TRUE)
+
+playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) -&gt; x
+x %&gt;% getInfo(prune=FALSE,compact=TRUE) -&gt; y
+plot(y,points=TRUE,diagram=TRUE)
+
+x %&gt;% getInfo(prune=TRUE,compact=TRUE) -&gt; y
+plot(y,points=TRUE,diagram=TRUE)
+
+playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) %&gt;%
+  playMoranWChain(ntimes=4) %&gt;%
+  mutate(diag=diagram(illustration)) %&gt;%
+  pull(diag) %&gt;%
+  plot_grid(plotlist=.,ncol=1)
+
+playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) %&gt;%
+  playMoranWChain(ntimes=40) %&gt;%
+  mutate(diag=diagram(illustration)) %&gt;%
+  pull(diag) %&gt;%
+  magrittr::extract(35:40) %&gt;%
+  plot_grid(plotlist=.,ncol=1)
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.4.0 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.8.2 <a href="00Index.html">Index</a>]</div>
 </body></html>

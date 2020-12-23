@@ -41,4 +41,4 @@ default: index.html sirws.html moran.html lbdp.html
 	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
 fresh:
-	$(RM) -r figure cache
+	$(RM) -r tmp
