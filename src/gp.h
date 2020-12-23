@@ -813,13 +813,17 @@ public:
   
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, const gp_tableau_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.newick().c_str()));
+  friend void newick (SEXP x, int k, const gp_tableau_t &T, bool compact = false) {
+    if (compact) {
+      SET_STRING_ELT(x,k,mkChar(T.compact_newick().c_str()));
+    } else {
+      SET_STRING_ELT(x,k,mkChar(T.newick().c_str()));
+    }
   }
 
-  friend SEXP newick (const gp_tableau_t &T) {
+  friend SEXP newick (const gp_tableau_t &T, bool compact = false) {
     SEXP x;
-    std::string s = T.newick();
+    std::string s = (compact) ? T.compact_newick() : T.newick();
     PROTECT(x = NEW_CHARACTER(1));
     SET_STRING_ELT(x,0,mkChar(s.c_str()));
     UNPROTECT(1);
@@ -915,23 +919,6 @@ private:
     o += ")i_;";
     return o;
   };
-
-public:
-
-  // extract the tree structure in Newick form.
-  // store in element k of character-vector x.
-  friend void compact_newick (SEXP x, int k, const gp_tableau_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.compact_newick().c_str()));
-  }
-
-  friend SEXP compact_newick (const gp_tableau_t &T) {
-    SEXP x;
-    std::string s = T.compact_newick();
-    PROTECT(x = NEW_CHARACTER(1));
-    SET_STRING_ELT(x,0,mkChar(s.c_str()));
-    UNPROTECT(1);
-    return x;
-  }
 
 private:
 
@@ -1303,43 +1290,6 @@ SEXP serial (const GPTYPE &T) {
   return out;
 }
 
-// extract/compute basic information.
-template <class GPTYPE>
-SEXP get_info (SEXP X, SEXP Prune) {
-  int nprotect = 0;
-  
-  // reconstruct the tableau from its serialization
-  GPTYPE gp(RAW(X));
-  // check validity
-  gp.valid();
-  
-  // extract current time
-  SEXP tout;
-  PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
-  *REAL(tout) = gp.time();
-
-  // prune if requested
-  if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
-
-  // pack up return values in a list
-  int nout = 7;
-  int k = 0;
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout)); nprotect++;
-  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-  k = set_list_elem(out,outnames,tout,"time",k);
-  k = set_list_elem(out,outnames,describe(gp),"description",k);
-  k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
-  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
-  k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
-  k = set_list_elem(out,outnames,newick(gp),"tree",k);
-  k = set_list_elem(out,outnames,compact_newick(gp),"compact_tree",k);
-  SET_NAMES(out,outnames);
-
-  UNPROTECT(nprotect);
-  return out;
-}
-
 // play a genealogy process
 // this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
@@ -1516,6 +1466,44 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
     k = set_list_elem(out,outnames,ill,"illustration",k);
   }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(nprotect);
+  return out;
+}
+
+// extract/compute basic information.
+template <class GPTYPE>
+SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
+  int nprotect = 0;
+  
+  // reconstruct the tableau from its serialization
+  GPTYPE gp(RAW(X));
+  // check validity
+  gp.valid();
+  
+  // extract current time
+  SEXP tout;
+  PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
+  *REAL(tout) = gp.time();
+
+  // prune if requested
+  if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
+
+  bool compact = *LOGICAL(AS_LOGICAL(Compact));
+
+  // pack up return values in a list
+  int nout = 6;
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout)); nprotect++;
+  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,tout,"time",k);
+  k = set_list_elem(out,outnames,describe(gp),"description",k);
+  k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
+  k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
+  k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);

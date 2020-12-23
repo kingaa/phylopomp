@@ -242,8 +242,8 @@ extern "C" {
   }
 
   // extract/compute basic information.
-  SEXP get_LBDP_info (SEXP X, SEXP Prune) {
-    return get_info<lbdp_tableau_t>(X,Prune);
+  SEXP get_LBDP_info (SEXP X, SEXP Prune, SEXP Compact) {
+    return get_info<lbdp_tableau_t>(X,Prune,Compact);
   }
 
 }

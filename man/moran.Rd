@@ -89,12 +89,10 @@ y <- getInfo(x)
 plot(y,points=TRUE,diagram=TRUE)
 
 playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) -> x
-x \%>\% getInfo(prune=FALSE) -> y
-y$tree <- y$compact_tree
+x \%>\% getInfo(prune=FALSE,compact=TRUE) -> y
 plot(y,points=TRUE,diagram=TRUE)
 
-x \%>\% getInfo(prune=TRUE) -> y
-y$tree <- y$compact_tree
+x \%>\% getInfo(prune=TRUE,compact=TRUE) -> y
 plot(y,points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) \%>\%

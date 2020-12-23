@@ -253,8 +253,8 @@ extern "C" {
   }
 
   // extract/compute basic information.
-  SEXP get_SIRwS_info (SEXP X, SEXP Prune) {
-    return get_info<sirws_tableau_t>(X,Prune);
+  SEXP get_SIRwS_info (SEXP X, SEXP Prune, SEXP Compact) {
+    return get_info<sirws_tableau_t>(X,Prune,Compact);
   }
 
 }

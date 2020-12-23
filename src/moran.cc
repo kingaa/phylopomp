@@ -201,8 +201,8 @@ extern "C" {
   }
 
   // extract/compute basic information.
-  SEXP get_Moran_info (SEXP X, SEXP Prune) {
-    return get_info<moran_tableau_t>(X,Prune);
+  SEXP get_Moran_info (SEXP X, SEXP Prune, SEXP Compact) {
+    return get_info<moran_tableau_t>(X,Prune,Compact);
   }
 
 }

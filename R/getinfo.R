@@ -8,6 +8,7 @@
 ##' @param data \code{gpsim} object.
 ##' @param ... arguments passed to specific methods.
 ##' @param prune logical; prune the tree?
+##' @param compact logical; return the tree in compact representation?
 ##'
 ##' @include package.R
 ##' @importFrom tibble as_tibble
@@ -22,12 +23,12 @@ getInfo <- function (data, ...) {
 
 ##' @rdname getinfo
 ##' @export
-getInfo.gpsim <- function (data, ..., prune  = TRUE) {
+getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = FALSE) {
   x <- switch(
     attr(data,"model"),
-    SIRwS = .Call(P_get_SIRwS_info,attr(data,"state"),prune),
-    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune),
-    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune),
+    SIRwS = .Call(P_get_SIRwS_info,attr(data,"state"),prune,compact),
+    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune,compact),
+    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune,compact),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
   x$cumhaz <- as_tibble(x$cumhaz)
