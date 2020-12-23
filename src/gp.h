@@ -63,7 +63,7 @@ protected:
   typedef std::vector<ball_t*> balls_t;
   typedef std::vector<player_t*> players_t;
 
-  name_t _unique;			    // next unique name
+  name_t _unique;                           // next unique name
   union {player_t *left; name_t leftmost;}; // player seated farthest to left
   union {player_t *right; name_t rightmost;}; // player seated farthest to right
   double _t0;                                 // initial time
@@ -124,17 +124,17 @@ protected:
     // human-readable info
     std::string describe (const gp_tableau_t *T) const {
       if (color==green) {
-	return color_name() + "(" + std::to_string(T->player[name]->uniq) + ")";
+        return color_name() + "(" + std::to_string(T->player[name]->uniq) + ")";
       } else {
-	return color_name() + "(" + std::to_string(name) + ")";
+        return color_name() + "(" + std::to_string(name) + ")";
       }
     };
     // machine-readable description
     std::string illustrate (const gp_tableau_t *T) const {
       if (color==green) {
-	return color_symbol() + "," + std::to_string(T->player[name]->uniq);
+        return color_symbol() + "," + std::to_string(T->player[name]->uniq);
       } else {
-	return color_symbol() + "," + std::to_string(name);
+        return color_symbol() + "," + std::to_string(name);
       }
     };
     // size of binary serialization
@@ -736,29 +736,6 @@ private:
     return o;
   };
 
-  std::string compact_newick (name_t &name, const double &tpar) const {
-
-    std::string o = "";
-    player_t *p = player[name];
-    ball_t *a = p->ballA;
-    ball_t *b = p->ballB;
-    
-    if ((a->is(blue) && b->is(red)) || (a->is(red) && b->is(blue))) {
-      o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
-    } else if (a->is(green) && b->is(blue)) {
-      o = "(" + compact_newick(a->name,p->slate) + ")b_" + std::to_string(p->name) + ":" +
-        std::to_string(p->slate - tpar);
-    } else if (a->is(blue) && b->is(green)) {
-      o = "(" + compact_newick(b->name,p->slate) + ")b_" + std::to_string(p->name) + ":" +
-        std::to_string(p->slate - tpar);
-    } else if (a->is(green) && b->is(green)) {
-      o = "(" + compact_newick(a->name,p->slate) + "," + compact_newick(b->name,p->slate) + ")g_" +
-        std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
-    }
-
-    return o;
-  };
-
 public:
 
   // put genealogy at current time into Newick format.
@@ -803,8 +780,71 @@ public:
     return x;
   }
 
-protected:
+private:
+  
+  std::string compact_newick (name_t &name, const double &tpar) const {
 
+    std::string o = "";
+    player_t *p = player[name];
+    ball_t *a = p->ballA;
+    ball_t *b = p->ballB;
+    
+    // the following depends strongly on the integer equivalents of the color enum:
+    // (typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;)
+    int cc = 10*static_cast<short>(a->color)+static_cast<short>(b->color);
+
+    switch (cc) {
+    case 00:                    // green+green
+      {
+        std::string as = compact_newick(a->name,p->slate);
+        std::string bs = compact_newick(b->name,p->slate);
+        if (!as.empty() && !bs.empty()) {
+          o = "(" + as + "," + bs + ")g_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        } else if (!as.empty() && bs.empty()) {
+          o = as;
+        } else if (as.empty() && !bs.empty()) {
+          o = bs;
+        }
+      }
+      break;
+    case 23: case 32:           // blue+red
+      o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+      break;
+    case 02:                    // green,blue
+      {
+        std::string as = compact_newick(a->name,p->slate);
+        if (!as.empty()) {
+          o = "(" + as + ")b_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        } else {
+          o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        }
+      }
+      break;
+    case 20:                    // blue,green
+      {
+        std::string bs = compact_newick(b->name,p->slate);
+        if (!bs.empty()) {
+          o = "(" + bs + ")b_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        } else {
+          o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        }
+      }
+      break;
+    case 01: case 03:           // green,black or green,red
+      o = compact_newick(a->name,tpar);
+      break;
+    case 10: case 30:           // black,green or red,green
+      o = compact_newick(b->name,tpar);
+      break;
+    default:
+      break;
+    }
+
+    return o;
+  };
+
+public:
+  
   // put genealogy at current time into compact Newick format.
   std::string compact_newick (void) const {
     player_t *p = anchor();
@@ -815,10 +855,14 @@ protected:
         ball_t *b = p->other(green_ball(p));
         switch (b->color) {
         case green:
-          o += ",((" + compact_newick(b->name,te) + ")g_" + std::to_string(p->name) + ":0.0)i_:0.0";
+          {
+            std::string bs = compact_newick(b->name,te);
+            if (!bs.empty()) {
+              o += ",((" + bs + ")g_" + std::to_string(p->name) + ":0.0)i_:0.0";
+            }
+          }
           break;
         default:
-          err("c'est impossible!");
           break;
         }
       }
@@ -827,6 +871,21 @@ protected:
     o += ")i_;";
     return o;
   };
+
+  // extract the tree structure in Newick form.
+  // store in element k of character-vector x.
+  friend void compact_newick (SEXP x, int k, const gp_tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.compact_newick().c_str()));
+  }
+
+  friend SEXP compact_newick (const gp_tableau_t &T) {
+    SEXP x;
+    std::string s = T.compact_newick();
+    PROTECT(x = NEW_CHARACTER(1));
+    SET_STRING_ELT(x,0,mkChar(s.c_str()));
+    UNPROTECT(1);
+    return x;
+  }
 
 private:
 
@@ -1203,25 +1262,6 @@ public:
     return rv;
   };
 
-  template <class GPTYPE>
-  friend void comp_newick (SEXP x, int k, const GPTYPE &T) {
-    SEXP s;
-    PROTECT(s = comp_newick(T));
-    SET_STRING_ELT(x,k,s);
-    UNPROTECT(1);
-  }
-
-  template <class GPTYPE>
-  friend SEXP comp_newick (const GPTYPE &T) {
-    GPTYPE U = T;
-    std::string s = U.compact_newick();
-    SEXP x;
-    PROTECT(x = NEW_CHARACTER(1));
-    SET_STRING_ELT(x,0,mkChar(s.c_str()));
-    UNPROTECT(1);
-    return x;
-  }
-
 };
 
 // create the serialized state:
@@ -1264,7 +1304,7 @@ SEXP get_info (SEXP X, SEXP Prune) {
   k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
   k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
   k = set_list_elem(out,outnames,newick(gp),"tree",k);
-  //  k = set_list_elem(out,outnames,comp_newick(gp),"compact_tree",k);
+  k = set_list_elem(out,outnames,compact_newick(gp),"compact_tree",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);

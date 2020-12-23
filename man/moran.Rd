@@ -92,6 +92,20 @@ plot(y,points=TRUE)[[1]]+
   annotation_custom(diagram(y$illustration)[[1]],0,3,-5,0)+
   expand_limits(y=-5)
 
+playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) \%>\%
+  getInfo(prune=FALSE) -> y
+y$tree <- y$compact_tree
+plot(y,points=TRUE)[[1]]+
+  annotation_custom(diagram(y$illustration)[[1]],0,10,-5,0)+
+  expand_limits(y=-5)
+
+playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) \%>\%
+  getInfo(prune=TRUE) -> y
+y$tree <- y$compact_tree
+plot(y,points=TRUE)[[1]]+
+  annotation_custom(diagram(y$illustration)[[1]],0,10,-5,0)+
+  expand_limits(y=-5)
+
 playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) \%>\%
   playMoranWChain(ntimes=4) \%>\%
   mutate(diag=diagram(illustration)) \%>\%
