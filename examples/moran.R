@@ -7,9 +7,7 @@ plot(x)
 
 playMoran(n=5,mu=10,times=0:10,t0=-3) %>%
   getInfo() -> y
-plot(y,points=TRUE)[[1]]+
-  annotation_custom(diagram(y$illustration,fontsize=8)[[1]],0,10,-9,0)+
-  expand_limits(y=-9)
+plot(y,points=TRUE,diagram=TRUE)
 
 playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
 plot(x,points=TRUE)
@@ -18,26 +16,19 @@ y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
 
 playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x,points=TRUE)
+plot(x,points=TRUE,diagram=TRUE)
 
 y <- getInfo(x)
-plot(y,points=TRUE)[[1]]+
-  annotation_custom(diagram(y$illustration)[[1]],0,3,-5,0)+
-  expand_limits(y=-5)
+plot(y,points=TRUE,diagram=TRUE)
 
-playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) %>%
-  getInfo(prune=FALSE) -> y
+playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) -> x
+x %>% getInfo(prune=FALSE) -> y
 y$tree <- y$compact_tree
-plot(y,points=TRUE)[[1]]+
-  annotation_custom(diagram(y$illustration)[[1]],0,10,-5,0)+
-  expand_limits(y=-5)
+plot(y,points=TRUE,diagram=TRUE)
 
-playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) %>%
-  getInfo(prune=TRUE) -> y
+x %>% getInfo(prune=TRUE) -> y
 y$tree <- y$compact_tree
-plot(y,points=TRUE)[[1]]+
-  annotation_custom(diagram(y$illustration)[[1]],0,10,-5,0)+
-  expand_limits(y=-5)
+plot(y,points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) %>%
   playMoranWChain(ntimes=4) %>%

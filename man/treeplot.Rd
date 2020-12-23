@@ -4,7 +4,7 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(data, ladderize = TRUE, points = FALSE)
+treeplot(data, ladderize = TRUE, points = FALSE, diagram = FALSE)
 }
 \arguments{
 \item{data}{Output of one of the \code{play} functions.}
@@ -12,6 +12,8 @@ treeplot(data, ladderize = TRUE, points = FALSE)
 \item{ladderize}{Ladderize?}
 
 \item{points}{Show nodes and tips?}
+
+\item{diagram}{Show a diagram?}
 }
 \value{
 A printable \code{ggtree} object.

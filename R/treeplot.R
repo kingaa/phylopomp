@@ -2,11 +2,12 @@
 ##'
 ##' Plots a genealogical tree.
 ##'
-##' @include package.R
+##' @include package.R diagram.R
 ##'
 ##' @param data Output of one of the \code{play} functions.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
+##' @param diagram Show a diagram?
 ##'
 ##' @return A printable \code{ggtree} object.
 ##'
@@ -22,7 +23,7 @@
 ##' @rdname treeplot
 ##' @export
 ##' 
-treeplot <- function (data, ladderize = TRUE, points = FALSE) {
+treeplot <- function (data, ladderize = TRUE, points = FALSE, diagram = FALSE) {
   if (is.null(data$tree))
     stop(sQuote("data")," contains no variable ",sQuote("tree"),call.=FALSE)
   read.tree(text=data$tree) %>%
@@ -38,7 +39,15 @@ treeplot <- function (data, ladderize = TRUE, points = FALSE) {
       nodecol=ball_colors[nodecol]
     ) %>%
     ungroup(.id) -> dat
-  foreach (d=split(dat,dat$.id)) %dopar% {
+
+  if (diagram) {
+    dg <- diagram(data$illustration)
+  }
+  
+  foreach (
+    k=seq_len(length(unique(dat$.id))),
+    d=split(dat,dat$.id)
+  ) %dopar% {
     attr(d,"layout") <- "rectangular"
     d %>%
       ggplot(aes(x=x,y=y))+
@@ -55,6 +64,16 @@ treeplot <- function (data, ladderize = TRUE, points = FALSE) {
         scale_color_identity()+
         guides(color=FALSE) -> pl
     }
+    if (diagram) {
+      ymin <- 4/3*min(dat$y)-1/3*max(dat$y)
+      pl+
+        annotation_custom(
+          dg[[k]],
+          xmin=min(dat$x),xmax=max(dat$x),
+          ymin=ymin,ymax=0
+        )+
+        expand_limits(y=ymin) -> pl
+    }
     pl
   }
 }
@@ -69,7 +88,7 @@ ball_colors <- c(
 )
 
 utils::globalVariables(
-         c("label","nodecol","%dopar%","x","y",".id","vis")
+         c(".id","k","label","nodecol","vis","x","y")
        )
 
 ##' @export
