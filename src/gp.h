@@ -39,12 +39,8 @@ static int set_list_elem (SEXP list, SEXP names, SEXP element,
   return ++pos;
 }
 
-// BALL COLORS
-// green must be first, numbers in sequence.
-static const name_t ncolors = 6;
 static const char *colores[] = {"green", "black", "blue", "red", "grey"};
 static const char *colorsymb[] = {"g", "o", "b", "r", "z"};
-typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;
 
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
@@ -54,12 +50,18 @@ class gp_tableau_t  {
 
 protected:
 
+  // BALL COLORS
+  // green must be first, numbers in sequence.
+  static const name_t ncolors = 5;
+  typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;
+
   typedef STATE state_t;
+
+private:
+
   class ball_t;
   class player_t;
 
-protected:
-  
   typedef std::vector<ball_t*> balls_t;
   typedef std::vector<player_t*> players_t;
 
@@ -71,9 +73,12 @@ protected:
   players_t player;             // pointers to all players
   balls_t balls[ncolors];       // one for each color class
   bool use_ghosts;              // insert a ghost to track state after death?
-  state_t state;                // current state of the GP
 
 protected:
+
+  state_t state;                // current state of the GP
+
+private:
 
   // BALL CLASS
   // each ball has:
@@ -330,6 +335,27 @@ private:
     return new player_t(col,this);
   };
   
+  void dismiss_player (player_t *p) {
+    if (!p->holds_own())
+      err("cannot drop a player that does not hold his own ball.");
+    ball_t *g = green_ball(p);
+    ball_t *a = p->other(g);
+    if (a->is(green))
+      err("cannot drop a player holding two green balls.");
+    swap(a,balls[a->color].back());
+    swap(g,balls[green].back());
+    player_t *q = player.back();
+    name_t n = p->name;
+    p->name = q->name; q->name = n;
+    q->ballA->hand(q->name);
+    q->ballB->hand(q->name);
+    player[n] = q;
+    balls[green].pop_back();
+    balls[a->color].pop_back();
+    player.pop_back();
+    delete p;
+  }
+
   // clean up
   void clean (void) {
     for (name_t i = 0; i < nplayers(); i++) delete player[i];
@@ -342,7 +368,7 @@ private:
     _unique = 0;
   };
 
-public:
+protected:
 
   // size of serialized binary form
   size_t size (void) const {
@@ -456,6 +482,8 @@ protected:
     _time = t;
   };
 
+private:
+
   // get anchor player
   player_t *anchor (void) const {
     return left;
@@ -520,6 +548,8 @@ public:
     return (balls[black].size() > 0 && !max_size_exceeded());
   }
 
+private:
+
   // report all the seating times and lineage count
   name_t lineage_count (double *t = 0, int *ct = 0) const {
     player_t *p = anchor();
@@ -545,6 +575,8 @@ public:
     return n;
   };
 
+public:
+
   friend SEXP lineage_count (const gp_tableau_t & T) {
     SEXP t, ct, rv, rvn;
     int nt = T.lineage_count();
@@ -560,6 +592,8 @@ public:
     return rv;
   }
 
+private:
+
   // human-readable info
   std::string describe (void) const {
     player_t *p = anchor();
@@ -573,6 +607,23 @@ public:
     return o;
   };
 
+public:
+  
+  // create a human-readable description
+  friend void describe (SEXP x, int k, const gp_tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.describe().c_str()));
+  }
+
+  friend SEXP describe (const gp_tableau_t &T) {
+    SEXP out;
+    PROTECT(out = NEW_CHARACTER(1));
+    SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
+    UNPROTECT(1);
+    return out;
+  }
+
+private:
+  
   // machine-readable info
   std::string illustrate (void) const {
     std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
@@ -584,14 +635,7 @@ public:
     return o;
   };
 
-  // create a human-readable description
-  friend SEXP describe (const gp_tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
-    UNPROTECT(1);
-    return out;
-  }
+public:
 
   // create a machine-readable description
   friend void illustrate (SEXP x, int k, const gp_tableau_t &T) {
@@ -605,6 +649,8 @@ public:
     UNPROTECT(1);
     return out;
   }
+
+protected:
 
   // check the validity of the gp_tableau.
   void valid (void) const {
@@ -736,8 +782,6 @@ private:
     return o;
   };
 
-public:
-
   // put genealogy at current time into Newick format.
   std::string newick (void) const {
     valid();
@@ -765,6 +809,8 @@ public:
     return o;
   };
 
+public:
+  
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
   friend void newick (SEXP x, int k, const gp_tableau_t &T) {
@@ -843,8 +889,6 @@ private:
     return o;
   };
 
-public:
-  
   // put genealogy at current time into compact Newick format.
   std::string compact_newick (void) const {
     player_t *p = anchor();
@@ -871,6 +915,8 @@ public:
     o += ")i_;";
     return o;
   };
+
+public:
 
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
@@ -969,27 +1015,6 @@ private:
     p->slate = _time;
   };
 
-  void drop_player (player_t *p) {
-    if (!p->holds_own())
-      err("cannot drop a player that does not hold his own ball.");
-    ball_t *g = green_ball(p);
-    ball_t *a = p->other(g);
-    if (a->is(green))
-      err("cannot drop a player holding two green balls.");
-    swap(a,balls[a->color].back());
-    swap(g,balls[green].back());
-    player_t *q = player.back();
-    name_t n = p->name;
-    p->name = q->name; q->name = n;
-    q->ballA->hand(q->name);
-    q->ballB->hand(q->name);
-    player[n] = q;
-    balls[green].pop_back();
-    balls[a->color].pop_back();
-    player.pop_back();
-    delete p;
-  }
-
   // unseat the player holding ball a.
   void unseat (ball_t *a) {
     if (a->is(green)) err("do not unseat by green ball!");
@@ -997,7 +1022,7 @@ private:
     ball_t *g = green_ball(p);
     swap(p->other(a),g);
     extract(p);
-    drop_player(p);
+    dismiss_player(p);
   };
 
   // change a ball's color
@@ -1157,6 +1182,8 @@ public:
     return *this;
   };
 
+private:
+
   // walk backward from each sample.
   // calls to the RNG are made here.
   void walk (double *t, double *haz) const {
@@ -1244,6 +1271,8 @@ public:
     }
     PutRNGstate();
   };
+
+public:
 
   // create the serialized state:
   friend SEXP walk (const gp_tableau_t &T) {

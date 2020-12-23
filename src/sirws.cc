@@ -99,10 +99,6 @@ public:
     if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
     if (params.N != state.S+state.I+state.R) err("population leakage!");
     if (clock() < time()) err("invalid clock");
-    for (name_t n = 0; n < nplayers(); n++) {
-      if (player[n]->state.S+player[n]->state.I+player[n]->state.R != params.N)
-        err("invalid player state!\n%s",player[n]->describe(this).c_str());
-    }
   };
   
   // get transmission rate
