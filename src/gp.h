@@ -1006,10 +1006,14 @@ private:
   void unseat (ball_t *a) {
     if (a->is(green)) err("do not unseat by green ball!");
     player_t *p = holder(a);
-    ball_t *g = green_ball(p);
-    swap(p->other(a),g);
-    extract(p);
-    dismiss_player(p);
+    if (a->is(black) && p->other(a)->is(blue)) {
+      change(a,red);
+    } else {
+      ball_t *g = green_ball(p);
+      swap(p->other(a),g);
+      extract(p);
+      dismiss_player(p);
+    }
   };
 
   // change a ball's color
@@ -1030,18 +1034,6 @@ private:
   void drop (color_t col) {
     while (balls[col].size() > 0) {
       unseat(balls[col].back());
-    }
-  };
-
-  // drop zero-length branches associated with samples
-  void drop_redundant (void) {
-    player_t *p = lead();
-    while (p != 0) {
-      player_t *pp = p->left;
-      if (p->holds(red) && p->holds(green)) {
-        unseat(p->ball(red));
-      }
-      p = pp;
     }
   };
 
@@ -1089,10 +1081,8 @@ private:
     if (live()) {
       ball_t *a = random_black_ball();
       player_t *p = make_player(blue);
-      player_t *q = make_player(red);
-      q->state = p->state = s;
+      p->state = s;
       seat(p->ball(blue),a);
-      seat(q->ball(red),a);
     }
   };
 
@@ -1164,7 +1154,6 @@ public:
   gp_tableau_t &prune (void) {
     drop(black);
     drop(grey);
-    drop_redundant();
     valid();
     return *this;
   };
