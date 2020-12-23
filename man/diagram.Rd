@@ -10,7 +10,7 @@ diagram(illustration, ...)
 \item{illustration}{character;
 illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.}
 
-\item{...}{graphical parameter settings. See \code{\link[grid:gpar]{gpar}}.}
+\item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
 }
 \value{
 A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
@@ -21,43 +21,17 @@ Produces a diagram of the genealogy process state.
 \examples{
 library(tidyverse)
 playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
-  stationary=FALSE,ill=TRUE,tree=TRUE) \%>\%
-  mutate(grob=diagram(illustration,fontsize=9)) -> x
-plot(x[5,],points=TRUE)[[1]]+
-  annotation_custom(x$grob[[5]],xmin=0,xmax=150,ymin=12,ymax=16)
+  stationary=FALSE,ill=TRUE,tree=TRUE) -> x
+plot(x[5,],points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=100:130,sample=FALSE,tree=TRUE,ill=TRUE) \%>\%
   mutate(dg=diagram(illustration)) -> x
-plot(x,points=TRUE) -> pl
-lapply(
-  seq_along(pl),
-  function(k) {
-    pl[[k]]+
-      expand_limits(y=-5)+
-      annotation_custom(
-        x$dg[[k]],
-        xmin=105,xmax=125,
-        ymin=-5,ymax=0
-      )
-  }
-)
+plot(x,points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=0:30,sample=FALSE,tree=TRUE,ill=TRUE,
   stationary=FALSE) \%>\%
   mutate(dg=diagram(illustration)) -> x
-plot(x,points=TRUE) -> pl
-lapply(
-  seq_along(pl),
-  function(k) {
-    pl[[k]]+
-      expand_limits(y=-5)+
-      annotation_custom(
-        x$dg[[k]],
-        xmin=5,xmax=25,
-        ymin=-5,ymax=0
-      )
-  }
-)
+plot(x,points=TRUE,diagram=TRUE)
 
 library(cowplot)
 playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) \%>\%

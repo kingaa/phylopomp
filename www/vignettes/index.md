@@ -92,6 +92,10 @@ dt {
 }
 </style>
 
+### Illustration of the Genealogy Process
+
+- [Moran genealogy process](./mgp.html)
+
 ### Checking the theoretical formulae for several models.
 
 - [Moran process](./moran.html)

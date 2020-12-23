@@ -22,7 +22,7 @@ params:
 ```{r pkgs,echo=FALSE,results="hide",message=FALSE,cache=FALSE}
 library(phylopomp)
 library(tidyverse)
-set.seed(407643109L)
+set.seed(437642209L)
 ```
 
 ## Verifying the attachment distribution
@@ -34,7 +34,7 @@ These should be perfectly distributed according to the standard exponential dist
 library(doParallel)
 library(doRNG)
 registerDoParallel()
-registerDoRNG(438522210)
+registerDoRNG(402385810)
 
 expand_grid(
   lambda=1,

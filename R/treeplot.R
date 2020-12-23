@@ -17,6 +17,7 @@
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
 ##' @importFrom dplyr mutate group_by ungroup
 ##' @importFrom tidyr separate
+##' @importFrom scales alpha
 ##' @importFrom utils globalVariables
 ##'
 ##' @name treeplot
