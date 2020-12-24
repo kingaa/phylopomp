@@ -33,7 +33,7 @@ These should be perfectly distributed according to the standard exponential dist
 ```{r hazards,echo=TRUE,cache=TRUE}
 library(doParallel)
 library(doRNG)
-registerDoParallel()
+## registerDoParallel()
 registerDoRNG(402385810)
 
 expand_grid(

@@ -2955,7 +2955,7 @@ div.tocify {
 <p>We investigate the distributions of the cumulative hazards of the conditional attachment process. These should be perfectly distributed according to the standard exponential distribution.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(doParallel)</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(doRNG)</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">registerDoParallel</span>()</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">## registerDoParallel()</span></span>
 <span id="cb1-4"><a href="#cb1-4"></a><span class="kw">registerDoRNG</span>(<span class="dv">402385810</span>)</span>
 <span id="cb1-5"><a href="#cb1-5"></a></span>
 <span id="cb1-6"><a href="#cb1-6"></a><span class="kw">expand_grid</span>(</span>

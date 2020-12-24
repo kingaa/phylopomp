@@ -11,7 +11,14 @@ png(filename="sirws3-%02d.png",res=100)
 
 theme_set(theme_bw())
 
-registerDoParallel()
+chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+if (nzchar(chk) && chk == "TRUE") {
+  ## use 2 cores in CRAN/Travis/AppVeyor
+  registerDoParallel(2)
+} else {
+  ## use all cores in devtools::test()
+  registerDoParallel()
+}
 registerDoRNG(1234166095)
 
 expand_grid(

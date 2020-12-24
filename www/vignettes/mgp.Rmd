@@ -1,0 +1,327 @@
+---
+title: "Online Appendix for<br>\"The Sampled Moran Genealogy Process\""
+author: "Aaron A. King"
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+    highlight: tango
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+bibliography: phylopomp.bib
+csl: prslb.csl
+params:
+  prefix: "mgp"
+---
+
+```{r knitr-opts,child="knitr_setup.Rmd"}
+```
+
+```{r pkgs,echo=FALSE,results="hide",message=FALSE,cache=FALSE}
+library(grid)
+library(tidyverse)
+library(cowplot)
+library(phylopomp)
+library(doParallel)
+library(doRNG)
+set.seed(423926102L)
+```
+
+## The Moran game simulator
+
+
+
+## One simulation of the MGP
+
+```{r mgp1,results="hide"}
+burnin <- 0
+tout <- seq(0,400,by=1)
+playMoran(n=100,mu=100,times=tout,t0=-burnin,sample=FALSE,tree=TRUE) -> x
+```
+
+```{r mgp1_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp1.gif")}
+registerDoParallel()
+x %>% plot() -> pls
+
+png_path <- file.path(tempdir(),"frame%05d.png")
+png(png_path,height=3.7,width=6,res=100,units="in")
+for (i in seq_along(pls)) print(pls[[i]])
+dev.off()
+
+library(gifski)
+png_files <- sprintf(png_path,seq_along(pls))
+gif_file <- "mgp1.gif"
+gifski(png_files,gif_file,delay=0.02,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg1,include=FALSE,cache=FALSE,eval=!file.exists("mgp1.mp4") | file.mtime("mgp1.gif")>file.mtime("mgp1.mp4")}
+ffmpeg -y -r 20 -i mgp1.gif mgp1.webm
+ffmpeg -y -r 20 -i mgp1.gif mgp1.mp4
+```
+
+<video width="600" controls>
+<source src="mgp1.mp4" type="video/mp4"/>
+<source src="mgp1.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+## One simulation of the SMGP
+
+```{r mgp2,results="hide"}
+burnin <- 0
+tout <- seq(0,400,by=1)
+playMoran(n=100,mu=100,times=tout,t0=-burnin,sample=TRUE,tree=TRUE) -> x
+```
+```{r mgp2_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp2.gif")}
+registerDoParallel()
+x %>% plot() -> pls
+
+png_path <- file.path(tempdir(),"frame%05d.png")
+png(png_path,height=3.7,width=6,res=100,units="in")
+for (i in seq_along(pls)) print(pls[[i]])
+dev.off()
+
+library(gifski)
+png_files <- sprintf(png_path,seq_along(pls))
+gif_file <- "mgp2.gif"
+gifski(png_files,gif_file,delay=0.02,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg2,include=FALSE,cache=FALSE,eval=!file.exists("mgp2.mp4") | file.mtime("mgp2.gif")>file.mtime("mgp2.mp4")}
+ffmpeg -y -r 20 -i mgp2.gif mgp2.webm
+ffmpeg -y -r 20 -i mgp2.gif mgp2.mp4
+```
+
+<video width="600" controls>
+<source src="mgp2.mp4" type="video/mp4"/>
+<source src="mgp2.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+## Simulations of the Observed SMGP
+
+```{r mgp3,results="hide"}
+burnin <- 0
+tout <- seq(0,400,by=1)
+playMoran(n=100,mu=100,times=tout,t0=-burnin,sample=TRUE,tree=TRUE) -> x
+```
+```{r mgp3_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp3.gif")}
+registerDoParallel()
+x %>% plot() -> pls
+
+png_path <- file.path(tempdir(),"frame%05d.png")
+png(png_path,height=3.7,width=6,res=100,units="in")
+for (i in seq_along(pls)) print(pls[[i]])
+dev.off()
+
+library(gifski)
+png_files <- sprintf(png_path,seq_along(pls))
+gif_file <- "mgp3.gif"
+gifski(png_files,gif_file,delay=0.02,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg3,include=FALSE,cache=FALSE,eval=!file.exists("mgp3.mp4") | file.mtime("mgp3.gif")>file.mtime("mgp3.mp4")}
+ffmpeg -y -r 50 -i mgp3.gif mgp3.webm
+ffmpeg -y -r 50 -i mgp3.gif mgp3.mp4
+```
+
+<video width="600" controls>
+<source src="mgp3.mp4" type="video/mp4"/>
+<source src="mgp3.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+## Observed SMGP with more detail
+
+In the following animation depicting one simulation of the SMGP, colored points are drawn to indicate players colored according to the scheme in the text.
+Red points correspond to "live samples" and "red players": each one holds one red and one blue ball.
+Blue points correspond to "dead samples" and "blue players": each one holds one blue and one green ball.
+These are samples that are the direct ancestor of another sample.
+Green points ("green players") represent branching points: each green player holds two green balls.
+
+```{r mgp4,results="hide"}
+burnin <- 0
+tout <- seq(0,100,by=1)
+playMoran(n=10,mu=10,times=tout,t0=-burnin,sample=TRUE,tree=TRUE,ill=TRUE) -> x
+```
+
+```{r mgp4_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp4.gif")}
+registerDoParallel()
+x %>% plot(points=TRUE,diagram=TRUE) -> pls
+
+png_path <- file.path(tempdir(),"frame%05d.png")
+png(png_path,height=3.7,width=6,res=100,units="in")
+for (i in seq_along(pls)) print(pls[[i]])
+dev.off()
+
+library(gifski)
+png_files <- sprintf(png_path,seq_along(pls))
+gif_file <- "mgp4.gif"
+gifski(png_files,gif_file,delay=0.05,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg4,include=FALSE,cache=FALSE,eval=!file.exists("mgp4.mp4") | file.mtime("mgp4.gif")>file.mtime("mgp4.mp4")}
+ffmpeg -y -r 8 -i mgp4.gif mgp4.webm
+ffmpeg -y -r 8 -i mgp4.gif mgp4.mp4
+```
+
+<video width="600" controls>
+<source src="mgp4.mp4" type="video/mp4"/>
+<source src="mgp4.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+
+## Verifying the SMGP formulae
+
+Now we investigate the distributions of the cumulative hazards of the conditional attachment process (main text, Theorem 9).
+These should be perfectly distributed according to the standard exponential distribution.
+
+```{r hazards,echo=TRUE}
+pomp::bake(file="mgp_hazards.rds",{
+  registerDoParallel()
+  registerDoRNG()
+  
+  nrep <- 2000
+  expand.grid(
+    rep=seq_len(nrep),
+    popsize=c(10,100,1000),
+    relsr=c(0.1,1,10),
+    nsamples=21
+  ) -> design
+  
+  foreach (i=iter(design,"row"),
+           .options.multicore=list(preschedule=FALSE)) %dopar%
+    {
+      samplerate <- i$relsr * i$popsize
+      tout <- cumsum(rexp(n=i$nsamples,rate=samplerate))
+      system.time({
+        playMoran(n=i$popsize,mu=i$popsize,times=tout,t0=0) %>%
+          getInfo() -> x
+        bind_cols(x$lineages,i) -> x
+      }) -> tm
+      x$etime <- tm[3]
+      x
+    } %>%
+    bind_rows() -> dat
+  
+  attr(dat,"cores") <- getDoParWorkers()
+  
+  dat
+  
+}) -> dat
+```
+
+The above required `r signif(attr(dat,"system.time")[3]/60,2)`&nbsp;min on `r attr(dat,"cores")`&nbsp;cores.
+Efficiency: `r e <- sum(dat$etime)/attr(dat,"cores")/attr(dat,"system.time")[3]; signif(e,3)`.
+
+We use Kolmogorov-Smirnov to test the hypothesis that the cumulative hazards are distributed as expected.
+
+```{r ks_tests,echo=TRUE,fig.width=8,fig.height=8,purl=FALSE,eval=FALSE}
+dat %>%
+  ggplot(aes(x=p))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  facet_wrap(~sample)+
+  coord_equal()+
+  labs(x=expression(italic(p)),y=expression(italic(F(p))))+
+  expand_limits(x=c(0,1),y=c(0,1))
+
+dat %>%
+  mutate(ratio=factor(samplerate/popsize)) %>%
+  ggplot(aes(x=p))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  facet_grid(popsize~ratio,labeller=label_both)+
+  coord_equal()+
+  labs(x=expression(italic(p)),y=expression(italic(F(p))))+
+  expand_limits(x=c(0,1),y=c(0,1))
+
+library(broom)
+
+dat %>%
+  filter(p>0) %>%
+  group_by(sample) %>%
+  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  select(p.value) %>%
+  ungroup()
+
+dat %>%
+  filter(p>0) %>%
+  group_by(popsize,samplerate) %>%
+  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  select(p.value) %>%
+  ungroup()
+
+dat %>%
+  filter(p>0) %>%
+  group_by(popsize) %>%
+  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  select(p.value) %>%
+  ungroup()
+
+dat %>%
+  filter(p>0) %>%
+  group_by(samplerate/popsize) %>%
+  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  select(p.value) %>%
+  ungroup()
+
+dat %>%
+  filter(p>0) %>%
+  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  select(p.value)
+```
+
+<!--
+Compare with Volz & Rasmussen. 
+-->
+
+```{r check_hazards,include=FALSE,eval=FALSE}
+popsize <- 10
+samplerate <- 10
+nsample <- 30
+
+tout <- cumsum(rexp(n=nsample,rate=samplerate))
+set.seed(590983203)
+playObsSMGP(n=popsize,times=tout,t0=-200) -> y
+getMGPinfo(y,drop=TRUE) -> x
+
+stopifnot(
+  x$tree == tail(y$tree,1)
+)
+
+x[c("etimes","lineages")] %>%
+  as_tibble() -> z
+
+z %>%
+  mutate(
+    lineages=lag(lineages),
+    deltat=etimes-lag(etimes),
+    dd=if_else(deltat==0,TRUE,NA)
+  ) %>%
+  filter(!is.na(deltat)) %>%
+  mutate(
+    haz=x$rate*choose(lineages,2)/choose(popsize,2)*deltat
+  ) -> z
+
+stopifnot(
+  all.equal(sum(z$haz),sum(x$cumhaz))
+)
+```
+
+## Session Info
+
+```{r session_info,echo=FALSE}
+sessionInfo()
+```
+
+## References

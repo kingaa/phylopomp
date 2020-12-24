@@ -35,7 +35,7 @@ These should be perfectly distributed according to the standard exponential dist
 #  source("CLUSTER.R")
 #} else {
   library(doParallel)
-  registerDoParallel()
+  ## registerDoParallel()
 #}
 ```
 
