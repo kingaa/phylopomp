@@ -4,23 +4,37 @@
 \alias{newick2df}
 \title{Convert a tree in Newick format to data frame}
 \usage{
-newick2df(tree)
+newick2df(tree, time = NA, root_time = 0)
 }
 \arguments{
 \item{tree}{tree data in Newick format.}
+
+\item{time}{time of the genealogy.}
+
+\item{root_time}{time of the root.}
 }
 \value{
-A data frame suitable for use as \code{pomp} input.
-This data frame will have three columns:
+A data frame suitable for use as \code{pomp} input, containing three columns:
 \describe{
-  \item{time}{numeric}
-  \item{lineages}{integer; the lineage-count function}
+  \item{time}{numeric; time of the genealogy event.}
+  \item{lineages}{integer; the value of the lineage-count function at the specified time.
+    Note that this function is right-continuous with left limits, and constant on the inter-event intervals.
+  }
   \item{code}{integer; a code describing the nature of the event.
-  0 indicates a coalescence; 1 indicates a dead sample; 2 indicates a live sample.}
+    1 indicates a coalescence;
+    0 indicates a dead sample;
+   -1 indicates a live sample;
+    2 indicates the root.
+  }
 }
 }
 \description{
-Convert a genealogical tree in Newick format to a data frame, containing event times, number of lineages, sample indicator, direct-descent indicator, and coalescent indicator.
+Convert a genealogical tree in Newick format to a data frame suitable for use with \pkg{pomp}.
+}
+\details{
+If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
+
+Leaves not corresponding to samples (labeled 'o_X' for any X) and invisible nodes (labeled 'X_' for any X) are dropped.
 }
 \examples{
 playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=c(0,5),t0=0,tree=TRUE) -> x

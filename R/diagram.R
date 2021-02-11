@@ -4,7 +4,7 @@
 ##'
 ##' @include package.R treeplot.R
 ##'
-##' @param illustration character;
+##' @param illus character;
 ##' illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
 ##' 
@@ -20,8 +20,8 @@
 ##' 
 ##' @export
 ##'
-diagram <- function (illustration, ...) {
-  dat <- lapply(illustration,read_csv)
+diagram <- function (illus, ...) {
+  dat <- lapply(illus,read_csv)
   nmax <- max(sapply(dat,nrow)) # longest tableau
   vp <- viewport(height=0.95,width=0.95,gp=gpar(...))
   tg <- lapply(

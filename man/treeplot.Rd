@@ -4,10 +4,24 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(data, ladderize = TRUE, points = FALSE, diagram = FALSE)
+treeplot(
+  tree,
+  time = NULL,
+  illus = NULL,
+  root_time = 0,
+  ladderize = TRUE,
+  points = FALSE,
+  diagram = FALSE
+)
 }
 \arguments{
-\item{data}{Output of one of the \code{play} functions.}
+\item{tree}{character; tree representation in Newick format.}
+
+\item{time}{numeric; times of the genealogies.}
+
+\item{illus}{character; genealogy process diagram information.}
+
+\item{root_time}{numeric; time of the root.}
 
 \item{ladderize}{Ladderize?}
 

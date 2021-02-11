@@ -4,10 +4,10 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(illustration, ...)
+diagram(illus, ...)
 }
 \arguments{
-\item{illustration}{character;
+\item{illus}{character;
 illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.}
 
 \item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
@@ -25,16 +25,16 @@ playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
 plot(x[5,],points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=100:130,sample=FALSE,tree=TRUE,ill=TRUE) \%>\%
-  mutate(dg=diagram(illustration)) -> x
-plot(x,points=TRUE,diagram=TRUE)
+  mutate(dg=diagram(illus)) -> x
+plot(x,points=TRUE,diagram=TRUE,root_time=NA)
 
 playMoran(n=8,mu=8,times=0:30,sample=FALSE,tree=TRUE,ill=TRUE,
   stationary=FALSE) \%>\%
-  mutate(dg=diagram(illustration)) -> x
-plot(x,points=TRUE,diagram=TRUE)
+  mutate(dg=diagram(illus)) -> x
+plot(x,points=TRUE,diagram=TRUE,root_time=NA)
 
 library(cowplot)
 playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) \%>\%
-  mutate(grob=diagram(illustration)) -> x
-plot_grid(plotlist=c(x$grob,treeplot(x,points=TRUE)),ncol=2,byrow=FALSE)
+  mutate(grob=diagram(illus)) -> x
+plot_grid(plotlist=c(x$grob,treeplot(x$tree,points=TRUE)),ncol=2,byrow=FALSE)
 }

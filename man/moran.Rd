@@ -97,13 +97,13 @@ plot(y,points=TRUE,diagram=TRUE)
 
 playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) \%>\%
   playMoranWChain(ntimes=4) \%>\%
-  mutate(diag=diagram(illustration)) \%>\%
+  mutate(diag=diagram(illus)) \%>\%
   pull(diag) \%>\%
   plot_grid(plotlist=.,ncol=1)
 
 playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) \%>\%
   playMoranWChain(ntimes=40) \%>\%
-  mutate(diag=diagram(illustration)) \%>\%
+  mutate(diag=diagram(illus)) \%>\%
   pull(diag) \%>\%
   magrittr::extract(35:40) \%>\%
   plot_grid(plotlist=.,ncol=1)

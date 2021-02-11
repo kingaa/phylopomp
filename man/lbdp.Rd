@@ -4,6 +4,7 @@
 \alias{lbdp}
 \alias{LBDP}
 \alias{playLBDP}
+\alias{lbdp_exact}
 \title{Linear birth-death process.}
 \usage{
 playLBDP(
@@ -11,16 +12,18 @@ playLBDP(
   ...,
   lambda,
   mu,
-  n0,
   psi,
+  n0 = 1,
   t0 = 0,
   times,
   tree = FALSE,
   ill = FALSE
 )
+
+lbdp_exact(data, lambda, mu, psi)
 }
 \arguments{
-\item{data}{optional data frame; output from \code{playLBDP}.}
+\item{data}{data frame containing the genealogy event times and event codes.}
 
 \item{...}{additional arguments; ignored.}
 
@@ -28,9 +31,9 @@ playLBDP(
 
 \item{mu}{death rate}
 
-\item{n0}{initial population size}
-
 \item{psi}{sampling rate}
+
+\item{n0}{initial population size}
 
 \item{t0}{initial time}
 
@@ -41,10 +44,24 @@ playLBDP(
 \item{ill}{logical; return an illustration?}
 }
 \value{
-A \code{tibble} with \code{state} attribute.
+\code{playLBDP} returns an object of class \code{gpsim}.
+Available methods for such objects include \code{\link{getInfo}} and \code{\link{plot}}.
+
+\code{lbdp_exact} returns the log likelihood of the genealogy.
+Note that the time since the most recent sample is informative.
 }
 \description{
-Run the LBDP simulator.
+Simulation and inference based on linear birth-death-sampling processes.
+}
+\details{
+\code{playLBDP} is a simulator of the genealogy process induced by a linear birth-death-sampling process.
+
+
+
+\code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
+The derivation is also given in comments in the code.
+
+The \code{data} argument should in the format returned by \code{\link{newick2df}}.
 }
 \examples{
 playLBDP(lambda=1,mu=0.5,psi=1,n0=3,times=seq(0,4,by=0.2),tree=TRUE) -> x
@@ -63,6 +80,15 @@ y$cumhaz \%>\%
   ggplot(aes(x=exp(-Lambda)))+
   stat_ecdf()+
   geom_abline(slope=1)
+
+playLBDP(lambda=1,mu=0.5,psi=1,n0=1,times=5,tree=TRUE) -> x
+plot(x,points=TRUE)
+getInfo(x,prune=TRUE)$tree \%>\%
+  newick2df(time=5) \%>\%
+  lbdp_exact(lambda=1,mu=0.5,psi=1)
+}
+\references{
+\Stadler2010
 }
 \seealso{
 Other Genealogy processes: 

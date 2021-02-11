@@ -475,6 +475,11 @@ public:
     return _time;
   };
 
+  // get zero time.
+  double timezero (void) const {
+    return _t0;
+  };
+
 protected:
 
   // set current time.
@@ -1332,7 +1337,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
   if (do_ill) {
-    k = set_list_elem(out,outnames,ill,"illustration",k);
+    k = set_list_elem(out,outnames,ill,"illus",k);
   }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
@@ -1395,7 +1400,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
   if (do_ill) {
-    k = set_list_elem(out,outnames,ill,"illustration",k);
+    k = set_list_elem(out,outnames,ill,"illus",k);
   }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
@@ -1452,7 +1457,7 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
   if (do_ill) {
-    k = set_list_elem(out,outnames,ill,"illustration",k);
+    k = set_list_elem(out,outnames,ill,"illus",k);
   }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
@@ -1472,7 +1477,9 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   gp.valid();
   
   // extract current time
-  SEXP tout;
+  SEXP t0, tout;
+  PROTECT(t0 = NEW_NUMERIC(1)); nprotect++;
+  *REAL(t0) = gp.timezero();
   PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
   *REAL(tout) = gp.time();
 
@@ -1482,14 +1489,15 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // pack up return values in a list
-  int nout = 6;
+  int nout = 7;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout)); nprotect++;
   PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  k = set_list_elem(out,outnames,t0,"t0",k);
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(gp),"description",k);
-  k = set_list_elem(out,outnames,illustrate(gp),"illustration",k);
+  k = set_list_elem(out,outnames,illustrate(gp),"illus",k);
   k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
   k = set_list_elem(out,outnames,walk(gp),"cumhaz",k);
   k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);

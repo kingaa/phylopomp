@@ -4,7 +4,10 @@
 ##'
 ##' @include package.R diagram.R
 ##'
-##' @param data Output of one of the \code{play} functions.
+##' @param tree character; tree representation in Newick format.
+##' @param illus character; genealogy process diagram information.
+##' @param root_time numeric; time of the root.
+##' @param time numeric; times of the genealogies.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
 ##' @param diagram Show a diagram?
@@ -24,25 +27,37 @@
 ##' @rdname treeplot
 ##' @export
 ##' 
-treeplot <- function (data, ladderize = TRUE, points = FALSE, diagram = FALSE) {
-  if (is.null(data$tree))
-    stop(sQuote("data")," contains no variable ",sQuote("tree"),call.=FALSE)
-  read.tree(text=data$tree) %>%
+treeplot <- function (tree, time = NULL, illus = NULL,
+  root_time = 0, ladderize = TRUE, points = FALSE, diagram = FALSE) {
+  if (missing(tree) || is.null(tree))
+    stop(sQuote("tree")," must be specified.",call.=FALSE)
+  read.tree(text=tree) %>%
     fortify(ladderize=ladderize) %>%
     separate(label,into=c("nodecol","label")) -> dat
-  if (length(data$tree)==1) dat$.id <- data$time
-  dat %>%
-    group_by(.id) %>%
-    mutate(
-      time=as.double(as.character(.id)),
-      x=x-max(x)+time,
-      vis=nodecol != "i",
-      nodecol=ball_colors[nodecol]
-    ) %>%
-    ungroup(.id) -> dat
+  if (length(tree)==1) dat$.id <- ""
+  dat$.id <- as.integer(as.factor(dat$.id))
+  if (is.na(root_time)) { # root time is to be determined from the current time
+    dat %>%
+      group_by(.id) %>%
+      mutate(
+        x=x-max(x)+time[.id],
+        vis=nodecol != "i",
+        nodecol=ball_colors[nodecol]
+      ) %>%
+      ungroup(.id) -> dat
+  } else {
+    dat %>%
+      group_by(.id) %>%
+      mutate(
+        x=x-min(x)+root_time,
+        vis=nodecol != "i",
+        nodecol=ball_colors[nodecol]
+      ) %>%
+      ungroup(.id) -> dat
+  }
 
   if (diagram) {
-    dg <- diagram(data$illustration)
+    dg <- diagram(illus)
   }
   
   foreach (
@@ -97,5 +112,7 @@ plot.gpsim <- function (x, y, ...) {
   if (!missing(y))
     warning("in ",sQuote("plot.gpsim"),": ",
       sQuote('y')," is ignored.",call.=FALSE)
-  treeplot(x,...)
+  if (!all(c("tree","illus") %in% names(x)))
+    x <- getInfo(x)
+  treeplot(tree=x$tree,time=x$time,illus=x$illus,...)
 }
