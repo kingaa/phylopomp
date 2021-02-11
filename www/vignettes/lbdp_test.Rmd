@@ -1,0 +1,115 @@
+---
+title: "Testing the SMC on the Linear birth-death-sampling model"
+author: "Aaron A. King"
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+    highlight: tango
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+params:
+  prefix: "lbdp_smc"
+---
+
+```{r knitr-opts,child="knitr_setup.Rmd"}
+```
+
+```{r pkgs,echo=FALSE,results="hide",message=FALSE,cache=FALSE}
+library(tidyverse)
+library(pomp)
+library(phylopomp)
+stopifnot(packageVersion("phylopomp")>="0.0.9.0")
+```
+
+```{r simdat}
+set.seed(257012390L)
+playLBDP(lambda=2,mu=1,psi=1,times=3,n0=1) %>%
+  getInfo(prune=TRUE) -> x
+x %>% plot(points=TRUE)
+x$tree %>%
+  newick2df(time=3) -> dat
+```
+
+```{r smc_loglik,eval=FALSE}
+dat %>%
+  lbdp_pomp(lambda=2,mu=1,psi=1) -> po
+
+expand_grid(
+  lambda=c(1.9,2.0,2.1),
+  mu=c(0.9,1.0,1.1),
+  psi=c(0.9,1.0,1.1),
+  n0=1,
+  Np=c(1e2,1e3,1e4,1e5,1e6),
+  rep=1:10
+) -> res
+
+library(foreach)
+library(iterators)
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+registerDoRNG(558976750)
+
+foreach (
+  p=iter(res,"row"),
+  .combine=bind_rows,
+  .inorder=FALSE
+) %dopar% {
+  po %>%
+    pfilter(
+      Np=p$Np,
+      params=unlist(p)
+    ) %>%
+    logLik() -> p$loglik
+  dat %>%
+    lbdp_exact(lambda=p$lambda,mu=p$mu,psi=p$psi) -> p$exact
+  p
+} -> res
+```
+
+```{r smc_loglik_eval,include=FALSE}
+bake(file="smc_loglik.rds",{
+  <<smc_loglik>>
+}) -> res
+```
+
+
+```{r smc_loglik_plot}
+res %>%
+  filter(psi==1,mu==1) %>%
+  ggplot(aes(x=Np,y=loglik,color=factor(lambda)))+
+  geom_point()+
+  geom_hline(aes(color=factor(lambda),yintercept=exact))+
+  labs(color=expression(lambda))+
+  scale_x_log10()+
+  theme_bw()
+
+res %>%
+  filter(lambda==2,mu==1) %>%
+  ggplot(aes(x=Np,y=loglik,color=factor(psi)))+
+  geom_point()+
+  geom_hline(aes(color=factor(psi),yintercept=exact))+
+  labs(color=expression(psi))+
+  scale_x_log10()+
+  theme_bw()
+
+res %>%
+  filter(psi==1,lambda==2) %>%
+  ggplot(aes(x=Np,y=loglik,color=factor(mu)))+
+  geom_point()+
+  geom_hline(aes(color=factor(mu),yintercept=exact))+
+  labs(color=expression(mu))+
+  scale_x_log10()+
+  theme_bw()
+```
+
+## Session Info
+
+```{r session_info,echo=FALSE}
+sessionInfo()
+```
