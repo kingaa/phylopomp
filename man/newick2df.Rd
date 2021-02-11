@@ -34,7 +34,7 @@ Convert a genealogical tree in Newick format to a data frame suitable for use wi
 \details{
 If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
 
-Leaves not corresponding to samples (labeled 'o_X' for any X) and invisible nodes (labeled 'X_' for any X) are dropped.
+Invisible nodes (labeled 'X_' for any X) are dropped.
 }
 \examples{
 playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=c(0,5),t0=0,tree=TRUE) -> x

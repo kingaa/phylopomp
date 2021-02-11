@@ -14,7 +14,7 @@
 ##' @details
 ##' If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
 ##'
-##' Leaves not corresponding to samples (labeled 'o_X' for any X) and invisible nodes (labeled 'X_' for any X) are dropped.
+##' Invisible nodes (labeled 'X_' for any X) are dropped.
 ##'
 ##' @return A data frame suitable for use as \code{pomp} input, containing three columns:
 ##' \describe{
@@ -49,7 +49,7 @@ newick2df <- function (tree, time = NA, root_time = 0) {
   read.tree(text=tree) %>%
     fortify(ladderize=TRUE) %>%
     separate(label,into=c("type","label")) %>%
-    filter(type!="o",label!="") %>%
+    filter(label!="") %>%
     select(label,time=x,isTip) %>%
     arrange(time) %>%
     mutate(

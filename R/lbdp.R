@@ -153,3 +153,35 @@ lbdp_exact <- function (data, lambda, mu, psi) {
     sum(log(Q(x)))+
     sum(log(p0(y)/Q(y)))
 }
+
+##' @name lbdp_pomp
+##' @rdname lbdp
+##'
+##' @details
+##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
+##'
+##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
+##'
+##' @importFrom pomp pomp onestep covariate_table
+##' @inheritParams lbdp_exact
+##'
+##' @export
+lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0) {
+  data[,"time"] %>%
+    pomp(
+      times="time",t0=t0,
+      params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+      rprocess=onestep("lbdp_stepfn"),
+      rinit="lbdp_rinit",
+      dmeasure="lbdp_dmeas",
+      accumvars=c("ll"),
+      statenames=c("n","ll"),
+      paramnames=c("lambda","mu","n0","psi"),
+      PACKAGE="phylopomp",
+      covar=covariate_table(
+        data,
+        times="time",
+        order="constant"
+      )
+    )
+}

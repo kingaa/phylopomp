@@ -9,7 +9,8 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 	  )
 Description: Tools for phylodynamic analysis.
 Depends: R(>= 4.0.0)
-Imports: grid, ggtree, ggplot2, scales, ape, magrittr, dplyr, tibble, foreach, tidyr, readr
+Imports: grid, ggtree, ggplot2, scales, ape, magrittr, dplyr, tibble, foreach, tidyr, readr, pomp
+LinkingTo: pomp
 Suggests: tidyverse, doParallel, doRNG, broom, cowplot
 License: GPL-3
 LazyData: true

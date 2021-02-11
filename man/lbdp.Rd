@@ -5,6 +5,7 @@
 \alias{LBDP}
 \alias{playLBDP}
 \alias{lbdp_exact}
+\alias{lbdp_pomp}
 \title{Linear birth-death process.}
 \usage{
 playLBDP(
@@ -21,6 +22,8 @@ playLBDP(
 )
 
 lbdp_exact(data, lambda, mu, psi)
+
+lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 }
 \arguments{
 \item{data}{data frame containing the genealogy event times and event codes.}
@@ -62,6 +65,10 @@ Simulation and inference based on linear birth-death-sampling processes.
 The derivation is also given in comments in the code.
 
 The \code{data} argument should in the format returned by \code{\link{newick2df}}.
+
+\code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
+
+It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 }
 \examples{
 playLBDP(lambda=1,mu=0.5,psi=1,n0=3,times=seq(0,4,by=0.2),tree=TRUE) -> x
@@ -81,11 +88,24 @@ y$cumhaz \%>\%
   stat_ecdf()+
   geom_abline(slope=1)
 
-playLBDP(lambda=1,mu=0.5,psi=1,n0=1,times=5,tree=TRUE) -> x
-plot(x,points=TRUE)
-getInfo(x,prune=TRUE)$tree \%>\%
+playLBDP(lambda=2,mu=1,psi=0.5,n0=1,times=5) \%>\%
+  getInfo() -> x
+plot(getInfo(x,compact=TRUE),points=TRUE)
+
+library(pomp)
+x$tree \%>\%
   newick2df(time=5) \%>\%
-  lbdp_exact(lambda=1,mu=0.5,psi=1)
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1) \%>\%
+  pfilter(Np=2000) \%>\%
+  logLik()
+
+x$tree \%>\%
+  newick2df(time=5) \%>\%
+  lbdp_exact(psi=0.5,lambda=2,mu=1)
+
+
+
+
 }
 \references{
 \Stadler2010
