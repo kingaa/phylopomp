@@ -112,7 +112,10 @@ plot.gpsim <- function (x, y, ...) {
   if (!missing(y))
     warning("in ",sQuote("plot.gpsim"),": ",
       sQuote('y')," is ignored.",call.=FALSE)
-  if (!all(c("tree","illus") %in% names(x)))
-    x <- getInfo(x)
-  treeplot(tree=x$tree,time=x$time,illus=x$illus,...)
+  tree <- getElement(x,"tree")
+  if (is.null(tree))
+    stop("no ",sQuote("tree")," element supplied!",call.=FALSE)
+  time <- getElement(x,"time")
+  illus <- getElement(x,"illus")
+  treeplot(tree=x$tree,time=time,illus=illus,...)
 }

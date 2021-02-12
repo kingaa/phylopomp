@@ -13,7 +13,7 @@ output:
       collapsed: yes
       smooth_scroll: yes
 bibliography: phylopomp.bib
-csl: prslb.csl
+csl: jss.csl
 params:
   prefix: "mgp"
 ---
@@ -26,6 +26,7 @@ library(grid)
 library(tidyverse)
 library(cowplot)
 library(phylopomp)
+stopifnot(packageVersion("phylopomp")>="0.0.10.0")
 library(doParallel)
 library(doRNG)
 set.seed(423926102L)
@@ -45,7 +46,7 @@ playMoran(n=100,mu=100,times=tout,t0=-burnin,sample=FALSE,tree=TRUE) -> x
 
 ```{r mgp1_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp1.gif")}
 registerDoParallel()
-x %>% plot() -> pls
+x %>% plot(root_time=NA) -> pls
 
 png_path <- file.path(tempdir(),"frame%05d.png")
 png(png_path,height=3.7,width=6,res=100,units="in")
@@ -79,7 +80,7 @@ playMoran(n=100,mu=100,times=tout,t0=-burnin,sample=TRUE,tree=TRUE) -> x
 ```
 ```{r mgp2_gif,cache=FALSE,results="hide",purl=FALSE,eval=!file.exists("mgp2.gif")}
 registerDoParallel()
-x %>% plot() -> pls
+x %>% plot(root_time=NA) -> pls
 
 png_path <- file.path(tempdir(),"frame%05d.png")
 png(png_path,height=3.7,width=6,res=100,units="in")
@@ -204,14 +205,25 @@ pomp::bake(file="mgp_hazards.rds",{
       samplerate <- i$relsr * i$popsize
       tout <- cumsum(rexp(n=i$nsamples,rate=samplerate))
       system.time({
-        playMoran(n=i$popsize,mu=i$popsize,times=tout,t0=0) %>%
-          getInfo() -> x
-        bind_cols(x$lineages,i) -> x
+        playMoran(
+          n=i$popsize,
+          mu=i$popsize,
+          times=tout,
+          t0=0,
+          tree=FALSE
+        ) %>%
+          getInfo(prune=FALSE) %>%
+          getElement("cumhaz") %>%
+          bind_cols(i) %>%
+          rowid_to_column("sample") -> x
       }) -> tm
       x$etime <- tm[3]
       x
     } %>%
-    bind_rows() -> dat
+    bind_rows() %>%
+    mutate(
+      p=exp(-Lambda)
+    ) -> dat
   
   attr(dat,"cores") <- getDoParWorkers()
   
@@ -225,7 +237,7 @@ Efficiency: `r e <- sum(dat$etime)/attr(dat,"cores")/attr(dat,"system.time")[3];
 
 We use Kolmogorov-Smirnov to test the hypothesis that the cumulative hazards are distributed as expected.
 
-```{r ks_tests,echo=TRUE,fig.width=8,fig.height=8,purl=FALSE,eval=FALSE}
+```{r ks_tests,echo=TRUE,fig.width=8,fig.height=8,purl=FALSE}
 dat %>%
   ggplot(aes(x=p))+
   geom_abline(slope=1)+
@@ -250,34 +262,34 @@ library(broom)
 dat %>%
   filter(p>0) %>%
   group_by(sample) %>%
-  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  do(tidy(ks.test(x=.$Lambda,y=pexp,rate=1))) %>%
   select(p.value) %>%
   ungroup()
 
 dat %>%
   filter(p>0) %>%
-  group_by(popsize,samplerate) %>%
-  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  group_by(popsize,samplerate=relsr*popsize) %>%
+  do(tidy(ks.test(x=.$Lambda,y=pexp,rate=1))) %>%
   select(p.value) %>%
   ungroup()
 
 dat %>%
   filter(p>0) %>%
   group_by(popsize) %>%
-  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  do(tidy(ks.test(x=.$Lambda,y=pexp,rate=1))) %>%
   select(p.value) %>%
   ungroup()
 
 dat %>%
   filter(p>0) %>%
-  group_by(samplerate/popsize) %>%
-  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  group_by(relsr) %>%
+  do(tidy(ks.test(x=.$Lambda,y=pexp,rate=1))) %>%
   select(p.value) %>%
   ungroup()
 
 dat %>%
   filter(p>0) %>%
-  do(tidy(ks.test(x=.$cumhaz+.$nuggets,y=pexp,rate=1))) %>%
+  do(tidy(ks.test(x=.$Lambda,y=pexp,rate=1))) %>%
   select(p.value)
 ```
 

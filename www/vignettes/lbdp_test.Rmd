@@ -3,7 +3,7 @@ title: "Testing the SMC on the Linear birth-death-sampling model"
 author: "Aaron A. King"
 output:
   html_document:
-    code_folding: hide
+    code_folding: show
     df_print: paged
     highlight: tango
     number_sections: no
@@ -12,6 +12,8 @@ output:
     toc_float:
       collapsed: yes
       smooth_scroll: yes
+bibliography: phylopomp.bib
+csl: jss.csl
 params:
   prefix: "lbdp_smc"
 ---
@@ -19,18 +21,23 @@ params:
 ```{r knitr-opts,child="knitr_setup.Rmd"}
 ```
 
-```{r pkgs,echo=FALSE,results="hide",message=FALSE,cache=FALSE}
+Here, we simulate a genealogy under a linear birth-death-sampling process and compute its likelihood using the **phylopomp** SMC algorithm.
+We compare the latter to the exact likelihood as computed using the formula of @Stadler2010.
+
+
+
+```{r pkgs,results="hide",message=FALSE,cache=FALSE}
 library(tidyverse)
 library(pomp)
 library(phylopomp)
 stopifnot(packageVersion("phylopomp")>="0.0.9.0")
 ```
 
-```{r simdat}
+```{r simdat,results="hide"}
 set.seed(257012390L)
 playLBDP(lambda=2,mu=1,psi=1,times=3,n0=1) %>%
   getInfo(prune=TRUE) -> x
-x %>% plot(points=TRUE)
+x %>% getInfo(compact=TRUE) %>% plot(points=TRUE)
 x$tree %>%
   newick2df(time=3) -> dat
 ```
@@ -79,37 +86,36 @@ bake(file="smc_loglik.rds",{
 ```
 
 
-```{r smc_loglik_plot}
+```{r smc_loglik_plot,fig.dim=c(6,6),out.width="100%"}
 res %>%
-  filter(psi==1,mu==1) %>%
   ggplot(aes(x=Np,y=loglik,color=factor(lambda)))+
-  geom_point()+
+  geom_point(size=0.5)+
   geom_hline(aes(color=factor(lambda),yintercept=exact))+
-  labs(color=expression(lambda))+
-  scale_x_log10()+
-  theme_bw()
-
-res %>%
-  filter(lambda==2,mu==1) %>%
-  ggplot(aes(x=Np,y=loglik,color=factor(psi)))+
-  geom_point()+
-  geom_hline(aes(color=factor(psi),yintercept=exact))+
-  labs(color=expression(psi))+
-  scale_x_log10()+
-  theme_bw()
-
-res %>%
-  filter(psi==1,lambda==2) %>%
-  ggplot(aes(x=Np,y=loglik,color=factor(mu)))+
-  geom_point()+
-  geom_hline(aes(color=factor(mu),yintercept=exact))+
-  labs(color=expression(mu))+
-  scale_x_log10()+
-  theme_bw()
+  labs(
+    color=expression(lambda),
+    x=expression(N[p]),
+    y=expression(log~L)
+  )+
+  scale_x_log10(
+    labels=function(x)aakmisc::scinot(x,simplify=TRUE)
+  )+
+  facet_grid(
+    mu~psi,
+    labeller=label_bquote(
+      rows=mu==.(mu),
+      cols=psi==.(psi)
+    )
+  )+
+  theme_bw(base_size=12)
 ```
+
+Dots show the results of SMC computations using the indicated number of particles ($N_p$).
+The horizontal lines are the exact values, as computed by @Stadler2010.
 
 ## Session Info
 
 ```{r session_info,echo=FALSE}
 sessionInfo()
 ```
+
+## References
