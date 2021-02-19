@@ -72,8 +72,6 @@ Simulation and inference based on linear birth-death-sampling processes.
 \details{
 \code{playLBDP} is a simulator of the genealogy process induced by a linear birth-death-sampling process.
 
-
-
 \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 The derivation is also given in comments in the code.
 
@@ -131,6 +129,7 @@ x$tree \%>\%
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{leventhal}},
 \code{\link{moran}},
 \code{\link{sirws}}
 }

@@ -58,8 +58,6 @@ utils::globalVariables("count")
 ##' @name lbdp_exact
 ##' @rdname lbdp
 ##' @details
-##'
-##' @details
 ##' \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 ##' The derivation is also given in comments in the code.
 ##'
