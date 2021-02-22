@@ -22,7 +22,13 @@ plot(getInfo(x,compact=TRUE),points=TRUE)
 library(pomp)
 x$tree %>%
   newick2df(time=5) %>%
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1) %>%
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="gillespie") %>%
+  pfilter(Np=2000) %>%
+  logLik()
+
+x$tree %>%
+  newick2df(time=5) %>%
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="euler",delta.t=0.001) %>%
   pfilter(Np=2000) %>%
   logLik()
 

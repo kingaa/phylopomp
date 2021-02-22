@@ -15,6 +15,8 @@
 ##' @param mu death rate
 ##' @param psi sampling rate
 ##' @param n0 initial population size
+##' @param method either \code{gillespie} or \code{eudler}
+##' @param delta.t time interval in \code{gillespie} method
 ##' 
 ##' @example examples/lbdp.R
 ##'
@@ -166,22 +168,86 @@ lbdp_exact <- function (data, lambda, mu, psi) {
 ##' @inheritParams lbdp_exact
 ##'
 ##' @export
-lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0) {
-  data[,"time"] %>%
-    pomp(
-      times="time",t0=t0,
-      params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
-      rprocess=onestep("lbdp_stepfn"),
-      rinit="lbdp_rinit",
-      dmeasure="lbdp_dmeas",
-      accumvars=c("ll"),
-      statenames=c("n","ll"),
-      paramnames=c("lambda","mu","n0","psi"),
-      PACKAGE="phylopomp",
-      covar=covariate_table(
-        data,
-        times="time",
-        order="constant"
-      )
-    )
+# lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0) {
+
+#   data[,"time"] %>%
+#     pomp(
+#       times="time",t0=t0,
+#       params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+#       rinit="lbdp_rinit",
+#       dmeasure="lbdp_dmeas",
+#       rprocess=onestep("lbdp_stepfn"),
+#       paramnames=c("lambda","mu","n0","psi"),
+#       accumvars=c("ll"),
+#       statenames=c("n","ll"),
+#       PACKAGE="phylopomp",
+#       covar=covariate_table(
+#         data,
+#         times="time",
+#         order="constant"
+#       )
+#     )
+# }
+lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0, method = c("gillespie", "euler"), delta.t=0.001) {
+  if (is.null(method) || !method %in% c("gillespie","euler")) 
+    stop(sQuote("method"),"must be either gillespie or euler.",.call=FALSE)
+
+  if (method == "euler" && is.null(delta.t)) 
+    stop(sQuote("delta.t"),"must be specified with euler method.",.call=FALSE)
+
+  # data[,"time"] %>%
+  #   pomp(
+  #     times="time",t0=t0,
+  #     params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+  #     rinit="lbdp_rinit",
+  #     dmeasure="lbdp_dmeas",
+  #     paramnames=c("lambda","mu","n0","psi"),
+  #     accumvars=c("ll"),
+  #     statenames=c("n","ll"),
+  #     PACKAGE="phylopomp",
+  #     covar=covariate_table(
+  #       data,
+  #       times="time",
+  #       order="constant"
+  #     )
+  #   ) -> po
+
+  if (method == "gillespie") {
+    data[,"time"] %>%
+      pomp(
+        times="time",t0=t0,
+        params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+        rinit="lbdp_rinit",
+        dmeasure="lbdp_dmeas",
+        paramnames=c("lambda","mu","n0","psi"),
+        accumvars=c("ll"),
+        statenames=c("n","ll"),
+        PACKAGE="phylopomp",
+        covar=covariate_table(
+          data,
+          times="time",
+          order="constant"
+        ),
+        rprocess=onestep("lbdp_stepfn")
+      ) -> po
+  } else if (method == "euler") {
+    data[,"time"] %>%
+      pomp(
+        times="time",t0=t0,
+        params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+        rinit="lbdp_rinit",
+        dmeasure="lbdp_dmeas",
+        paramnames=c("lambda","mu","n0","psi"),
+        accumvars=c("ll"),
+        statenames=c("n","ll"),
+        PACKAGE="phylopomp",
+        covar=covariate_table(
+          data,
+          times="time",
+          order="constant"
+        ),
+        rprocess=euler("lbdp_eulerfn", delta.t=delta.t)
+      ) -> po
+  } 
+  po
 }
