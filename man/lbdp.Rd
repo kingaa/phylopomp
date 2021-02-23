@@ -31,7 +31,7 @@ lbdp_pomp(
   n0 = 1,
   t0 = 0,
   method = c("gillespie", "euler"),
-  delta.t = 0.001
+  delta.t = NULL
 )
 }
 \arguments{
@@ -55,9 +55,9 @@ lbdp_pomp(
 
 \item{ill}{logical; return an illustration?}
 
-\item{method}{either \code{gillespie} or \code{eudler}}
+\item{method}{either \dQuote{gillespie} or \dQuote{euler}}
 
-\item{delta.t}{time interval in \code{gillespie} method}
+\item{delta.t}{time interval in \dQuote{euler} method}
 }
 \value{
 \code{playLBDP} returns an object of class \code{gpsim}.

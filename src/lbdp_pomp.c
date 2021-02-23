@@ -18,7 +18,7 @@ void lbdp_rinit (double *__x, const double *__p, double t, const int *__stateind
   // q = nearbyint(0);
 }
 
-void lbdp_stepfn (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
+void lbdp_gill (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
 {
 
   int ind;
@@ -55,7 +55,7 @@ void lbdp_stepfn (double *__x, const double *__p, const int *__stateindex, const
 }
 
 
-void lbdp_eulerfn (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
+void lbdp_euler (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
 {
   int ind;
   ind = nearbyint(code);

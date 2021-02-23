@@ -1,0 +1,78 @@
+
+R version 4.0.4 (2021-02-15) -- "Lost Library Book"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> suppressPackageStartupMessages({
++   library(phylopomp)
++   library(pomp)
++   library(tidyverse)
++   library(broom)
++   library(doParallel)
++   library(doRNG)
++ })
+> 
+> options(digits=3)
+> png(filename="lbdp3-%02d.png",res=100)
+> theme_set(theme_bw())
+> 
+> chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+> if (nzchar(chk) && chk == "TRUE") {
++   ## use 2 cores in CRAN/Travis/AppVeyor
++   registerDoParallel(2)
++ } else {
++   ## use all cores in devtools::test()
++   registerDoParallel()
++ }
+> registerDoRNG(728604304)
+> 
+> playLBDP(lambda=4,mu=2,psi=4,times=5) -> x
+> x %>% getInfo(compact=TRUE) %>% plot(points=TRUE)
+[[1]]
+
+attr(,"rng")
+attr(,"rng")[[1]]
+[1]       10407   439729167  1940085508  1081284149 -1971422862  -857470389
+[7] -1318253296
+
+attr(,"doRNG_version")
+[1] "1.7.4"
+Warning messages:
+1: `tbl_df()` was deprecated in dplyr 1.0.0.
+Please use `tibble::as_tibble()` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_warnings()` to see where this warning was generated. 
+2: In (function (obj, ex)  :
+  Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state
+> x %>% getInfo() %>% getElement("tree") %>%
++   newick2df(time=5) -> dat
+> 
+> dat %>% lbdp_exact(lambda=4,mu=3,psi=4) -> ll1
+> 
+> dat %>%
++   lbdp_pomp(lambda=4,mu=3,psi=4) %>%
++   pfilter(
++     Np=1000
++   ) %>%
++   logLik() -> ll2
+> 
+> stopifnot(all.equal(ll1,ll2,tol=0.3))
+> 
+> dev.off()
+null device 
+          1 
+> 
