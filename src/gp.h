@@ -634,7 +634,8 @@ private:
     std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
     player_t *p = anchor();
     while (p != 0) {
-      o += p->illustrate(this) + "," + std::to_string(time()) + "\n";
+      if (!p->holds(grey))
+	o += p->illustrate(this) + "," + std::to_string(time()) + "\n";
       p = p->right;
     }
     return o;

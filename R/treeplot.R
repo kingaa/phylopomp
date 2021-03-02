@@ -2,6 +2,7 @@
 ##'
 ##' Plots a genealogical tree.
 ##'
+##' @name treeplot
 ##' @include package.R diagram.R
 ##'
 ##' @param tree character; tree representation in Newick format.
@@ -23,10 +24,8 @@
 ##' @importFrom scales alpha
 ##' @importFrom utils globalVariables
 ##'
-##' @name treeplot
 ##' @rdname treeplot
 ##' @export
-##' 
 treeplot <- function (tree, time = NULL, illus = NULL,
   root_time = 0, ladderize = TRUE, points = FALSE, diagram = FALSE) {
   if (missing(tree) || is.null(tree))
@@ -55,7 +54,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
       ) %>%
       ungroup(.id) -> dat
   }
-
+  
   if (diagram) {
     dg <- diagram(illus)
   }
@@ -81,12 +80,21 @@ treeplot <- function (tree, time = NULL, illus = NULL,
         guides(color=FALSE) -> pl
     }
     if (diagram) {
-      ymin <- 4/3*min(dat$y)-1/3*max(dat$y)
+      d %>%
+        filter(vis) %>%
+        summarize(
+          ymin=min(y),
+          ymax=max(y),
+          xmin=min(x),
+          xmax=max(x)
+        ) -> ss
+      ymax <- ss$ymin-1
+      ymin <- ymax-1/3*(ss$ymax-ss$ymin)
       pl+
         annotation_custom(
           dg[[k]],
-          xmin=min(dat$x),xmax=max(dat$x),
-          ymin=ymin,ymax=0
+          xmin=ss$xmin,xmax=ss$xmax,
+          ymin=ymin,ymax=ymax
         )+
         expand_limits(y=ymin) -> pl
     }
