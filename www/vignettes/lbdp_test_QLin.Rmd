@@ -30,7 +30,7 @@ We compare the latter to the exact likelihood as computed using the formula of @
 library(tidyverse)
 library(pomp)
 library(phylopomp)
-stopifnot(packageVersion("phylopomp")>="0.0.10.0")
+stopifnot(packageVersion("phylopomp")>="0.0.11.0")
 ```
 
 ```{r simdat,results="hide"}
