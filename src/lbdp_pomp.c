@@ -80,9 +80,20 @@ void lbdp_euler (double *__x, const double *__p, const int *__stateindex, const 
   rate[0] = lambda;
   rate[1] = mu;
 
-  reulermultinom(2, n, &rate[0], dt, &trans[0]);
+
+  // method 1:
+  trans[0] = rpois(rate[0]*dt*n);
+  reulermultinom(1, n, &rate[1], dt, &trans[1]);
     
   n += trans[0] - trans[1];
+
+  // method 2:
+  // trans[0] = rnbinom_mu(n, exp(rate[0]*dt));
+  // reulermultinom(1, trans[0], &rate[1], dt, &n);
+
+  // method 3:
+  // reulermulitnom(1, n, &rate[1], dt, &trans[1]);
+  // n = rbinom_mu(trans[1], exp(rate[0]*dt));
     
   // assume all births and deaths occur at the end of the interval
   if (trans[0] > 0)
