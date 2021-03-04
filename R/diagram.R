@@ -163,11 +163,7 @@ ballGrob <- function (y, label, color, ..., vp = NULL) {
   vp1 <- viewport(y=y,width=1,height=1/4)
   cg <- circleGrob(r=unit(0.48,"native"),
     gp=gpar(fill=ball_colors[color],col=ball_colors[color]),vp=vp1)
-  if (color == "g") {
-    tg <- textGrob(label=label,gp=gpar(col="white"),vp=vp1)
-  } else {
-    tg <- NULL
-  }
+  tg <- textGrob(label=label,gp=gpar(col="white"),vp=vp1)
   grob(cg=cg,tg=tg,vp=vp,cl="ballGrob")
 }
 
