@@ -89,10 +89,11 @@ private:
   private:
     name_t _hand;
   public:
-    name_t name;
+    name_t uniq, name;
     color_t color;
     // basic constructor
-    ball_t (color_t col = blue, name_t nom = na, name_t who = na) {
+    ball_t (name_t u, color_t col = blue, name_t nom = na, name_t who = na) {
+      uniq = u;
       color = col;
       name = nom;
       _hand = who;
@@ -131,7 +132,7 @@ private:
       if (color==green) {
         return color_name() + "(" + std::to_string(T->player[name]->uniq) + ")";
       } else {
-        return color_name() + "(" + std::to_string(name) + ")";
+        return color_name() + "(" + std::to_string(uniq) + ")";
       }
     };
     // machine-readable description
@@ -139,22 +140,24 @@ private:
       if (color==green) {
         return color_symbol() + "," + std::to_string(T->player[name]->uniq);
       } else {
-        return color_symbol() + "," + std::to_string(name);
+        return color_symbol() + "," + std::to_string(uniq);
       }
     };
     // size of binary serialization
     size_t size (void) const {
-      return sizeof(name_t) + sizeof(color_t);
+      return 2*sizeof(name_t) + sizeof(color_t);
     };
     // binary serialization
     friend raw_t* operator<< (raw_t *o, const ball_t &b) {
       memcpy(o,&b.name,sizeof(name_t)); o += sizeof(name_t);
+      memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
       memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
       return o;
     };
     // binary deserialization
     friend raw_t* operator>> (raw_t *o, ball_t &b) {
       memcpy(&b.name,o,sizeof(name_t)); o += sizeof(name_t);
+      memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
       memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
       b._hand = na;
       return o;
@@ -184,13 +187,17 @@ private:
     player_t (color_t col, gp_tableau_t *T) {
       if (col == green) err("bad dog!");
       name = T->nplayers();
+      uniq = T->unique();
       name_t i = T->nballs(col);
-      ballA = new ball_t(green,name,name);
-      ballB = new ball_t(col,i,name);
+      ballA = new ball_t(uniq,green,name,name);
+      if (col == black) {
+	ballB = new ball_t(uniq,col,i,name);
+      } else {
+	ballB = new ball_t(i,col,i,name);
+      }
       left = 0;
       right = 0;
       slate = default_slate;
-      uniq = T->unique();
       T->balls[green].push_back(ballA);
       T->balls[col].push_back(ballB);
       T->player.push_back(this);
@@ -342,10 +349,16 @@ private:
     ball_t *a = p->other(g);
     if (a->is(green))
       err("cannot drop a player holding two green balls.");
+    name_t n = balls[a->color].back()->uniq;
+    balls[a->color].back()->uniq = a->uniq;
+    a->uniq = n;
     swap(a,balls[a->color].back());
+    n = balls[green].back()->uniq;
+    balls[green].back()->uniq = g->uniq;
+    g->uniq = n;
     swap(g,balls[green].back());
     player_t *q = player.back();
-    name_t n = p->name;
+    n = p->name;
     p->name = q->name; q->name = n;
     q->ballA->hand(q->name);
     q->ballB->hand(q->name);
@@ -749,13 +762,13 @@ private:
 
     switch (a->color) {
     case black:
-      o += "o_" + std::to_string(a->name) + ":" + std::to_string(_time - t) + ",";
+      o += "o_" + std::to_string(a->uniq) + ":" + std::to_string(_time - t) + ",";
       break;
     case red:
-      o += "r_" + std::to_string(a->name) + ":0.0,";
+      o += "r_" + std::to_string(a->uniq) + ":0.0,";
       break;
     case blue:
-      o += "b_" + std::to_string(a->name) + ":0.0,";
+      o += "b_" + std::to_string(a->uniq) + ":0.0,";
       break;
     case green:
       o += newick(a->name,t) + ",";
@@ -767,13 +780,13 @@ private:
 
     switch (b->color) {
     case black:
-      o += "o_" + std::to_string(b->name) + ":" + std::to_string(_time - t);
+      o += "o_" + std::to_string(b->uniq) + ":" + std::to_string(_time - t);
       break;
     case red:
-      o += "r_" + std::to_string(b->name) + ":0.0";
+      o += "r_" + std::to_string(b->uniq) + ":0.0";
       break;
     case blue:
-      o += "b_" + std::to_string(b->name) + ":0.0";
+      o += "b_" + std::to_string(b->uniq) + ":0.0";
       break;
     case green:
       o += newick(b->name,t);
@@ -802,7 +815,7 @@ private:
           o += ",((" + newick(b->name,te) + ")g_" + std::to_string(p->name) + ":0.0)i_:0.0";
           break;
         case black:
-          o += ",o_" + std::to_string(b->name) + ":" + std::to_string(tl-te);
+          o += ",o_" + std::to_string(b->uniq) + ":" + std::to_string(tl-te);
           break;
         default:
           err("c'est impossible!");
@@ -1028,6 +1041,8 @@ private:
     if (from == green || to == green)
       err("green balls cannot change color.");
     ball_t *a = balls[from].back();
+    name_t n = a->uniq;
+    a->uniq = b->uniq; b->uniq = n;
     swap(b,a);
     a->color = to;
     a->name = balls[to].size();

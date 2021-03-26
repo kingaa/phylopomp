@@ -104,7 +104,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
 
 ball_colors <- c(
   g="darkgreen",
-  b="royalblue4",
+  b="royalblue2",
   r="red2",
   n="saddlebrown",
   o="black",
