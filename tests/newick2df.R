@@ -10,6 +10,13 @@ y <- getInfo(x)
 newick2df(y$tree) -> z
 
 # compare to y$lineages
-y$lineages %>%
-  all.equal(tail(z,-1)[,1:2],tolerance=1e-5) %>%
-  stopifnot()
+all.equal(
+  z %>%
+    select(time,lineages),
+  y$lineages %>%
+    group_by(time) %>%
+    summarize(lineages=lineages[n()]) %>%
+    ungroup() %>%
+    slice(-n()),
+  tolerance=1e-5
+)

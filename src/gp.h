@@ -569,43 +569,43 @@ public:
 private:
 
   // report all the seating times and lineage count
-  name_t lineage_count (double *t = 0, int *ct = 0) const {
+  name_t lineage_count (double *t = 0, int *ell = 0) const {
     player_t *p = anchor();
-    name_t n = 0;
+    name_t n = 1;
     int count = 0;
     while (p != 0) {
       if (!p->holds(grey)) {
         if (t != 0) *t = p->slate;
-        if (ct != 0) {
+        if (ell != 0) {
           count--;
           if (p->ballA->is(green)) count++;
           if (p->ballB->is(green)) count++;
-          *ct = count;
+          *ell = count;
         }
-        if (!p->holds_own()) {
-          n++;
-          if (t != 0) t++;
-          if (ct != 0) ct++;
-        }
+	n++;
+	if (t != 0) t++;
+	if (ell != 0) ell++;
       }
       p = p->right;
     }
+    if (t != 0) *t = time();
+    if (ell != 0) *ell = 0;
     return n;
   };
 
 public:
 
   friend SEXP lineage_count (const gp_tableau_t & T) {
-    SEXP t, ct, rv, rvn;
+    SEXP t, ell, rv, rvn;
     int nt = T.lineage_count();
     PROTECT(t = NEW_NUMERIC(nt));
-    PROTECT(ct = NEW_INTEGER(nt));
+    PROTECT(ell = NEW_INTEGER(nt));
     PROTECT(rv = NEW_LIST(2));
     PROTECT(rvn = NEW_CHARACTER(2));
     set_list_elem(rv,rvn,t,"time",0);
-    set_list_elem(rv,rvn,ct,"lineages",1);
+    set_list_elem(rv,rvn,ell,"lineages",1);
     SET_NAMES(rv,rvn);
-    T.lineage_count(REAL(t),INTEGER(ct));
+    T.lineage_count(REAL(t),INTEGER(ell));
     UNPROTECT(4);
     return rv;
   }

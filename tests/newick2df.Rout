@@ -1,6 +1,6 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.4 (2021-02-15) -- "Lost Library Book"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -27,14 +27,17 @@ Type 'q()' to quit R.
 > playSIRwS(beta=2,gamma=1,psi=2,S0=100,I0=2,times=c(0,5),t0=0,tree=TRUE) -> x
 > y <- getInfo(x)
 > newick2df(y$tree) -> z
-Warning message:
-`tbl_df()` is deprecated as of dplyr 1.0.0.
-Please use `tibble::as_tibble()` instead.
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
 > 
 > # compare to y$lineages
-> y$lineages %>%
-+   all.equal(tail(z,-1)[,1:2],tolerance=1e-5) %>%
-+   stopifnot()
+> all.equal(
++   z %>%
++     select(time,lineages),
++   y$lineages %>%
++     group_by(time) %>%
++     summarize(lineages=lineages[n()]) %>%
++     ungroup() %>%
++     slice(-n()),
++   tolerance=1e-5
++ )
+[1] TRUE
 > 

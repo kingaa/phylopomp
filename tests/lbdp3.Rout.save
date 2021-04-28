@@ -51,12 +51,8 @@ attr(,"rng")[[1]]
 
 attr(,"doRNG_version")
 [1] "1.7.4"
-Warning messages:
-1: `tbl_df()` was deprecated in dplyr 1.0.0.
-Please use `tibble::as_tibble()` instead.
-This warning is displayed once every 8 hours.
-Call `lifecycle::last_warnings()` to see where this warning was generated. 
-2: In (function (obj, ex)  :
+Warning message:
+In (function (obj, ex)  :
   Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state
 > x %>% getInfo() %>% getElement("tree") %>%
 +   newick2df(time=5) -> dat
