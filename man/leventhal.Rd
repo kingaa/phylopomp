@@ -28,7 +28,7 @@ Simulation and inference for Leventhal's model
 \details{
 \code{leventhal_pomp} constructs a \pkg{pomp} object containing a given set of data and a Leventhal-type SIS infection.
 
-It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
+It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
 }
 \seealso{
 Other Genealogy processes: 

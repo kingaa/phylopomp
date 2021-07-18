@@ -32,9 +32,24 @@ treeplot <- function (tree, time = NULL, illus = NULL,
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   read.tree(text=tree) %>%
     fortify(ladderize=ladderize) %>%
-    separate(label,into=c("nodecol","label")) -> dat
+    mutate(nodecol="") %>%
+    arrange(x) -> dat
   if (length(tree)==1) dat$.id <- ""
   dat$.id <- as.integer(as.factor(dat$.id))
+  
+  if (points) {
+    dat %>%
+      group_by(.id) %>%
+      mutate(
+        descs=(table(parent)[as.character(node)]) %>% replace_na(0),  # regarding "node"
+        nodecol=if_else(parent %in% parent[node==parent] & x==0.0, "i", 
+                if_else(isTip, "r", 
+                if_else(descs>1, "g", 
+                if_else(x!=0.0,"b","g"))))
+      ) %>%
+      mutate(nodecol=if_else(nodecol=="i" & sum(nodecol=="i")==1, "g", nodecol)) %>%
+      ungroup(.id) -> dat
+  }
   if (is.na(root_time)) { # root time is to be determined from the current time
     dat %>%
       group_by(.id) %>%
@@ -70,14 +85,14 @@ treeplot <- function (tree, time = NULL, illus = NULL,
       expand_limits(x=dat$x)+
       scale_x_continuous()+
       scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
-      guides(alpha=FALSE)+
+      guides(alpha="none")+
       theme_tree2() -> pl
     if (points) {
       pl+
         geom_nodepoint(aes(color=nodecol))+
         geom_tippoint(aes(color=nodecol))+
         scale_color_identity()+
-        guides(color=FALSE) -> pl
+        guides(color="none") -> pl
     }
     if (diagram) {
       d %>%

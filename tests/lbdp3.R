@@ -24,7 +24,7 @@ registerDoRNG(728604304)
 playLBDP(lambda=4,mu=2,psi=4,times=5) -> x
 x %>% getInfo(compact=TRUE) %>% plot(points=TRUE)
 x %>% getInfo() %>% getElement("tree") %>%
-  newick2df(time=5) -> dat
+  nwk2df(time=5) -> dat
 
 dat %>% lbdp_exact(lambda=4,mu=3,psi=4) -> ll1
 

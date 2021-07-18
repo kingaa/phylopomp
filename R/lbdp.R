@@ -60,7 +60,7 @@ utils::globalVariables("count")
 ##' \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 ##' The derivation is also given in comments in the code.
 ##'
-##' The \code{data} argument should in the format returned by \code{\link{newick2df}}.
+##' The \code{data} argument should in the format returned by \code{\link{nwk2df}}.
 ##'
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
@@ -159,7 +159,7 @@ lbdp_exact <- function (data, lambda, mu, psi) {
 ##' @details
 ##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 ##'
-##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
+##' It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
 ##'
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact

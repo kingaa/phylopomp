@@ -2,7 +2,6 @@
 
 - ~~make names of black balls globally serial as with green balls~~
 - ~~make blue and red ball names correspond to the name of the black ball selected~~
-- improve `newick2df` for use with more general formats
 - include `code` column in `lineage_count`
 - ~~compact Newick representation~~
 - ~~get rid of brown balls altogether~~
