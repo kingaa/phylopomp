@@ -131,6 +131,7 @@ x$tree \%>\%
 Other Genealogy processes: 
 \code{\link{leventhal}},
 \code{\link{moran}},
+\code{\link{multisirws}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}

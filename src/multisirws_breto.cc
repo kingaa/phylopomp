@@ -1,10 +1,9 @@
-// SIR with Sampling Genealogy Process Simulator (C++)
-
-#include "sirws.h"
+// multisir with Sampling Genealogy Process Simulator (C++)
+#include "multisirws_breto.h"
 #include "internal.h"
 
-sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP R0, SEXP T0, SEXP State) {
-  sirws_tableau_t *gp;
+multisirws_tableau_t *makemultiSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP Theta, SEXP S0, SEXP I0, SEXP R0, SEXP T0, SEXP State) {
+  multisirws_tableau_t *gp;
   
   double beta = R_NaReal;     // transmission rate
   if (!isNull(Beta)) {
@@ -21,7 +20,12 @@ sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, S
     psi = *(REAL(AS_NUMERIC(Psi)));
   }
 
-  if (isNull(State)) {        // a fresh SIR
+  double theta = R_NaReal;       // dispersion param
+  if (!isNull(Theta)) {
+    theta = *(REAL(AS_NUMERIC(Theta)));
+  }
+
+  if (isNull(State)) {        // a fresh multisir
 
     double t0 = *(REAL(AS_NUMERIC(T0)));
 
@@ -40,16 +44,16 @@ sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, S
       r0 = *(INTEGER(AS_INTEGER(R0)));
     }
 
+    gp = new multisirws_tableau_t(beta,gamma,psi,theta,s0,i0,r0,t0);
 
-    gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,r0,t0);
+  }  else {              // restart the multisir from the specified state
 
-  }  else {              // restart the SIR from the specified state
-
-    gp = new sirws_tableau_t(RAW(State));
+    gp = new multisirws_tableau_t(RAW(State));
     // optionally override the stored parameters
     if (!isNull(Beta)) gp->transmission_rate(beta);
     if (!isNull(Gamma)) gp->recovery_rate(gamma);
     if (!isNull(Psi)) gp->sample_rate(psi);
+    if (!isNull(Theta)) gp->dispersion_param(theta);
       
   }
 
@@ -60,13 +64,13 @@ sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, S
 
 extern "C" {
 
-  // Sampled SIR process.
+  // Sampled overdispersed SIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
+  SEXP playmultiSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP Theta, SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
     SEXP out = R_NilValue;
     GetRNGstate();
-    sirws_tableau_t *gp = makeSIRwS(Beta,Gamma,Psi,S0,I0,R0,T0,State);
-    PROTECT(out = playGP<sirws_tableau_t>(gp,Times,Tree,Ill));
+    multisirws_tableau_t *gp = makemultiSIRwS(Beta,Gamma,Psi,Theta,S0,I0,R0,T0,State);
+    PROTECT(out = playGP<multisirws_tableau_t>(gp,Times,Tree,Ill));
     PutRNGstate();
     delete gp;
     UNPROTECT(1);

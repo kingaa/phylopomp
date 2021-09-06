@@ -1072,11 +1072,13 @@ private:
 
 private:
 
-  void birth (const state_t &s) {
+  void birth (const state_t &s, int b=1) {
     ball_t *a = random_black_ball();
-    player_t *p = make_player(black);
-    p->state = s;
-    seat(p->ball(black),a);
+    for (int i=0; i<b; i++) {
+      player_t *p = make_player(black);
+      p->state = s;
+      seat(p->ball(black),a);
+    }
   };
 
   void death (const state_t &s) {
@@ -1109,8 +1111,8 @@ private:
 
 public:
 
-  void birth (void) {
-    birth(this->state);
+  void birth (int b=1) {
+    birth(this->state, b);
   };
 
   void death (void) {

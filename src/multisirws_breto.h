@@ -1,4 +1,5 @@
-// SIR with Sampling Genealogy Process Simulator (C++)
+// multisir with Sampling Genealogy Process Simulator (C++)
+// with multifurcation birth
 
 #include "gp.h"
 
@@ -6,19 +7,20 @@ typedef struct {
   double S;             // number of susceptibles
   double I;             // number of infections
   double R;             // number of recovereds
-} sir_state_t;
+} multisir_state_t;
 
-const sir_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
+const multisir_state_t default_multistate = {R_NaReal,R_NaReal,R_NaReal};
 
-class sirws_tableau_t : public gp_tableau_t<sir_state_t> {
+class multisirws_tableau_t : public gp_tableau_t<multisir_state_t> {
 
 private:
 
   typedef struct {
-    double N;                   // host population size
+    double N;                   // total population size
     double beta;                // transmission rate
     double gamma;               // recovery rate
     double psi;                 // sampling rate
+    double theta;               // inverse dispersion parameter
     int S0;                     // initial susceptibles
     int I0;                     // initial infecteds
     int R0;                     // initial recoveries
@@ -45,24 +47,24 @@ public:
     return sizeof(parameters_t) + this->gp_tableau_t::size();
   };
 
-  friend raw_t* operator<< (raw_t *o, const sirws_tableau_t &T) {
+  friend raw_t* operator<< (raw_t *o, const multisirws_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
     return o << *dynamic_cast<const gp_tableau_t*>(&T);
   };
 
-  friend raw_t* operator>> (raw_t *o, sirws_tableau_t &T) {
+  friend raw_t* operator>> (raw_t *o, multisirws_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
     return o >> *dynamic_cast<gp_tableau_t*>(&T);
   };
 
 public:
 
-  sirws_tableau_t (void) = default;
+  multisirws_tableau_t (void) = default;
   // basic constructor
-  sirws_tableau_t (double beta, double gamma, double psi,
+  multisirws_tableau_t (double beta, double gamma, double psi, double theta,
                    int S0, int I0, int R0, double t0 = 0) : gp_tableau_t(t0) {
     params = {
-      double(S0+I0+R0), beta, gamma, psi, S0, I0, R0
+      double(S0+I0+R0), beta, gamma, psi, theta, S0, I0, R0
     };
     state = {double(S0), double(I0), double(R0)};
     for (name_t j = 0; j < name_t(I0); j++) graft();
@@ -70,13 +72,13 @@ public:
     valid();
   };
   // constructor from serialized binary form
-  sirws_tableau_t (raw_t *o) {
+  multisirws_tableau_t (raw_t *o) {
     o >> *this;
     update_clocks();
     valid();
   };
   // copy constructor
-  sirws_tableau_t (const sirws_tableau_t &T) {
+  multisirws_tableau_t (const multisirws_tableau_t &T) {
     raw_t *o = new raw_t[T.size()];
     o << T;
     o >> *this;
@@ -85,13 +87,13 @@ public:
     valid();
   };
   // move constructor
-  sirws_tableau_t (sirws_tableau_t &&) = delete;
+  multisirws_tableau_t (multisirws_tableau_t &&) = delete;
   // copy assignment operator
-  sirws_tableau_t & operator= (const sirws_tableau_t &) = delete;
+  multisirws_tableau_t & operator= (const multisirws_tableau_t &) = delete;
   // move assignment operator
-  sirws_tableau_t & operator= (sirws_tableau_t &&) = delete;
+  multisirws_tableau_t & operator= (multisirws_tableau_t &&) = delete;
   // destructor
-  ~sirws_tableau_t (void) = default;
+  ~multisirws_tableau_t (void) = default;
 
   void valid (void) const {
     this->gp_tableau_t::valid();
@@ -134,9 +136,26 @@ public:
     update_clocks();
   };
 
+  // get dispersion param
+  double dispersion_param (void) const {
+    return params.theta;
+  };
+
+  // set dispersion rate
+  void dispersion_param (double &theta) {
+    params.theta = theta;
+    update_clocks();
+  };
+
   void update_clocks (void) {
-    double rate;
-    rate = params.beta * state.S * state.I / params.N;
+    double rate, q, totalrates;
+    q = state.S / (state.S + params.theta - 1.0);
+    totalrates = q;
+    for (int j = 2; j <= (int)state.S; j++) {
+      q = q * (j-1.0) * (state.S + 1.0 - j) / j / (state.S + params.theta - j);
+      totalrates += q;
+    }
+    rate = params.beta * state.I / params.N * params.theta * totalrates;
     if (rate > 0) {
       nextI = time()+rexp(1/rate);
     } else {
@@ -170,12 +189,31 @@ public:
     }
     return next;
   };
-    
+
+  // Breto & Ionides (2011)
+  void birthrates (int indmax, double size, double disp, double *arr) {
+    arr[0] = 0.0;
+    arr[1] = size / (size + disp - 1.0);
+    double p = arr[1];
+    for (int j = 2; j < indmax; j++) {
+     p = p * (j - 1.0) * (size + 1.0 - j) / j / (size + disp - j);
+     arr[j] = arr[j-1] + p; 
+    }
+  }
+
   void move (void) {
     if (nextI < nextR && nextI < nextS) {
-      state.S -= 1.0;
-      state.I += 1.0;
-      birth();
+      int n, desc = 1, max = (int)(params.N+1.0);
+      n = (int)(state.S + 1.0);
+      double cum[max];
+      birthrates(n, state.S, params.theta, cum);
+      double Q = unif_rand() * cum[n-1];
+      while (cum[desc] < Q) {
+        desc++;
+      }
+      state.S -= double(desc);
+      state.I += double(desc);
+      birth(desc);
     } else if (nextS < nextI && nextS < nextR) {
       sample();
     } else if (nextR < nextI && nextR < nextS) {

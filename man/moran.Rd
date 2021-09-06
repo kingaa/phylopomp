@@ -112,6 +112,7 @@ playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) \%>
 Other Genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{leventhal}},
+\code{\link{multisirws}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}

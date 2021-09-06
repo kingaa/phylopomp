@@ -3,6 +3,7 @@
 #include "moran.h"
 #include "lbdp.h"
 #include "sirws.h"
+#include "multisirws_breto.h"
 
 extern "C" {
 
@@ -16,6 +17,10 @@ extern "C" {
 
   SEXP get_SIRwS_info (SEXP X, SEXP Prune, SEXP Compact) {
     return get_info<sirws_tableau_t>(X,Prune,Compact);
+  }
+
+  SEXP get_multiSIRwS_info (SEXP X, SEXP Prune, SEXP Compact) {
+    return get_info<multisirws_tableau_t>(X,Prune,Compact);
   }
 
 }

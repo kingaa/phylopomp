@@ -34,6 +34,7 @@ It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}
 Other Genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{multisirws}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}
