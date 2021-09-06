@@ -3,8 +3,8 @@
 
 #define Beta		  (__p[__parindex[0]])
 #define gamma		  (__p[__parindex[1]])
-#define theta     (__p[__parindex[2]])
-#define psi       (__p[__parindex[3]])
+#define psi       (__p[__parindex[2]])
+#define theta     (__p[__parindex[3]])
 #define S0		    (__p[__parindex[4]])
 #define I0        (__p[__parindex[5]])
 #define R0        (__p[__parindex[6]])      
@@ -184,8 +184,8 @@ void multisir_dmeas (double *__lik, const double *__y, const double *__x, const 
 #undef lik
 #undef Beta
 #undef gamma
-#undef theta
 #undef psi
+#undef theta
 #undef S0
 #undef I0
 #undef R0
