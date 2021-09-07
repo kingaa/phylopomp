@@ -6,7 +6,8 @@
 #define psi       (__p[__parindex[2]])
 #define S0		    (__p[__parindex[3]])
 #define I0        (__p[__parindex[4]])
-#define R0        (__p[__parindex[5]])      
+#define R0        (__p[__parindex[5]])
+#define N         (__p[__parindex[6]])
 #define lineages	(__covars[__covindex[0]])
 #define code		  (__covars[__covindex[1]])
 #define S		      (__x[__stateindex[0]])
@@ -15,10 +16,11 @@
 #define ll		    (__x[__stateindex[3]])
 
 void sir_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
-{
-    S = S0;
-    I = I0;
-    R = R0;
+{ 
+    double m = N/(S0+I0+R0);
+    S = nearbyint(S0*m);
+    I = nearbyint(I0*m);
+    R = nearbyint(R0*m);
     ll = 0.0;
 }
 
@@ -29,7 +31,7 @@ void sir_gill (double *__x, const double *__p, const int *__stateindex, const in
   double tstep = 0.0, tmax = t + dt;
 
   // params
-  double lambda = Beta*S/(S+I+R);
+  double lambda = Beta*S/N;
   double mu = gamma;
   if (ind == 1) {                // coalescent
     ll += (I > 0) ? log(lambda*I) : R_NegInf;
@@ -56,7 +58,7 @@ void sir_gill (double *__x, const double *__p, const int *__stateindex, const in
       R += 1;
     }
     t += tstep;
-    lambda = Beta*S/(S+I+R);
+    lambda = Beta*S/N;
     tstep = exp_rand()/(lambda+mu)/I;
   }
 
@@ -70,7 +72,7 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
 {
     int ind = nearbyint(code);
     // params
-    double lambda = Beta*S/(S+I+R);
+    double lambda = Beta*S/N;
     double mu = gamma;
     if (ll < 1e-300 && ll > -1e-300) {
       if (ind == 1) {                // coalescent
@@ -94,7 +96,7 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
     int nrate = 2;
     double rate[nrate], trans[nrate];
 
-    rate[0] = Beta*I/(S+I+R);
+    rate[0] = Beta*I/N;
     rate[1] = gamma;
 
 
@@ -138,6 +140,7 @@ void sir_dmeas (double *__lik, const double *__y, const double *__x, const doubl
 #undef S0
 #undef I0
 #undef R0
+#undef N
 #undef lineages
 #undef code
 #undef S

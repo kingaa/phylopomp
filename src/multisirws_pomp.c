@@ -7,7 +7,8 @@
 #define theta     (__p[__parindex[3]])
 #define S0		    (__p[__parindex[4]])
 #define I0        (__p[__parindex[5]])
-#define R0        (__p[__parindex[6]])      
+#define R0        (__p[__parindex[6]])   
+#define N         (__p[__parindex[7]])     
 #define lineages	(__covars[__covindex[0]])
 #define code		  (__covars[__covindex[1]])
 #define branches  (__covars[__covindex[2]])
@@ -17,10 +18,11 @@
 #define ll		    (__x[__stateindex[3]])
 
 void multisir_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
-{
-    S = S0;
-    I = I0;
-    R = R0;
+{ 
+    double m = N/(S0+I0+R0);
+    S = nearbyint(S0*m);
+    I = nearbyint(I0*m);
+    R = nearbyint(R0*m);
     ll = 0.0;
 }
 
@@ -33,7 +35,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
     // params
     double mu = gamma;
     double lambda, Q, totalrates;
-    int n, max = nearbyint(S+I+R+1.0), tmp;
+    int n, max = nearbyint(N+1.0), tmp;
     double c[max];                         // cumulative birth rates
     void birthrates (int indmax, double size, double disp, double *arr) {
       arr[0] = 0.0;
@@ -48,7 +50,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
     birthrates(n, S, theta, c);
     totalrates = c[n-1];
 
-    lambda = Beta/(S+I+R)*theta*totalrates;
+    lambda = Beta/N*theta*totalrates;
     if (ind == 1) {// coalescent
       if (S >= branches) {// check for compatibility
         ll += (I > 0) ? log(lambda*I) : R_NegInf;
@@ -82,7 +84,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
     n = nearbyint(S+1);
     birthrates(n, S, theta, c);
     totalrates = c[n-1];
-    lambda = Beta/(S+I+R)*theta*totalrates;
+    lambda = Beta/N*theta*totalrates;
     tstep = exp_rand()/(lambda+mu)/I;
     while (t + tstep < tmax) {
       ll -= psi*I*tstep;
@@ -103,7 +105,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
       n = nearbyint(S+1);
       birthrates(n, S, theta, c);
       totalrates = c[n-1];
-      lambda = Beta/(S+I+R)*theta*totalrates;
+      lambda = Beta/N*theta*totalrates;
       tstep = exp_rand()/(lambda+mu)/I;
     }
     
@@ -119,7 +121,7 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
 {
     int ind = nearbyint(code);
     // params
-    double lambda = Beta*S/(S+I+R);
+    double lambda = Beta*S/N;
     double mu = gamma;
     if (ll < 1e-300 && ll > -1e-300) {
       if (ind == 1) {                // coalescent
@@ -143,7 +145,7 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
     int nrate = 2;
     double rate[nrate], trans[nrate];
 
-    rate[0] = Beta*I/(S+I+R);
+    rate[0] = Beta*I/N;
     rate[1] = gamma;
 
 
@@ -189,6 +191,7 @@ void multisir_dmeas (double *__lik, const double *__y, const double *__x, const 
 #undef S0
 #undef I0
 #undef R0
+#undef N
 #undef lineages
 #undef code
 #undef branches
