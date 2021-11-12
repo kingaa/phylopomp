@@ -38,9 +38,9 @@ playSIRwS <- function (data = NULL, ..., beta, gamma, psi, S0, I0, t0 = 0, times
   x <- .Call(P_playSIRwS,beta,gamma,psi,S0,I0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble() %>% filter(!is.na(count))
+      x |> as_tibble() |> filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "SIRwS"

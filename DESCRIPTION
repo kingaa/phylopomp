@@ -8,8 +8,8 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
 	  )
 Description: Tools for phylodynamic analysis.
-Depends: R(>= 4.0.0)
-Imports: grid, ggtree, ggplot2, scales, ape, magrittr, dplyr, tibble, foreach, tidyr, readr, pomp
+Depends: R(>= 4.1.0)
+Imports: grid, ggtree, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, readr, pomp
 LinkingTo: pomp
 Suggests: tidyverse, doParallel, doRNG, broom, cowplot
 License: GPL-3
@@ -29,5 +29,4 @@ Collate:
     'leventhal.R'
     'moran.R'
     'newick2df.R'
-    'pipe.R'
     'print.R'

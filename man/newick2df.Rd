@@ -42,6 +42,6 @@ y <- getInfo(x)
 newick2df(y$tree) -> z
 
 # compare to y$lineages
-y$lineages \%>\%
+y$lineages |>
   all.equal(tail(z,-1)[,1:2],tolerance=1e-5)
 }

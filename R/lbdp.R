@@ -42,9 +42,9 @@ playLBDP <- function (data = NULL, ..., lambda, mu, psi, n0 = 1, t0 = 0, times,
   x <- .Call(P_playLBDP,lambda,mu,psi,n0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble() %>% filter(!is.na(count))
+      x |> as_tibble() |> filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "LBDP"
@@ -174,7 +174,7 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0,
   if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
     stop(sQuote("delta.t")," must be specified when method = ",
       dQuote("euler"),".",.call=FALSE)
-  data[,"time"] %>%
+  data[,"time"] |>
     pomp(
       times="time",t0=t0,
       params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),

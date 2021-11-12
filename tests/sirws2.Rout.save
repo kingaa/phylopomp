@@ -1,6 +1,6 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -61,7 +61,7 @@ Type 'q()' to quit R.
 > dat %>%
 +   do(tidy(ks.test(x=.$p,y=punif))) %>%
 +   select(p.value)
-# A tibble: 1 x 1
+# A tibble: 1 × 1
   p.value
     <dbl>
 1   0.268

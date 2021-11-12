@@ -48,9 +48,9 @@ playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, sample = TRUE,
   x <- .Call(P_playMoran,n,mu,times,t0,sample,tree,ill,stationary,state)
   state <- x$state
   x$state <- NULL
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble()
+      x |> as_tibble()
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "Moran"
@@ -72,9 +72,9 @@ playMoranWChain <- function (data = NULL, ..., n, mu, t0 = 0, ntimes, tree = TRU
   state <- x$state
   x$state <- NULL
   x$count <- 1
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble()
+      x |> as_tibble()
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "Moran"

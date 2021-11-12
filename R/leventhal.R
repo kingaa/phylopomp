@@ -34,7 +34,7 @@ NULL
 ##'
 ##' @export
 leventhal_pomp <- function (data, beta, gamma, psi, N, I0 = 1, t0 = 0) {
-  data[,"time"] %>%
+  data[,"time"] |>
     pomp(
       times="time",t0=t0,
       params=c(beta=beta,gamma=gamma,psi=psi,N=N,I0=I0),

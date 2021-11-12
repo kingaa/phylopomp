@@ -30,28 +30,28 @@ treeplot <- function (tree, time = NULL, illus = NULL,
   root_time = 0, ladderize = TRUE, points = FALSE, diagram = FALSE) {
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
-  read.tree(text=tree) %>%
-    fortify(ladderize=ladderize) %>%
+  read.tree(text=tree) |>
+    fortify(ladderize=ladderize) |>
     separate(label,into=c("nodecol","label")) -> dat
   if (length(tree)==1) dat$.id <- ""
   dat$.id <- as.integer(as.factor(dat$.id))
   if (is.na(root_time)) { # root time is to be determined from the current time
-    dat %>%
-      group_by(.id) %>%
+    dat |>
+      group_by(.id) |>
       mutate(
         x=x-max(x)+time[.id],
         vis=nodecol != "i",
         nodecol=ball_colors[nodecol]
-      ) %>%
+      ) |>
       ungroup(.id) -> dat
   } else {
-    dat %>%
-      group_by(.id) %>%
+    dat |>
+      group_by(.id) |>
       mutate(
         x=x-min(x)+root_time,
         vis=nodecol != "i",
         nodecol=ball_colors[nodecol]
-      ) %>%
+      ) |>
       ungroup(.id) -> dat
   }
   
@@ -64,24 +64,24 @@ treeplot <- function (tree, time = NULL, illus = NULL,
     d=split(dat,dat$.id)
   ) %dopar% {
     attr(d,"layout") <- "rectangular"
-    d %>%
+    d |>
       ggplot(aes(x=x,y=y))+
       geom_tree(aes(alpha=vis))+
       expand_limits(x=dat$x)+
       scale_x_continuous()+
       scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
-      guides(alpha=FALSE)+
+      guides(alpha="none")+
       theme_tree2() -> pl
     if (points) {
       pl+
         geom_nodepoint(aes(color=nodecol))+
         geom_tippoint(aes(color=nodecol))+
         scale_color_identity()+
-        guides(color=FALSE) -> pl
+        guides(color="none") -> pl
     }
     if (diagram) {
-      d %>%
-        filter(vis) %>%
+      d |>
+        filter(vis) |>
         summarize(
           ymin=min(y),
           ymax=max(y),
