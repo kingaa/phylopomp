@@ -24,12 +24,13 @@ playSIRwS(
 
 sir_pomp(
   data,
-  beta,
+  Beta,
   gamma,
   psi,
   S0,
   I0,
   R0,
+  N,
   t0 = 0,
   method = c("gillespie", "euler"),
   delta.t = NULL
@@ -59,6 +60,8 @@ sir_pomp(
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
+
+\item{N}{initial total population size}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

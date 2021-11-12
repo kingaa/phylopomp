@@ -23,7 +23,7 @@ playmultiSIRwS(
   ill = FALSE
 )
 
-multisir_pomp(data, beta, gamma, psi, theta, S0, I0, R0, t0 = 0)
+multisir_pomp(data, Beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
 }
 \arguments{
 \item{data}{optional data frame; output from \code{playmultiSIRwS}.}
@@ -51,6 +51,8 @@ multisir_pomp(data, beta, gamma, psi, theta, S0, I0, R0, t0 = 0)
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
+
+\item{N}{initial total population size}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
