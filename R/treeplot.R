@@ -19,8 +19,8 @@
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous scale_color_manual guides fortify
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate group_by ungroup
-##' @importFrom tidyr separate
+##' @importFrom dplyr mutate group_by ungroup arrange
+##' @importFrom tidyr separate replace_na
 ##' @importFrom scales alpha
 ##' @importFrom utils globalVariables
 ##'

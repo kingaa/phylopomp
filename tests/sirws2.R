@@ -28,6 +28,7 @@ foreach (i=1:50) %dopar% {
     psi=3,
     S0=1000,
     I0=500,
+    R0=0,
     t0=0,
     times=100,
     tree=FALSE

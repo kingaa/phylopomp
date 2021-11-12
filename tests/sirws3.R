@@ -27,6 +27,7 @@ expand_grid(
   psi=1,
   I0=1,
   S0=c(1,2),
+  R0=0,
   rep=1:2000
 ) -> pars
 
@@ -36,7 +37,7 @@ foreach (par=iter(pars,"row")) %dopar% {
   par %$%
     playSIRwS(
       beta=beta,gamma=gamma,psi=psi,
-      S0=S0,I0=I0,t0=0,times=100,
+      S0=S0,I0=I0,R0=0,t0=0,times=100,
       tree=FALSE
     ) %>%
     getInfo() -> x
