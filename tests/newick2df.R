@@ -11,12 +11,12 @@ newick2df(y$tree) -> z
 
 # compare to y$lineages
 all.equal(
-  z %>%
+  z |>
     select(time,lineages),
-  y$lineages %>%
-    group_by(time) %>%
-    summarize(lineages=lineages[n()]) %>%
-    ungroup() %>%
+  y$lineages |>
+    group_by(time) |>
+    summarize(lineages=lineages[n()]) |>
+    ungroup() |>
     slice(-n()),
   tolerance=1e-5
 )

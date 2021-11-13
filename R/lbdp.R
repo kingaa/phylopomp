@@ -111,12 +111,13 @@ lbdp_exact <- function (data, lambda, mu, psi) {
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
 
-  tf <- tail(data$time,1)
+  tf <- tail(data$time,1L)
   x <- tf-data$time[data$code==1 | data$code==2] ## coalescence times (including root time)
-  y <- tf-data$time[data$code==-1]               ## live samples
+  y <- tf-data$time[data$code==-1]                ## live samples
   k <- sum(data$code==0)  ## k: no. of dead samples
   m <- sum(data$code==-1) ## m: no. of live samples
-  if (m != length(x))
+  ##  if (m - length(x) != data$lineages[1L]-1L)
+  if (m - length(x) != 0L)
     stop("internal inconsistency in ",sQuote("data"),".",call.=FALSE)
 
   ## A simple fractional linear transformation (1-z)/(1+z),

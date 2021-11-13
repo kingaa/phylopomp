@@ -1,6 +1,7 @@
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
+  library(magrittr)
   library(broom)
   library(doParallel)
   library(doRNG)
@@ -38,29 +39,29 @@ foreach (par=iter(pars,"row")) %dopar% {
       beta=beta,gamma=gamma,psi=psi,
       S0=S0,I0=I0,t0=0,times=100,
       tree=FALSE
-    ) %>%
+    ) |>
     getInfo() -> x
   bind_cols(par,x$cumhaz)
-} %>%
-  bind_rows() %>%
-  filter(!is.na(Lambda)) %>%
-  mutate(p=exp(-Lambda)) %>%
+} |>
+  bind_rows() |>
+  filter(!is.na(Lambda)) |>
+  mutate(p=exp(-Lambda)) |>
   arrange(beta,gamma,psi,S0,I0,rep,time) -> dat
 
 stopifnot(
-  `ties in KS test`=dat %>%
-    count(p) %>%
-    filter(n>1) %>%
+  `ties in KS test`=dat |>
+    count(p) |>
+    filter(n>1) |>
     nrow()==0
 )
 
-dat %>%
-  group_by(S0) %>%
-  do(tidy(ks.test(x=.$p,y=punif))) %>%
+dat |>
+  group_by(S0) |>
+  do(tidy(ks.test(x=.$p,y=punif))) |>
   select(p.value) -> pval
 pval
 
-dat %>%
+dat |>
   ggplot(aes(x=p,group=S0,color=as.factor(S0)))+
   geom_abline(slope=1)+
   stat_ecdf()+

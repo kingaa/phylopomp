@@ -31,36 +31,36 @@ foreach (i=1:50) %dopar% {
     t0=0,
     times=100,
     tree=FALSE
-  ) %>%
-    getInfo(tree=FALSE) %>% {
-      .$cumhaz %>%
+  ) |>
+    getInfo(tree=FALSE) |> {
+      \(x) x$cumhaz |>
         mutate(p=exp(-Lambda))
-    }
-} %>%
+    }()
+} |>
   bind_rows(.id="rep") -> dat
 
 stopifnot(
-  `ties in KS test`=dat %>%
-    count(p) %>%
-    filter(n>1) %>%
+  `ties in KS test`=dat |>
+    count(p) |>
+    filter(n>1) |>
     nrow()==0
 )
 
-dat %>%
-  do(tidy(ks.test(x=.$p,y=punif))) %>%
+dat |>
+  do(tidy(ks.test(x=.$p,y=punif))) |>
   select(p.value)
 
-dat %>%
-  group_by(rep) %>%
-  do(tidy(ks.test(x=.$p,y=punif))) %>%
-  ungroup() %>%
+dat |>
+  group_by(rep) |>
+  do(tidy(ks.test(x=.$p,y=punif))) |>
+  ungroup() |>
   select(p.value) -> pvals
 
-pvals %>%
-  do(tidy(ks.test(x=.$p.value,y=punif))) %>%
+pvals |>
+  do(tidy(ks.test(x=.$p.value,y=punif))) |>
   select(p.value) -> ppval
 
-dat %>%
+dat |>
   ggplot(aes(x=p))+
   geom_abline(slope=1)+
   stat_ecdf()+
