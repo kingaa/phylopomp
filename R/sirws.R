@@ -70,14 +70,19 @@ sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0,
 {
   method <- match.arg(method)
   delta.t <- as.double(delta.t)
-  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
-    stop(sQuote("delta.t")," must be specified when method = ",
+  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t) || delta.t < 0))
+    stop(sQuote("delta.t")," must be a positive number when method = ",
       dQuote("euler"),".",.call=FALSE)
-  N <- S0+I0+R0
+  S0 <- as.integer(S0)
+  I0 <- as.integer(I0)
+  R0 <- as.integer(R0)
+  if (S0 < 0 || I0 < 0 || R0 < 0)
+    stop(sQuote("S0"),", ",sQuote("I0"),", and ",sQuote("R0"),
+      " must be nonnegative integers.",.call=FALSE)
   data[,"time"] |>
     pomp(
       times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=N),
+      params=c(Beta=Beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=S0+I0+R0),
       rinit="sir_rinit",
       dmeasure="sir_dmeas",
       paramnames=c("Beta","gamma","psi","S0","I0","R0","N"),
