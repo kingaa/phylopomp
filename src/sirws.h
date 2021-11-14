@@ -21,6 +21,7 @@ private:
     double psi;                 // sampling rate
     int S0;                     // initial susceptibles
     int I0;                     // initial infecteds
+    int R0;                     // initial recoveries
   } parameters_t;
 
   parameters_t params;
@@ -59,11 +60,11 @@ public:
   sirws_tableau_t (void) = default;
   // basic constructor
   sirws_tableau_t (double beta, double gamma, double psi,
-                   int S0, int I0, double t0 = 0) : gp_tableau_t(t0) {
+                   int S0, int I0, int R0, double t0 = 0) : gp_tableau_t(t0) {
     params = {
-      double(S0+I0), beta, gamma, psi, S0, I0
+      double(S0+I0+R0), beta, gamma, psi, S0, I0, R0
     };
-    state = {double(S0), double(I0), 0};
+    state = {double(S0), double(I0), double(R0)};
     for (name_t j = 0; j < name_t(I0); j++) graft();
     update_clocks();
     valid();

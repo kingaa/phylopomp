@@ -42,11 +42,12 @@ Type 'q()' to quit R.
 > 
 > foreach (i=1:50) %dopar% {
 +   playSIRwS(
-+     beta=2,
++     Beta=2,
 +     gamma=1,
 +     psi=3,
 +     S0=1000,
 +     I0=500,
++     R0=0,
 +     t0=0,
 +     times=100,
 +     tree=FALSE

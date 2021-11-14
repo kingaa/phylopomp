@@ -4,36 +4,53 @@
 \alias{sirws}
 \alias{playSIRwS}
 \alias{SIRwS}
+\alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
 playSIRwS(
   data = NULL,
   ...,
-  beta,
+  Beta,
   gamma,
   psi,
   S0,
   I0,
+  R0,
   t0 = 0,
   times,
   tree = FALSE,
   ill = FALSE
 )
+
+sir_pomp(
+  data,
+  Beta,
+  gamma,
+  psi,
+  S0,
+  I0,
+  R0,
+  t0 = 0,
+  method = c("gillespie", "euler"),
+  delta.t = NULL
+)
 }
 \arguments{
-\item{data}{optional data frame; output from \code{playSIRwS}.}
+\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 
 \item{...}{additional arguments; ignored.}
 
-\item{beta}{transmission rate}
+\item{Beta}{transmission rate.}
 
-\item{gamma}{recovery rate}
+\item{gamma}{recovery rate.}
 
-\item{psi}{sampling rate}
+\item{psi}{sampling rate.}
 
-\item{S0}{initial size of susceptible population}
+\item{S0}{initial size of susceptible population.}
 
-\item{I0}{initial size of infected population}
+\item{I0}{initial size of infected population.}
+
+\item{R0}{initial size of recovered population.}
 
 \item{t0}{initial time}
 
@@ -42,6 +59,10 @@ playSIRwS(
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
+
+\item{method}{choice of simulation method.}
+
+\item{delta.t}{Euler step size.}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -49,12 +70,15 @@ A \code{tibble} with \code{state} attribute.
 \description{
 Run the simulator.
 }
+\details{
+\code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
+}
 \examples{
-playSIRwS(beta=2,gamma=1,psi=2,S0=1000,I0=5,times=0:5,t0=0,tree=TRUE) -> x
+playSIRwS(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
 playSIRwS(x,times=6:10,psi=1,tree=TRUE) -> x
 plot(x)
 
-playSIRwS(beta=3,gamma=1,psi=2,S0=10,I0=5,times=0:5,t0=-1,tree=TRUE) -> x
+playSIRwS(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
 plot(x,points=TRUE)
 
 y <- getInfo(x)
