@@ -73,7 +73,6 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
     int ind = nearbyint(code);
     // params
     double lambda = Beta*S/N;
-    double mu = gamma;
     if (ll < 1e-300 && ll > -1e-300) {
       if (ind == 1) {                // coalescent
         if (S > 0) {

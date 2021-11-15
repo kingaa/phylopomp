@@ -1,6 +1,6 @@
 
-R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.1.1 (2021-08-10) -- "Kick Things"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -46,6 +46,7 @@ Type 'q()' to quit R.
 +   psi=1,
 +   I0=1,
 +   S0=c(1,2),
++   R0=0,
 +   rep=1:2000
 + ) -> pars
 > 
@@ -55,7 +56,7 @@ Type 'q()' to quit R.
 +   par %$%
 +     playSIRwS(
 +       beta=beta,gamma=gamma,psi=psi,
-+       S0=S0,I0=I0,t0=0,times=100,
++       S0=S0,I0=I0,R0=0,t0=0,times=100,
 +       tree=FALSE
 +     ) %>%
 +     getInfo() -> x
@@ -79,7 +80,7 @@ Type 'q()' to quit R.
 +   select(p.value) -> pval
 Adding missing grouping variables: `S0`
 > pval
-# A tibble: 2 x 2
+# A tibble: 2 × 2
 # Groups:   S0 [2]
      S0 p.value
   <dbl>   <dbl>

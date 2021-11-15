@@ -1,5 +1,5 @@
 
-R version 4.0.4 (2021-02-15) -- "Lost Library Book"
+R version 4.1.1 (2021-08-10) -- "Kick Things"
 Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -55,14 +55,14 @@ Warning message:
 In (function (obj, ex)  :
   Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state
 > x %>% getInfo() %>% getElement("tree") %>%
-+   newick2df(time=5) -> dat
++   nwk2df(time=5) -> dat
 > 
 > dat %>% lbdp_exact(lambda=4,mu=3,psi=4) -> ll1
 > 
 > dat %>%
 +   lbdp_pomp(lambda=4,mu=3,psi=4) %>%
 +   pfilter(
-+     Np=1000
++     Np=2000
 +   ) %>%
 +   logLik() -> ll2
 > 

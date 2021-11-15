@@ -203,9 +203,10 @@ public:
 
   void move (void) {
     if (nextI < nextR && nextI < nextS) {
-      int n, desc = 1, max = (int)(params.N+1.0);
-      n = (int)(state.S + 1.0);
-      double cum[max];
+      int desc = 1;
+      int n = (int)(state.S + 1.0);
+      int max = (int)(params.N+1.0);
+      double *cum = new double[max];
       birthrates(n, state.S, params.theta, cum);
       double Q = unif_rand() * cum[n-1];
       while (cum[desc] < Q) {
@@ -214,6 +215,7 @@ public:
       state.S -= double(desc);
       state.I += double(desc);
       birth(desc);
+      delete[] cum;
     } else if (nextS < nextI && nextS < nextR) {
       sample();
     } else if (nextR < nextI && nextR < nextS) {
