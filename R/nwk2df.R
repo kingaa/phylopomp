@@ -78,4 +78,4 @@ nwk2df <- function(tree, time = NA, root_time = 0, show_branches = FALSE) {
   df
 }
 
-utils::globalVariables(c("lineages","isTip","time","code","type"))
+utils::globalVariables(c("lineages","isTip","time","code","type","parent","node","newbs"))

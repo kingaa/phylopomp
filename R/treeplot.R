@@ -127,7 +127,7 @@ ball_colors <- c(
 )
 
 utils::globalVariables(
-         c(".id","k","label","nodecol","vis","x","y")
+         c(".id","k","label","nodecol","vis","x","y","parent","node","descs")
        )
 
 ##' @export

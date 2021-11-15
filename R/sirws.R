@@ -17,6 +17,8 @@
 ##' @param I0 initial size of infected population
 ##' @param R0 initial size of recovered population
 ##' @param N initial total population size
+##' @param method either \dQuote{gillespie} or \dQuote{euler}
+##' @param delta.t time interval in \dQuote{euler} method
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -64,7 +66,7 @@ utils::globalVariables("count")
 ##'
 ##' @export
 
-sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, N, t0=0, 
+sir_pomp <- function (data, beta, gamma, psi, S0, I0, R0, N, t0=0, 
   method = c("gillespie", "euler"), delta.t = NULL)
 {
   method <- match.arg(method)
@@ -75,7 +77,7 @@ sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, N, t0=0,
   data[,"time"] %>%
     pomp(
       times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=N),
+      params=c(Beta=beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=N),
       rinit="sir_rinit",
       dmeasure="sir_dmeas",
       paramnames=c("Beta","gamma","psi","S0","I0","R0","N"),
