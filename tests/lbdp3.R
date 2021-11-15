@@ -31,7 +31,7 @@ dat %>% lbdp_exact(lambda=4,mu=3,psi=4) -> ll1
 dat %>%
   lbdp_pomp(lambda=4,mu=3,psi=4) %>%
   pfilter(
-    Np=1000
+    Np=2000
   ) %>%
   logLik() -> ll2
 

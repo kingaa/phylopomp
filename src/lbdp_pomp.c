@@ -27,7 +27,7 @@ void lbdp_gill (double *__x, const double *__p, const int *__stateindex, const i
   if (ind == 1) {                // coalescent
     ll += (n > 0) ? log(lambda*n) : R_NegInf;
     n += 1;
-    ll += (n >= lineages && lineages > 1) ? -log(n*(n-1)) : R_NegInf;
+    ll += (n >= lineages && lineages > 1) ? -log(n*(n-1)/2) : R_NegInf;
   } else if (ind == 0) {         // dead sample
     ll += (n >= lineages) ? log(psi) : R_NegInf;
   } else if (ind == -1) {        // live sample

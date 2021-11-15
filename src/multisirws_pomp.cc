@@ -1,5 +1,6 @@
 #include <pomp.h>
 #include <R_ext/Rdynload.h>
+#include <vector>
 
 #define Beta		  (__p[__parindex[0]])
 #define gamma		  (__p[__parindex[1]])
@@ -17,6 +18,8 @@
 #define R         (__x[__stateindex[2]])
 #define ll		    (__x[__stateindex[3]])
 
+typedef std::vector<double> arr_t;
+
 void multisir_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
 { 
     double m = N/(S0+I0+R0);
@@ -24,6 +27,16 @@ void multisir_rinit (double *__x, const double *__p, double t, const int *__stat
     I = nearbyint(I0*m);
     R = nearbyint(R0*m);
     ll = 0.0;
+}
+
+void birthrates (int indmax, double size, double disp, arr_t &arr) {
+    arr.push_back(0);
+    arr.push_back(size/(size+disp-1.0));
+    double p = arr.at(1);
+    for (int j = 2; j < indmax; j++) {
+        p = p*(j-1)*(size+1.0-j)/j/(size+disp-j);
+        arr.push_back(arr.at(j-1)+p);
+    }
 }
 
 void multisir_gill (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
@@ -35,32 +48,24 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
     // params
     double mu = gamma;
     double lambda, Q, totalrates;
-    int n, max = nearbyint(N+1.0), tmp;
-    double c[max];                         // cumulative birth rates
-    void birthrates (int indmax, double size, double disp, double *arr) {
-      arr[0] = 0.0;
-      arr[1] = size/(size+disp-1.0);
-      double p = arr[1];
-      for (int j = 2; j < indmax; j++) {
-        p = p*(j-1)*(size+1.0-j)/j/(size+disp-j);
-        arr[j] = arr[j-1]+p;
-      }
-    }
+    int n, tmp;
+    arr_t c;
+    // double c[max];                         // cumulative birth rates
     n = nearbyint(S+1);
     birthrates(n, S, theta, c);
-    totalrates = c[n-1];
+    totalrates = c.at(n-1);
 
     lambda = Beta/N*theta*totalrates;
     if (ind == 1) {// coalescent
       if (S >= branches) {// check for compatibility
         ll += (I > 0) ? log(lambda*I) : R_NegInf;
         tmp = nearbyint(branches-1.0);
-        ll += log(1-c[tmp]/totalrates);    // correction for the truncated prob
+        ll += log(1-c.at(tmp)/totalrates);    // correction for the truncated prob
         
         // randome no. of offsprings
-        Q = unif_rand()*(totalrates-c[tmp]) + c[tmp];
+        Q = unif_rand()*(totalrates-c.at(tmp)) + c.at(tmp);
         desc = nearbyint(branches);
-        while(c[desc] < Q) {
+        while(c.at(desc) < Q) {
           desc++;
         }
         I += desc;
@@ -68,7 +73,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
         ll += (I > lineages + desc && lineages > 1 + branches) ? lchoose(desc+1,branches+1) + lchoose(I-desc-1,lineages-branches-1) - lchoose(lineages,branches+1) - lchoose(I,lineages) : R_NegInf;
         n = nearbyint(S+1);
         birthrates(n, S, theta, c);
-        totalrates = c[n-1];
+        totalrates = c.at(n-1);
       } else {
         ll += R_NegInf;
       }
@@ -83,15 +88,15 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
     // unpdate rates
     n = nearbyint(S+1);
     birthrates(n, S, theta, c);
-    totalrates = c[n-1];
+    totalrates = c.at(n-1);
     lambda = Beta/N*theta*totalrates;
     tstep = exp_rand()/(lambda+mu)/I;
     while (t + tstep < tmax) {
       ll -= psi*I*tstep;
       if (unif_rand() < lambda/(lambda+mu)) {   // birth; when S=0, this will never occur
-        Q = unif_rand() * c[n-1];
+        Q = unif_rand() * c.at(n-1);
         desc = 1;
-        while(c[desc] < Q) {
+        while(c.at(desc) < Q) {
           desc++;
         }
         S -= desc;
@@ -104,7 +109,7 @@ void multisir_gill (double *__x, const double *__p, const int *__stateindex, con
       // update rates
       n = nearbyint(S+1);
       birthrates(n, S, theta, c);
-      totalrates = c[n-1];
+      totalrates = c.at(n-1);
       lambda = Beta/N*theta*totalrates;
       tstep = exp_rand()/(lambda+mu)/I;
     }

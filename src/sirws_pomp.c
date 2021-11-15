@@ -37,7 +37,7 @@ void sir_gill (double *__x, const double *__p, const int *__stateindex, const in
     ll += (I > 0) ? log(lambda*I) : R_NegInf;
     I += 1;
     S -= 1;
-    ll += (I >= lineages && lineages > 1) ? -log(I*(I-1)) : R_NegInf;
+    ll += (I >= lineages && lineages > 1) ? -log(I*(I-1)/2) : R_NegInf;
   } else if (ind == 0) {         // dead sample
     ll += (I >= lineages) ? log(psi) : R_NegInf;
   } else if (ind == -1) {        // live sample

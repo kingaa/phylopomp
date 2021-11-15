@@ -24,7 +24,7 @@ playSIRwS(
 
 sir_pomp(
   data,
-  Beta,
+  beta,
   gamma,
   psi,
   S0,
@@ -62,6 +62,10 @@ sir_pomp(
 \item{ill}{logical; return an illustration?}
 
 \item{N}{initial total population size}
+
+\item{method}{either \dQuote{gillespie} or \dQuote{euler}}
+
+\item{delta.t}{time interval in \dQuote{euler} method}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
