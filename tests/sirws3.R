@@ -37,7 +37,7 @@ foreach (par=iter(pars,"row")) %dopar% {
   library(tidyverse)
   par %$%
     playSIRwS(
-      Beta=Beta,gamma=gamma,psi=psi,
+      Beta=Beta,gamma=gamma,psi=psi,Delta=0,
       S0=S0,I0=I0,R0=0,t0=0,times=100,
       tree=FALSE
     ) |>

@@ -13,6 +13,7 @@
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
+##' @param Delta waning rate of immunity.
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
@@ -27,16 +28,22 @@
 ##'
 ##' @rdname sirws
 ##' @export
-playSIRwS <- function (data = NULL, ..., Beta, gamma, psi, S0, I0, R0, t0 = 0, times,
-  tree = FALSE, ill = FALSE) {
+playSIRwS <- function (
+  data = NULL, ...,
+  Beta, gamma, psi, Delta,
+  S0, I0, R0,
+  t0 = 0, times,
+  tree = FALSE, ill = FALSE
+) {
   state <- attr(data,"state")
   if (missing(Beta)) Beta <- NULL
   if (missing(gamma)) gamma <- NULL
   if (missing(psi)) psi <- NULL
+  if (missing(Delta)) Delta <- NULL
   if (missing(S0)) S0 <- NULL
   if (missing(I0)) I0 <- NULL
   if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIRwS,Beta,gamma,psi,S0,I0,R0,times,t0,tree,ill,state)
+  x <- .Call(P_playSIRwS,Beta,gamma,psi,Delta,S0,I0,R0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
   data |>
@@ -65,7 +72,7 @@ utils::globalVariables("count")
 ##'
 ##' @export
 
-sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0, 
+sir_pomp <- function (data, Beta, gamma, psi, Delta, S0, I0, R0, t0=0, 
   method = c("gillespie", "euler"), delta.t = NULL)
 {
   method <- match.arg(method)
@@ -82,10 +89,11 @@ sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0,
   data[,"time"] |>
     pomp(
       times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=S0+I0+R0),
+      params=c(Beta=Beta,gamma=gamma,psi=psi,Delta=Delta,
+        S0=S0,I0=I0,R0=R0,N=S0+I0+R0),
       rinit="sir_rinit",
       dmeasure="sir_dmeas",
-      paramnames=c("Beta","gamma","psi","S0","I0","R0","N"),
+      paramnames=c("Beta","gamma","psi","S0","I0","R0","N","Delta"),
       accumvars=c("ll"),
       statenames=c("S","I","R","ll"),
       PACKAGE="phylopomp",

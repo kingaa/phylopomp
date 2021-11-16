@@ -1,19 +1,20 @@
 #include <pomp.h>
 #include <R_ext/Rdynload.h>
 
-#define Beta		  (__p[__parindex[0]])
-#define gamma		  (__p[__parindex[1]])
+#define Beta	  (__p[__parindex[0]])
+#define gamma	  (__p[__parindex[1]])
 #define psi       (__p[__parindex[2]])
-#define S0		    (__p[__parindex[3]])
+#define S0        (__p[__parindex[3]])
 #define I0        (__p[__parindex[4]])
 #define R0        (__p[__parindex[5]])
 #define N         (__p[__parindex[6]])
-#define lineages	(__covars[__covindex[0]])
-#define code		  (__covars[__covindex[1]])
-#define S		      (__x[__stateindex[0]])
+#define Delta     (__p[__parindex[7]])
+#define lineages  (__covars[__covindex[0]])
+#define code	  (__covars[__covindex[1]])
+#define S         (__x[__stateindex[0]])
 #define I         (__x[__stateindex[1]])
 #define R         (__x[__stateindex[2]])
-#define ll		    (__x[__stateindex[3]])
+#define ll        (__x[__stateindex[3]])
 
 void sir_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
 { 
@@ -135,6 +136,7 @@ void sir_dmeas (double *__lik, const double *__y, const double *__x, const doubl
 }
 
 #undef lik
+#undef Delta
 #undef Beta
 #undef gamma
 #undef psi

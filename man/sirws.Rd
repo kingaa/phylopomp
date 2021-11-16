@@ -13,6 +13,7 @@ playSIRwS(
   Beta,
   gamma,
   psi,
+  Delta,
   S0,
   I0,
   R0,
@@ -27,6 +28,7 @@ sir_pomp(
   Beta,
   gamma,
   psi,
+  Delta,
   S0,
   I0,
   R0,
@@ -45,6 +47,8 @@ sir_pomp(
 \item{gamma}{recovery rate.}
 
 \item{psi}{sampling rate.}
+
+\item{Delta}{waning rate of immunity.}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -74,11 +78,13 @@ Run the simulator.
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 }
 \examples{
-playSIRwS(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
+playSIRwS(Beta=2,gamma=1,psi=2,Delta=0,
+  S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
 playSIRwS(x,times=6:10,psi=1,tree=TRUE) -> x
 plot(x)
 
-playSIRwS(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
+playSIRwS(Beta=3,gamma=1,psi=2,Delta=0,
+  S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
 plot(x,points=TRUE)
 
 y <- getInfo(x)
