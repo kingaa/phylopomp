@@ -26,7 +26,6 @@ foreach (i=1:50) %dopar% {
     Beta=2,
     gamma=1,
     psi=3,
-    Delta=0,
     S0=1000,
     I0=500,
     R0=0,
