@@ -66,7 +66,7 @@ utils::globalVariables("count")
 ##'
 ##' @export
 
-sir_pomp <- function (data, beta, gamma, psi, S0, I0, R0, N, t0=0, 
+sir_pomp <- function (data, beta, gamma, psi, S0, I0, R0, N, t0 = 0, 
   method = c("gillespie", "euler"), delta.t = NULL)
 {
   method <- match.arg(method)

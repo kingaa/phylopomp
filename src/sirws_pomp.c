@@ -79,7 +79,7 @@ void sir_euler (double *__x, const double *__p, const int *__stateindex, const i
           ll += (I > 0) ? log(lambda*I) : R_NegInf;
           I += 1;
           S -= 1;
-          ll += (I >= lineages && lineages > 1) ? -log(I*(I-1)) : R_NegInf;
+          ll += (I >= lineages && lineages > 1) ? -log(I*(I-1)/2) : R_NegInf;
         } else {
           ll += R_NegInf;
         }

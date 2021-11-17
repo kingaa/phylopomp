@@ -66,7 +66,7 @@ utils::globalVariables("count")
 ##'
 ##' @export
 
-multisir_pomp <- function (data, beta, gamma, psi, theta, S0, I0, R0, N, t0=0)
+multisir_pomp <- function (data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
 {
   data[,"time"] %>%
     pomp(
