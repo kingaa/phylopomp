@@ -10,7 +10,6 @@
 \usage{
 playLBDP(
   data = NULL,
-  ...,
   lambda,
   mu,
   psi,
@@ -36,8 +35,6 @@ lbdp_pomp(
 }
 \arguments{
 \item{data}{data frame containing the genealogy event times and event codes.}
-
-\item{...}{additional arguments; ignored.}
 
 \item{lambda}{birth rate}
 

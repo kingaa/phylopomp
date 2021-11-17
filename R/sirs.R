@@ -27,7 +27,7 @@
 ##' @rdname sirs
 ##' @export
 playSIRS <- function (
-  data = NULL, ...,
+  data = NULL,
   Beta, gamma, psi, Delta,
   S0, I0, R0,
   t0 = 0, times,

@@ -6,29 +6,15 @@
 lbdp_tableau_t *makeLBDP (SEXP Lambda, SEXP Mu, SEXP Psi, SEXP N0, SEXP T0, SEXP State) {
   lbdp_tableau_t *gp;
 
-  double lambda = R_NaReal;   // birth rate
-  if (!isNull(Lambda)) {
-    lambda = *(REAL(AS_NUMERIC(Lambda)));
-  }
-
-  double mu = R_NaReal;       // death rate
-  if (!isNull(Mu)) {
-    mu = *(REAL(AS_NUMERIC(Mu)));
-  }
-
-  double psi = R_NaReal;       // sampling rate
-  if (!isNull(Psi)) {
-    psi = *(REAL(AS_NUMERIC(Psi)));
-  }
+  OPTIONAL_REAL_PAR(lambda,Lambda,1);
+  OPTIONAL_REAL_PAR(mu,Mu,1);
+  OPTIONAL_REAL_PAR(psi,Psi,1);
 
   if (isNull(State)) {        // a fresh GP
 
     double t0 = *REAL(AS_NUMERIC(T0));
     
-    int n0 = na;                // initial number of infections
-    if (!isNull(N0)) {
-      n0 = *(INTEGER(AS_INTEGER(N0)));
-    }
+    OPTIONAL_INT_PAR(n0,N0,1);
 
     gp = new lbdp_tableau_t(lambda,mu,psi,n0,t0);
 

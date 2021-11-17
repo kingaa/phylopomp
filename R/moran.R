@@ -22,7 +22,6 @@
 ##' @param t0 initial time
 ##' @param times times at which output is requested.
 ##' @param tree logical; represent the genealogical tree in Newick format?
-##' @param ... additional arguments; ignored.
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -36,7 +35,7 @@ NULL
 
 ##' @rdname moran
 ##' @export
-playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, sample = TRUE,
+playMoran <- function (data = NULL, n, mu, t0 = 0, times, sample = TRUE,
   tree = FALSE, ill = FALSE, stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL
@@ -60,7 +59,7 @@ playMoran <- function (data = NULL, ..., n, mu, t0 = 0, times, sample = TRUE,
 
 ##' @rdname moran
 ##' @export
-playMoranWChain <- function (data = NULL, ..., n, mu, t0 = 0, ntimes, tree = TRUE, ill = TRUE, stationary = TRUE) {
+playMoranWChain <- function (data = NULL, n, mu, t0 = 0, ntimes, tree = TRUE, ill = TRUE, stationary = TRUE) {
   state <- attr(data,"state")
   if (missing(n)) n <- NULL
   if (missing(mu)) mu <- NULL

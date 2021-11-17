@@ -27,8 +27,13 @@
 ##'
 ##' @rdname sirws
 ##' @export
-playSIRwS <- function (data = NULL, ..., Beta, gamma, psi, S0, I0, R0, t0 = 0, times,
-  tree = FALSE, ill = FALSE) {
+playSIRwS <- function (
+  data = NULL,
+  Beta, gamma, psi, S0,
+  I0, R0,
+  t0 = 0, times,
+  tree = FALSE, ill = FALSE
+) {
   state <- attr(data,"state")
   if (missing(Beta)) Beta <- NULL
   if (missing(gamma)) gamma <- NULL

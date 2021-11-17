@@ -1,20 +1,23 @@
 // Moran Genealogy Process with Sampling Simulator (C++)
 
 #include "moran.h"
+#include "internal.h"
 
 moran_tableau_t *makeGP (SEXP N, SEXP Mu, SEXP T0, SEXP Stat, SEXP State) {
   moran_tableau_t *gp;
+  OPTIONAL_INT_PAR(n,N,100);
+  OPTIONAL_REAL_PAR(mu,Mu,1);
   if (isNull(State)) {		// a fresh GP
     double t0 = *REAL(AS_NUMERIC(T0));
     int stat = *INTEGER(AS_INTEGER(Stat));
     GetRNGstate();
-    gp = new moran_tableau_t(*INTEGER(AS_INTEGER(N)),*REAL(AS_NUMERIC(Mu)),t0,stat);
+    gp = new moran_tableau_t(n,mu,t0,stat);
     PutRNGstate();
   }  else {		    // restart the GP from the specified state
     gp = new moran_tableau_t(RAW(State));
     // optionally override the stored parameters
-    if (!isNull(N)) gp->popsize(*INTEGER(AS_INTEGER(N)));
-    if (!isNull(Mu)) gp->moran_rate(*REAL(AS_NUMERIC(Mu)));
+    if (!isNull(N)) gp->popsize(n);
+    if (!isNull(Mu)) gp->moran_rate(mu);
   }
   return gp;
 }

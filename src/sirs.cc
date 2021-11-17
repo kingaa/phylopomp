@@ -7,45 +7,18 @@ sirs_tableau_t *makeSIRS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP Delta,
 			  SEXP S0, SEXP I0, SEXP R0, SEXP T0, SEXP State) {
   sirs_tableau_t *gp;
   
-  double beta = R_NaReal;     // transmission rate
-  if (!isNull(Beta)) {
-    beta = *(REAL(AS_NUMERIC(Beta)));
-  }
-
-  double gamma = R_NaReal;    // recovery rate
-  if (!isNull(Gamma)) {
-    gamma = *(REAL(AS_NUMERIC(Gamma)));
-  }
-
-  double psi = R_NaReal;      // sampling rate
-  if (!isNull(Psi)) { 
-    psi = *(REAL(AS_NUMERIC(Psi)));
-  }
-
-  double delta = R_NaReal;      // waning rate
-  if (!isNull(Delta)) { 
-    delta = *(REAL(AS_NUMERIC(Delta)));
-  }
+  OPTIONAL_REAL_PAR(beta,Beta,0);
+  OPTIONAL_REAL_PAR(gamma,Gamma,0);
+  OPTIONAL_REAL_PAR(psi,Psi,1);
+  OPTIONAL_REAL_PAR(delta,Delta,0);
 
   if (isNull(State)) {        // a fresh SIR
 
     double t0 = *(REAL(AS_NUMERIC(T0)));
 
-    int s0 = na;                // initial susceptible pool
-    if (!isNull(S0)) {
-      s0 = *(INTEGER(AS_INTEGER(S0)));
-    }
-    
-    int i0 = na;                // initial number of infections
-    if (!isNull(I0)) {
-      i0 = *(INTEGER(AS_INTEGER(I0)));
-    }
-
-    int r0 = na;                // initial number of recoveries
-    if (!isNull(R0)) {
-      r0 = *(INTEGER(AS_INTEGER(R0)));
-    }
-
+    OPTIONAL_INT_PAR(s0,S0,0);
+    OPTIONAL_INT_PAR(i0,I0,0);
+    OPTIONAL_INT_PAR(r0,R0,0);
 
     gp = new sirs_tableau_t(beta,gamma,psi,delta,s0,i0,r0,t0);
 

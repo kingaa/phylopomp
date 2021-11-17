@@ -10,7 +10,6 @@
 \usage{
 playMoran(
   data = NULL,
-  ...,
   n,
   mu,
   t0 = 0,
@@ -23,7 +22,6 @@ playMoran(
 
 playMoranWChain(
   data = NULL,
-  ...,
   n,
   mu,
   t0 = 0,
@@ -35,8 +33,6 @@ playMoranWChain(
 }
 \arguments{
 \item{data}{optional data frame; output from \code{playMoran} or \code{playMoranWChain}}
-
-\item{...}{additional arguments; ignored.}
 
 \item{n}{population size}
 

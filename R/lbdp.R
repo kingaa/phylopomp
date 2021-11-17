@@ -33,7 +33,7 @@ NULL
 ##' Available methods for such objects include \code{\link{getInfo}} and \code{\link{plot}}.
 ##' 
 ##' @export
-playLBDP <- function (data = NULL, ..., lambda, mu, psi, n0 = 1, t0 = 0, times,
+playLBDP <- function (data = NULL, lambda, mu, psi, n0 = 1, t0 = 0, times,
   tree = FALSE, ill = FALSE) {
   state <- attr(data,"state")
   if (missing(lambda)) lambda <- NULL

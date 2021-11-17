@@ -9,7 +9,6 @@
 \usage{
 playSIRS(
   data = NULL,
-  ...,
   Beta,
   gamma,
   psi,
@@ -39,8 +38,6 @@ sirs_pomp(
 }
 \arguments{
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
-
-\item{...}{additional arguments; ignored.}
 
 \item{Beta}{transmission rate.}
 
