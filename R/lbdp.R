@@ -149,7 +149,7 @@ lbdp_exact <- function (data, lambda, mu, psi) {
     e/g/g
   }
 
-  (m-1)*log(lambda)+(k+m)*log(psi)+
+  (m-1)*log(2*lambda)+(k+m)*log(psi)+
     sum(log(Q(x)))+
     sum(log(p0(y)/Q(y)))
 }

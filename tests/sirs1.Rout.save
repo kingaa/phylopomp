@@ -58,7 +58,7 @@ Type 'q()' to quit R.
 +   ) |>
 +   pfilter(Np=1000) |>
 +   logLik()
-[1] -912
+[1] -697
 > 
 > x |>
 +   getInfo(compact=TRUE) |>
