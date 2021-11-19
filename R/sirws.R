@@ -60,24 +60,15 @@ utils::globalVariables("count")
 ##' @rdname sirws
 ##'
 ##' @param data data frame containing the genealogy in the format returned by \code{\link{newick2df}}.
-##' @param method choice of simulation method.
-##' @param delta.t Euler step size.
-##'
 ##' @details
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##'
-##' @importFrom pomp pomp onestep euler covariate_table
+##' @importFrom pomp pomp onestep covariate_table
 ##'
 ##' @export
 
-sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0, 
-  method = c("gillespie", "euler"), delta.t = NULL)
+sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0)
 {
-  method <- match.arg(method)
-  delta.t <- as.double(delta.t)
-  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t) || delta.t < 0))
-    stop(sQuote("delta.t")," must be a positive number when method = ",
-      dQuote("euler"),".",.call=FALSE)
   S0 <- as.integer(S0)
   I0 <- as.integer(I0)
   R0 <- as.integer(R0)
@@ -99,11 +90,6 @@ sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0,
         times="time",
         order="constant"
       ),
-      rprocess=
-        if (method=="gillespie") {
-          onestep("sir_gill")
-        } else {
-          euler("sir_euler",delta.t=delta.t)
-        }
+      rprocess=onestep("sir_gill")
     )
 }

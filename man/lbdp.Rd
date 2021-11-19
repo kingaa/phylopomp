@@ -22,16 +22,7 @@ playLBDP(
 
 lbdp_exact(data, lambda, mu, psi)
 
-lbdp_pomp(
-  data,
-  lambda,
-  mu,
-  psi,
-  n0 = 1,
-  t0 = 0,
-  method = c("gillespie", "euler"),
-  delta.t = NULL
-)
+lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 }
 \arguments{
 \item{data}{data frame containing the genealogy event times and event codes.}
@@ -51,10 +42,6 @@ lbdp_pomp(
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
-
-\item{method}{either \dQuote{gillespie} or \dQuote{euler}}
-
-\item{delta.t}{time interval in \dQuote{euler} method}
 }
 \value{
 \code{playLBDP} returns an object of class \code{gpsim}.
@@ -103,13 +90,7 @@ plot(getInfo(x,compact=TRUE),points=TRUE)
 library(pomp)
 x$tree |>
   newick2df(time=5) |>
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="gillespie") |>
-  pfilter(Np=2000) |>
-  logLik()
-
-x$tree |>
-  newick2df(time=5) |>
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="euler",delta.t=0.001) |>
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1) |>
   pfilter(Np=2000) |>
   logLik()
 
