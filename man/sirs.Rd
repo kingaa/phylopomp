@@ -22,7 +22,19 @@ playSIRS(
   ill = FALSE
 )
 
-sirs_pomp(data, Beta, gamma, psi, Delta, S0, I0, R0, t0 = 0)
+sirs_pomp(
+  data,
+  Beta,
+  gamma,
+  psi,
+  Delta,
+  S0,
+  I0,
+  R0,
+  t0 = 0,
+  method = c("gillespie", "euler"),
+  delta.t = NULL
+)
 }
 \arguments{
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
@@ -48,6 +60,10 @@ sirs_pomp(data, Beta, gamma, psi, Delta, S0, I0, R0, t0 = 0)
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
+
+\item{method}{choice of simulation method.}
+
+\item{delta.t}{Euler step size.}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

@@ -15,6 +15,8 @@
 ##' @param mu death rate
 ##' @param psi sampling rate
 ##' @param n0 initial population size
+##' @param method either \dQuote{gillespie} or \dQuote{euler}
+##' @param delta.t time interval in \dQuote{euler} method
 ##' 
 ##' @example examples/lbdp.R
 ##'
@@ -160,13 +162,19 @@ lbdp_exact <- function (data, lambda, mu, psi) {
 ##'
 ##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 ##'
-##' @importFrom pomp pomp onestep covariate_table
+##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact
 ##'
 ##' @export
 
-lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0,
+  method = c("gillespie", "euler"), delta.t = NULL)
 {
+  method <- match.arg(method)
+  delta.t <- as.double(delta.t)
+  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
+    stop(sQuote("delta.t")," must be specified when method = ",
+      dQuote("euler"),".",.call=FALSE)
   data[,"time"] |>
     pomp(
       times="time",t0=t0,
@@ -182,6 +190,11 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
         times="time",
         order="constant"
       ),
-      rprocess=onestep("lbdp_gill")
+      rprocess=
+        if (method=="gillespie") {
+          onestep("lbdp_gill")
+        } else {
+          euler("lbdp_euler",delta.t=delta.t)
+        }
     )
 }
