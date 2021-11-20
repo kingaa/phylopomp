@@ -151,8 +151,7 @@ lbdp_exact <- function (data, lambda, mu, psi) {
 
   (m-1)*log(2*lambda)+(k+m)*log(psi)+
     sum(log(Q(x)))+
-    sum(log(p0(y)/Q(y)))+
-    log(2)*(length(x)-1) # makeup the distinguished lineages atx coalescence
+    sum(log(p0(y)/Q(y)))
 }
 
 ##' @name lbdp_pomp

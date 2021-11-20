@@ -15,6 +15,7 @@ newick2df(y$tree) -> z
 # compare to y$lineages
 all.equal(
   z |>
+    mutate(lineages=unname(lineages)) |>
     select(time,lineages),
   y$lineages |>
     group_by(time) |>

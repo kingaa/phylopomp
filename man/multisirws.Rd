@@ -9,8 +9,7 @@
 \usage{
 playmultiSIRwS(
   data = NULL,
-  ...,
-  beta,
+  Beta,
   gamma,
   psi,
   theta = Inf,
@@ -23,12 +22,12 @@ playmultiSIRwS(
   ill = FALSE
 )
 
-multisir_pomp(data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
+multisir_pomp(data, Beta, gamma, psi, theta, S0, I0, R0, t0 = 0)
 }
 \arguments{
 \item{data}{optional data frame; output from \code{playmultiSIRwS}.}
 
-\item{beta}{transmission rate}
+\item{Beta}{transmission rate}
 
 \item{gamma}{recovery rate}
 
@@ -49,8 +48,6 @@ multisir_pomp(data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
 \item{tree}{logical; represent the genealogical tree in Newick format?}
 
 \item{ill}{logical; return an illustration?}
-
-\item{N}{initial total population size}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -64,7 +61,7 @@ Run the simulator.
 It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 }
 \examples{
-playmultiSIRwS(beta=10,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
+playmultiSIRwS(Beta=10,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
 plot(x,points=TRUE)
 
 y <- getInfo(x,compact=TRUE)
@@ -76,7 +73,7 @@ y$lineages |>
   geom_step()
 
 
-playmultiSIRwS(beta=5,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0,times=5,t0=0,tree=TRUE) |>
+playmultiSIRwS(Beta=5,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0,times=5,t0=0,tree=TRUE) |>
   getInfo(compact=TRUE) -> x
 
 plot(x,points=TRUE)
@@ -85,7 +82,7 @@ library(pomp)
 
 x$tree |>
   newick2df(time=5) |>
-  multisir_pomp(beta=5,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0,N=505) |>
+  multisir_pomp(Beta=5,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0) |>
   pfilter(Np=2000) |>
   logLik()
 }

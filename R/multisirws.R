@@ -10,14 +10,13 @@
 ##' 
 ##' @inheritParams moran
 ##' @param data optional data frame; output from \code{playmultiSIRwS}.
-##' @param beta transmission rate
+##' @param Beta transmission rate
 ##' @param gamma recovery rate
 ##' @param psi sampling rate
 ##' @param theta inverse over-dispersed parameter
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of infected population
 ##' @param R0 initial size of recovered population
-##' @param N initial total population size
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -29,17 +28,21 @@
 ##'
 ##' @rdname multisirws
 ##' @export
-playmultiSIRwS <- function (data = NULL, ..., beta, gamma, psi, theta = Inf, S0, I0, R0, t0 = 0, times,
-  tree = FALSE, ill = FALSE) {
+playmultiSIRwS <- function (
+  data = NULL, Beta, gamma, psi, theta = Inf,
+  S0, I0, R0,
+  t0 = 0, times,
+  tree = FALSE, ill = FALSE
+) {
   state <- attr(data,"state")
-  if (missing(beta)) beta <- NULL
+  if (missing(Beta)) Beta <- NULL
   if (missing(gamma)) gamma <- NULL
   if (missing(psi)) psi <- NULL
   if (missing(theta)) theta <- NULL
   if (missing(S0)) S0 <- NULL
   if (missing(I0)) I0 <- NULL
   if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playmultiSIRwS,beta,gamma,psi,theta,S0,I0,R0,times,t0,tree,ill,state)
+  x <- .Call(P_playmultiSIRwS,Beta,gamma,psi,theta,S0,I0,R0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
   data |>
@@ -66,12 +69,21 @@ utils::globalVariables("count")
 ##'
 ##' @export
 
-multisir_pomp <- function (data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
+multisir_pomp <- function (data, Beta, gamma, psi, theta, S0, I0, R0, t0 = 0)
 {
+  S0 <- as.integer(S0)
+  I0 <- as.integer(I0)
+  R0 <- as.integer(R0)
+  if (S0 < 0 || I0 < 0 || R0 < 0)
+    stop(sQuote("S0"),", ",sQuote("I0"),", and ",sQuote("R0"),
+      " must be nonnegative integers.",.call=FALSE)
   data[,"time"] |>
     pomp(
       times="time",t0=t0,
-      params=c(Beta=beta,gamma=gamma,psi=psi,theta=theta,S0=S0,I0=I0,R0=R0,N=N),
+      params=c(
+        Beta=Beta,gamma=gamma,psi=psi,theta=theta,
+        S0=S0,I0=I0,R0=R0,N=S0+I0+R0
+      ),
       rinit="multisir_rinit",
       dmeasure="multisir_dmeas",
       paramnames=c("Beta","gamma","psi","theta","S0","I0","R0","N"),

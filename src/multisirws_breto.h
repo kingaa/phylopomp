@@ -9,11 +9,11 @@ typedef struct {
   double R;             // number of recovereds
 } multisir_state_t;
 
-const multisir_state_t default_multistate = {R_NaReal,R_NaReal,R_NaReal};
-
 class multisirws_tableau_t : public gp_tableau_t<multisir_state_t> {
 
 private:
+
+  const multisir_state_t default_multistate = {R_NaReal,R_NaReal,R_NaReal};
 
   typedef struct {
     double N;                   // total population size

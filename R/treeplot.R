@@ -42,12 +42,15 @@ treeplot <- function (tree, time = NULL, illus = NULL,
       group_by(.id) |>
       mutate(
         descs=(table(parent)[as.character(node)]) |> replace_na(0),  # regarding "node"
-        nodecol=if_else(parent %in% parent[node==parent] & x==0.0, "i", 
-                if_else(isTip, "r", 
-                if_else(descs>1, "g", 
-                if_else(x!=0.0,"b","g"))))
+        nodecol=if_else(
+          parent %in% parent[node==parent] & x==0.0, "i", 
+          if_else(isTip, "r", 
+            if_else(descs>1, "g", 
+              if_else(x!=0.0,"b","g"))))
       ) |>
-      mutate(nodecol=if_else(nodecol=="i" & sum(nodecol=="i")==1, "g", nodecol)) |>
+      mutate(
+        nodecol=if_else(nodecol=="i" & sum(nodecol=="i")==1, "g", nodecol)
+      ) |>
       ungroup(.id) -> dat
   }
   if (is.na(root_time)) { # root time is to be determined from the current time

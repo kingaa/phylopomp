@@ -13,7 +13,7 @@ newick2df(tree, time = NA, root_time = 0, show_branches = FALSE)
 
 \item{root_time}{time of the root.}
 
-\item{show_branches}{whether to show number of new branches at coalesecens.}
+\item{show_branches}{whether to show number of new branches at coalescences.}
 }
 \value{
 A data frame suitable for use as \code{pomp} input, containing three columns:

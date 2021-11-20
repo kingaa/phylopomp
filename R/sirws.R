@@ -15,10 +15,9 @@
 ##' @param psi sampling rate.
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
-##' @param R0 initial size of recovered population
-##' @param N initial total population size
-##' @param method either \dQuote{gillespie} or \dQuote{euler}
-##' @param delta.t time interval in \dQuote{euler} method
+##' @param R0 initial size of recovered population.
+##' @param method numerical integration method.
+##' @param delta.t time interval in \dQuote{euler} method.
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'

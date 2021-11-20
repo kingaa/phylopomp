@@ -9,13 +9,11 @@
 #define code		(__covars[__covindex[1]])
 #define n		(__x[__stateindex[0]])
 #define ll		(__x[__stateindex[1]])
-// #define q     (__x[__stateindex[2]])
 
 void lbdp_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
 {
   n = nearbyint(n0);
   ll = 0;
-  // q = nearbyint(0);
 }
 
 void lbdp_gill (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
@@ -54,17 +52,15 @@ void lbdp_gill (double *__x, const double *__p, const int *__stateindex, const i
    
 }
 
-
 void lbdp_euler (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
 {
   int ind;
   ind = nearbyint(code);
   if (ll < 1e-300 && ll > -1e-300) {
-  	// q = 1;
     if (ind == 1) {                // coalescent
       ll += (n > 0) ? log(lambda*n) : R_NegInf;
       n += 1;
-      ll += (n >= lineages && lineages > 1) ? -log(n*(n-1)) : R_NegInf;
+      ll += (n >= lineages && lineages > 1) ? -log(n*(n-1)/2) : R_NegInf;
     } else if (ind == 0) {         // dead sample
       ll += (n >= lineages) ? log(psi) : R_NegInf;
     } else if (ind == -1) {        // live sample
@@ -79,7 +75,6 @@ void lbdp_euler (double *__x, const double *__p, const int *__stateindex, const 
 
   rate[0] = lambda;
   rate[1] = mu;
-
 
   // method 1:
   trans[0] = rpois(rate[0]*dt*n);
@@ -107,7 +102,11 @@ void lbdp_euler (double *__x, const double *__p, const int *__stateindex, const 
 
 void lbdp_dmeas (double *__lik, const double *__y, const double *__x, const double *__p, int give_log, const int *__obsindex, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t)
 {
-  lik = (give_log) ? ll : exp(ll);
+  if (n >= 0 && n >= lineages) {
+    lik = (give_log) ? ll : exp(ll);
+  } else {
+    lik = (give_log) ? R_NegInf : 0;
+  }
 }
 
 #undef lik
@@ -120,4 +119,3 @@ void lbdp_dmeas (double *__lik, const double *__y, const double *__x, const doub
 #undef code
 #undef n
 #undef ll
-// #undef q

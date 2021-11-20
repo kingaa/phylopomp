@@ -19,12 +19,6 @@ sirws_tableau_t *makeSIRwS (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, S
     OPTIONAL_INT_PAR(r0,R0,0);
 
     gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,r0,t0);
-    if (!isNull(R0)) {
-      r0 = *(INTEGER(AS_INTEGER(R0)));
-    }
-
-
-    gp = new sirws_tableau_t(beta,gamma,psi,s0,i0,r0,t0);
 
   }  else {              // restart the SIR from the specified state
 

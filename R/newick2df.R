@@ -10,7 +10,7 @@
 ##' @param tree tree data in Newick format.
 ##' @param time time of the genealogy.
 ##' @param root_time time of the root.
-##' @param show_branches whether to show number of new branches at coalesecens.
+##' @param show_branches whether to show number of new branches at coalescences.
 ##'
 ##' @details
 ##' If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
