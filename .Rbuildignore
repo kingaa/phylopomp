@@ -8,10 +8,12 @@ inst/doc/(.+?).md
 inst/doc/(.+?).Rmd
 inst/doc/(.+?)\.Rout$
 inst/doc/CLUSTER(.*)
+man/roxygen
 LICENSE\.md$
 README\.md$
 TODO\.md$
 ^\.gitignore$
+\.github
 ^\.travis\.yml$
 ^codecov\.yml$
 ^.*\.Rproj$
@@ -27,4 +29,5 @@ www
 ^(.+?)\.tar\.gz
 ^(.+?)\.tgz
 ^(.+?)\.zip
-hub_cov\.R
+covr.html
+covr.rds

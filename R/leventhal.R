@@ -27,14 +27,14 @@ NULL
 ##' @details
 ##' \code{leventhal_pomp} constructs a \pkg{pomp} object containing a given set of data and a Leventhal-type SIS infection.
 ##'
-##' It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
+##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 ##'
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
 ##'
 ##' @export
 leventhal_pomp <- function (data, beta, gamma, psi, N, I0 = 1, t0 = 0) {
-  data[,"time"] %>%
+  data[,"time"] |>
     pomp(
       times="time",t0=t0,
       params=c(beta=beta,gamma=gamma,psi=psi,N=N,I0=I0),

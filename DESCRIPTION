@@ -9,13 +9,14 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 	  )
 Description: Tools for phylodynamic analysis.
 Depends: R(>= 4.0.0)
-Imports: grid, ggtree, ggplot2, scales, ape, magrittr, dplyr, tibble, foreach, tidyr, readr, pomp
+Imports: grid, ggtree, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, readr, pomp
 LinkingTo: pomp
 Suggests: 
     tidyverse,
     doParallel,
     doRNG,
     broom,
+    magrittr,
     cowplot,
     testthat (>= 3.0.0)
 License: GPL-3
@@ -35,7 +36,6 @@ Collate:
     'leventhal.R'
     'moran.R'
     'multisirws.R'
-    'nwk2df.R'
-    'pipe.R'
+    'newick2df.R'
     'print.R'
 Config/testthat/edition: 3

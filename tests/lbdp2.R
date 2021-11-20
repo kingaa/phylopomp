@@ -29,29 +29,29 @@ foreach (i=1:200) %dopar% {
     n0=100,
     times=40,
     tree=FALSE
-  ) %>%
-    getInfo(tree=FALSE) %>% {
-      .$cumhaz %>%
+  ) |>
+    getInfo(tree=FALSE) |> {
+      \(x) x$cumhaz |>
         mutate(p=exp(-Lambda))
-    }
-} %>%
+    }()
+} |>
   bind_rows(.id="rep") -> dat
 
-dat %>%
-  do(tidy(ks.test(x=.$p,y=punif))) %>%
+dat |>
+  do(tidy(ks.test(x=.$p,y=punif))) |>
   select(p.value)
 
-dat %>%
-  group_by(rep) %>%
-  do(tidy(ks.test(x=.$p,y=punif))) %>%
-  ungroup() %>%
+dat |>
+  group_by(rep) |>
+  do(tidy(ks.test(x=.$p,y=punif))) |>
+  ungroup() |>
   select(p.value) -> pvals
 
-pvals %>%
-  do(tidy(ks.test(x=.$p.value,y=punif))) %>%
+pvals |>
+  do(tidy(ks.test(x=.$p.value,y=punif))) |>
   select(p.value) -> ppval
 
-dat %>%
+dat |>
   ggplot(aes(x=p))+
   geom_abline(slope=1)+
   stat_ecdf()+

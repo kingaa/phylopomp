@@ -42,9 +42,9 @@ playSIRwS <- function (data = NULL, ..., beta, gamma, psi, S0, I0, R0, t0 = 0, t
   x <- .Call(P_playSIRwS,beta,gamma,psi,S0,I0,R0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble() %>% filter(!is.na(count))
+      x |> as_tibble() |> filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "SIRwS"
@@ -60,7 +60,7 @@ utils::globalVariables("count")
 ##' @details
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##'
-##' It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
+##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 ##'
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##'
@@ -74,7 +74,7 @@ sir_pomp <- function (data, beta, gamma, psi, S0, I0, R0, N, t0 = 0,
   if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
     stop(sQuote("delta.t")," must be specified when method = ",
       dQuote("euler"),".",.call=FALSE)
-  data[,"time"] %>%
+  data[,"time"] |>
     pomp(
       times="time",t0=t0,
       params=c(Beta=beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=N),

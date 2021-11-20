@@ -30,43 +30,43 @@ treeplot <- function (tree, time = NULL, illus = NULL,
   root_time = 0, ladderize = TRUE, points = FALSE, diagram = FALSE) {
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
-  read.tree(text=tree) %>%
-    fortify(ladderize=ladderize) %>%
-    mutate(nodecol="") %>%
+  read.tree(text=tree) |>
+    fortify(ladderize=ladderize) |>
+    mutate(nodecol="") |>
     arrange(x) -> dat
   if (length(tree)==1) dat$.id <- ""
   dat$.id <- as.integer(as.factor(dat$.id))
   
   if (points) {
-    dat %>%
-      group_by(.id) %>%
+    dat |>
+      group_by(.id) |>
       mutate(
-        descs=(table(parent)[as.character(node)]) %>% replace_na(0),  # regarding "node"
+        descs=(table(parent)[as.character(node)]) |> replace_na(0),  # regarding "node"
         nodecol=if_else(parent %in% parent[node==parent] & x==0.0, "i", 
                 if_else(isTip, "r", 
                 if_else(descs>1, "g", 
                 if_else(x!=0.0,"b","g"))))
-      ) %>%
-      mutate(nodecol=if_else(nodecol=="i" & sum(nodecol=="i")==1, "g", nodecol)) %>%
+      ) |>
+      mutate(nodecol=if_else(nodecol=="i" & sum(nodecol=="i")==1, "g", nodecol)) |>
       ungroup(.id) -> dat
   }
   if (is.na(root_time)) { # root time is to be determined from the current time
-    dat %>%
-      group_by(.id) %>%
+    dat |>
+      group_by(.id) |>
       mutate(
         x=x-max(x)+time[.id],
         vis=nodecol != "i",
         nodecol=ball_colors[nodecol]
-      ) %>%
+      ) |>
       ungroup(.id) -> dat
   } else {
-    dat %>%
-      group_by(.id) %>%
+    dat |>
+      group_by(.id) |>
       mutate(
         x=x-min(x)+root_time,
         vis=nodecol != "i",
         nodecol=ball_colors[nodecol]
-      ) %>%
+      ) |>
       ungroup(.id) -> dat
   }
   
@@ -79,7 +79,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
     d=split(dat,dat$.id)
   ) %dopar% {
     attr(d,"layout") <- "rectangular"
-    d %>%
+    d |>
       ggplot(aes(x=x,y=y))+
       geom_tree(aes(alpha=vis))+
       expand_limits(x=dat$x)+
@@ -95,8 +95,8 @@ treeplot <- function (tree, time = NULL, illus = NULL,
         guides(color="none") -> pl
     }
     if (diagram) {
-      d %>%
-        filter(vis) %>%
+      d |>
+        filter(vis) |>
         summarize(
           ymin=min(y),
           ymax=max(y),

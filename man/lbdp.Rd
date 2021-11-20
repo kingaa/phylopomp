@@ -75,11 +75,11 @@ Simulation and inference based on linear birth-death-sampling processes.
 \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 The derivation is also given in comments in the code.
 
-The \code{data} argument should in the format returned by \code{\link{nwk2df}}.
+The \code{data} argument should in the format returned by \code{\link{newick2df}}.
 
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 
-It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
+It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 }
 \examples{
 set.seed(148228486)
@@ -90,35 +90,35 @@ y <- getInfo(x,prune=FALSE)
 plot(y,points=TRUE)
 
 library(ggplot2)
-y$lineages \%>\%
+y$lineages |>
   ggplot(aes(x=time,y=lineages))+
   geom_step()+
   geom_vline(xintercept=y$etimes,alpha=0.1)
 
-y$cumhaz \%>\%
+y$cumhaz |>
   ggplot(aes(x=exp(-Lambda)))+
   stat_ecdf()+
   geom_abline(slope=1)
 
-playLBDP(lambda=2,mu=1,psi=0.5,n0=1,times=5) \%>\%
+playLBDP(lambda=2,mu=1,psi=0.5,n0=1,times=5) |>
   getInfo() -> x
 plot(getInfo(x,compact=TRUE),points=TRUE)
 
 library(pomp)
-x$tree \%>\%
-  nwk2df(time=5) \%>\%
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="gillespie") \%>\%
-  pfilter(Np=2000) \%>\%
+x$tree |>
+  newick2df(time=5) |>
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="gillespie") |>
+  pfilter(Np=2000) |>
   logLik()
 
-x$tree \%>\%
-  nwk2df(time=5) \%>\%
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="euler",delta.t=0.001) \%>\%
-  pfilter(Np=2000) \%>\%
+x$tree |>
+  newick2df(time=5) |>
+  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="euler",delta.t=0.001) |>
+  pfilter(Np=2000) |>
   logLik()
 
-x$tree \%>\%
-  nwk2df(time=5) \%>\%
+x$tree |>
+  newick2df(time=5) |>
   lbdp_exact(psi=0.5,lambda=2,mu=1)
 
 

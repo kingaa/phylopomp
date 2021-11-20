@@ -42,9 +42,9 @@ playmultiSIRwS <- function (data = NULL, ..., beta, gamma, psi, theta = Inf, S0,
   x <- .Call(P_playmultiSIRwS,beta,gamma,psi,theta,S0,I0,R0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
-  data %>%
+  data |>
     bind_rows(
-      x %>% as_tibble() %>% filter(!is.na(count))
+      x |> as_tibble() |> filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "multiSIRwS"
@@ -60,7 +60,7 @@ utils::globalVariables("count")
 ##' @details
 ##' \code{multisir_pomp} constructs a \pkg{pomp} object containing a given set of data and an overdispersed SIR model.
 ##'
-##' It is assumed that \code{data} is in the format returned by \code{\link{nwk2df}}.
+##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 ##'
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##'
@@ -68,7 +68,7 @@ utils::globalVariables("count")
 
 multisir_pomp <- function (data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
 {
-  data[,"time"] %>%
+  data[,"time"] |>
     pomp(
       times="time",t0=t0,
       params=c(Beta=beta,gamma=gamma,psi=psi,theta=theta,S0=S0,I0=I0,R0=R0,N=N),
