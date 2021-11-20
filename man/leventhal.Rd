@@ -35,6 +35,7 @@ Other Genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{multisirws}},
+\code{\link{sirs}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}

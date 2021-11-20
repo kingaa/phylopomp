@@ -23,7 +23,7 @@ registerDoRNG(721604604)
 
 foreach (i=1:50) %dopar% {
   playSIRwS(
-    beta=2,
+    Beta=2,
     gamma=1,
     psi=3,
     S0=1000,

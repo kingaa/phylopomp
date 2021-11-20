@@ -23,7 +23,7 @@ if (nzchar(chk) && chk == "TRUE") {
 registerDoRNG(1234166095)
 
 expand_grid(
-  beta=4,
+  Beta=4,
   gamma=1,
   psi=1,
   I0=1,
@@ -37,17 +37,17 @@ foreach (par=iter(pars,"row")) %dopar% {
   library(tidyverse)
   par %$%
     playSIRwS(
-      beta=beta,gamma=gamma,psi=psi,
+      Beta=Beta,gamma=gamma,psi=psi,
       S0=S0,I0=I0,R0=0,t0=0,times=100,
       tree=FALSE
     ) |>
     getInfo() -> x
   bind_cols(par,x$cumhaz)
-} %>%
-  bind_rows() %>%
-  filter(!is.na(Lambda)) %>%
-  mutate(p=exp(-Lambda)) %>%
-  arrange(beta,gamma,psi,S0,I0,rep,time) -> dat
+} |>
+  bind_rows() |>
+  filter(!is.na(Lambda)) |>
+  mutate(p=exp(-Lambda)) |>
+  arrange(Beta,gamma,psi,S0,I0,rep,time) -> dat
 
 stopifnot(
   `ties in KS test`=dat |>

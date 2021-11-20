@@ -52,9 +52,10 @@ public:
   // basic constructor
   lbdp_tableau_t (double lambda, double mu, double psi, int n0,
                   double t0 = 0) : gp_tableau_t(t0) {
-    params = {
-      double(n0), lambda, mu, psi
-    };
+    params.n0 = double(n0);
+    params.lambda = lambda;
+    params.mu = mu;
+    params.psi = psi;
     state.n = double(n0);
     for (int j = 0; j < n0; j++) graft();
     update_clocks();

@@ -21,7 +21,7 @@
 ##' @export
 ##'
 diagram <- function (illus, ...) {
-  dat <- lapply(illus,read_csv)
+  dat <- lapply(illus,read_csv,show_col_types=FALSE)
   nmax <- max(sapply(dat,nrow)) # longest tableau
   vp <- viewport(height=0.95,width=0.95,gp=gpar(...))
   tg <- lapply(

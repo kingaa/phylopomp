@@ -19,16 +19,16 @@ Type 'q()' to quit R.
 
 > suppressPackageStartupMessages({
 +   library(phylopomp)
++   library(pomp)
 +   library(tidyverse)
 +   library(broom)
 +   library(doParallel)
 +   library(doRNG)
 + })
-> 
 > options(digits=3)
-> png(filename="sirws1-%02d.png",res=100)
-> 
+> png(filename="sirs1-%02d.png",res=100)
 > theme_set(theme_bw())
+> set.seed(328168304L)
 > 
 > chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
 > if (nzchar(chk) && chk == "TRUE") {
@@ -38,62 +38,35 @@ Type 'q()' to quit R.
 +   ## use all cores in devtools::test()
 +   registerDoParallel()
 + }
-> registerDoRNG(721604604)
+> registerDoRNG(328168304L)
 > 
-> foreach (i=1:50) %dopar% {
-+   playSIRwS(
-+     Beta=2,
-+     gamma=1,
-+     psi=2,
-+     S0=10000,
-+     I0=5,
-+     R0=0,
-+     t0=0,
-+     times=100,
-+     tree=FALSE
+> playSIRS(
++   Beta=4,gamma=2,psi=1,Delta=1,
++   S0=97,I0=3,R0=0,t0=0,times=40,
++   tree=TRUE
++ ) -> x
+> 
+> x |>
++   getInfo() |>
++   getElement("tree") |>
++   newick2df(time=40) -> sirs_dat
+> 
+> sirs_dat |>
++   sirs_pomp(
++     Beta=4,gamma=2,psi=1,Delta=1,
++     S0=97,I0=3,R0=0,t0=0
 +   ) |>
-+     getInfo(tree=FALSE) |> {
-+       \(x) x$cumhaz |>
-+         mutate(p=exp(-Lambda))
-+     }()
-+ } |>
-+   bind_rows(.id="rep") -> dat
++   pfilter(Np=1000) |>
++   logLik()
+[1] -697
 > 
-> stopifnot(
-+   `ties in KS test`=dat |>
-+     count(p) |>
-+     filter(n>1) |>
-+     nrow()==0
-+ )
-> 
-> dat |>
-+   do(tidy(ks.test(x=.$p,y=punif))) |>
-+   select(p.value)
-# A tibble: 1 × 1
-  p.value
-    <dbl>
-1   0.612
-> 
-> dat |>
-+   group_by(rep) |>
-+   do(tidy(ks.test(x=.$p,y=punif))) |>
-+   ungroup() |>
-+   select(p.value) -> pvals
-> 
-> pvals |>
-+   do(tidy(ks.test(x=.$p.value,y=punif))) |>
-+   select(p.value) -> ppval
-> 
-> dat |>
-+   ggplot(aes(x=p))+
-+   geom_abline(slope=1)+
-+   stat_ecdf()+
-+   annotate("rug",x=pvals$p.value)+
-+   annotate("text",x=0.2,y=0.8,
-+     label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
-+   coord_equal()+
-+   labs(x=expression(italic(p)),y=expression(italic(F(p))))+
-+   expand_limits(x=c(0,1),y=c(0,1))
+> x |>
++   getInfo(compact=TRUE) |>
++   plot(points=FALSE) |>
++   getElement(1L)
+Warning message:
+In (function (obj, ex)  :
+  Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state
 > 
 > dev.off()
 null device 

@@ -28,8 +28,6 @@ multisir_pomp(data, beta, gamma, psi, theta, S0, I0, R0, N, t0 = 0)
 \arguments{
 \item{data}{optional data frame; output from \code{playmultiSIRwS}.}
 
-\item{...}{additional arguments; ignored.}
-
 \item{beta}{transmission rate}
 
 \item{gamma}{recovery rate}
@@ -96,6 +94,7 @@ Other Genealogy processes:
 \code{\link{lbdp}},
 \code{\link{leventhal}},
 \code{\link{moran}},
+\code{\link{sirs}},
 \code{\link{sirws}}
 }
 \concept{Genealogy processes}

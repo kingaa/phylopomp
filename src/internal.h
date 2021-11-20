@@ -25,4 +25,18 @@ inline SEXP falseSEXP (void) {
   return x;
 }
 
+#define OPTIONAL_REAL_PAR(x,X,d) double x;	\
+  if (isNull(X)) {				\
+    x = d;					\
+  } else {					\
+    x = *(REAL(AS_NUMERIC(X)));			\
+  }						\
+  
+#define OPTIONAL_INT_PAR(x,X,d) int x;		\
+  if (isNull(X)) {				\
+    x = d;					\
+  } else {					\
+    x = *(INTEGER(AS_INTEGER(X)));		\
+  }						\
+  
 #endif

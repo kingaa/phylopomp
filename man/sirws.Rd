@@ -9,8 +9,7 @@
 \usage{
 playSIRwS(
   data = NULL,
-  ...,
-  beta,
+  Beta,
   gamma,
   psi,
   S0,
@@ -24,32 +23,29 @@ playSIRwS(
 
 sir_pomp(
   data,
-  beta,
+  Beta,
   gamma,
   psi,
   S0,
   I0,
   R0,
-  N,
   t0 = 0,
   method = c("gillespie", "euler"),
   delta.t = NULL
 )
 }
 \arguments{
-\item{data}{optional data frame; output from \code{playSIRwS}.}
+\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 
-\item{...}{additional arguments; ignored.}
+\item{Beta}{transmission rate.}
 
-\item{beta}{transmission rate}
+\item{gamma}{recovery rate.}
 
-\item{gamma}{recovery rate}
+\item{psi}{sampling rate.}
 
-\item{psi}{sampling rate}
+\item{S0}{initial size of susceptible population.}
 
-\item{S0}{initial size of susceptible population}
-
-\item{I0}{initial size of infected population}
+\item{I0}{initial size of infected population.}
 
 \item{R0}{initial size of recovered population}
 
@@ -61,11 +57,11 @@ sir_pomp(
 
 \item{ill}{logical; return an illustration?}
 
+\item{method}{choice of simulation method.}
+
+\item{delta.t}{Euler step size.}
+
 \item{N}{initial total population size}
-
-\item{method}{either \dQuote{gillespie} or \dQuote{euler}}
-
-\item{delta.t}{time interval in \dQuote{euler} method}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -75,15 +71,13 @@ Run the simulator.
 }
 \details{
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
-
-It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 }
 \examples{
-playSIRwS(beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
+playSIRwS(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
 playSIRwS(x,times=6:10,psi=1,tree=TRUE) -> x
 plot(x)
 
-playSIRwS(beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
+playSIRwS(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
 plot(x,points=TRUE)
 
 y <- getInfo(x,compact=TRUE)
@@ -118,6 +112,7 @@ Other Genealogy processes:
 \code{\link{lbdp}},
 \code{\link{leventhal}},
 \code{\link{moran}},
-\code{\link{multisirws}}
+\code{\link{multisirws}},
+\code{\link{sirs}}
 }
 \concept{Genealogy processes}

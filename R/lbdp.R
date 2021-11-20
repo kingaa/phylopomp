@@ -33,7 +33,7 @@ NULL
 ##' Available methods for such objects include \code{\link{getInfo}} and \code{\link{plot}}.
 ##' 
 ##' @export
-playLBDP <- function (data = NULL, ..., lambda, mu, psi, n0 = 1, t0 = 0, times,
+playLBDP <- function (data = NULL, lambda, mu, psi, n0 = 1, t0 = 0, times,
   tree = FALSE, ill = FALSE) {
   state <- attr(data,"state")
   if (missing(lambda)) lambda <- NULL
@@ -111,12 +111,13 @@ lbdp_exact <- function (data, lambda, mu, psi) {
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
 
-  tf <- tail(data$time,1)
+  tf <- tail(data$time,1L)
   x <- tf-data$time[data$code==1 | data$code==2] ## coalescence times (including root time)
-  y <- tf-data$time[data$code==-1]               ## live samples
+  y <- tf-data$time[data$code==-1]                ## live samples
   k <- sum(data$code==0)  ## k: no. of dead samples
   m <- sum(data$code==-1) ## m: no. of live samples
-  if (m != length(x))
+  ##  if (m - length(x) != data$lineages[1L]-1L)
+  if (m - length(x) != 0L)
     stop("internal inconsistency in ",sQuote("data"),".",call.=FALSE)
 
   ## A simple fractional linear transformation (1-z)/(1+z),
@@ -148,7 +149,7 @@ lbdp_exact <- function (data, lambda, mu, psi) {
     e/g/g
   }
 
-  (m-1)*log(lambda)+(k+m)*log(psi)+
+  (m-1)*log(2*lambda)+(k+m)*log(psi)+
     sum(log(Q(x)))+
     sum(log(p0(y)/Q(y)))+
     log(2)*(length(x)-1) # makeup the distinguished lineages atx coalescence
