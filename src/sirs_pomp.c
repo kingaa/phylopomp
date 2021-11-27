@@ -100,11 +100,7 @@ void sirs_gill (double *__x, const double *__p, const int *__stateindex, const i
 
 void sirs_dmeas (double *__lik, const double *__y, const double *__x, const double *__p, int give_log, const int *__obsindex, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t)
 {
-  if (S >= 0 && I >= 0 && R >= 0 && I >= lineages) {
-    lik = (give_log) ? ll : exp(ll);
-  } else {
-    lik = (give_log) ? R_NegInf : 0;
-  }
+  lik = (give_log) ? ll : exp(ll);
 }
 
 #undef lik
