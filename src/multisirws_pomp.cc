@@ -19,6 +19,9 @@
 #define ll        (__x[__stateindex[3]])
 #define lik       (__lik[0])
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
   void birthrates (int indmax, double size, double disp, double *arr) 
   {
@@ -31,9 +34,6 @@
       }
   }
 
-
-
-extern "C" {
   void multisir_rinit (double *__x, const double *__p, double t, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars)
   { 
       double m = N/(S0+I0+R0);
@@ -127,7 +127,10 @@ extern "C" {
       tstep = tmax - t;
       ll -= psi*I*tstep;
   }
+
+#ifdef __cplusplus
 }
+#endif
 
 #undef lik
 #undef Beta
