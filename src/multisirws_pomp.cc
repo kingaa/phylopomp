@@ -52,14 +52,14 @@ extern "C" {
   {
       int ind, desc;
       double tstep = 0.0, tmax = t + dt;
-      ind = nearbyint(code);
+      ind = (int)(code);
       // params
       double mu = gamma;
       double lambda, Q, totalrates;
       int n, tmp;
-      int max = nearbyint(N+1.0);
+      int max = (int)(N+1.0);
       double *cum = new double[max];
-      n = nearbyint(S+1);
+      n = (int)(S+1);
       birthrates(n, S, theta, cum);
       totalrates = cum[n-1];
       lambda = Beta/N*theta*totalrates;
@@ -67,19 +67,19 @@ extern "C" {
       if (ind == 1) {// coalescent
           if (S >= branches) {// check for compatibility
               ll += (I > 0) ? log(lambda*I) : R_NegInf;
-              tmp = nearbyint(branches-1.0);
+              tmp = (int)(branches-1.0);
               ll += log(1-cum[tmp]/totalrates);    // correction for the truncated prob
         
               // randome no. of offsprings
               Q = unif_rand()*(totalrates-cum[tmp]) + cum[tmp];
-              desc = nearbyint(branches);
+              desc = (int)(branches);
               while(cum[desc] < Q) {
                   desc++;
               }
               I += desc;
               S -= desc;
               ll += (I > lineages + desc && lineages > 1 + branches) ? lchoose(desc+1,branches+1) + lchoose(I-desc-1,lineages-branches-1) - lchoose(lineages,branches+1) - lchoose(I,lineages) : R_NegInf;
-              n = nearbyint(S+1);
+              n = (int)(S+1);
               birthrates(n, S, theta, cum);
               totalrates = cum[n-1];
           } else {
@@ -94,7 +94,7 @@ extern "C" {
     
       // Gillespie steps
       // unpdate rates
-      n = nearbyint(S+1);
+      n = (int)(S+1);
       birthrates(n, S, theta, cum);
       totalrates = cum[n-1];
       lambda = Beta/N*theta*totalrates;
@@ -115,7 +115,7 @@ extern "C" {
           }
           t += tstep;
           // update rates
-          n = nearbyint(S+1);
+          n = (int)(S+1);
           birthrates(n, S, theta, cum);
           totalrates = cum[n-1];
           lambda = Beta/N*theta*totalrates;
