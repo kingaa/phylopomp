@@ -19,9 +19,9 @@
 #define ll        (__x[__stateindex[3]])
 #define lik       (__lik[0])
 
-#ifdef __cplusplus
+
 extern "C" {
-#endif
+
 
   void birthrates (int indmax, double size, double disp, double *arr) 
   {
@@ -127,10 +127,7 @@ extern "C" {
       tstep = tmax - t;
       ll -= psi*I*tstep;
   }
-
-#ifdef __cplusplus
 }
-#endif
 
 #undef lik
 #undef Beta
