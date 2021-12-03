@@ -2,8 +2,8 @@ REXE = R --vanilla
 RCMD = $(REXE) CMD
 RCMD_ALT = R --no-save --no-restore CMD
 RSCRIPT = Rscript --vanilla
-REPODIR = ../www
-MANUALDIR = ../www/manuals/$(PKG)
+REPODIR = ../../Rpkg/www
+MANUALDIR = ../../Rpkg/www/manuals/$(PKG)
 
 PDFLATEX = pdflatex
 BIBTEX = bibtex
@@ -48,7 +48,7 @@ htmlhelp: install news manual
 	rsync --delete --exclude=aliases.rds --exclude=paths.rds --exclude=$(PKG).rdb --exclude=$(PKG).rdx --exclude=macros -a library/$(PKG)/help/ $(MANUALDIR)/help
 	(cd $(MANUALDIR); (cat links.ed && echo w ) | ed - html/00Index.html)
 	$(CP) $(PKG).pdf $(MANUALDIR)
-	$(CP) ../www/assets/R.css $(MANUALDIR)/html
+	$(CP) $(REPODIR)/assets/R.css $(MANUALDIR)/html
 
 vignettes: manual install
 	$(MAKE)	-C www/vignettes
