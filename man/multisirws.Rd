@@ -81,7 +81,7 @@ plot(x,points=TRUE)
 library(pomp)
 
 x$tree |>
-  newick2df(time=5) |>
+  newick2df(time=5,show_branches=TRUE) |>
   multisir_pomp(Beta=5,gamma=1,psi=.5,theta=100.5,S0=500,I0=5,R0=0) |>
   pfilter(Np=2000) |>
   logLik()
