@@ -39,21 +39,21 @@ static int set_list_elem (SEXP list, SEXP names, SEXP element,
   return ++pos;
 }
 
-static const char *colores[] = {"green", "black", "blue", "red", "grey"};
-static const char *colorsymb[] = {"g", "o", "b", "r", "z"};
+static const char *colores[] = {"green", "black", "blue", "red", "grey","purple"};
+static const char *colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
 // STATE is a datatype that holds the state of the Markov process.
-template <class STATE>
+template <class STATE, name_t NDEME = 1>
 class gp_tableau_t  {
 
 protected:
 
   // BALL COLORS
   // green must be first, numbers in sequence.
-  static const name_t ncolors = 5;
-  typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;
+  static const name_t ncolors = 6;
+  typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4, purple = 5} color_t;
 
   typedef STATE state_t;
 
@@ -72,6 +72,7 @@ private:
   double _time;                               // current time
   players_t player;             // pointers to all players
   balls_t balls[ncolors];       // one for each color class
+  balls_t inventory[NDEME];	// the demes in the inventory process
   bool use_ghosts;              // insert a ghost to track state after death?
 
 protected:
@@ -175,7 +176,7 @@ private:
 
   public:
     
-    name_t uniq, name;
+    name_t uniq, name, deme;
     ball_t *ballA, *ballB;
     union {player_t *left; name_t lname;};
     union {player_t *right; name_t rname;};
@@ -184,14 +185,16 @@ private:
 
     player_t (void) = delete;
     // basic constructor
-    player_t (color_t col, gp_tableau_t *T) {
+    player_t (gp_tableau_t *T, color_t col, name_t d = 0) {
       if (col == green) err("bad dog!");
-      name = T->nplayers();
       uniq = T->unique();
+      name = T->nplayers();
+      deme = d;
       name_t i = T->nballs(col);
       ballA = new ball_t(uniq,green,name,name);
       if (col == black) {
 	ballB = new ball_t(uniq,col,i,name);
+	inventory[d].push_back(ballB);
       } else {
 	ballB = new ball_t(i,col,i,name);
       }
@@ -257,7 +260,8 @@ private:
     };
     // human-readable info
     std::string describe (const gp_tableau_t *T) const {
-      return "player(" + std::to_string(uniq) + ") {"
+      return "player(" + std::to_string(uniq) + ","
+	+ std::to_string(deme) + ") {"
         + ballA->describe(T) + ","
         + ballB->describe(T) + "}, t = "
         + std::to_string(slate) + "\n";
@@ -265,18 +269,19 @@ private:
     // machine-readable info
     std::string illustrate (const gp_tableau_t *T) const {
       return std::to_string(uniq) + ","
+	+ std::to_string(deme) + ","
         + ballA->illustrate(T) + ","
         + ballB->illustrate(T) + ","
         + std::to_string(slate);
     };
     // size of binary serialization
     size_t size (void) const {
-      return 4*sizeof(name_t)+sizeof(double)+sizeof(state_t)+2*ballA->size();
+      return 5*sizeof(name_t)+sizeof(double)+sizeof(state_t)+2*ballA->size();
     };
-    // binary serialization
+    // binary serialization of player_t
     friend raw_t* operator<< (raw_t *o, const player_t &p) {
       name_t buf[] = {
-        p.uniq, p.name, 
+        p.uniq, p.name, p.deme,
         (p.left != 0)  ? p.left->name  : na,
         (p.right != 0) ? p.right->name : na
       };
@@ -285,13 +290,13 @@ private:
       memcpy(o,&p.state,sizeof(state_t)); o += sizeof(state_t);
       return o << *p.ballA << *p.ballB;
     };
-    // binary deserialization
+    // binary deserialization of player_t
     friend raw_t* operator>> (raw_t *o, player_t &p) {
-      name_t buf[4], *b = buf;
+      name_t buf[5], *b = buf;
       memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
       memcpy(&p.slate,o,sizeof(double)); o += sizeof(double);
       memcpy(&p.state,o,sizeof(state_t)); o += sizeof(state_t);
-      p.uniq = *b++; p.name = *b++; p.lname = *b++; p.rname = *b++;
+      p.uniq = *b++; p.name = *b++; p.deme = *b++; p.lname = *b++; p.rname = *b++;
       return o >> *p.ballA >> *p.ballB;
     };
   };
@@ -336,10 +341,10 @@ private:
     b->hand(A->name);
   };
   
-  player_t* make_player (color_t col) {
+  player_t* make_player (color_t col, name_t d = 0) {
     if (max_size_exceeded(1))
       err("maximum tableau size exceeded!");
-    return new player_t(col,this);
+    return new player_t(this,col,d);
   };
   
   void dismiss_player (player_t *p) {
@@ -390,7 +395,7 @@ protected:
     return s;
   };
 
-  // binary serialization
+  // binary serialization of gp_tableau_t
   friend raw_t* operator<< (raw_t *o, const gp_tableau_t &T) {
     name_t buf[ncolors+3], *b = buf;
     double buf2[] = {T._t0, T._time};
@@ -407,10 +412,16 @@ protected:
     memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
     for (name_t i = 0; i < T.nplayers(); i++)
       o = (o << *T.player[i]);
+    for (name_t i = 0; i < NDEME; i++) {
+      name_t n = inventory[i].size();
+      o = (o << n);
+      for (name_t j = 0; j < n; j++)
+	o = (o << inventory[i][j]->uniq);
+    }
     return o;
   };
 
-  // binary deserialization
+  // binary deserialization of gp_tableau_t
   friend raw_t* operator>> (raw_t *o, gp_tableau_t &T) {
     name_t buf[ncolors+3], *b = buf;
     double buf2[2];
@@ -422,7 +433,7 @@ protected:
     memcpy(buf3,o,sizeof(buf3)); o += sizeof(buf3);
     T.use_ghosts = buf3[0];
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
-    name_t np = *b++;
+    name_t np = *b++;		// number of green balls
     for (name_t i = 1; i < ncolors; i++, b++) {
       for (name_t j = 0; j < *b; j++) {
         T.make_player(static_cast<color_t>(i));
@@ -555,11 +566,6 @@ private:
     return balls[col].size();
   };
 
-  // get number of black balls
-  name_t nlive (void) const {
-    return balls[black].size();
-  };
-  
 public:
 
   bool live (void) const {
@@ -644,7 +650,7 @@ private:
   
   // machine-readable info
   std::string illustrate (void) const {
-    std::string o = "player,ballAcol,ballA,ballBcol,ballB,slate,t\n";
+    std::string o = "player,deme,ballAcol,ballA,ballBcol,ballB,slate,t\n";
     player_t *p = anchor();
     while (p != 0) {
       if (!p->holds(grey))
@@ -684,7 +690,7 @@ protected:
       player_t *p = 0;
 
       if (nplayers() != nballs(green)) err("ai yi yi!");
-      if (nballs(black)+nballs(red)+nballs(blue)+nballs(grey) != nplayers()) err("caramba!");
+      if (nballs(black)+nballs(red)+nballs(blue)+nballs(grey)+nballs(purple) != nplayers()) err("caramba!");
 
       // check each player
       for (name_t j = 0; j < nplayers(); j++) {
@@ -770,6 +776,9 @@ private:
     case blue:
       o += "b_" + std::to_string(a->uniq) + ":0.0,";
       break;
+    case purple:
+      o += "p_" + std::to_string(a->uniq) + ":0.0,";
+      break;
     case green:
       o += newick(a->name,t) + ",";
       break;
@@ -787,6 +796,9 @@ private:
       break;
     case blue:
       o += "b_" + std::to_string(b->uniq) + ":0.0";
+      break;
+    case purple:
+      o += "p_" + std::to_string(b->uniq) + ":0.0";
       break;
     case green:
       o += newick(b->name,t);
@@ -859,7 +871,7 @@ private:
     ball_t *b = p->ballB;
     
     // the following depends strongly on the integer equivalents of the color enum:
-    // (typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4} color_t;)
+    // (typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4, purple = 5} color_t;)
     int cc = 10*static_cast<short>(a->color)+static_cast<short>(b->color);
 
     switch (cc) {
@@ -885,7 +897,8 @@ private:
         if (!as.empty()) {
           o = "(" + as + ")b_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
         } else {
-          o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+	  err("impossible to have a green and blue ball with no descendants");
+          // o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
         }
       }
       break;
@@ -895,15 +908,36 @@ private:
         if (!bs.empty()) {
           o = "(" + bs + ")b_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
         } else {
-          o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+	  err("impossible to have a green and blue ball with no descendants");
+	  // o = "r_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
         }
       }
       break;
-    case 01: case 03:           // green,black or green,red
-      o = compact_newick(a->name,tpar);
+    case 05:                    // green,purple
+      {
+        std::string as = compact_newick(a->name,p->slate);
+        if (!as.empty()) {
+          o = "(" + as + ")p_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        } else {
+	  err("impossible to have a green and purple ball with no descendants");
+        }
+      }
       break;
-    case 10: case 30:           // black,green or red,green
-      o = compact_newick(b->name,tpar);
+    case 50:                    // purple,green
+      {
+        std::string bs = compact_newick(b->name,p->slate);
+        if (!bs.empty()) {
+          o = "(" + bs + ")p_" + std::to_string(p->name) + ":" + std::to_string(p->slate - tpar);
+        } else {
+	  err("impossible to have a green and purple ball with no descendants");
+        }
+      }
+      break;
+    case 01: case 10: case 11: case 12: case 21: case 13: case 31: case 15: case 51:
+      err("compact_newick called on unpruned genealogy");
+      break;
+    case 22: case 33: case 55: case 03: case 30: case 25: case 52: case 35: case 53:
+      err("forbidden color combination");
       break;
     default:
       break;
@@ -1027,6 +1061,12 @@ private:
     player_t *p = holder(a);
     if (a->is(black) && p->other(a)->is(blue)) {
       change(a,red);
+    } else if (a->is(black) && p->other(a)->is(purple)) {
+      ball_t *g = green_ball(p);
+      swap(a,g);
+      extract(p);
+      dismiss_player(p);
+      unseat(a);
     } else {
       ball_t *g = green_ball(p);
       swap(p->other(a),g);
@@ -1059,10 +1099,12 @@ private:
   };
 
   // draw random black ball
-  ball_t *random_black_ball (void) {
+  ball_t *random_black_ball (name_t d = 0) {
     name_t draw;
-    draw_one(nlive(),&draw);
-    return balls[black][draw];
+    name_t n = inventory[d].size();
+    if (n < 1) err("cannot draw from empty inventory %d",d);
+    draw_one(n,&draw);
+    return inventory[d][draw];
   };
 
   bool max_size_exceeded (size_t grace = 0) const {
@@ -1072,9 +1114,9 @@ private:
 
 private:
 
-  void birth (const state_t &s) {
+  void birth (const state_t &s, name_t d) {
     ball_t *a = random_black_ball();
-    player_t *p = make_player(black);
+    player_t *p = make_player(black,d);
     p->state = s;
     seat(p->ball(black),a);
   };
@@ -1109,8 +1151,8 @@ private:
 
 public:
 
-  void birth (void) {
-    birth(this->state);
+  void birth (name_t d) {
+    birth(this->state, d);
   };
 
   void death (void) {
@@ -1362,7 +1404,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
   return out;
 }
 
-// play a sampled  genealogy process
+// play a sampled genealogy process
 // this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
 SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
@@ -1499,10 +1541,10 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
   *REAL(tout) = gp.time();
 
-  // prune if requested
-  if (*(INTEGER(AS_INTEGER(Prune)))) gp.prune();
-
   bool compact = *LOGICAL(AS_LOGICAL(Compact));
+
+  // prune if requested
+  if (compact || *(INTEGER(AS_INTEGER(Prune)))) gp.prune();
 
   // pack up return values in a list
   int nout = 7;
