@@ -1,35 +1,35 @@
-##' SIRS with sampling simulator.
+##' SIR with sampling simulator.
 ##'
 ##' Run the simulator.
 ##'
-##' @name sirs
-##' @aliases SIRS
+##' @name sir
+##' @aliases SIR
 ##' @include getinfo.R
 ##' 
 ##' @family Genealogy processes
 ##' 
-##' @inheritParams moran
 ##' @param data optional data frame; output from \code{playSIRwS}.
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
-##' @param Delta waning rate of immunity.
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
+##' @example examples/sir.R
+##'
 ##' @importFrom dplyr bind_rows filter
 ##' @importFrom tibble as_tibble
 ##' @importFrom utils globalVariables
 ##'
-##' @rdname sirs
+##' @rdname sir
 ##' @export
-playSIRS <- function (
+playSIR <- function (
   data = NULL,
-  Beta, gamma, psi, Delta,
-  S0, I0, R0,
+  Beta, gamma, psi, S0,
+  I0, R0,
   t0 = 0, times,
   tree = FALSE, ill = FALSE
 ) {
@@ -37,11 +37,10 @@ playSIRS <- function (
   if (missing(Beta)) Beta <- NULL
   if (missing(gamma)) gamma <- NULL
   if (missing(psi)) psi <- NULL
-  if (missing(Delta)) Delta <- NULL
   if (missing(S0)) S0 <- NULL
   if (missing(I0)) I0 <- NULL
   if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIRS,Beta,gamma,psi,Delta,S0,I0,R0,times,t0,tree,ill,state)
+  x <- .Call(P_playSIR,Beta,gamma,psi,S0,I0,R0,times,t0,tree,ill,state)
   state <- x$state
   x$state <- NULL
   data |>
@@ -49,25 +48,25 @@ playSIRS <- function (
       x |> as_tibble() |> filter(!is.na(count))
     ) -> x
   attr(x,"state") <- state
-  attr(x,"model") <- "SIRS"
+  attr(x,"model") <- "SIR"
   if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))
   x
 }
 
 utils::globalVariables("count")
 
-##' @name sirs_pomp
-##' @rdname sirs
+##' @name sir_pomp
+##' @rdname sir
 ##'
 ##' @param data data frame containing the genealogy in the format returned by \code{\link{newick2df}}.
 ##' @details
-##' \code{sirs_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
+##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##'
 ##' @importFrom pomp pomp onestep covariate_table
 ##'
 ##' @export
 
-sirs_pomp <- function (data, Beta, gamma, psi, Delta, S0, I0, R0, t0=0)
+sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0)
 {
   S0 <- as.integer(S0)
   I0 <- as.integer(I0)
@@ -78,11 +77,10 @@ sirs_pomp <- function (data, Beta, gamma, psi, Delta, S0, I0, R0, t0=0)
   data[,"time"] |>
     pomp(
       times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,Delta=Delta,
-        S0=S0,I0=I0,R0=R0,N=S0+I0+R0),
-      rinit="sirs_rinit",
-      dmeasure="sirs_dmeas",
-      paramnames=c("Beta","gamma","psi","S0","I0","R0","N","Delta"),
+      params=c(Beta=Beta,gamma=gamma,psi=psi,S0=S0,I0=I0,R0=R0,N=S0+I0+R0),
+      rinit="sir_rinit",
+      dmeasure="sir_dmeas",
+      paramnames=c("Beta","gamma","psi","S0","I0","R0","N"),
       accumvars=c("ll"),
       statenames=c("S","I","R","ll"),
       PACKAGE="phylopomp",
@@ -91,6 +89,6 @@ sirs_pomp <- function (data, Beta, gamma, psi, Delta, S0, I0, R0, t0=0)
         times="time",
         order="constant"
       ),
-      rprocess=onestep("sirs_gill")
+      rprocess=onestep("sir_gill")
     )
 }

@@ -1,24 +1,21 @@
-// SIRS with Sampling Genealogy Process Simulator (C++)
-
 #include "gp.h"
 
 typedef struct {
   double S;             // number of susceptibles
   double I;             // number of infections
   double R;             // number of recovereds
-} sirs_state_t;
+} sir_state_t;
 
-class sirs_tableau_t : public gp_tableau_t<sirs_state_t> {
+class sir_tableau_t : public tableau_t<sir_state_t> {
 
 private:
 
-  const sirs_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
+  const sir_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
 
   typedef struct {
     double N;                   // host population size
     double beta;                // transmission rate
     double gamma;               // recovery rate
-    double delta;               // loss of immunity rate
     double psi;                 // sampling rate
     int S0;                     // initial susceptibles
     int I0;                     // initial infecteds
@@ -31,43 +28,34 @@ private:
   double nextI;                 // ...infection
   double nextR;                 // ...recovery
   double nextS;                 // ...sample
-  double nextW;                 // ...waning
-
-  double branch_rate (state_t &s) const {
-    return params.beta * (s.S+1) * (s.I-1) / params.N;
-  };
-
-  double pop (state_t &s) const {
-    return s.I;
-  };
 
 public:
 
   size_t size (void) const {
-    return sizeof(parameters_t) + this->gp_tableau_t::size();
+    return sizeof(parameters_t) + this->tableau_t::size();
   };
 
-  friend raw_t* operator<< (raw_t *o, const sirs_tableau_t &T) {
+  friend raw_t* operator<< (raw_t *o, const sir_tableau_t &T) {
     memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    return o << *dynamic_cast<const gp_tableau_t*>(&T);
+    return o << *dynamic_cast<const tableau_t*>(&T);
   };
 
-  friend raw_t* operator>> (raw_t *o, sirs_tableau_t &T) {
+  friend raw_t* operator>> (raw_t *o, sir_tableau_t &T) {
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    return o >> *dynamic_cast<gp_tableau_t*>(&T);
+    return o >> *dynamic_cast<tableau_t*>(&T);
   };
 
 public:
 
-  sirs_tableau_t (void) = default;
+  sir_tableau_t (void) = default;
   // basic constructor
-  sirs_tableau_t (double beta, double gamma, double psi, double delta,
-		  int S0, int I0, int R0, double t0 = 0) : gp_tableau_t(t0) {
+  sir_tableau_t (double beta, double gamma, double psi,
+                   int S0, int I0, int R0,
+                   double t0 = 0) : tableau_t(t0) {
     params.N = double(S0+I0+R0);
     params.beta = beta;
     params.gamma = gamma;
     params.psi = psi;
-    params.delta = delta;
     params.S0 = S0;
     params.I0 = I0;
     params.R0 = R0;
@@ -79,31 +67,30 @@ public:
     valid();
   };
   // constructor from serialized binary form
-  sirs_tableau_t (raw_t *o) {
+  sir_tableau_t (raw_t *o) {
     o >> *this;
     update_clocks();
     valid();
   };
   // copy constructor
-  sirs_tableau_t (const sirs_tableau_t &T) {
+  sir_tableau_t (const sir_tableau_t &T) {
     raw_t *o = new raw_t[T.size()];
-    o << T;
-    o >> *this;
+    o << T; o >> *this;
     delete[] o;
     update_clocks();
     valid();
   };
   // move constructor
-  sirs_tableau_t (sirs_tableau_t &&) = delete;
+  sir_tableau_t (sir_tableau_t &&) = delete;
   // copy assignment operator
-  sirs_tableau_t & operator= (const sirs_tableau_t &) = delete;
+  sir_tableau_t & operator= (const sir_tableau_t &) = delete;
   // move assignment operator
-  sirs_tableau_t & operator= (sirs_tableau_t &&) = delete;
+  sir_tableau_t & operator= (sir_tableau_t &&) = delete;
   // destructor
-  ~sirs_tableau_t (void) = default;
+  ~sir_tableau_t (void) = default;
 
   void valid (void) const {
-    this->gp_tableau_t::valid();
+    this->tableau_t::valid();
     if (params.N <= 0) err("total population size must be positive!");
     if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
     if (params.N != state.S+state.I+state.R) err("population leakage!");
@@ -143,15 +130,8 @@ public:
     update_clocks();
   };
 
-  // get waning rate
-  double waning_rate (void) const {
-    return params.delta;
-  };
-
-  // set sample rate
-  void waning_rate (double &delta) {
-    params.delta = delta;
-    update_clocks();
+  bool live (void) const {
+    return (state.I > 0 && !(this->tableau_t::max_size_exceeded()));
   };
 
   void update_clocks (void) {
@@ -174,45 +154,34 @@ public:
     } else {
       nextS = R_PosInf;
     }
-    rate = params.delta*state.R;
-    if (rate > 0) {
-      nextW = time()+rexp(1/rate);
-    } else {
-      nextW = R_PosInf;
-    }
   };
 
   // time to next event
   double clock (void) const {
     double next;
-    if (nextI < nextR && nextI < nextS && nextI < nextW) {
+    if (nextI < nextR && nextI < nextS) {
       next = nextI;
-    } else if (nextS < nextI && nextS < nextR && nextS < nextW) {
+    } else if (nextS < nextI && nextS < nextR) {
       next = nextS;
-    } else if (nextR < nextI && nextR < nextS && nextR < nextW) {
+    } else if (nextR < nextI && nextR < nextS) {
       next = nextR;
-    } else if (nextW < nextI && nextW < nextS && nextW < nextR) {
-      next = nextW;
     } else {
-      next = inf;
+      next = R_PosInf;
     }
     return next;
   };
     
-  void move (void) {
-    if (nextI < nextR && nextI < nextS && nextI < nextW) {
+  void jump (void) {
+    if (nextI < nextR && nextI < nextS) {
       state.S -= 1.0;
       state.I += 1.0;
       birth();
-    } else if (nextS < nextI && nextS < nextR && nextS < nextW) {
+    } else if (nextS < nextI && nextS < nextR) {
       sample();
-    } else if (nextR < nextI && nextR < nextS && nextR < nextW) {
+    } else if (nextR < nextI && nextR < nextS) {
       state.I -= 1.0;
       state.R += 1.0;
       death();
-    } else if (nextW < nextI && nextW < nextS && nextW < nextR) {
-      state.S += 1.0;
-      state.R -= 1.0;
     }
     update_clocks();
   };
