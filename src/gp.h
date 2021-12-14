@@ -2,6 +2,11 @@
 // Generic Genealogy Process (GP) Simulator (C++)
 // State of the GP is represented as a "tableau".
 
+// TODO:
+// - inventory class
+// - deme in nodes and black balls, points backward
+// - rewrite to eliminate nodenames and greenballs maps
+
 #ifndef _GP_H_
 #define _GP_H_
 
@@ -39,7 +44,7 @@ typedef double slate_t;
 
 const name_t na = name_t(R_NaInt);
 const slate_t inf = R_PosInf;
-const slate_t default_slate = R_NegInf;
+const slate_t default_slate = R_NaReal;
 const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
 
 // interface with R's integer RNG
@@ -238,7 +243,7 @@ private:
       return holds_own();
     };
     // retrieve the first ball of the specified color.
-    ball_t *ball (color_t c) {
+    ball_t *ball (const color_t c) const {
       for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
 	if ((*i)->color == c) return *i;
       }
@@ -456,10 +461,10 @@ private:
   };
 
   slate_t dawn (void) const {
-    return nodes.front()->slate;
+    return (nodes.empty()) ? default_slate : nodes.front()->slate;
   };
   slate_t dusk (void) const {
-    return nodes.back()->slate;
+    return (nodes.empty()) ? default_slate : nodes.back()->slate;
   }
 
   // get number of nodes
@@ -503,59 +508,97 @@ private:
   std::string illustrate (void) const;
 
 private:
+
+  std::string newick (const ball_t *b, const slate_t &t) const {
+    return b->color_symbol()
+      + "_" + std::to_string(b->uniq)
+      + ":" + std::to_string(t);
+  };
   
   // recursive function to put genealogy into Newick format.
-  std::string newick (const node_t *p, const double &tpar) const {
-
+  std::string newick (const node_t *p, const slate_t &tpar) const {
     std::string o = "(";
-    double t = p->slate;
+    bool single = true;
     for (pocket_it i = p->pocket.begin(); i != p->pocket.end(); i++) {
       ball_t *a = *i;
+      node_t *q = 0;
+      if (!single) o += ",";
+      single = p->is_root();
       switch (a->color) {
-      case black:
-	o += "o_" + std::to_string(a->uniq) + ":" + std::to_string(_time - t) + ",";
-	break;
-      case red:
-	o += "r_" + std::to_string(a->uniq) + ":0.0,";
-	break;
-      case blue:
-	o += "b_" + std::to_string(a->uniq) + ":0.0,";
-	break;
-      case purple:
-	o += "p_" + std::to_string(a->uniq) + ":0.0,";
-	break;
       case green:
-	o += newick(child(a),t) + ",";
+	q = child(a);
+	if (q != p) {
+	  o += newick(q,p->slate);
+	}
+	break;
+      case black:
+	o += newick(a,time()-p->slate);
+	break;
+      case purple: case red: case blue:
+	o += newick(a,0);
 	break;
       default:
-	err("in 'newick': error that should not occur.");
+	err("in 'newick': c'est impossible!");
 	break;
       }
     }
-    o.erase(o.end()-1);
-    o += ")g_" + std::to_string(p->uniq) + ":" + std::to_string(t - tpar);
+    o += ")g_"
+      + std::to_string(p->uniq)
+      + ":" + std::to_string(p->slate - tpar);
     return o;
   };
 
+  std::string compact_newick (const node_t *p, const slate_t &tpar) const {
+    std::string o1 = "(";
+    std::string o2 = "";
+    std::string o3 = ")g_";
+    bool single = true;
+    bool rednode = false;
+    for (pocket_it i = p->pocket.begin(); i != p->pocket.end(); i++) {
+      ball_t *b = *i;
+      node_t *q = 0;
+      if (!single) o2 += ",";
+      single = p->is_root();
+      switch (b->color) {
+      case green:
+	q = child(b);
+	if (q != p) {
+	  o2 += compact_newick(q,p->slate);
+	}
+	break;
+      case black:
+	o2 += newick(b,time()-p->slate);
+	break;
+      case purple:
+	o3 = ")p_";
+	single = true;
+	break;
+      case red:
+	o1 = ""; o2 = ""; o3 = "r_";
+	rednode = true;
+	single = true;
+	break;
+      case blue:
+	if (!rednode) o3 = ")b_";
+	single = true;
+	break;
+      default:
+	err("in 'compact_newick': c'est impossible!");
+	break;
+      }
+    }
+    return o1 + o2 + o3 + std::to_string(p->uniq)
+      + ":" + std::to_string(p->slate - tpar);
+  }
+
   // put genealogy at current time into Newick format.
-  std::string newick (void) const {
-    double te = dawn(), tl = dusk();
+  std::string newick (bool compact = true) const {
+    slate_t te = dawn(), tl = dusk();
     std::string o = std::to_string(tl) + "(i_:0.0,i_:0.0";
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
       if (p->is_root()) {
-        ball_t *b = p->other(green_ball(p));
-        switch (b->color) {
-        case green:
-          o += ",((" + newick(child(b),te) + ")g_" + std::to_string(p->uniq) + ":0.0)i_:0.0";
-          break;
-        case black:
-          o += ",o_" + std::to_string(b->uniq) + ":" + std::to_string(tl-te);
-          break;
-        default:
-          err("in 'newick': c'est impossible!");
-          break;
-        }
+	o += ",(" + ((compact) ? compact_newick(p,te) : newick(p,te)) + ")i_:0.0";
       }
     }
     o += ")i_;";
@@ -567,19 +610,13 @@ public:
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
   friend void newick (SEXP x, int k, const tableau_t &T, bool compact = false) {
-    //    if (compact) {
-    //      SET_STRING_ELT(x,k,mkChar(T.compact_newick().c_str()));
-    //    } else {
-    SET_STRING_ELT(x,k,mkChar(T.newick().c_str()));
-      //    }
+    SET_STRING_ELT(x,k,mkChar(T.newick(compact).c_str()));
   }
 
   friend SEXP newick (const tableau_t &T, bool compact = false) {
     SEXP x;
-    //    std::string s = (compact) ? T.compact_newick() : T.newick();
-    std::string s = T.newick();
     PROTECT(x = NEW_CHARACTER(1));
-    SET_STRING_ELT(x,0,mkChar(s.c_str()));
+    SET_STRING_ELT(x,0,mkChar(T.newick(compact).c_str()));
     UNPROTECT(1);
     return x;
   }
@@ -1043,7 +1080,7 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // prune if requested
-  if (compact || *(INTEGER(AS_INTEGER(Prune)))) gp.prune();
+  if (*(LOGICAL(AS_LOGICAL(Prune)))) gp.prune();
 
   // pack up return values in a list
   int nout = 4;

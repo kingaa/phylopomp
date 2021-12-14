@@ -8,7 +8,7 @@
 ##' 
 ##' @family Genealogy processes
 ##' 
-##' @param data optional data frame; output from \code{playSIRwS}.
+##' @param data optional data frame; output from \code{playSIR}.
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
@@ -47,6 +47,8 @@ playSIR <- function (
     bind_rows(
       x |> as_tibble() |> filter(!is.na(count))
     ) -> x
+  if (exists("tree",where=x))
+    x$tree <- sapply(x$tree,\(t) gsub("nan","NA",t)) 
   attr(x,"state") <- state
   attr(x,"model") <- "SIR"
   if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))

@@ -34,6 +34,7 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = FALSE) {
   x$cumhaz <- as_tibble(x$cumhaz)
   x$lineages <- as_tibble(x$lineages)
   x$stimes <- NULL
+  x$tree <- gsub("nan","NA",x$tree)
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")
   class(x) <- c("gpsim",class(x))
