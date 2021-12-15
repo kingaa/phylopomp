@@ -43,7 +43,7 @@ static const char *colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 // GP TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
 // STATE is a datatype that holds the state of the Markov process.
-template <class STATE, size_t NDEME = 1>
+template <class STATE, class PARAMETERS, size_t NDEME = 1>
 class tableau_t  {
 
 private:
@@ -54,6 +54,7 @@ private:
   typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4, purple = 5} color_t;
 
   typedef STATE state_t;
+  typedef PARAMETERS parameters_t;
 
 private:
 
@@ -70,11 +71,12 @@ private:
   slate_t _t0;			// initial time
   slate_t _time;		// current time
   nodes_t nodes;		// pointers to all nodes
-  inventory_t inventory;	// the inventory process
 
 protected:
 
+  inventory_t inventory;	// the inventory process
   state_t state;                // current state of the GP
+  parameters_t params;		// parameters of the GP
 
 private:
 
@@ -208,7 +210,7 @@ private:
       if (x[1] >= x[0]) x[1]++;
     };
     // n-th deme
-    pocket_t & operator[] (name_t n) {
+    pocket_t & operator[] (const name_t n) {
       return _inven[n];
     };
     // n-th member of deme d
@@ -482,7 +484,8 @@ public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = 2*sizeof(name_t) + 2*sizeof(slate_t) + sizeof(state_t);
+    size_t s = 2*sizeof(name_t) + 2*sizeof(slate_t)
+      + sizeof(state_t) + sizeof(parameters_t);
     for (node_it i = nodes.begin(); i != nodes.end(); i++)
       s += (*i)->size();
     return s;
@@ -495,6 +498,7 @@ public:
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
     memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
     for (node_it i = T.nodes.begin(); i != T.nodes.end(); i++) {
       o = (o << **i);
     }
@@ -510,6 +514,7 @@ public:
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
     T._unique = A[0]; T._t0 = B[0]; T._time = B[1];
     for (name_t i = 0; i < A[1]; i++) {
       node_t *p = new node_t();

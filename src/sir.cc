@@ -1,6 +1,7 @@
 // SIR with Sampling Genealogy Process Simulator (C++)
 
 #include "gp.h"
+#include "internal.h"
 
 typedef struct {
   double S;             // number of susceptibles
@@ -8,44 +9,26 @@ typedef struct {
   double R;             // number of recovereds
 } sir_state_t;
 
-class sir_tableau_t : public tableau_t<sir_state_t> {
+typedef struct {
+  double N;                   // host population size
+  double beta;                // transmission rate
+  double gamma;               // recovery rate
+  double psi;                 // sampling rate
+  int S0;                     // initial susceptibles
+  int I0;                     // initial infecteds
+  int R0;                     // initial recoveries
+} sir_parameters_t;
+
+class sir_tableau_t : public tableau_t<sir_state_t,sir_parameters_t> {
 
 private:
 
   const sir_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
 
-  typedef struct {
-    double N;                   // host population size
-    double beta;                // transmission rate
-    double gamma;               // recovery rate
-    double psi;                 // sampling rate
-    int S0;                     // initial susceptibles
-    int I0;                     // initial infecteds
-    int R0;                     // initial recoveries
-  } parameters_t;
-
-  parameters_t params;
-  
   // clocks: times to next...
   double nextI;                 // ...infection
   double nextR;                 // ...recovery
   double nextS;                 // ...sample
-
-public:
-
-  size_t size (void) const {
-    return sizeof(parameters_t) + this->tableau_t::size();
-  };
-
-  friend raw_t* operator<< (raw_t *o, const sir_tableau_t &T) {
-    memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    return o << *dynamic_cast<const tableau_t*>(&T);
-  };
-
-  friend raw_t* operator>> (raw_t *o, sir_tableau_t &T) {
-    memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    return o >> *dynamic_cast<tableau_t*>(&T);
-  };
 
 public:
 
@@ -189,7 +172,6 @@ public:
   };
 
 };
-#include "internal.h"
 
 sir_tableau_t *makeSIR (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP R0, SEXP T0, SEXP State) {
   sir_tableau_t *A;

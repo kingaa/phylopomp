@@ -6,6 +6,8 @@
 static const R_CallMethodDef callMethods[] = {
   {"playSIR", (DL_FUNC) &playSIR, 11},
   {"get_SIR_info", (DL_FUNC) &get_SIR_info, 3},
+  {"playSIIR", (DL_FUNC) &playSIIR, 13},
+  {"get_SIIR_info", (DL_FUNC) &get_SIIR_info, 3},
   {NULL, NULL, 0}
 };
 

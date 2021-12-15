@@ -7,7 +7,7 @@
 \usage{
 getInfo(data, ...)
 
-\method{getInfo}{gpsim}(data, ..., prune = TRUE, compact = FALSE)
+\method{getInfo}{gpsim}(data, ..., prune = TRUE, compact = TRUE)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}
