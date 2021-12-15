@@ -157,7 +157,9 @@ private:
     };
     // element of a newick representation
     std::string newick (const slate_t &t) const {
+      if (deme == na) err("undefined deme");
       return color_symbol()
+	+ "_" + std::to_string(deme)
 	+ "_" + std::to_string(uniq)
 	+ ":" + std::to_string(t);
     };
@@ -382,7 +384,8 @@ private:
 	}
       }
       o += ")g_"
-	+ std::to_string(uniq)
+	+ std::to_string(deme)
+	+ "_" + std::to_string(uniq)
 	+ ":" + std::to_string(slate - tpar);
       return o;
     };
@@ -426,7 +429,9 @@ private:
 	  break;
 	}
       }
-      return o1 + o2 + o3 + std::to_string(uniq)
+      return o1 + o2 + o3
+	+ std::to_string(deme)
+	+ "_" + std::to_string(uniq)
 	+ ":" + std::to_string(slate - tpar);
     }
     // size of binary serialization
@@ -651,14 +656,14 @@ private:
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
     slate_t te = dawn(), tl = dusk();
-    std::string o = std::to_string(tl) + "(i_:0.0,i_:0.0";
+    std::string o = std::to_string(tl) + "(i_NA_NA:0.0,i_NA_NA:0.0";
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
       if (p->is_root()) {
 	o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_NA_NA:0.0";
       }
     }
-    o += ")i_;";
+    o += ")i_NA_NA;";
     return o;
   };
 

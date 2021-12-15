@@ -32,7 +32,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   read.tree(text=tree) |>
     fortify(ladderize=ladderize) |>
-    separate(label,into=c("nodecol","label")) -> dat
+    separate(label,into=c("nodecol","deme","label")) -> dat
   if (length(tree)==1) dat$.id <- ""
   dat$.id <- as.integer(as.factor(dat$.id))
   if (is.na(root_time)) { # root time is to be determined from the current time
@@ -40,8 +40,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
       group_by(.id) |>
       mutate(
         x=x-max(x)+time[.id],
-        vis=nodecol != "i",
-        nodecol=ball_colors[nodecol]
+        vis=nodecol != "i"
       ) |>
       ungroup(.id) -> dat
   } else {
@@ -49,8 +48,7 @@ treeplot <- function (tree, time = NULL, illus = NULL,
       group_by(.id) |>
       mutate(
         x=x-min(x)+root_time,
-        vis=nodecol != "i",
-        nodecol=ball_colors[nodecol]
+        vis=nodecol != "i"
       ) |>
       ungroup(.id) -> dat
   }
@@ -66,18 +64,22 @@ treeplot <- function (tree, time = NULL, illus = NULL,
     attr(d,"layout") <- "rectangular"
     d |>
       ggplot(aes(x=x,y=y))+
-      geom_tree(aes(alpha=vis))+
+      geom_tree(aes(alpha=vis,color=deme))+
       expand_limits(x=dat$x)+
       scale_x_continuous()+
+      scale_color_brewer(type="qual")+
       scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
-      guides(alpha="none")+
+      guides(alpha="none",color="none")+
       theme_tree2() -> pl
     if (points) {
       pl+
-        geom_nodepoint(aes(color=nodecol))+
-        geom_tippoint(aes(color=nodecol))+
-        scale_color_identity()+
-        guides(color="none") -> pl
+        geom_nodepoint(shape=21,fill="darkgreen",color="darkgreen",aes(alpha=nodecol %in% c("g","p")))+
+        geom_nodepoint(shape=21,fill="royalblue2",color="royalblue2",aes(alpha=nodecol %in% c("b")))+
+        geom_tippoint(shape=21,fill="red2",color="red2",aes(alpha=nodecol %in% c("r")))+
+        geom_tippoint(shape=21,fill="royalblue2",color="royalblue2",aes(alpha=nodecol %in% c("b")))+
+        geom_tippoint(shape=21,fill="black",color="black",aes(alpha=nodecol %in% c("o")))+
+        scale_shape_manual(values=c(i=NA,o=19,g=17,p=17,r=19,b=19))+
+        guides(shape="none") -> pl
     }
     if (diagram) {
       d |>
@@ -108,6 +110,7 @@ ball_colors <- c(
   r="red2",
   n="saddlebrown",
   o="black",
+  p="purple",
   i=alpha("white",0)
 )
 
