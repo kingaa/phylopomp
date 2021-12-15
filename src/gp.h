@@ -3,20 +3,30 @@
 // State of the GP is represented as a "tableau".
 
 // TODO:
-// - deme in nodes and black balls, points backward
-// - rewrite to eliminate nodenames map
 
 #ifndef _GP_H_
 #define _GP_H_
 
 #include <list>
-#include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <string>
 #include <cstring>
 
-#define "internal.h"
+#include "internal.h"
+
+// interface with R's integer RNG
+static int random_integer (int n) {
+  return int(floor(R_unif_index(double(n))));
+}
+
+// helper function for filling a return list
+static int set_list_elem (SEXP list, SEXP names, SEXP element,
+                          const char *name, int pos) {
+  SET_ELEMENT(list,pos,element);
+  SET_STRING_ELT(names,pos,mkChar(name));
+  return ++pos;
+}
 
 typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
 typedef size_t name_t;
@@ -54,18 +64,13 @@ private:
   typedef std::list<node_t*> nodes_t;
   typedef typename nodes_t::const_iterator node_it;
   typedef std::unordered_set<ball_t*> pocket_t;
-  typedef typename pocket_t::const_iterator pocket_it;
   typedef typename pocket_t::const_iterator ball_it;
-  typedef typename std::unordered_map<name_t,ball_t*>::const_iterator greenball_it;
-  typedef typename std::unordered_map<name_t,node_t*>::const_iterator nodename_it;
   
   name_t _unique;		// next unique name
   slate_t _t0;			// initial time
   slate_t _time;		// current time
   nodes_t nodes;		// pointers to all nodes
   inventory_t inventory;	// the inventory process
-  std::unordered_map<name_t,ball_t*> greenballs; // to hold pointers to all green balls
-  std::unordered_map<name_t,node_t*> nodenames; // to hold pointers to all nodes
 
 protected:
 
@@ -84,15 +89,15 @@ private:
     node_t *_owner;
   public:
     name_t uniq;
-    name_t deme;
     color_t color;
+    name_t deme;
     // basic constructor for ball class
     ball_t (node_t *who, name_t u = 0, color_t col = green) {
       _holder = who;
       _owner = who;
       uniq = u;
-      deme = na;
       color = col;
+      deme = na;
     };
     // copy constructor
     ball_t (const ball_t &b) = delete;
@@ -111,7 +116,7 @@ private:
       return _owner;
     };
     // change owner
-    void owner (node_t *who) const {
+    void owner (node_t *who) {
       if (color != green)
 	err("do not meddle in the ownership of non-green balls.");
       _owner = who;
@@ -123,6 +128,9 @@ private:
     // change pockets
     void holder (node_t *who) {
       _holder = who;
+    };
+    node_t* child (void) const {
+      return owner();
     };
     bool is (color_t c) const {
       return color==c;
@@ -137,7 +145,9 @@ private:
     };
     // human-readable info
     std::string describe (void) const {
-      return color_name() + "(" + std::to_string(uniq) + ")";
+      return color_name()
+	+ "(" + std::to_string(uniq)
+	+ "," + std::to_string(deme) + ")";
     };
     // machine-readable description
     std::string illustrate (void) const {
@@ -165,7 +175,7 @@ private:
       memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
       memcpy(&b.deme,o,sizeof(name_t)); o += sizeof(name_t);
       memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
-      b._holder = 0;
+      b.holder(0);
       return o;
     };
   };
@@ -226,9 +236,8 @@ private:
     void remove (ball_t *b) {
       if (b->is(black)) {
 	if (_inven[b->deme].empty())
-	  err("in 'inventory::remove': empty deme.");
+	  err("in 'inventory::remove': empty deme %ld.",b->deme);
 	_inven[b->deme].erase(b);
-	b->deme = na;
       }
     };
   };
@@ -241,6 +250,10 @@ private:
   // - knowledge of the Markov process state at time of seating
   // - a deme
   class node_t {
+
+  private:
+
+    ball_t *_greenball;
 
   public:
     
@@ -255,6 +268,7 @@ private:
       uniq = u;
       slate = t;
       deme = d;
+      _greenball = 0;
     };
     // copy constructor
     node_t (const node_t &p) = delete;
@@ -270,35 +284,39 @@ private:
     };
     // delete balls and clear pocket
     void clean (void) {
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) delete *i;
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) delete *i;
       pocket.clear();
     };
     // does this node hold this ball?
     bool holds (ball_t *b) const {
-      pocket_it i = pocket.find(b);
+      ball_it i = pocket.find(b);
       return (i != pocket.end());
     };
     // does this node hold a ball of this color?
     bool holds (color_t c) const {
       bool result = false;
-      for (pocket_it i = pocket.begin(); !result && i != pocket.end(); i++) {
+      for (ball_it i = pocket.begin(); !result && i != pocket.end(); i++) {
 	result = ((*i)->color == c);
       }
       return result;
     };
+    // pointer to my green ball
+    ball_t* green_ball (void) const {
+      return _greenball;
+    };
+    // set green ball
+    void green_ball (ball_t *g) {
+      _greenball = g;
+    };
     bool holds_own (void) const {
-      bool result = false;
-      for (pocket_it i = pocket.begin(); !result && i != pocket.end(); i++) {
-	result = ((*i)->color == green) && ((*i)->uniq == uniq);
-      }
-      return result;
+      return (_greenball->holder() == this);
     };
     bool is_root (void) const {
       return holds_own();
     };
     // retrieve the first ball of the specified color.
     ball_t *ball (const color_t c) const {
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	if ((*i)->color == c) return *i;
       }
       err("no ball of color %s",colores[c]);
@@ -306,7 +324,7 @@ private:
     };
     // return a pointer to another ball
     ball_t *other (const ball_t *b) const {
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	if (*i != b) return *i;
       }
       err("error in 'other': no other ball");
@@ -316,7 +334,7 @@ private:
     std::string describe (void) const {
       std::string s = "node(" + std::to_string(uniq)
 	+ "," + std::to_string(deme) + ") {";
-      pocket_it i = pocket.begin();
+      ball_it i = pocket.begin();
       s += (*i)->describe(); ++i;
       while (i != pocket.end()) {
         s += "," + (*i)->describe(); ++i;
@@ -328,7 +346,7 @@ private:
     std::string illustrate (void) const {
       std::string s = std::to_string(uniq) + ","
 	+ std::to_string(deme) + ",";
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	s += (*i)->illustrate() + ",";   
       }
       s += std::to_string(slate);
@@ -338,23 +356,23 @@ private:
     std::string newick (const slate_t& tnow, const slate_t& tpar) const {
       std::string o = "(";
       bool single = true;
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
-	ball_t *a = *i;
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
+	ball_t *b = *i;
 	node_t *p = 0;
 	if (!single) o += ",";
 	single = is_root();
-	switch (a->color) {
+	switch (b->color) {
 	case green:
-	  p = child(a);
+	  p = b->child();
 	  if (p != this) {
-	    o += newick(p,slate);
+	    o += p->newick(tnow,slate);
 	  }
 	  break;
 	case black:
-	  o += a->newick(tnow-slate);
+	  o += b->newick(tnow-slate);
 	  break;
 	case purple: case red: case blue:
-	  o += a->newick(0);
+	  o += b->newick(0);
 	  break;
 	default:
 	  err("in 'newick': c'est impossible!");
@@ -373,16 +391,16 @@ private:
       std::string o3 = ")g_";
       bool single = true;
       bool rednode = false;
-      for (pocket_it i = pocket.begin(); i != pocket.end(); i++) {
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	ball_t *b = *i;
 	node_t *p = 0;
 	if (!single) o2 += ",";
 	single = is_root();
 	switch (b->color) {
 	case green:
-	  p = child(b);
+	  p = b->child();
 	  if (p != this) {
-	    o2 += compact_newick(p,slate);
+	    o2 += p->compact_newick(tnow,slate);
 	  }
 	  break;
 	case black:
@@ -421,7 +439,7 @@ private:
       memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
       memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
       memcpy(o,&p.state,sizeof(state_t)); o += sizeof(state_t);
-      for (pocket_it i = p.pocket.begin(); i != p.pocket.end(); i++) 
+      for (ball_it i = p.pocket.begin(); i != p.pocket.end(); i++) 
 	o = (o << **i);
       return o;
     };
@@ -455,8 +473,6 @@ private:
   void clean (void) {
     for (node_it i = nodes.begin(); i != nodes.end(); i++) delete *i;
     nodes.clear();
-    greenballs.clear();
-    nodenames.clear();
     for (size_t d = 0; d < NDEME; d++) inventory[d].clear();
     _time = default_slate;
     _unique = 0;
@@ -489,6 +505,8 @@ public:
   friend raw_t* operator>> (raw_t *o, tableau_t &T) {
     name_t A[2];
     slate_t B[2];
+    std::unordered_map<name_t,node_t*> nodeptr;
+    typename std::unordered_map<name_t,node_t*>::const_iterator npit;
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
@@ -497,10 +515,22 @@ public:
       node_t *p = new node_t();
       o = (o >> *p);
       T.nodes.push_back(p);
-      T.nodenames.insert({p->uniq,p});
-      for (pocket_it j = p->pocket.begin(); j != p->pocket.end(); j++) {
-	T.inventory.insert(*j,p->deme);
-	if ((*j)->is(green)) T.greenballs.insert({{(*j)->uniq,(*j)}});
+      nodeptr.insert({p->uniq,p});
+    }
+    for (node_it i = T.nodes.begin(); i != T.nodes.end(); i++) {
+      node_t *p = *i;
+      for (ball_it j = p->pocket.begin(); j != p->pocket.end(); j++) {
+	ball_t *b = *j;
+	T.inventory.insert(b,b->deme);
+	if (b->is(green)) {
+	  npit = nodeptr.find(b->uniq);
+	  if (npit == nodeptr.end()) {
+	    err("cannot find uniq id %ld",b->uniq);
+	  } else {
+	    node_t *q = npit->second;
+	    b->owner(q); q->green_ball(b);
+	  }
+	}
       }
     }
     return o;
@@ -564,21 +594,6 @@ protected:
 
 private:
 
-  ball_t *green_ball (const node_t *p) const {
-    greenball_it i = greenballs.find(p->uniq);
-    if (i != greenballs.end()) {
-      return i->second;
-    } else {
-      err("green ball %ld not found.",p->uniq);
-    }
-  };
-  node_t *parent (const node_t *p) const {
-    return green_ball(p)->holder();
-  };
-  node_t *child (const ball_t *g) const {
-    return nodenames.find(g->uniq)->second;
-  };
-
   slate_t dawn (void) const {
     return (nodes.empty()) ? default_slate : nodes.front()->slate;
   };
@@ -628,82 +643,6 @@ private:
 
 private:
 
-  // recursive function to put genealogy into Newick format.
-  std::string newick (const node_t *p, const slate_t &tpar) const {
-    std::string o = "(";
-    bool single = true;
-    for (pocket_it i = p->pocket.begin(); i != p->pocket.end(); i++) {
-      ball_t *a = *i;
-      node_t *q = 0;
-      if (!single) o += ",";
-      single = p->is_root();
-      switch (a->color) {
-      case green:
-	q = child(a);
-	if (q != p) {
-	  o += newick(q,p->slate);
-	}
-	break;
-      case black:
-	o += a->newick(time()-p->slate);
-	break;
-      case purple: case red: case blue:
-	o += a->newick(0);
-	break;
-      default:
-	err("in 'newick': c'est impossible!");
-	break;
-      }
-    }
-    o += ")g_"
-      + std::to_string(p->uniq)
-      + ":" + std::to_string(p->slate - tpar);
-    return o;
-  };
-
-  std::string compact_newick (const node_t *p, const slate_t &tpar) const {
-    std::string o1 = "(";
-    std::string o2 = "";
-    std::string o3 = ")g_";
-    bool single = true;
-    bool rednode = false;
-    for (pocket_it i = p->pocket.begin(); i != p->pocket.end(); i++) {
-      ball_t *b = *i;
-      node_t *q = 0;
-      if (!single) o2 += ",";
-      single = p->is_root();
-      switch (b->color) {
-      case green:
-	q = child(b);
-	if (q != p) {
-	  o2 += compact_newick(q,p->slate);
-	}
-	break;
-      case black:
-	o2 += b->newick(time()-p->slate);
-	break;
-      case purple:
-	o3 = ")p_";
-	single = true;
-	break;
-      case red:
-	o1 = ""; o2 = ""; o3 = "r_";
-	rednode = true;
-	single = true;
-	break;
-      case blue:
-	if (!rednode) o3 = ")b_";
-	single = true;
-	break;
-      default:
-	err("in 'compact_newick': c'est impossible!");
-	break;
-      }
-    }
-    return o1 + o2 + o3 + std::to_string(p->uniq)
-      + ":" + std::to_string(p->slate - tpar);
-  }
-
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
     slate_t te = dawn(), tl = dusk();
@@ -711,8 +650,7 @@ private:
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
       if (p->is_root()) {
-	//	o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_:0.0";
-	o += ",(" + ((compact) ? compact_newick(p,te) : newick(p,te)) + ")i_:0.0";
+	o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_NA_NA:0.0";
       }
     }
     o += ")i_;";
@@ -762,11 +700,11 @@ private:
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green);
-    ball_t *b = new ball_t(p,u,col);    
+    ball_t *b = new ball_t(p,u,col);
+    p->green_ball(g);
+    g->deme = d; b->deme = d;
     p->pocket.insert(g);
     p->pocket.insert(b);
-    greenballs.insert({{u,g}});
-    nodenames.insert({{u,p}});
     inventory.insert(b,d);
     return p;
   };
@@ -776,10 +714,8 @@ private:
       err("cannot drop a node that does not hold its own green ball.");
     if (p->pocket.size() != 2)
       err("cannot drop a node with more than 2 balls.");
-    for (pocket_it i = p->pocket.begin(); i != p->pocket.end(); i++)
+    for (ball_it i = p->pocket.begin(); i != p->pocket.end(); i++)
       inventory.remove(*i);
-    nodenames.erase(p->uniq);
-    greenballs.erase(p->uniq);
     nodes.remove(p);
     delete p;
   };
@@ -788,12 +724,6 @@ private:
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
     node_t *q = b->holder();
-    name_t dp = p->deme;
-    name_t dq = q->deme;
-    if (dp != dq) {
-      inventory.insert(a,dq);
-      inventory.insert(b,dp);
-    }
     if (p != q) {
       q->pocket.insert(a); p->pocket.erase(a); a->holder(q);
       p->pocket.insert(b); q->pocket.erase(b); b->holder(p);
@@ -802,7 +732,8 @@ private:
 
   // seat node p; take as parent the node holding ball b.
   void seat (node_t *p, ball_t *b) {
-    swap(b,green_ball(p));
+    swap(b,p->green_ball());
+    p->green_ball()->deme = b->deme;
     nodes.push_back(p);
   };
 
@@ -810,10 +741,7 @@ private:
   void unseat (ball_t *a) {
     if (!a->is(black))
       err("in 'unseat': ball is %s, not black.",colores[a->color]);
-    //    std::cout << "unseat " << a->describe() << "\n";
-    //    rprint(this->describe());
     node_t *p = a->holder();
-    //    rprint(p->describe());
     if (p->pocket.size() > 2) {
       p->pocket.erase(a);
       inventory.remove(a);
@@ -826,15 +754,17 @@ private:
 	a->color = red;
 	break;
       case purple:	// swap black ball for green ball, delete node
-	swap(a,green_ball(p));
-	unseat(a);		// recursively pursue dropping ball a
+	swap(a,p->green_ball());
+	a->deme = p->green_ball()->deme;
 	drop_node(p);
+	unseat(a);		// recursively pursue dropping ball a
 	break;
       case red: case grey:
-	err("in 'unseat': error that should never occur.");
+	err("in 'unseat': inconceivable error.");
 	break;
       default:		// swap other ball for green ball, delete node
-	swap(b,green_ball(p));
+	swap(b,p->green_ball());
+	b->deme = p->deme;
 	drop_node(p);
 	break;
       }
