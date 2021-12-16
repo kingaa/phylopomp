@@ -11,8 +11,9 @@
 ##'
 ##' @include package.R
 ##' @importFrom tibble as_tibble
+##' @importFrom yaml read_yaml
 ##' 
-##' @example examples/moran.R
+##' @example examples/siir.R
 ##'
 ##' @rdname getinfo
 ##' @export
@@ -29,10 +30,11 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
     SIIR = .Call(P_get_SIIR_info,attr(data,"state"),prune,compact),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
-  x$cumhaz <- as_tibble(x$cumhaz)
   x$lineages <- as_tibble(x$lineages)
   x$stimes <- NULL
   x$tree <- gsub("nan","NA",x$tree)
+  x$structure <- read_yaml(text=x$yaml)$tableau
+  x$yaml <- NULL
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")
   class(x) <- c("gpsim",class(x))

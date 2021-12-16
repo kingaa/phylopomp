@@ -66,6 +66,9 @@ library/$(PKG)/html/NEWS.html: inst/NEWS.Rd
 session: install
 	exec $(REXE)
 
+debug: REXE = R -d gdb
+debug: session
+
 revdeps: install
 	mkdir -p library check
 	$(REXE) -e "pkgs <- strsplit('$(REVDEPS)',' ')[[1]]; download.packages(pkgs,destdir='library',repos='https://mirrors.nics.utk.edu/cran/')"

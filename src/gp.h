@@ -151,6 +151,21 @@ private:
 	+ "(" + std::to_string(uniq)
 	+ "," + std::to_string(deme) + ")";
     };
+    // machine-readable info
+    std::string yaml (size_t level = 0, bool prefix = false) const {
+      std::string tab(2*level,' ');
+      std::string o = tab;
+      tab.append(2,' ');
+      if (prefix) {
+	o += "- ";
+      } else {
+	o += "ball:\n" + tab;
+      }
+      o += "color: " + color_name() + "\n"	
+	+ tab + "name: " + std::to_string(uniq) + "\n"
+	+ tab + "deme: " + std::to_string(deme) + "\n";
+      return o;
+    };
     // element of a newick representation
     std::string newick (const slate_t &t) const {
       if (deme == na) err("undefined deme");
@@ -337,10 +352,30 @@ private:
       ball_it i = pocket.begin();
       s += (*i)->describe(); ++i;
       while (i != pocket.end()) {
-        s += "," + (*i)->describe(); ++i;
+        s += ", " + (*i)->describe(); ++i;
       }
       s += "}, t = " + std::to_string(slate) + "\n";
       return s;
+    };
+    // machine-readable info
+    std::string yaml (size_t level = 0, bool prefix = false) const {
+      std::string tab(2*level,' ');
+      std::string o = tab;
+      tab.append(2,' ');
+      if (prefix) {
+	o += "- ";
+      } else {
+	o += "node:\n" + tab;
+      }
+      o += "name: " + std::to_string(uniq) + "\n"
+	+ tab + "deme: " + std::to_string(deme) + "\n"
+	+ tab + "time: " + std::to_string(slate) + "\n"
+	+ tab + "pocket:\n";
+      level++;
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
+	o += (*i)->yaml(level,true);
+      }
+      return o;
     };
     // Newick format
     std::string newick (const slate_t& tnow, const slate_t& tpar) const {
@@ -613,6 +648,25 @@ private:
     o += "time = " + std::to_string(time()) + "\n";
     return o;
   };
+  // machine-readable info
+  std::string yaml (size_t level = 0, bool prefix = false) const {
+    std::string tab(2*level,' ');
+    std::string o = tab;
+    tab.append(2,' ');
+    if (prefix) {
+      o += "- ";
+    } else {
+      o += "tableau:\n" + tab;
+    }
+    o += "ndemes: " + std::to_string(NDEME) + "\n"
+      + tab + "time: " + std::to_string(time()) + "\n"
+      + tab + "nodes:\n";
+    level++;
+    for (node_it p = nodes.begin(); p != nodes.end(); p++) {
+      o += (*p)->yaml(level,true);
+    }
+    return o;
+  };
 
 public:
 
@@ -625,6 +679,19 @@ public:
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
     SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
+    UNPROTECT(1);
+    return out;
+  }
+
+  // create a machine-readable description
+  friend void yaml (SEXP x, int k, const tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
+  }
+
+  friend SEXP yaml (const tableau_t &T) {
+    SEXP out;
+    PROTECT(out = NEW_CHARACTER(1));
+    SET_STRING_ELT(out,0,mkChar(T.yaml().c_str()));
     UNPROTECT(1);
     return out;
   }
@@ -1064,7 +1131,7 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   if (*(LOGICAL(AS_LOGICAL(Prune)))) gp.prune();
 
   // pack up return values in a list
-  int nout = 4;
+  int nout = 5;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout)); nprotect++;
@@ -1072,6 +1139,7 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   k = set_list_elem(out,outnames,t0,"t0",k);
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(gp),"description",k);
+  k = set_list_elem(out,outnames,yaml(gp),"yaml",k);
   //  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
   k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);
   SET_NAMES(out,outnames);
