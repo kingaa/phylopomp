@@ -12,6 +12,18 @@
 ##' @include package.R
 ##' @importFrom tibble as_tibble
 ##' @importFrom yaml read_yaml
+##'
+##' @return
+##' A list containing the following elements
+##' \describe{
+##'   \item{t0}{the initial time}
+##'   \item{time}{the current time}
+##'   \item{tree}{the genealogical tree, in Newick format}
+##'   \item{description}{a human readable description of the state of the genealogy process}
+##'   \item{yaml}{the state of the genealogy process in YAML format}
+##'   \item{structure}{the state of the genealogy process in \R list format}
+##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+##' }
 ##' 
 ##' @example examples/siir.R
 ##'
@@ -32,6 +44,7 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
   )
   x$tree <- gsub("nan","NA",x$tree)
   x$structure <- read_yaml(text=x$yaml)$tableau
+  x$lineages <- as_tibble(x$lineages)
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")
   class(x) <- c("gpsim",class(x))

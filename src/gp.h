@@ -74,16 +74,16 @@ private:
   
 private:
   
-  name_t _unique;		// next unique name
-  slate_t _t0;			// initial time
-  slate_t _time;		// current time
-  nodes_t nodes;		// sequence of pointers to nodes
+  name_t _unique;               // next unique name
+  slate_t _t0;                  // initial time
+  slate_t _time;                // current time
+  nodes_t nodes;                // sequence of pointers to nodes
 
 protected:
 
-  inventory_t inventory;	// the inventory process
+  inventory_t inventory;        // the inventory process
   state_t state;                // current state of the GP
-  parameters_t params;		// parameters of the GP
+  parameters_t params;          // parameters of the GP
 
 private:
 
@@ -125,13 +125,13 @@ private:
     // who owns me?
     node_t* owner (void) const {
       if (color != green)
-	err("ask not who owns a ball that is not green."); // # nocov
+        err("ask not who owns a ball that is not green."); // # nocov
       return _owner;
     };
     // change owner
     void owner (node_t *who) {
       if (color != green)
-	err("meddle not in the ownership of non-green balls."); // # nocov
+        err("meddle not in the ownership of non-green balls."); // # nocov
       _owner = who;
     };
     // in whose pocket do I lie?
@@ -158,9 +158,13 @@ private:
     };
     // human-readable info
     std::string describe (void) const {
-      return color_name()
-	+ "(" + std::to_string(uniq)
-	+ "," + std::to_string(deme) + ")";
+      std::string o = color_name()
+        + "(" + std::to_string(uniq);
+      if (is(black)) {
+        o += "," + std::to_string(deme);
+      }
+      o += ")";
+      return o;
     };
     // machine-readable info
     std::string yaml (size_t level = 0, bool prefix = false) const {
@@ -168,14 +172,14 @@ private:
       std::string o = tab;
       tab.append(2,' ');
       if (prefix) {
-	o += "- ";
+        o += "- ";
       } else {
-	o += "ball:\n" + tab;
+        o += "ball:\n" + tab;
       }
-      o += "color: " + color_name() + "\n"	
-	+ tab + "name: " + std::to_string(uniq) + "\n";
+      o += "color: " + color_name() + "\n"      
+        + tab + "name: " + std::to_string(uniq) + "\n";
       if (color==black) {
-	o += tab + "deme: " + std::to_string(deme) + "\n";
+        o += tab + "deme: " + std::to_string(deme) + "\n";
       }
       return o;
     };
@@ -183,9 +187,9 @@ private:
     std::string newick (const slate_t &t) const {
       if (deme == na) err("undefined deme"); // # nocov
       return color_symbol()
-	+ "_" + std::to_string(deme)
-	+ "_" + std::to_string(uniq)
-	+ ":" + std::to_string(t);
+        + "_" + std::to_string(deme)
+        + "_" + std::to_string(uniq)
+        + ":" + std::to_string(t);
     };
     // size of binary serialization
     size_t size (void) const {
@@ -250,47 +254,47 @@ private:
     // random pair of balls
     void random_pair (ball_t* ballI, ball_t* ballJ, name_t i, name_t j) const {
       if (i != j) {
-	ballI = random_ball(i);
-	ballJ = random_ball(j);
+        ballI = random_ball(i);
+        ballJ = random_ball(j);
       } else {
-	name_t n = _inven[i].size();
-	if (n < 2) err("cannot draw from inventory %ld",i); // # nocov
-	name_t d1 = random_integer(n-1);
-	name_t d2 = random_integer(n);
-	bool toggle = false;
-	if (d1 >= d2) {
-	  toggle = true;
-	  d1++;
-	  n = d1; d1 = d2; d2 = n;
-	}
-	ball_it k = _inven[i].begin();
-	while (d1 > 0) {
-	  d1--; d2--; k++;
-	}
-	if (toggle) ballJ = *k;
-	else ballI = *k;
-	while (d2 > 0) {
-	  d2--; k++;
-	}
-	if (toggle) ballI = *k;
-	else ballJ = *k;
+        name_t n = _inven[i].size();
+        if (n < 2) err("cannot draw from inventory %ld",i); // # nocov
+        name_t d1 = random_integer(n-1);
+        name_t d2 = random_integer(n);
+        bool toggle = false;
+        if (d1 >= d2) {
+          toggle = true;
+          d1++;
+          n = d1; d1 = d2; d2 = n;
+        }
+        ball_it k = _inven[i].begin();
+        while (d1 > 0) {
+          d1--; d2--; k++;
+        }
+        if (toggle) ballJ = *k;
+        else ballI = *k;
+        while (d2 > 0) {
+          d2--; k++;
+        }
+        if (toggle) ballI = *k;
+        else ballJ = *k;
       }
     };
     // add black ball to deme i;
     // remove from existing deme if necessary
     void insert (ball_t *b, name_t i) {
       if (b->is(black)) {
-	if (b->deme != na) _inven[b->deme].erase(b);
-	_inven[i].insert(b);
-	b->deme = i;
+        if (b->deme != na) _inven[b->deme].erase(b);
+        _inven[i].insert(b);
+        b->deme = i;
       }
     };
     // remove black ball from its deme
     void remove (ball_t *b) {
       if (b->is(black)) {
-	if (_inven[b->deme].empty())
-	  err("in 'inventory::remove': empty deme %ld.",b->deme); // # nocov
-	_inven[b->deme].erase(b);
+        if (_inven[b->deme].empty())
+          err("in 'inventory::remove': empty deme %ld.",b->deme); // # nocov
+        _inven[b->deme].erase(b);
       }
     };
   };
@@ -349,7 +353,7 @@ private:
     bool holds (color_t c) const {
       bool result = false;
       for (ball_it i = pocket.begin(); !result && i != pocket.end(); i++) {
-	result = ((*i)->color == c);
+        result = ((*i)->color == c);
       }
       return result;
     };
@@ -370,7 +374,7 @@ private:
     // retrieve the first ball of the specified color.
     ball_t *ball (const color_t c) const {
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	if ((*i)->color == c) return *i;
+        if ((*i)->color == c) return *i;
       }
       err("no ball of color %s",colores[c]); // # nocov
       return 0;
@@ -378,15 +382,34 @@ private:
     // return a pointer to another ball
     ball_t *other (const ball_t *b) const {
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	if (*i != b) return *i;
+        if (*i != b) return *i;
       }
       err("error in 'other': no other ball"); // # nocov
       return 0;
     };
+    // number of descendants
+    int nchildren (bool compact = false) const {
+      int n = 0;
+      if (compact) {
+        for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
+          switch ((*i)->color) {
+          case green: case black: case grey:
+            n++;
+            break;
+          case blue: case red: case purple:
+            break;
+          }
+        }
+      } else {
+        n = pocket.size();
+      }
+      if (holds_own()) n--;
+      return n;
+    };
     // human-readable info
     std::string describe (void) const {
       std::string s = "node(" + std::to_string(uniq)
-	+ "," + std::to_string(deme) + ") {";
+        + "," + std::to_string(deme) + ") {";
       ball_it i = pocket.begin();
       s += (*i)->describe(); ++i;
       while (i != pocket.end()) {
@@ -401,49 +424,47 @@ private:
       std::string o = tab;
       tab.append(2,' ');
       if (prefix) {
-	o += "- ";
+        o += "- ";
       } else {
-	o += "node:\n" + tab;
+        o += "node:\n" + tab;
       }
       o += "name: " + std::to_string(uniq) + "\n"
-	+ tab + "deme: " + std::to_string(deme) + "\n"
-	+ tab + "time: " + std::to_string(slate) + "\n"
-	+ tab + "pocket:\n";
+        + tab + "deme: " + std::to_string(deme) + "\n"
+        + tab + "time: " + std::to_string(slate) + "\n"
+        + tab + "pocket:\n";
       level++;
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	o += (*i)->yaml(level,true);
+        o += (*i)->yaml(level,true);
       }
       return o;
     };
     // Newick format
     std::string newick (const slate_t& tnow, const slate_t& tpar) const {
       std::string o = "(";
-      bool single = true;
-      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	ball_t *b = *i;
-	node_t *p = 0;
-	if (!single) o += ",";
-	single = is_root();
-	switch (b->color) {
-	case green:
-	  p = b->child();
-	  if (p != this) {
-	    o += p->newick(tnow,slate);
-	  }
-	  break;
-	case black:
-	  o += b->newick(tnow-slate);
-	  break;
-	case purple: case red: case blue:
+      int n = nchildren(false);
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++, n--) {
+        ball_t *b = *i;
+        node_t *p = 0;
+        switch (b->color) {
+        case green:
+          p = b->child();
+          if (p != this) {
+            o += p->newick(tnow,slate);
+          }
+          break;
+        case black:
+          o += b->newick(tnow-slate);
+          break;
+        case purple: case red: case blue:
 	  o += b->newick(0);
-	  break;
-	default:				 // # nocov
-	  err("in 'newick': c'est impossible!"); // # nocov
-	  break;
-	}
+          break;
+        default:                                 // # nocov
+          err("in 'newick': c'est impossible!"); // # nocov
+          break;
+        }
+        if (n > 1) o += ",";
       }
-      o += ")g_"
-	+ std::to_string(deme)
+      o += ")g_" + std::to_string(deme)
 	+ "_" + std::to_string(uniq)
 	+ ":" + std::to_string(slate - tpar);
       return o;
@@ -453,47 +474,46 @@ private:
       std::string o1 = "(";
       std::string o2 = "";
       std::string o3 = ")g_";
-      bool single = true;
-      bool rednode = false;
-      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	ball_t *b = *i;
-	node_t *p = 0;
-	if (!single) o2 += ",";
-	single = is_root() || holds(red) || holds(blue) || holds(purple);
-	switch (b->color) {
-	case green:
-	  p = b->child();
-	  if (p != this) {
-	    o2 += p->compact_newick(tnow,slate);
-	  }
-	  break;
-	case black:
-	  o2 += b->newick(tnow-slate);
-	  break;
-	case purple:
-	  o3 = ")p_";
-	  break;
-	case red:
-	  o1 = ""; o2 = ""; o3 = "r_";
-	  rednode = true;
-	  break;
-	case blue:
-	  if (!rednode) o3 = ")b_";
-	  break;
-	default:					 // # nocov
-	  err("in 'compact_newick': c'est impossible!"); // # nocov
-	  break;
-	}
+      bool rednode = holds(red);
+      int n = nchildren(true);
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++, n--) {
+        ball_t *b = *i;
+        node_t *p = 0;
+        switch (b->color) {
+        case green:
+          p = b->child();
+          if (p != this) {
+            o2 += p->compact_newick(tnow,slate);
+          }
+          break;
+        case black:
+          o2 += b->newick(tnow-slate);
+          break;
+        case purple:
+          o3 = ")p_";
+          break;
+        case red:
+          o1 = ""; o2 = ""; o3 = "r_";
+          rednode = true;
+          break;
+        case blue:
+          if (!rednode) o3 = ")b_";
+          break;
+        default:                                         // # nocov
+          err("in 'compact_newick': c'est impossible!"); // # nocov
+          break;
+        }
+        if (n > 1) o2 += ",";
       }
       return o1 + o2 + o3
-	+ std::to_string(deme)
-	+ "_" + std::to_string(uniq)
-	+ ":" + std::to_string(slate - tpar);
+        + std::to_string(deme)
+        + "_" + std::to_string(uniq)
+        + ":" + std::to_string(slate - tpar);
     }
     // size of binary serialization
     size_t size (void) const {
       return 2*sizeof(name_t)+sizeof(slate_t)
-	+sizeof(state_t)+pocket.size()*sizeof(ball_t);
+        +sizeof(state_t)+pocket.size()*sizeof(ball_t);
     };
     // binary serialization of node_t
     friend raw_t* operator<< (raw_t *o, const node_t &p) {
@@ -503,7 +523,7 @@ private:
       memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
       memcpy(o,&p.state,sizeof(state_t)); o += sizeof(state_t);
       for (ball_it i = p.pocket.begin(); i != p.pocket.end(); i++) 
-	o = (o << **i);
+        o = (o << **i);
       return o;
     };
     // binary deserialization of node_t
@@ -515,9 +535,9 @@ private:
       p.clean();
       p.uniq = buf[0]; p.deme = buf[1];
       for (size_t i = 0; i < buf[2]; i++) {
-	ball_t *b = new ball_t(&p);
-	o = (o >> *b);
-	p.pocket.insert(b); b->holder(&p);
+        ball_t *b = new ball_t(&p);
+        o = (o >> *b);
+        p.pocket.insert(b); b->holder(&p);
       }
       return o;
     };
@@ -588,17 +608,17 @@ public:
     for (node_it i = T.nodes.begin(); i != T.nodes.end(); i++) {
       node_t *p = *i;
       for (ball_it j = p->pocket.begin(); j != p->pocket.end(); j++) {
-	ball_t *b = *j;
-	T.inventory.insert(b,b->deme);
-	if (b->is(green)) {
-	  npit = nodeptr.find(b->uniq);
-	  if (npit == nodeptr.end()) {
-	    err("cannot find unique id %ld",b->uniq); // # nocov
-	  } else {
-	    node_t *q = npit->second;
-	    b->owner(q); q->green_ball(b);
-	  }
-	}
+        ball_t *b = *j;
+        T.inventory.insert(b,b->deme);
+        if (b->is(green)) {
+          npit = nodeptr.find(b->uniq);
+          if (npit == nodeptr.end()) {
+            err("cannot find unique id %ld",b->uniq); // # nocov
+          } else {
+            node_t *q = npit->second;
+            b->owner(q); q->green_ball(b);
+          }
+        }
       }
     }
     return o;
@@ -669,7 +689,33 @@ private:
 private:
   
   // report all the seating times and lineage count
-  name_t lineage_count (slate_t *t = 0, int *ell = 0) const;
+  size_t lineage_count (double *t = 0, int *ell = 0) const {
+    size_t count = 1;
+    int n = 0;
+    slate_t tcur = R_NegInf;
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      if ((*i)->is_root()) n++;
+      if (tcur < (*i)->slate) {
+        tcur = (*i)->slate;
+        count++;
+      }
+    }
+    if (t != 0 && ell != 0) {
+      tcur = R_NegInf;
+      *ell = n;
+      for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+        n += (*i)->nchildren(true)-1;
+        if (tcur != (*i)->slate) {
+          *(t++) = tcur = (*i)->slate;
+          *(ell++) = n;
+        }
+      }
+      *t = time();
+      *ell = 0;
+    }
+    return count;
+  };
+
   // human-readable info
   std::string describe (void) const {
     std::string o = "";
@@ -705,7 +751,7 @@ private:
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
       if (p->is_root()) {
-	o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_NA_NA:0.0";
+        o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_NA_NA:0.0";
       }
     }
     o += ")i_NA_NA;";
@@ -713,6 +759,21 @@ private:
   };
 
 public:
+
+  friend SEXP lineage_count (const tableau_t& T) {
+    SEXP t, ell, out, outn;
+    int nt = T.lineage_count();
+    PROTECT(t = NEW_NUMERIC(nt));
+    PROTECT(ell = NEW_INTEGER(nt));
+    PROTECT(out = NEW_LIST(2));
+    PROTECT(outn = NEW_CHARACTER(2));
+    set_list_elem(out,outn,t,"time",0);
+    set_list_elem(out,outn,ell,"lineages",1);
+    SET_NAMES(out,outn);
+    T.lineage_count(REAL(t),INTEGER(ell));
+    UNPROTECT(4);
+    return out;
+  }
 
   // create a human-readable description
   friend void describe (SEXP x, int k, const tableau_t &T) {
@@ -816,29 +877,29 @@ private:
     if (!a->is(black))
       err("in 'unseat': inconceivable!"); // # nocov
     node_t *p = a->holder();
-    if (p->pocket.size() > 2) {	// pocket is large: we simply drop the ball
+    if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
       p->pocket.erase(a);
       inventory.remove(a);
       delete a;
-    } else {	   // pocket is tight: action depends on the other ball
+    } else {       // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
-      case blue:		// change black ball for red ball
-	inventory.remove(a);
-	a->color = red;
-	break;
-      case purple:	// swap black ball for green ball, delete node
-	swap(a,p->green_ball());
-	drop_node(p);
-	unseat(a);		// recursively pursue dropping ball a
-	break;
+      case blue:                // change black ball for red ball
+        inventory.remove(a);
+        a->color = red;
+        break;
+      case purple:      // swap black ball for green ball, delete node
+        swap(a,p->green_ball());
+        drop_node(p);
+        unseat(a);              // recursively pursue dropping ball a
+        break;
       case red: case grey: // # nocov
-	err("in 'unseat': inconceivable error."); // # nocov
-	break;
+        err("in 'unseat': inconceivable error."); // # nocov
+        break;
       case black: case green: default: // swap other for green, delete node
-	swap(b,p->green_ball());
-	drop_node(p);
-	break;
+        swap(b,p->green_ball());
+        drop_node(p);
+        break;
       }
     }
   };
@@ -851,7 +912,7 @@ private:
   };
   // draw random pair of black balls from demes i,j
   void random_pair (ball_t* ballI, ball_t* ballJ,
-		    name_t i = 0, name_t j = 0) const {
+                    name_t i = 0, name_t j = 0) const {
     inventory.random_pair(ballI,ballJ,i,j);
   };
   // birth into deme j with parent in deme i
@@ -918,8 +979,8 @@ public:
   tableau_t &prune (void) {
     for (size_t d = 0; d < NDEME; d++) {
       while (!inventory[d].empty()) {
-	ball_t *b = *(inventory[d].begin());
-	unseat(b);
+        ball_t *b = *(inventory[d].begin());
+        unseat(b);
       }
     }
     return *this;
@@ -1158,7 +1219,7 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   if (*(LOGICAL(AS_LOGICAL(Prune)))) gp.prune();
 
   // pack up return values in a list
-  int nout = 5;
+  int nout = 6;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout)); nprotect++;
@@ -1167,7 +1228,7 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(gp),"description",k);
   k = set_list_elem(out,outnames,yaml(gp),"yaml",k);
-  //  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
+  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
   k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);
   SET_NAMES(out,outnames);
 

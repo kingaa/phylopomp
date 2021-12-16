@@ -5,17 +5,17 @@
 
 typedef struct {
   double S;             // number of susceptibles
-  double I1, I2;	// number of infections
+  double I1, I2;        // number of infections
   double R;             // number of recovereds
 } siir_state_t;
 
 typedef struct {
   double N;                   // host population size
-  double beta1, beta2;	      // transmission rate
+  double beta1, beta2;        // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
   int S0;                     // initial susceptibles
-  int I1_0, I2_0;	      // initial infecteds
+  int I1_0, I2_0;             // initial infecteds
   int R0;                     // initial recoveries
 } siir_parameters_t;
 
@@ -35,9 +35,9 @@ public:
   siir_tableau_t (void) = default;
   // basic constructor
   siir_tableau_t (double beta1, double beta2,
-		  double gamma, double psi,
-		  int S0, int I1_0, int I2_0, int R0,
-		  double t0 = 0) : tableau_t(t0) {
+                  double gamma, double psi,
+                  int S0, int I1_0, int I2_0, int R0,
+                  double t0 = 0) : tableau_t(t0) {
     params.N = double(S0+I1_0+I2_0+R0);
     params.beta1 = beta1;
     params.beta2 = beta2;
@@ -203,7 +203,7 @@ public:
 };
 
 siir_tableau_t *makeSIIR (SEXP Beta1, SEXP Beta2, SEXP Gamma, SEXP Psi,
-			  SEXP S0, SEXP I1_0, SEXP I2_0, SEXP R0, SEXP T0, SEXP State) {
+                          SEXP S0, SEXP I1_0, SEXP I2_0, SEXP R0, SEXP T0, SEXP State) {
   siir_tableau_t *A;
   
   OPTIONAL_REAL_PAR(beta1,Beta1,2);
@@ -243,9 +243,9 @@ extern "C" {
   // Sampled SIIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
   SEXP playSIIR (SEXP Beta1, SEXP Beta2, SEXP Gamma, SEXP Psi,
-		 SEXP S0, SEXP I1_0, SEXP I2_0,
-		 SEXP R0, SEXP Times, SEXP T0,
-		 SEXP Tree, SEXP Compact, SEXP State) {
+                 SEXP S0, SEXP I1_0, SEXP I2_0,
+                 SEXP R0, SEXP Times, SEXP T0,
+                 SEXP Tree, SEXP Compact, SEXP State) {
     SEXP out = R_NilValue;
     GetRNGstate();
     siir_tableau_t *A = makeSIIR(Beta1,Beta2,Gamma,Psi,S0,I1_0,I2_0,R0,T0,State);

@@ -35,8 +35,8 @@ public:
   sir_tableau_t (void) = default;
   // basic constructor
   sir_tableau_t (double beta, double gamma, double psi,
-                   int S0, int I0, int R0,
-                   double t0 = 0) : tableau_t(t0) {
+                 int S0, int I0, int R0,
+                 double t0 = 0) : tableau_t(t0) {
     params.N = double(S0+I0+R0);
     params.beta = beta;
     params.gamma = gamma;
@@ -175,8 +175,8 @@ public:
 };
 
 sir_tableau_t *makeSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
-			SEXP S0, SEXP I0, SEXP R0,
-			SEXP T0, SEXP State) {
+                        SEXP S0, SEXP I0, SEXP R0,
+                        SEXP T0, SEXP State) {
   sir_tableau_t *A;
   
   OPTIONAL_REAL_PAR(beta,Beta,2);
@@ -213,8 +213,8 @@ extern "C" {
   // Sampled SIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
   SEXP playSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
-		SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0,
-		SEXP Tree, SEXP Compact, SEXP State) {
+                SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0,
+                SEXP Tree, SEXP Compact, SEXP State) {
     SEXP out = R_NilValue;
     GetRNGstate();
     sir_tableau_t *A = makeSIR(Beta,Gamma,Psi,S0,I0,R0,T0,State);

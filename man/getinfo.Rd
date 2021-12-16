@@ -18,6 +18,18 @@ getInfo(data, ...)
 
 \item{compact}{logical; return the tree in compact representation?}
 }
+\value{
+A list containing the following elements
+\describe{
+  \item{t0}{the initial time}
+  \item{time}{the current time}
+  \item{tree}{the genealogical tree, in Newick format}
+  \item{description}{a human readable description of the state of the genealogy process}
+  \item{yaml}{the state of the genealogy process in YAML format}
+  \item{structure}{the state of the genealogy process in \R list format}
+  \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+}
+}
 \description{
 getInfo
 }
