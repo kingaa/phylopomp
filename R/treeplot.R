@@ -3,15 +3,13 @@
 ##' Plots a genealogical tree.
 ##'
 ##' @name treeplot
-##' @include package.R diagram.R
+##' @include package.R
 ##'
 ##' @param tree character; tree representation in Newick format.
-##' @param illus character; genealogy process diagram information.
 ##' @param root_time numeric; time of the root.
 ##' @param time numeric; times of the genealogies.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
-##' @param diagram Show a diagram?
 ##'
 ##' @return A printable \code{ggtree} object.
 ##'
@@ -26,8 +24,8 @@
 ##'
 ##' @rdname treeplot
 ##' @export
-treeplot <- function (tree, time = NULL, illus = NULL,
-  root_time = 0, ladderize = TRUE, points = FALSE, diagram = FALSE) {
+treeplot <- function (tree, time = NULL, root_time = 0,
+  ladderize = TRUE, points = FALSE) {
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   read.tree(text=tree) |>
@@ -51,10 +49,6 @@ treeplot <- function (tree, time = NULL, illus = NULL,
         vis=nodecol != "i"
       ) |>
       ungroup(.id) -> dat
-  }
-  
-  if (diagram) {
-    dg <- diagram(illus)
   }
   
   foreach (
@@ -81,25 +75,6 @@ treeplot <- function (tree, time = NULL, illus = NULL,
         scale_shape_manual(values=c(i=NA,o=19,g=17,p=17,r=19,b=19))+
         guides(shape="none") -> pl
     }
-    if (diagram) {
-      d |>
-        filter(vis) |>
-        summarize(
-          ymin=min(y),
-          ymax=max(y),
-          xmin=min(x),
-          xmax=max(x)
-        ) -> ss
-      ymax <- ss$ymin-1
-      ymin <- ymax-1/3*(ss$ymax-ss$ymin)
-      pl+
-        annotation_custom(
-          dg[[k]],
-          xmin=ss$xmin,xmax=ss$xmax,
-          ymin=ymin,ymax=ymax
-        )+
-        expand_limits(y=ymin) -> pl
-    }
     pl
   }
 }
@@ -115,7 +90,7 @@ ball_colors <- c(
 )
 
 utils::globalVariables(
-         c(".id","k","label","nodecol","vis","x","y")
+         c(".id","k","label","nodecol","deme","vis","x","y")
        )
 
 ##' @export
@@ -127,6 +102,5 @@ plot.gpsim <- function (x, y, ...) {
   if (is.null(tree))
     stop("no ",sQuote("tree")," element supplied!",call.=FALSE)
   time <- getElement(x,"time")
-  illus <- getElement(x,"illus")
-  treeplot(tree=x$tree,time=time,illus=illus,...)
+  treeplot(tree=x$tree,time=time,...)
 }

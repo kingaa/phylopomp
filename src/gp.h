@@ -151,10 +151,6 @@ private:
 	+ "(" + std::to_string(uniq)
 	+ "," + std::to_string(deme) + ")";
     };
-    // machine-readable description
-    std::string illustrate (void) const {
-      return color_symbol() + "," + std::to_string(uniq);
-    };
     // element of a newick representation
     std::string newick (const slate_t &t) const {
       if (deme == na) err("undefined deme");
@@ -346,16 +342,6 @@ private:
       s += "}, t = " + std::to_string(slate) + "\n";
       return s;
     };
-    // machine-readable info
-    std::string illustrate (void) const {
-      std::string s = std::to_string(uniq) + ","
-	+ std::to_string(deme) + ",";
-      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-	s += (*i)->illustrate() + ",";   
-      }
-      s += std::to_string(slate);
-      return s;
-    };
     // Newick format
     std::string newick (const slate_t& tnow, const slate_t& tpar) const {
       std::string o = "(";
@@ -400,7 +386,7 @@ private:
 	ball_t *b = *i;
 	node_t *p = 0;
 	if (!single) o2 += ",";
-	single = is_root();
+	single = is_root() || holds(red) || holds(blue) || holds(purple);
 	switch (b->color) {
 	case green:
 	  p = b->child();
@@ -413,16 +399,13 @@ private:
 	  break;
 	case purple:
 	  o3 = ")p_";
-	  single = true;
 	  break;
 	case red:
 	  o1 = ""; o2 = ""; o3 = "r_";
 	  rednode = true;
-	  single = true;
 	  break;
 	case blue:
 	  if (!rednode) o3 = ")b_";
-	  single = true;
 	  break;
 	default:
 	  err("in 'compact_newick': c'est impossible!");
@@ -647,15 +630,10 @@ public:
   }
 
 private:
-  
-  // machine-readable info
-  std::string illustrate (void) const;
-
-private:
 
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
-    slate_t te = dawn(), tl = dusk();
+    slate_t te = dawn(), tl = time();
     std::string o = std::to_string(tl) + "(i_NA_NA:0.0,i_NA_NA:0.0";
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
@@ -743,7 +721,7 @@ private:
   // seat node p; take as parent the node holding ball b.
   void seat (node_t *p, ball_t *b) {
     swap(b,p->green_ball());
-    p->green_ball()->deme = b->deme;
+    p->deme = p->green_ball()->deme = b->deme;
     nodes.push_back(p);
   };
 
@@ -825,7 +803,6 @@ public:
     for (size_t d = 0; d < NDEME; d++) {
       while (!inventory[d].empty()) {
 	ball_t *b = *(inventory[d].begin());
-	inventory.remove(b);
 	unseat(b);
       }
     }
@@ -912,7 +889,7 @@ SEXP serial (const GPTYPE &T) {
 // play a genealogy process
 // this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
-SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
+SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   int nprotect = 0;
   int nout = 3;
   int ntimes = LENGTH(Times);
@@ -930,12 +907,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
     nout++;
   }
 
-  // SEXP ill = R_NilValue;
-  // int do_ill = *(INTEGER(AS_INTEGER(Ill)));
-  // if (do_ill) {
-  //   PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
-  //   nout++;
-  // }
+  bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   int *xc = INTEGER(count);
   slate_t *xt = REAL(times);
@@ -944,8 +916,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
 
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
-    if (do_tree) newick(tree,k,*gp);
-    //    if (do_ill) illustrate(ill,k,*gp);
+    if (do_tree) newick(tree,k,*gp,compact);
     R_CheckUserInterrupt();
   }
       
@@ -961,9 +932,6 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  // if (do_ill) {
-  //   k = set_list_elem(out,outnames,ill,"illus",k);
-  // }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
 
@@ -974,7 +942,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
 // play a sampled genealogy process
 // this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
-SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
+SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   int nprotect = 0;
   int nout = 3;
   int ntimes = LENGTH(Times);
@@ -992,12 +960,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
     nout++;
   }
 
-  // SEXP ill = R_NilValue;
-  // int do_ill = *(INTEGER(AS_INTEGER(Ill)));
-  // if (do_ill) {
-  //   PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
-  //   nout++;
-  // }
+  bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   int *xc = INTEGER(count);
   slate_t *xt = REAL(times);
@@ -1007,8 +970,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
     gp->sample();
-    if (do_tree) newick(tree,k,*gp);
-    //    if (do_ill) illustrate(ill,k,*gp);
+    if (do_tree) newick(tree,k,*gp,compact);
     R_CheckUserInterrupt();
   }
       
@@ -1024,9 +986,6 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  //  if (do_ill) {
-  //    k = set_list_elem(out,outnames,ill,"illus",k);
-  //  }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
 
@@ -1035,7 +994,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Ill) {
 }
 
 template<class GPTYPE>
-SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
+SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Compact) {
   int nprotect = 0;
   int nout = 2;
   int ntimes = *(INTEGER(AS_INTEGER(N)));
@@ -1052,20 +1011,14 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
     nout++;
   }
 
-  // SEXP ill = R_NilValue;
-  // int do_ill = *(INTEGER(AS_INTEGER(Ill)));
-  // if (do_ill) {
-  //   PROTECT(ill = NEW_CHARACTER(ntimes)); nprotect++;
-  //   nout++;
-  // }
+  bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   slate_t *xt = REAL(times);
 
   GetRNGstate();
   for (int k = 0; k < ntimes; k++, xt++) {
     *xt = gp->play1();
-    if (do_tree) newick(tree,k,*gp);
-    //    if (do_ill) illustrate(ill,k,*gp);
+    if (do_tree) newick(tree,k,*gp,compact);
     R_CheckUserInterrupt();
   }
   PutRNGstate();
@@ -1081,9 +1034,6 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Ill) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  // if (do_ill) {
-  //   k = set_list_elem(out,outnames,ill,"illus",k);
-  // }
   k = set_list_elem(out,outnames,serial(*gp),"state",k);
   SET_NAMES(out,outnames);
 
@@ -1122,7 +1072,6 @@ SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
   k = set_list_elem(out,outnames,t0,"t0",k);
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(gp),"description",k);
-  //  k = set_list_elem(out,outnames,illustrate(gp),"illus",k);
   //  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
   k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);
   SET_NAMES(out,outnames);

@@ -4,30 +4,18 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(
-  tree,
-  time = NULL,
-  illus = NULL,
-  root_time = 0,
-  ladderize = TRUE,
-  points = FALSE,
-  diagram = FALSE
-)
+treeplot(tree, time = NULL, root_time = 0, ladderize = TRUE, points = FALSE)
 }
 \arguments{
 \item{tree}{character; tree representation in Newick format.}
 
 \item{time}{numeric; times of the genealogies.}
 
-\item{illus}{character; genealogy process diagram information.}
-
 \item{root_time}{numeric; time of the root.}
 
 \item{ladderize}{Ladderize?}
 
 \item{points}{Show nodes and tips?}
-
-\item{diagram}{Show a diagram?}
 }
 \value{
 A printable \code{ggtree} object.

@@ -242,11 +242,11 @@ extern "C" {
   // Sampled SIIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
   SEXP playSIIR (SEXP Beta1, SEXP Beta2, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I1_0, SEXP I2_0,
-		 SEXP R0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
+		 SEXP R0, SEXP Times, SEXP T0, SEXP Tree, SEXP Compact, SEXP State) {
     SEXP out = R_NilValue;
     GetRNGstate();
     siir_tableau_t *A = makeSIIR(Beta1,Beta2,Gamma,Psi,S0,I1_0,I2_0,R0,T0,State);
-    PROTECT(out = playGP<siir_tableau_t>(A,Times,Tree,Ill));
+    PROTECT(out = playGP<siir_tableau_t>(A,Times,Tree,Compact));
     PutRNGstate();
     delete A;
     UNPROTECT(1);

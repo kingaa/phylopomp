@@ -209,11 +209,13 @@ extern "C" {
 
   // Sampled SIR process.
   // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playSIR (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0, SEXP Tree, SEXP Ill, SEXP State) {
+  SEXP playSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
+		SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0,
+		SEXP Tree, SEXP Compact, SEXP State) {
     SEXP out = R_NilValue;
     GetRNGstate();
     sir_tableau_t *A = makeSIR(Beta,Gamma,Psi,S0,I0,R0,T0,State);
-    PROTECT(out = playGP<sir_tableau_t>(A,Times,Tree,Ill));
+    PROTECT(out = playGP<sir_tableau_t>(A,Times,Tree,Compact));
     PutRNGstate();
     delete A;
     UNPROTECT(1);

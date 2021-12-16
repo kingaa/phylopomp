@@ -18,7 +18,7 @@ playSIR(
   t0 = 0,
   times,
   tree = FALSE,
-  ill = FALSE
+  compact = TRUE
 )
 
 sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
@@ -37,6 +37,14 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 \item{I0}{initial size of infected population.}
 
 \item{R0}{initial size of recovered population.}
+
+\item{t0}{initial time}
+
+\item{times}{times at which output is requested.}
+
+\item{tree}{logical; represent the genealogical tree in Newick format?}
+
+\item{compact}{logical; return the tree in compact format?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -57,11 +65,6 @@ plot(x,points=TRUE)
 
 y <- getInfo(x)
 plot(y,points=TRUE)
-
-library(ggplot2)
-y$lineages |>
-  ggplot(aes(x=time,y=lineages))+
-  geom_step()
 }
 \seealso{
 Other Genealogy processes: 

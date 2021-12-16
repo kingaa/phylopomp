@@ -15,6 +15,10 @@
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
+##' @param t0 initial time
+##' @param times times at which output is requested.
+##' @param tree logical; represent the genealogical tree in Newick format?
+##' @param compact logical; return the tree in compact format?
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -31,7 +35,8 @@ playSIR <- function (
   Beta, gamma, psi, S0,
   I0, R0,
   t0 = 0, times,
-  tree = FALSE, ill = FALSE
+  tree = FALSE, 
+  compact = TRUE
 ) {
   state <- attr(data,"state")
   if (missing(Beta)) Beta <- NULL
@@ -40,7 +45,7 @@ playSIR <- function (
   if (missing(S0)) S0 <- NULL
   if (missing(I0)) I0 <- NULL
   if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIR,Beta,gamma,psi,S0,I0,R0,times,t0,tree,ill,state)
+  x <- .Call(P_playSIR,Beta,gamma,psi,S0,I0,R0,times,t0,tree,compact,state)
   state <- x$state
   x$state <- NULL
   data |>

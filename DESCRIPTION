@@ -9,7 +9,7 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 	  )
 Description: Tools for phylodynamic analysis.
 Depends: R(>= 4.1.0)
-Imports: grid, ggtree, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, readr, pomp
+Imports: grid, ggtree, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp
 LinkingTo: pomp
 Suggests: tidyverse, magrittr, doParallel, doRNG, broom, cowplot
 License: GPL-3
@@ -20,11 +20,10 @@ RoxygenNote: 7.1.2
 Collate: 
     'package.R'
     'aaa.R'
-    'treeplot.R'
-    'diagram.R'
     'foreach.R'
     'getinfo.R'
     'newick2df.R'
     'print.R'
     'siir.R'
     'sir.R'
+    'treeplot.R'

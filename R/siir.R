@@ -8,7 +8,7 @@
 ##' 
 ##' @family Genealogy processes
 ##' 
-##' @param data optional data frame; output from \code{playSIR}.
+##' @inheritParams sir
 ##' @param Beta1,Beta2 transmission rates from each of the infectious classes.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
@@ -19,7 +19,7 @@
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
-##' @example examples/sir.R
+##' @example examples/siir.R
 ##'
 ##' @importFrom dplyr bind_rows filter
 ##' @importFrom tibble as_tibble
@@ -32,7 +32,8 @@ playSIIR <- function (
   Beta1, Beta2, gamma, psi, S0,
   I1_0, I2_0, R0,
   t0 = 0, times,
-  tree = FALSE, ill = FALSE
+  tree = FALSE,
+  compact = TRUE
 ) {
   state <- attr(data,"state")
   if (missing(Beta1)) Beta1 <- NULL
@@ -43,7 +44,7 @@ playSIIR <- function (
   if (missing(I1_0)) I1_0 <- NULL
   if (missing(I2_0)) I2_0 <- NULL
   if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIIR,Beta1,Beta2,gamma,psi,S0,I1_0,I2_0,R0,times,t0,tree,ill,state)
+  x <- .Call(P_playSIIR,Beta1,Beta2,gamma,psi,S0,I1_0,I2_0,R0,times,t0,tree,compact,state)
   state <- x$state
   x$state <- NULL
   data |>

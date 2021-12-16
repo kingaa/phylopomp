@@ -25,11 +25,8 @@ getInfo <- function (data, ...) {
 getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
   x <- switch(
     attr(data,"model"),
-    SIRS = .Call(P_get_SIRS_info,attr(data,"state"),prune,compact),
     SIR = .Call(P_get_SIR_info,attr(data,"state"),prune,compact),
     SIIR = .Call(P_get_SIIR_info,attr(data,"state"),prune,compact),
-    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune,compact),
-    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune,compact),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
   x$cumhaz <- as_tibble(x$cumhaz)

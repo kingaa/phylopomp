@@ -48,7 +48,7 @@ newick2df <- function (tree, time = NA, root_time = 0) {
   root_time <- as.numeric(root_time)
   read.tree(text=tree) |>
     fortify(ladderize=TRUE) |>
-    separate(label,into=c("type","label")) |>
+    separate(label,into=c("type","deme","label")) |>
     filter(label!="") |>
     select(label,time=x,isTip) |>
     arrange(time) |>
