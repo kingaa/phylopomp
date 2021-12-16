@@ -116,7 +116,7 @@ public:
   };
 
   bool live (void) const {
-    max_size_exceeded();
+    check_tableau_size();
     return (state.I > 0);
   };
 
@@ -174,10 +174,12 @@ public:
 
 };
 
-sir_tableau_t *makeSIR (SEXP Beta, SEXP Gamma, SEXP Psi, SEXP S0, SEXP I0, SEXP R0, SEXP T0, SEXP State) {
+sir_tableau_t *makeSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
+			SEXP S0, SEXP I0, SEXP R0,
+			SEXP T0, SEXP State) {
   sir_tableau_t *A;
   
-  OPTIONAL_REAL_PAR(beta,Beta,1);
+  OPTIONAL_REAL_PAR(beta,Beta,2);
   OPTIONAL_REAL_PAR(gamma,Gamma,1);
   OPTIONAL_REAL_PAR(psi,Psi,1);
 

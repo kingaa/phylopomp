@@ -2,13 +2,11 @@
 // Generic Genealogy Process (GP) Simulator (C++)
 // State of the GP is represented as a "tableau".
 
-// TODO:
-
 #ifndef _GP_H_
 #define _GP_H_
 
 #include <list>
-#include <unordered_set>
+#include <set>
 #include <unordered_map>
 #include <string>
 #include <cstring>
@@ -35,42 +33,51 @@ typedef double slate_t;
 const name_t na = name_t(R_NaInt);
 const slate_t inf = R_PosInf;
 const slate_t default_slate = R_NaReal;
-const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
+static const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
 
 static const char *colores[] = {"green", "black", "blue", "red", "grey", "purple"};
 static const char *colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 
-// GP TABLEAU CLASS
+// TABLEAU CLASS
 // the class to hold the state of the genealogy process (a "tableau")..
-// STATE is a datatype that holds the state of the Markov process.
+// - STATE is a datatype that holds the state of the Markov process.
+// - PARAMETERS is a datatype for the model parameters
+// - NDEME is the number of demes
 template <class STATE, class PARAMETERS, size_t NDEME = 1>
 class tableau_t  {
 
 private:
 
-  // BALL COLORS
-  // green must be first, numbers in sequence.
-  static const name_t ncolors = sizeof(colores);
-  typedef enum {green = 0, black = 1, blue = 2, red = 3, grey = 4, purple = 5} color_t;
-
   typedef STATE state_t;
   typedef PARAMETERS parameters_t;
 
-private:
-
+  // BALL COLORS
+  typedef enum {green, black, blue, red, grey, purple} color_t;
+  
   class ball_t;
   class inventory_t;
   class node_t;
 
   typedef std::list<node_t*> nodes_t;
   typedef typename nodes_t::const_iterator node_it;
-  typedef std::unordered_set<ball_t*> pocket_t;
+  typedef std::set<ball_t*> pocket_t;
   typedef typename pocket_t::const_iterator ball_it;
+
+  // TABLEAU data:
+  // - a counter of serial numbers
+  // - an initial time
+  // - the current time
+  // - a sequence of nodes
+  // - an inventory consisting of one or more demes (sets of black balls)
+  // - the current state of the population process
+  // - parameters of the population process
+  
+private:
   
   name_t _unique;		// next unique name
   slate_t _t0;			// initial time
   slate_t _time;		// current time
-  nodes_t nodes;		// pointers to all nodes
+  nodes_t nodes;		// sequence of pointers to nodes
 
 protected:
 
@@ -82,9 +89,12 @@ private:
 
   // BALL CLASS
   // each ball has:
+  // - a name (uniq)
   // - a color
-  // - a name, unique within its color
-  // - a pointer to the node in whose pocket it lies.
+  // - a 'holder': a pointer to the node in whose pocket it lies
+  // - an 'owner': a pointer to the node in which it was originally created
+  // - a deme
+  
   class ball_t {
   private:
     node_t *_holder;
@@ -93,6 +103,7 @@ private:
     name_t uniq;
     color_t color;
     name_t deme;
+  public:
     // basic constructor for ball class
     ball_t (node_t *who, name_t u = 0, color_t col = green) {
       _holder = who;
@@ -162,8 +173,10 @@ private:
 	o += "ball:\n" + tab;
       }
       o += "color: " + color_name() + "\n"	
-	+ tab + "name: " + std::to_string(uniq) + "\n"
-	+ tab + "deme: " + std::to_string(deme) + "\n";
+	+ tab + "name: " + std::to_string(uniq) + "\n";
+      if (color==black) {
+	o += tab + "deme: " + std::to_string(deme) + "\n";
+      }
       return o;
     };
     // element of a newick representation
@@ -196,6 +209,9 @@ private:
   };
 
   // INVENTORY CLASS
+  // An inventory consists of an array of demes.
+  // Each deme is a set of black balls.
+  
   class inventory_t {
   private:
     pocket_t _inven[NDEME];
@@ -212,10 +228,6 @@ private:
     inventory_t & operator= (inventory_t &&) = delete;
     // destructor
     ~inventory_t (void) = default;
-    // draw a random integer in the interval [0,n-1]
-    void draw_one (name_t n, name_t *x) const {
-      *x = random_integer(n);
-    };
     // draw a pair of random integers in the interval [0,n-1]
     void draw_two (name_t n, name_t *x) const {
       x[0] = random_integer(n);
@@ -226,17 +238,43 @@ private:
     pocket_t & operator[] (const name_t n) {
       return _inven[n];
     };
-    // n-th member of deme d
-    ball_t * random_black_ball (name_t d) {
-      name_t draw;
-      name_t n = _inven[d].size();
-      if (n < 1) err("cannot draw from empty inventory %ld",d); // # nocov
-      draw_one(n,&draw);
-      ball_it i = _inven[d].begin();
-      while (draw > 0 && i != _inven[d].end()) {
-	draw--; i++;
+    // random ball
+    ball_t* random_ball (name_t i) const {
+      name_t n = _inven[i].size();
+      if (n < 1) err("cannot draw from empty inventory %ld",i); // # nocov
+      name_t draw = random_integer(n);
+      ball_it k = _inven[i].begin();
+      while (draw-- > 0) k++;
+      return *k;
+    };
+    // random pair of balls
+    void random_pair (ball_t* ballI, ball_t* ballJ, name_t i, name_t j) const {
+      if (i != j) {
+	ballI = random_ball(i);
+	ballJ = random_ball(j);
+      } else {
+	name_t n = _inven[i].size();
+	if (n < 2) err("cannot draw from inventory %ld",i); // # nocov
+	name_t d1 = random_integer(n-1);
+	name_t d2 = random_integer(n);
+	bool toggle = false;
+	if (d1 >= d2) {
+	  toggle = true;
+	  d1++;
+	  n = d1; d1 = d2; d2 = n;
+	}
+	ball_it k = _inven[i].begin();
+	while (d1 > 0) {
+	  d1--; d2--; k++;
+	}
+	if (toggle) ballJ = *k;
+	else ballI = *k;
+	while (d2 > 0) {
+	  d2--; k++;
+	}
+	if (toggle) ballI = *k;
+	else ballJ = *k;
       }
-      return *i;
     };
     // add black ball to deme i;
     // remove from existing deme if necessary
@@ -259,11 +297,11 @@ private:
   
   // NODE CLASS
   // each node has:
-  // - a unique name
-  // - a pocket containting two or more balls
-  // - a slate with the time of seating
-  // - knowledge of the Markov process state at time of seating
+  // - a unique name (uniq)
   // - a deme
+  // - a pocket containting two or more balls
+  // - a "slate" with the time of seating
+  // - the state of the Markov population process at that time
   class node_t {
 
   private:
@@ -534,11 +572,13 @@ public:
     slate_t B[2];
     std::unordered_map<name_t,node_t*> nodeptr;
     typename std::unordered_map<name_t,node_t*>::const_iterator npit;
+    T.clean();
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
     T._unique = A[0]; T._t0 = B[0]; T._time = B[1];
+    nodeptr.reserve(A[1]);
     for (name_t i = 0; i < A[1]; i++) {
       node_t *p = new node_t();
       o = (o >> *p);
@@ -597,17 +637,14 @@ public:
   virtual ~tableau_t (void) {
     clean();
   };
-
   // is empty?
   bool empty (void) const {
     return nodes.empty();
   };
-
   // get current time.
   slate_t time (void) const {
     return _time;
   };
-
   // get zero time.
   slate_t timezero (void) const {
     return _t0;
@@ -629,16 +666,10 @@ private:
     return (nodes.empty()) ? default_slate : nodes.back()->slate;
   }
 
-  // get number of nodes
-  name_t nnodes (void) const {
-    return nodes.size();
-  }
-  
 private:
   
   // report all the seating times and lineage count
   name_t lineage_count (slate_t *t = 0, int *ell = 0) const;
-
   // human-readable info
   std::string describe (void) const {
     std::string o = "";
@@ -667,37 +698,6 @@ private:
     }
     return o;
   };
-
-public:
-
-  // create a human-readable description
-  friend void describe (SEXP x, int k, const tableau_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.describe().c_str()));
-  }
-
-  friend SEXP describe (const tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
-    UNPROTECT(1);
-    return out;
-  }
-
-  // create a machine-readable description
-  friend void yaml (SEXP x, int k, const tableau_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
-  }
-
-  friend SEXP yaml (const tableau_t &T) {
-    SEXP out;
-    PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(T.yaml().c_str()));
-    UNPROTECT(1);
-    return out;
-  }
-
-private:
-
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
     slate_t te = dawn(), tl = time();
@@ -713,11 +713,37 @@ private:
   };
 
 public:
+
+  // create a human-readable description
+  friend void describe (SEXP x, int k, const tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.describe().c_str()));
+  }
+  
+  friend SEXP describe (const tableau_t &T) {
+    SEXP out;
+    PROTECT(out = NEW_CHARACTER(1));
+    SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
+    UNPROTECT(1);
+    return out;
+  }
+
+  // create a machine-readable description
+  friend void yaml (SEXP x, int k, const tableau_t &T) {
+    SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
+  }
+  
+  friend SEXP yaml (const tableau_t &T) {
+    SEXP out;
+    PROTECT(out = NEW_CHARACTER(1));
+    SET_STRING_ELT(out,0,mkChar(T.yaml().c_str()));
+    UNPROTECT(1);
+    return out;
+  }
   
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, const tableau_t &T, bool compact = false) {
-    SET_STRING_ELT(x,k,mkChar(T.newick(compact).c_str()));
+  friend void newick (SEXP x, int k, const tableau_t* T, bool compact = false) {
+    SET_STRING_ELT(x,k,mkChar(T->newick(compact).c_str()));
   }
 
   friend SEXP newick (const tableau_t &T, bool compact = false) {
@@ -733,16 +759,9 @@ protected:
   // check the validity of the tableau.
   void valid (void) const {};
 
-private:
-
-  // draw random black ball
-  ball_t *random_black_ball (name_t d = 0) {
-    return inventory.random_black_ball(d);
-  };
-
 public:
 
-  void max_size_exceeded (size_t grace = 0) const {
+  void check_tableau_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
     if (nodes.size() > maxq+grace) 
       err("maximum tableau size exceeded!");
@@ -751,13 +770,13 @@ public:
 private:
 
   node_t* make_node (color_t col, name_t d = 0) {
-    max_size_exceeded(1);
+    check_tableau_size(1);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green);
     ball_t *b = new ball_t(p,u,col);
     p->green_ball(g);
-    g->deme = d; b->deme = d;
+    g->deme = na; b->deme = d;
     p->pocket.insert(g);
     p->pocket.insert(b);
     inventory.insert(b,d);
@@ -788,7 +807,7 @@ private:
   // seat node p; take as parent the node holding ball b.
   void seat (node_t *p, ball_t *b) {
     swap(b,p->green_ball());
-    p->deme = p->green_ball()->deme = b->deme;
+    p->deme = b->deme;
     nodes.push_back(p);
   };
 
@@ -810,7 +829,6 @@ private:
 	break;
       case purple:	// swap black ball for green ball, delete node
 	swap(a,p->green_ball());
-	a->deme = p->green_ball()->deme;
 	drop_node(p);
 	unseat(a);		// recursively pursue dropping ball a
 	break;
@@ -819,13 +837,23 @@ private:
 	break;
       case black: case green: default: // swap other for green, delete node
 	swap(b,p->green_ball());
-	b->deme = p->deme;
 	drop_node(p);
 	break;
       }
     }
   };
 
+private:
+
+  // draw random black ball from deme i
+  ball_t *random_black_ball (name_t i = 0) const {
+    return inventory.random_ball(i);
+  };
+  // draw random pair of black balls from demes i,j
+  void random_pair (ball_t* ballI, ball_t* ballJ,
+		    name_t i = 0, name_t j = 0) const {
+    inventory.random_pair(ballI,ballJ,i,j);
+  };
   // birth into deme j with parent in deme i
   void birth (const state_t &s, name_t i = 0, name_t j = 0) {
     ball_t *a = random_black_ball(i);
@@ -857,25 +885,15 @@ private:
   // movement from deme i to deme j
   void migrate (const state_t &s, name_t i = 0, name_t j = 0) {
     ball_t *a = random_black_ball(i);
-    node_t *p = make_node(purple,j);
+    node_t *p = make_node(purple,i);
     p->slate = time();
     p->state = s;
     seat(p,a);
+    inventory.insert(a,j);
   };
 
 public:
-
-  // prune the tree (drop all black balls)
-  tableau_t &prune (void) {
-    for (size_t d = 0; d < NDEME; d++) {
-      while (!inventory[d].empty()) {
-	ball_t *b = *(inventory[d].begin());
-	unseat(b);
-      }
-    }
-    return *this;
-  };
-
+  
   void birth (name_t i = 0, name_t j = 0) {
     birth(this->state,i,j);
   };
@@ -896,6 +914,25 @@ public:
     migrate(this->state,i,j);
   };
   
+  // prune the tree (drop all black balls)
+  tableau_t &prune (void) {
+    for (size_t d = 0; d < NDEME; d++) {
+      while (!inventory[d].empty()) {
+	ball_t *b = *(inventory[d].begin());
+	unseat(b);
+      }
+    }
+    return *this;
+  };
+
+  friend tableau_t* prune (tableau_t & T) {
+    tableau_t *U = new tableau_t(T);
+    U->prune();
+    return U;
+  }
+
+public:
+  
   // determines if process is still alive
   virtual bool live (void) const = 0;
   // returns time of next event
@@ -911,13 +948,9 @@ public:
   // return number of events that have occurred.
   int play (double tfin) {
     int count = R_NaInt;
-
-    max_size_exceeded();
-    
+    check_tableau_size();
     if (!live()) return count;
-
     double next = clock();
-
     count = 0;
     while (next < tfin && live()) {
       _time = next;
@@ -926,7 +959,6 @@ public:
       count++;
     }
     if (next > tfin)  _time = tfin; // relies on Markov property
-
     return count;
   };
 
@@ -934,20 +966,14 @@ public:
   // return new time.
   slate_t play1 (void);
 
-  friend tableau_t* prune (tableau_t & T) {
-    tableau_t *U = new tableau_t(T);
-    U->prune();
-    return U;
-  }
-
 };
 
 // create the serialized state:
 template <class GPTYPE>
-SEXP serial (const GPTYPE &T) {
+SEXP serial (const GPTYPE* T) {
   SEXP out;
-  PROTECT(out = NEW_RAW(T.size()));
-  RAW(out) << T;
+  PROTECT(out = NEW_RAW(T->size()));
+  RAW(out) << *T;
   UNPROTECT(1);
   return out;
 }
@@ -983,7 +1009,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
 
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
-    if (do_tree) newick(tree,k,*gp,compact);
+    if (do_tree) newick(tree,k,gp,compact);
     R_CheckUserInterrupt();
   }
       
@@ -999,7 +1025,7 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  k = set_list_elem(out,outnames,serial(gp),"state",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);
@@ -1038,7 +1064,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
     gp->sample();
-    if (do_tree) newick(tree,k,*gp,compact);
+    if (do_tree) newick(tree,k,gp,compact);
     R_CheckUserInterrupt();
   }
       
@@ -1054,7 +1080,7 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  k = set_list_elem(out,outnames,serial(gp),"state",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);
@@ -1086,7 +1112,7 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Compact) {
   GetRNGstate();
   for (int k = 0; k < ntimes; k++, xt++) {
     *xt = gp->play1();
-    if (do_tree) newick(tree,k,*gp,compact);
+    if (do_tree) newick(tree,k,gp,compact);
     R_CheckUserInterrupt();
   }
   PutRNGstate();
@@ -1102,7 +1128,7 @@ SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Compact) {
   if (do_tree) {
     k = set_list_elem(out,outnames,tree,"tree",k);
   }
-  k = set_list_elem(out,outnames,serial(*gp),"state",k);
+  k = set_list_elem(out,outnames,serial(gp),"state",k);
   SET_NAMES(out,outnames);
 
   UNPROTECT(nprotect);
