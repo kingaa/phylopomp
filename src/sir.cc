@@ -116,7 +116,8 @@ public:
   };
 
   bool live (void) const {
-    return (state.I > 0 && !(this->tableau_t::max_size_exceeded()));
+    max_size_exceeded();
+    return (state.I > 0);
   };
 
   void update_clocks (void) {

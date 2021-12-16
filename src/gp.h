@@ -114,13 +114,13 @@ private:
     // who owns me?
     node_t* owner (void) const {
       if (color != green)
-	err("do not ask who owns a ball that is not green.");
+	err("ask not who owns a ball that is not green."); // # nocov
       return _owner;
     };
     // change owner
     void owner (node_t *who) {
       if (color != green)
-	err("do not meddle in the ownership of non-green balls.");
+	err("meddle not in the ownership of non-green balls."); // # nocov
       _owner = who;
     };
     // in whose pocket do I lie?
@@ -168,7 +168,7 @@ private:
     };
     // element of a newick representation
     std::string newick (const slate_t &t) const {
-      if (deme == na) err("undefined deme");
+      if (deme == na) err("undefined deme"); // # nocov
       return color_symbol()
 	+ "_" + std::to_string(deme)
 	+ "_" + std::to_string(uniq)
@@ -230,7 +230,7 @@ private:
     ball_t * random_black_ball (name_t d) {
       name_t draw;
       name_t n = _inven[d].size();
-      if (n < 1) err("cannot draw from empty inventory %ld",d);
+      if (n < 1) err("cannot draw from empty inventory %ld",d); // # nocov
       draw_one(n,&draw);
       ball_it i = _inven[d].begin();
       while (draw > 0 && i != _inven[d].end()) {
@@ -251,7 +251,7 @@ private:
     void remove (ball_t *b) {
       if (b->is(black)) {
 	if (_inven[b->deme].empty())
-	  err("in 'inventory::remove': empty deme %ld.",b->deme);
+	  err("in 'inventory::remove': empty deme %ld.",b->deme); // # nocov
 	_inven[b->deme].erase(b);
       }
     };
@@ -279,7 +279,7 @@ private:
 
     // basic constructor for node class
     node_t (name_t u = 0, slate_t t = na, name_t d = 0) {
-      if (d >= NDEME) err("deme %ld does not exist",d);
+      if (d >= NDEME) err("deme %ld does not exist",d); // # nocov
       uniq = u;
       slate = t;
       deme = d;
@@ -334,7 +334,7 @@ private:
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	if ((*i)->color == c) return *i;
       }
-      err("no ball of color %s",colores[c]);
+      err("no ball of color %s",colores[c]); // # nocov
       return 0;
     };
     // return a pointer to another ball
@@ -342,7 +342,7 @@ private:
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
 	if (*i != b) return *i;
       }
-      err("error in 'other': no other ball");
+      err("error in 'other': no other ball"); // # nocov
       return 0;
     };
     // human-readable info
@@ -399,8 +399,8 @@ private:
 	case purple: case red: case blue:
 	  o += b->newick(0);
 	  break;
-	default:
-	  err("in 'newick': c'est impossible!");
+	default:				 // # nocov
+	  err("in 'newick': c'est impossible!"); // # nocov
 	  break;
 	}
       }
@@ -442,8 +442,8 @@ private:
 	case blue:
 	  if (!rednode) o3 = ")b_";
 	  break;
-	default:
-	  err("in 'compact_newick': c'est impossible!");
+	default:					 // # nocov
+	  err("in 'compact_newick': c'est impossible!"); // # nocov
 	  break;
 	}
       }
@@ -553,7 +553,7 @@ public:
 	if (b->is(green)) {
 	  npit = nodeptr.find(b->uniq);
 	  if (npit == nodeptr.end()) {
-	    err("cannot find uniq id %ld",b->uniq);
+	    err("cannot find unique id %ld",b->uniq); // # nocov
 	  } else {
 	    node_t *q = npit->second;
 	    b->owner(q); q->green_ball(b);
@@ -742,16 +742,16 @@ private:
 
 public:
 
-  bool max_size_exceeded (size_t grace = 0) const {
+  void max_size_exceeded (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
-    return (nodes.size() > maxq+grace);
+    if (nodes.size() > maxq+grace) 
+      err("maximum tableau size exceeded!");
   };
 
 private:
 
   node_t* make_node (color_t col, name_t d = 0) {
-    if (max_size_exceeded(1))
-      err("maximum tableau size exceeded!");
+    max_size_exceeded(1);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green);
@@ -766,9 +766,9 @@ private:
 
   void drop_node (node_t *p) {
     if (!p->holds_own())
-      err("cannot drop a node that does not hold its own green ball.");
+      err("cannot drop a node that does not hold its own green ball."); // # nocov
     if (p->pocket.size() != 2)
-      err("cannot drop a node with more than 2 balls.");
+      err("cannot drop a node with more than 2 balls."); // # nocov
     for (ball_it i = p->pocket.begin(); i != p->pocket.end(); i++)
       inventory.remove(*i);
     nodes.remove(p);
@@ -795,13 +795,13 @@ private:
   // unseat the node holding black ball a.
   void unseat (ball_t *a) {
     if (!a->is(black))
-      err("in 'unseat': ball is %s, not black.",colores[a->color]);
+      err("in 'unseat': inconceivable!"); // # nocov
     node_t *p = a->holder();
-    if (p->pocket.size() > 2) {
+    if (p->pocket.size() > 2) {	// pocket is large: we simply drop the ball
       p->pocket.erase(a);
       inventory.remove(a);
       delete a;
-    } else {
+    } else {	   // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
       case blue:		// change black ball for red ball
@@ -814,10 +814,10 @@ private:
 	drop_node(p);
 	unseat(a);		// recursively pursue dropping ball a
 	break;
-      case red: case grey:
-	err("in 'unseat': inconceivable error.");
+      case red: case grey: // # nocov
+	err("in 'unseat': inconceivable error."); // # nocov
 	break;
-      default:		// swap other ball for green ball, delete node
+      case black: case green: default: // swap other for green, delete node
 	swap(b,p->green_ball());
 	b->deme = p->deme;
 	drop_node(p);
@@ -912,8 +912,7 @@ public:
   int play (double tfin) {
     int count = R_NaInt;
 
-    if (max_size_exceeded())
-      warn("maximum tableau size reached.");
+    max_size_exceeded();
     
     if (!live()) return count;
 
@@ -979,7 +978,8 @@ SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   int *xc = INTEGER(count);
   slate_t *xt = REAL(times);
 
-  if (gp->time() > xt[0]) err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
+  if (gp->time() > xt[0])
+    err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
 
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);
@@ -1032,7 +1032,8 @@ SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
   int *xc = INTEGER(count);
   slate_t *xt = REAL(times);
 
-  if (gp->time() > xt[0]) err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
+  if (gp->time() > xt[0])
+    err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
 
   for (int k = 0; k < ntimes; k++, xc++, xt++) {
     *xc = gp->play(*xt);

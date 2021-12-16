@@ -134,7 +134,8 @@ public:
   };
 
   bool live (void) const {
-    return (state.I1+state.I2 > 0 && !max_size_exceeded());
+    max_size_exceeded();
+    return (state.I1+state.I2 > 0);
   };
 
   void update_clocks (void) {

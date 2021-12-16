@@ -10,6 +10,9 @@ theme_set(theme_bw())
 set.seed(481604604)
 options(digits=3)
 
+playSIR(times=1:10) -> x
+x
+
 playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=1:2,tree=TRUE) |>
   plot(points=TRUE)
 

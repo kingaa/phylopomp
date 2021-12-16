@@ -29,6 +29,13 @@ Type 'q()' to quit R.
 > set.seed(481604604)
 > options(digits=3)
 > 
+> playSIR(times=1:10) -> x
+> x
+# A tibble: 1 × 2
+   time count
+  <dbl> <int>
+1     1     1
+> 
 > playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=1:2,tree=TRUE) |>
 +   plot(points=TRUE)
 [[1]]
