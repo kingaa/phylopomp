@@ -456,7 +456,7 @@ private:
           o += b->newick(tnow-slate);
           break;
         case purple: case red: case blue:
-	  o += b->newick(0);
+          o += b->newick(0);
           break;
         default:                                 // # nocov
           err("in 'newick': c'est impossible!"); // # nocov
@@ -465,8 +465,8 @@ private:
         if (n > 1) o += ",";
       }
       o += ")g_" + std::to_string(deme)
-	+ "_" + std::to_string(uniq)
-	+ ":" + std::to_string(slate - tpar);
+        + "_" + std::to_string(uniq)
+        + ":" + std::to_string(slate - tpar);
       return o;
     };
     // compact Newick format
@@ -931,9 +931,9 @@ private:
   // graft a new lineage into deme i
   void graft (const state_t &s, name_t i = 0) {
     node_t *p = make_node(black,i);
-    p->slate = time();
+    p->slate = timezero();
     p->state = s;
-    nodes.push_back(p);
+    nodes.push_front(p);
   };
   // insert a sample node into deme i
   void sample (const state_t &s, name_t i = 0) {

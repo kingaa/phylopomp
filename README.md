@@ -16,10 +16,3 @@ Related packages:
 - add examples to `examples/<model.R>`
 - add tests to `tests/`
 
-### To-do List
-
-- GP simulations are not fully reproducible: why?
-- need 'lineage_count' functions in GP simulators
-- put illustration facility back in
-
-
