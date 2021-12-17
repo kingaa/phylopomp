@@ -21,9 +21,6 @@ Type 'q()' to quit R.
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
-+   library(broom)
-+   library(doParallel)
-+   library(doRNG)
 + })
 > theme_set(theme_bw())
 > set.seed(481604604)
@@ -45,15 +42,15 @@ Type 'q()' to quit R.
  9     9    20
 10    10     1
 > 
-> playSIIR(Beta1=2,Beta2=4,gamma=1,psi=2,S0=100,I1_0=5,I2_0=2,times=1:2,tree=TRUE) |>
+> playSIIR(Beta1=2,Beta2=4,gamma=1,psi=2,S0=100,I1_0=5,I2_0=2,times=1:2) |>
++   getInfo() |>
 +   plot(points=TRUE)
 [[1]]
 
-[[2]]
-
 > 
-> playSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,times=100) |>
-+   getInfo() |>
+> playSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,times=1) |>
++   continue(times=100) |>
++   getInfo(compact=FALSE) |>
 +   plot(points=TRUE)
 [[1]]
 

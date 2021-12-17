@@ -23,8 +23,6 @@ class sir_tableau_t : public tableau_t<sir_state_t,sir_parameters_t> {
 
 private:
 
-  const sir_state_t default_state = {R_NaReal,R_NaReal,R_NaReal};
-
   // clocks: times to next...
   double nextI;                 // ...infection
   double nextR;                 // ...recovery
@@ -34,36 +32,16 @@ public:
 
   sir_tableau_t (void) = default;
   // basic constructor
-  sir_tableau_t (double beta, double gamma, double psi,
-                 int S0, int I0, int R0,
-                 double t0 = 0) : tableau_t(t0) {
-    params.N = double(S0+I0+R0);
-    params.beta = beta;
-    params.gamma = gamma;
-    params.psi = psi;
-    params.S0 = S0;
-    params.I0 = I0;
-    params.R0 = R0;
-    state.S = double(S0);
-    state.I = double(I0);
-    state.R = double(R0);
-    for (name_t j = 0; j < name_t(I0); j++) graft();
-    update_clocks();
-    valid();
-  };
+  sir_tableau_t (double t0 = 0) : tableau_t(t0) { };
   // constructor from serialized binary form
   sir_tableau_t (raw_t *o) {
     o >> *this;
-    update_clocks();
-    valid();
   };
   // copy constructor
   sir_tableau_t (const sir_tableau_t &T) {
     raw_t *o = new raw_t[T.size()];
     o << T; o >> *this;
     delete[] o;
-    update_clocks();
-    valid();
   };
   // move constructor
   sir_tableau_t (sir_tableau_t &&) = delete;
@@ -81,42 +59,8 @@ public:
     if (params.N != state.S+state.I+state.R) err("population leakage!");
     if (clock() < time()) err("invalid clock");
   };
-  
-  // get transmission rate
-  double transmission_rate (void) const {
-    return params.beta;
-  };
-
-  // set transmission rate
-  void transmission_rate (double &beta) {
-    params.beta = beta;
-    update_clocks();
-  };
-
-  // get recovery rate
-  double recovery_rate (void) const {
-    return params.gamma;
-  };
-
-  // set recovery rate
-  void recovery_rate (double &gamma) {
-    params.gamma = gamma;
-    update_clocks();
-  };
-
-  // get sample rate
-  double sample_rate (void) const {
-    return params.psi;
-  };
-
-  // set sample rate
-  void sample_rate (double &psi) {
-    params.psi = psi;
-    update_clocks();
-  };
 
   bool live (void) const {
-    check_tableau_size();
     return (state.I > 0);
   };
 
@@ -172,63 +116,44 @@ public:
     update_clocks();
   };
 
-};
+  void update_params (double *p) {
+    if (!ISNA(p[0])) params.beta = p[0];
+    if (!ISNA(p[1])) params.gamma = p[1];
+    if (!ISNA(p[2])) params.psi = p[2];
+  };
 
-sir_tableau_t *makeSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
-                        SEXP S0, SEXP I0, SEXP R0,
-                        SEXP T0, SEXP State) {
-  sir_tableau_t *A;
-  
-  OPTIONAL_REAL_PAR(beta,Beta,2);
-  OPTIONAL_REAL_PAR(gamma,Gamma,1);
-  OPTIONAL_REAL_PAR(psi,Psi,1);
-
-  if (isNull(State)) {        // a fresh SIR
-
-    double t0 = *(REAL(AS_NUMERIC(T0)));
-
-    OPTIONAL_INT_PAR(s0,S0,100);
-    OPTIONAL_INT_PAR(i0,I0,1);
-    OPTIONAL_INT_PAR(r0,R0,0);
-
-    A = new sir_tableau_t(beta,gamma,psi,s0,i0,r0,t0);
-
-  }  else {              // restart the SIR from the specified state
-
-    A = new sir_tableau_t(RAW(State));
-    // optionally override the stored parameters
-    if (!isNull(Beta)) A->transmission_rate(beta);
-    if (!isNull(Gamma)) A->recovery_rate(gamma);
-    if (!isNull(Psi)) A->sample_rate(psi);
-
+  void update_ICs (double *p) {
+    if (!ISNA(p[0])) params.S0 = int(p[0]);
+    if (!ISNA(p[1])) params.I0 = int(p[1]);
+    if (!ISNA(p[2])) params.R0 = int(p[2]);    
+    params.N = double(params.S0+params.I0+params.R0);
   }
 
-  A->valid();
-    
-  return A;
-}
+  void rinit (void) {
+    state.S = double(params.S0);
+    state.I = double(params.I0);
+    state.R = double(params.R0);
+    for (name_t j = 0; j < name_t(params.I0); j++) graft();
+  };
+
+};
 
 extern "C" {
 
-  // Sampled SIR process.
-  // optionally compute genealogies in Newick form ('tree = TRUE').
-  SEXP playSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
-                SEXP S0, SEXP I0, SEXP R0, SEXP Times, SEXP T0,
-                SEXP Tree, SEXP Compact, SEXP State) {
-    SEXP out = R_NilValue;
-    GetRNGstate();
-    sir_tableau_t *A = makeSIR(Beta,Gamma,Psi,S0,I0,R0,T0,State);
-    PROTECT(out = playGP<sir_tableau_t>(A,Times,Tree,Compact));
-    PutRNGstate();
-    delete A;
-    UNPROTECT(1);
-    return out;
+  SEXP makeSIR (SEXP Params, SEXP ICs, SEXP T0) {
+    return make_tableau<sir_tableau_t>(Params,ICs,T0);
   }
 
-  // Extract information from the stored state of a GP process
+  SEXP reviveSIR (SEXP State, SEXP Params) {
+    return revive_tableau<sir_tableau_t>(State,Params);
+  }
 
-  SEXP get_SIR_info (SEXP X, SEXP Prune, SEXP Compact) {
-    return get_info<sir_tableau_t>(X,Prune,Compact);
+  SEXP runSIR (SEXP State, SEXP Times) {
+    return run_gp<sir_tableau_t>(State,Times);
+  }
+
+  SEXP infoSIR (SEXP State, SEXP Prune, SEXP Compact) {
+    return get_info<sir_tableau_t>(State,Prune,Compact);
   }
 
 }

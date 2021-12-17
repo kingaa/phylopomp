@@ -5,18 +5,16 @@
 extern "C" {
 #endif
 
-  SEXP playSIR (SEXP Beta, SEXP Gamma, SEXP Psi,
-                SEXP S0, SEXP I0, SEXP R0,
-                SEXP Times, SEXP T0, SEXP Tree,
-                SEXP Compact, SEXP State);
-  SEXP get_SIR_info (SEXP X, SEXP Prune, SEXP Compact);
+  SEXP makeSIR (SEXP Params, SEXP ICs, SEXP T0);
+  SEXP reviveSIR (SEXP State, SEXP Params);
+  SEXP runSIR (SEXP State, SEXP Times);
+  SEXP infoSIR (SEXP State, SEXP Prune, SEXP Compact);
 
-  SEXP playSIIR (SEXP Beta1, SEXP Beta2, SEXP Gamma, SEXP Psi,
-                 SEXP S0, SEXP I1_0, SEXP I2_0,
-                 SEXP R0, SEXP Times, SEXP T0, SEXP Tree,
-                 SEXP Compact, SEXP State);
-  SEXP get_SIIR_info (SEXP X, SEXP Prune, SEXP Compact);
-  
+  SEXP makeSIIR (SEXP Params, SEXP ICs, SEXP T0);
+  SEXP reviveSIIR (SEXP State, SEXP Params);
+  SEXP runSIIR (SEXP State, SEXP Times);
+  SEXP infoSIIR (SEXP State, SEXP Prune, SEXP Compact);
+
 #ifdef __cplusplus
 }
 #endif

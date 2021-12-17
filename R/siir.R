@@ -28,34 +28,29 @@
 ##' @rdname siir
 ##' @export
 playSIIR <- function (
-  data = NULL,
-  Beta1, Beta2, gamma, psi, S0,
-  I1_0, I2_0, R0,
-  t0 = 0, times,
-  tree = FALSE,
-  compact = TRUE
+  Beta1 = 2, Beta2 = 2, gamma = 1, psi = 1,
+  S0 = 100, I1_0 = 1, I2_0 = 1, R0 = 0,
+  t0 = 0, times
 ) {
-  state <- attr(data,"state")
-  if (missing(Beta1)) Beta1 <- NULL
-  if (missing(Beta2)) Beta2 <- NULL
-  if (missing(gamma)) gamma <- NULL
-  if (missing(psi)) psi <- NULL
-  if (missing(S0)) S0 <- NULL
-  if (missing(I1_0)) I1_0 <- NULL
-  if (missing(I2_0)) I2_0 <- NULL
-  if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIIR,Beta1,Beta2,gamma,psi,S0,I1_0,I2_0,R0,times,t0,tree,compact,state)
+  params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi=psi)
+  ics <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
+  x <- .Call(P_makeSIIR,params,ics,t0)
+  x <- .Call(P_runSIIR,x,times)
   state <- x$state
   x$state <- NULL
-  data |>
-    bind_rows(
-      x |> as_tibble() |> filter(!is.na(count))
-    ) -> x
-  if (exists("tree",where=x))
-    x$tree <- sapply(x$tree,\(t) gsub("nan","NA",t)) 
+  x |> as_tibble() |> filter(!is.na(count)) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "SIIR"
   if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))
+  x
+}
+
+continueSIIR <- function (
+  state, times, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA
+) {
+  params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi=psi)
+  x <- .Call(P_reviveSIIR,state,params)
+  x <- .Call(P_runSIIR,x,times)
   x
 }
 

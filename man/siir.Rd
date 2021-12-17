@@ -7,24 +7,19 @@
 \title{SIIR with sampling simulator.}
 \usage{
 playSIIR(
-  data = NULL,
-  Beta1,
-  Beta2,
-  gamma,
-  psi,
-  S0,
-  I1_0,
-  I2_0,
-  R0,
+  Beta1 = 2,
+  Beta2 = 2,
+  gamma = 1,
+  psi = 1,
+  S0 = 100,
+  I1_0 = 1,
+  I2_0 = 1,
+  R0 = 0,
   t0 = 0,
-  times,
-  tree = FALSE,
-  compact = TRUE
+  times
 )
 }
 \arguments{
-\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
-
 \item{Beta1, Beta2}{transmission rates from each of the infectious classes.}
 
 \item{gamma}{recovery rate.}
@@ -42,10 +37,6 @@ playSIIR(
 \item{t0}{initial time}
 
 \item{times}{times at which output is requested.}
-
-\item{tree}{logical; represent the genealogical tree in Newick format?}
-
-\item{compact}{logical; return the tree in compact format?}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -54,18 +45,24 @@ A \code{tibble} with \code{state} attribute.
 Run the simulator.
 }
 \examples{
-playSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,times=0:3,t0=0,tree=TRUE) -> x
-playSIIR(x,Beta1=5,Beta2=10,gamma=2,times=4:10,psi=10,tree=TRUE) -> x
-plot(x)
+playSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,times=0:3,t0=0) |>
+  continue(Beta1=5,Beta2=10,gamma=2,times=4:10,psi=10) |>
+  getInfo() |>
+  plot()
 
-playSIIR(Beta1=3,Beta2=4,gamma=1,psi=2,S0=10,I1_0=5,I2_0=1,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
-plot(x,points=TRUE)
-
-y <- getInfo(x)
+playSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,times=0,t0=-1) |>
+  continue(psi=10,times=1:5) |>
+  getInfo(prune=FALSE) -> y
 plot(y,points=TRUE)
+
+library(ggplot2)
+y$lineages |>
+  ggplot(aes(x=time,y=lineages))+
+  geom_step()
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{continue}()},
 \code{\link{sir}}
 }
 \concept{Genealogy processes}

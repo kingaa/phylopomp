@@ -220,7 +220,7 @@ private:
   private:
     pocket_t _inven[NDEME];
   public:
-    // basic constructor
+    // basic constructor for inventory class
     inventory_t (void) = default;
     // copy constructor
     inventory_t (const inventory_t &) = default;
@@ -304,7 +304,7 @@ private:
   // - a unique name (uniq)
   // - a deme
   // - a pocket containting two or more balls
-  // - a "slate" with the time of seating
+  // - a "slate" with the time
   // - the state of the Markov population process at that time
   class node_t {
 
@@ -626,7 +626,7 @@ public:
 
 public:
   
-  // basic constructor
+  // basic constructor for tableau class
   //  t0 = initial time
   tableau_t (slate_t t0 = 0) {
     clean();
@@ -688,7 +688,7 @@ private:
 
 private:
   
-  // report all the seating times and lineage count
+  // report all the node times and lineage count
   size_t lineage_count (double *t = 0, int *ell = 0) const {
     size_t count = 1;
     int n = 0;
@@ -705,7 +705,7 @@ private:
       *ell = n;
       for (node_it i = nodes.begin(); i != nodes.end(); i++) {
         n += (*i)->nchildren(true)-1;
-        if (tcur != (*i)->slate) {
+        if (tcur < (*i)->slate) {
           *(t++) = tcur = (*i)->slate;
           *(ell++) = n;
         }
@@ -716,6 +716,8 @@ private:
     return count;
   };
 
+protected:
+
   // human-readable info
   std::string describe (void) const {
     std::string o = "";
@@ -725,6 +727,8 @@ private:
     o += "time = " + std::to_string(time()) + "\n";
     return o;
   };
+
+private:
   // machine-readable info
   std::string yaml (size_t level = 0, bool prefix = false) const {
     std::string tab(2*level,' ');
@@ -844,11 +848,11 @@ private:
     return p;
   };
 
-  void drop_node (node_t *p) {
+  void destroy_node (node_t *p) {
     if (!p->holds_own())
-      err("cannot drop a node that does not hold its own green ball."); // # nocov
+      err("cannot destroy a node that does not hold its own green ball."); // # nocov
     if (p->pocket.size() != 2)
-      err("cannot drop a node with more than 2 balls."); // # nocov
+      err("cannot destroy a node with more than 2 balls."); // # nocov
     for (ball_it i = p->pocket.begin(); i != p->pocket.end(); i++)
       inventory.remove(*i);
     nodes.remove(p);
@@ -865,17 +869,17 @@ private:
     }
   };
 
-  // seat node p; take as parent the node holding ball b.
-  void seat (node_t *p, ball_t *b) {
+  // add node p; take as parent the node holding ball b.
+  void add (node_t *p, ball_t *b) {
     swap(b,p->green_ball());
     p->deme = b->deme;
     nodes.push_back(p);
   };
 
-  // unseat the node holding black ball a.
-  void unseat (ball_t *a) {
+  // drop the node holding black ball a.
+  void drop (ball_t *a) {
     if (!a->is(black))
-      err("in 'unseat': inconceivable!"); // # nocov
+      err("in 'drop': inconceivable!"); // # nocov
     node_t *p = a->holder();
     if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
       p->pocket.erase(a);
@@ -890,15 +894,15 @@ private:
         break;
       case purple:      // swap black ball for green ball, delete node
         swap(a,p->green_ball());
-        drop_node(p);
-        unseat(a);              // recursively pursue dropping ball a
+        destroy_node(p);
+        drop(a);              // recursively pursue dropping ball a
         break;
       case red: case grey: // # nocov
-        err("in 'unseat': inconceivable error."); // # nocov
+        err("in 'drop': inconceivable error."); // # nocov
         break;
       case black: case green: default: // swap other for green, delete node
         swap(b,p->green_ball());
-        drop_node(p);
+        destroy_node(p);
         break;
       }
     }
@@ -921,12 +925,12 @@ private:
     node_t *p = make_node(black,j);
     p->slate = time();
     p->state = s;
-    seat(p,a);
+    add(p,a);
   };
   // death from deme i
   void death (const state_t &s, name_t i = 0) {
     ball_t *a = random_black_ball(i);
-    unseat(a);
+    drop(a);
   };
   // graft a new lineage into deme i
   void graft (const state_t &s, name_t i = 0) {
@@ -941,7 +945,7 @@ private:
     node_t *p = make_node(blue,i);
     p->slate = time();
     p->state = s;
-    seat(p,a);
+    add(p,a);
   };
   // movement from deme i to deme j
   void migrate (const state_t &s, name_t i = 0, name_t j = 0) {
@@ -949,7 +953,7 @@ private:
     node_t *p = make_node(purple,i);
     p->slate = time();
     p->state = s;
-    seat(p,a);
+    add(p,a);
     inventory.insert(a,j);
   };
 
@@ -980,7 +984,7 @@ public:
     for (size_t d = 0; d < NDEME; d++) {
       while (!inventory[d].empty()) {
         ball_t *b = *(inventory[d].begin());
-        unseat(b);
+        drop(b);
       }
     }
     return *this;
@@ -994,6 +998,8 @@ public:
 
 public:
   
+  // initialize the state
+  virtual void rinit (void) = 0;
   // determines if process is still alive
   virtual bool live (void) const = 0;
   // returns time of next event
@@ -1002,6 +1008,10 @@ public:
   virtual void update_clocks (void) = 0;
   // makes a move
   virtual void jump (void) = 0;
+  // set parameters 
+  virtual void update_params (double*) = 0;
+  // set initial conditions
+  virtual void update_ICs (double*) = 0;
 
 public:
 
@@ -1031,208 +1041,109 @@ public:
 
 // create the serialized state:
 template <class GPTYPE>
-SEXP serial (const GPTYPE* T) {
+SEXP serial (GPTYPE& T) {
   SEXP out;
-  PROTECT(out = NEW_RAW(T->size()));
-  RAW(out) << *T;
+  PROTECT(out = NEW_RAW(T.size()));
+  RAW(out) << T;
   UNPROTECT(1);
   return out;
 }
 
-// play a genealogy process
-// this requires that the RNG state has been handled elsewhere
 template<class GPTYPE>
-SEXP playGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
-  int nprotect = 0;
-  int nout = 3;
-  int ntimes = LENGTH(Times);
-
-  gp->valid();
-
-  SEXP times, count;
-  PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
-  PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
-
-  SEXP tree = R_NilValue;
-  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
-  if (do_tree) {
-    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-    nout++;
-  }
-
-  bool compact = *LOGICAL(AS_LOGICAL(Compact));
-
-  int *xc = INTEGER(count);
-  slate_t *xt = REAL(times);
-
-  if (gp->time() > xt[0])
-    err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
-
-  for (int k = 0; k < ntimes; k++, xc++, xt++) {
-    *xc = gp->play(*xt);
-    if (do_tree) newick(tree,k,gp,compact);
-    R_CheckUserInterrupt();
-  }
-      
-  gp->valid();
-    
-  // pack everything up in a list
-  int k = 0;
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout)); nprotect++;
-  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-  k = set_list_elem(out,outnames,times,"time",k);
-  k = set_list_elem(out,outnames,count,"count",k);
-  if (do_tree) {
-    k = set_list_elem(out,outnames,tree,"tree",k);
-  }
-  k = set_list_elem(out,outnames,serial(gp),"state",k);
-  SET_NAMES(out,outnames);
-
-  UNPROTECT(nprotect);
-  return out;
-}
-
-// play a sampled genealogy process
-// this requires that the RNG state has been handled elsewhere
-template<class GPTYPE>
-SEXP playSGP (GPTYPE *gp, SEXP Times, SEXP Tree, SEXP Compact) {
-  int nprotect = 0;
-  int nout = 3;
-  int ntimes = LENGTH(Times);
-
-  gp->valid();
-
-  SEXP times, count;
-  PROTECT(times = AS_NUMERIC(duplicate(Times))); nprotect++;
-  PROTECT(count = NEW_INTEGER(ntimes)); nprotect++;
-
-  SEXP tree = R_NilValue;
-  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
-  if (do_tree) {
-    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-    nout++;
-  }
-
-  bool compact = *LOGICAL(AS_LOGICAL(Compact));
-
-  int *xc = INTEGER(count);
-  slate_t *xt = REAL(times);
-
-  if (gp->time() > xt[0])
-    err("must not have t0 = %lg > %g = times[1]!",gp->time(),xt[0]);
-
-  for (int k = 0; k < ntimes; k++, xc++, xt++) {
-    *xc = gp->play(*xt);
-    gp->sample();
-    if (do_tree) newick(tree,k,gp,compact);
-    R_CheckUserInterrupt();
-  }
-      
-  gp->valid();
-    
-  // pack everything up in a list
-  int k = 0;
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout)); nprotect++;
-  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-  k = set_list_elem(out,outnames,times,"time",k);
-  k = set_list_elem(out,outnames,count,"count",k);
-  if (do_tree) {
-    k = set_list_elem(out,outnames,tree,"tree",k);
-  }
-  k = set_list_elem(out,outnames,serial(gp),"state",k);
-  SET_NAMES(out,outnames);
-
-  UNPROTECT(nprotect);
-  return out;
-}
-
-template<class GPTYPE>
-SEXP playWChain (GPTYPE *gp, SEXP N, SEXP Tree, SEXP Compact) {
-  int nprotect = 0;
-  int nout = 2;
-  int ntimes = *(INTEGER(AS_INTEGER(N)));
-
-  gp->valid();
-
-  SEXP times;
-  PROTECT(times = NEW_NUMERIC(ntimes)); nprotect++;
-
-  SEXP tree = R_NilValue;
-  int do_tree = *(INTEGER(AS_INTEGER(Tree)));
-  if (do_tree) {
-    PROTECT(tree = NEW_CHARACTER(ntimes)); nprotect++;
-    nout++;
-  }
-
-  bool compact = *LOGICAL(AS_LOGICAL(Compact));
-
-  slate_t *xt = REAL(times);
-
+SEXP make_tableau (SEXP Params, SEXP ICs, SEXP T0) {
+  SEXP o;
+  PROTECT(Params = AS_NUMERIC(Params));
+  PROTECT(ICs = AS_NUMERIC(ICs));
+  PROTECT(T0 = AS_NUMERIC(T0));
   GetRNGstate();
-  for (int k = 0; k < ntimes; k++, xt++) {
-    *xt = gp->play1();
-    if (do_tree) newick(tree,k,gp,compact);
+  GPTYPE A(*REAL(T0));
+  A.update_params(REAL(Params));
+  A.update_ICs(REAL(ICs));
+  A.rinit();
+  PutRNGstate();
+  PROTECT(o = NEW_RAW(A.size()));
+  RAW(o) << A;
+  UNPROTECT(4);
+  return o;
+}
+
+template<class GPTYPE>
+SEXP revive_tableau (SEXP State, SEXP Params) {
+  SEXP o;
+  GPTYPE A(RAW(State));
+  PROTECT(Params = AS_NUMERIC(Params));
+  A.update_params(REAL(Params));
+  PROTECT(o = NEW_RAW(A.size()));
+  RAW(o) << A;
+  UNPROTECT(2);
+  return o;
+}
+
+// play a genealogy process
+template<class GPTYPE>
+SEXP run_gp (SEXP State, SEXP Times) {
+  int nout = 3;
+  int ntimes = LENGTH(Times);
+  GPTYPE A(RAW(State));
+  GetRNGstate();
+  A.update_clocks();
+  A.valid();
+  SEXP times, count;
+  PROTECT(times = AS_NUMERIC(duplicate(Times)));
+  PROTECT(count = NEW_INTEGER(ntimes));
+  int *xc = INTEGER(count);
+  slate_t *xt = REAL(times);
+  if (A.time() > xt[0])
+    err("must not have t0 = %lg > %g = times[1]!",A.time(),xt[0]);
+  for (int k = 0; k < ntimes; k++, xc++, xt++) {
+    *xc = A.play(*xt);
     R_CheckUserInterrupt();
   }
   PutRNGstate();
-      
-  gp->valid();
-    
   // pack everything up in a list
-  int k = 0;
   SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout)); nprotect++;
-  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
-  k = set_list_elem(out,outnames,times,"time",k);
-  if (do_tree) {
-    k = set_list_elem(out,outnames,tree,"tree",k);
-  }
-  k = set_list_elem(out,outnames,serial(gp),"state",k);
+  PROTECT(out = NEW_LIST(nout));
+  PROTECT(outnames = NEW_CHARACTER(nout));
+  set_list_elem(out,outnames,times,"time",0);
+  set_list_elem(out,outnames,count,"count",1);
+  set_list_elem(out,outnames,serial(A),"state",2);
   SET_NAMES(out,outnames);
-
-  UNPROTECT(nprotect);
+  UNPROTECT(4);
   return out;
 }
 
 // extract/compute basic information.
 template <class GPTYPE>
-SEXP get_info (SEXP X, SEXP Prune, SEXP Compact) {
-  int nprotect = 0;
-  
+SEXP get_info (SEXP State, SEXP Prune, SEXP Compact) {
   // reconstruct the tableau from its serialization
-  GPTYPE gp(RAW(X));
-  // check validity
-  gp.valid();
-  
+  GPTYPE A(RAW(State));
   // extract current time
   SEXP t0, tout;
-  PROTECT(t0 = NEW_NUMERIC(1)); nprotect++;
-  *REAL(t0) = gp.timezero();
-  PROTECT(tout = NEW_NUMERIC(1)); nprotect++;
-  *REAL(tout) = gp.time();
+  PROTECT(t0 = NEW_NUMERIC(1));
+  *REAL(t0) = A.timezero();
+  PROTECT(tout = NEW_NUMERIC(1));
+  *REAL(tout) = A.time();
 
   bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // prune if requested
-  if (*(LOGICAL(AS_LOGICAL(Prune)))) gp.prune();
+  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
 
   // pack up return values in a list
   int nout = 6;
   int k = 0;
   SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout)); nprotect++;
-  PROTECT(outnames = NEW_CHARACTER(nout)); nprotect++;
+  PROTECT(out = NEW_LIST(nout));
+  PROTECT(outnames = NEW_CHARACTER(nout));
   k = set_list_elem(out,outnames,t0,"t0",k);
   k = set_list_elem(out,outnames,tout,"time",k);
-  k = set_list_elem(out,outnames,describe(gp),"description",k);
-  k = set_list_elem(out,outnames,yaml(gp),"yaml",k);
-  k = set_list_elem(out,outnames,lineage_count(gp),"lineages",k);
-  k = set_list_elem(out,outnames,newick(gp,compact),"tree",k);
+  k = set_list_elem(out,outnames,describe(A),"description",k);
+  k = set_list_elem(out,outnames,yaml(A),"yaml",k);
+  k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
+  k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
   SET_NAMES(out,outnames);
 
-  UNPROTECT(nprotect);
+  UNPROTECT(4);
   return out;
 }
 

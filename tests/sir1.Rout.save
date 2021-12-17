@@ -21,9 +21,6 @@ Type 'q()' to quit R.
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
-+   library(broom)
-+   library(doParallel)
-+   library(doRNG)
 + })
 > theme_set(theme_bw())
 > set.seed(481604604)
@@ -34,16 +31,16 @@ Type 'q()' to quit R.
 # A tibble: 1 × 2
    time count
   <dbl> <int>
-1     1     1
+1     1     3
 > 
-> playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=1:2,tree=TRUE) |>
+> playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=1:2) |>
++   getInfo() |>
 +   plot(points=TRUE)
 [[1]]
 
-[[2]]
-
 > 
-> playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=100) |>
+> playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=5,times=1) |>
++   continue(times=100) |>
 +   getInfo(tree=TRUE,compact=TRUE) |>
 +   plot(points=TRUE)
 [[1]]

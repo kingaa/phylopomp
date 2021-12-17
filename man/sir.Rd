@@ -7,25 +7,11 @@
 \alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
-playSIR(
-  data = NULL,
-  Beta,
-  gamma,
-  psi,
-  S0,
-  I0,
-  R0,
-  t0 = 0,
-  times,
-  tree = FALSE,
-  compact = TRUE
-)
+playSIR(Beta = 2, gamma = 1, psi = 1, S0 = 100, I0 = 2, R0 = 0, t0 = 0, times)
 
 sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 }
 \arguments{
-\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
-
 \item{Beta}{transmission rate.}
 
 \item{gamma}{recovery rate.}
@@ -42,9 +28,7 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 
 \item{times}{times at which output is requested.}
 
-\item{tree}{logical; represent the genealogical tree in Newick format?}
-
-\item{compact}{logical; return the tree in compact format?}
+\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 }
 \value{
 A \code{tibble} with \code{state} attribute.
@@ -56,15 +40,14 @@ Run the simulator.
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 }
 \examples{
-playSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5,t0=0,tree=TRUE) -> x
-playSIR(x,Beta=5,gamma=2,times=6:10,psi=3,tree=TRUE) -> x
-plot(x)
+playSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5) |>
+  continue(Beta=5,gamma=2,times=6:10,psi=3) |>
+  getInfo() |>
+  plot()
 
-playSIR(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1,tree=TRUE) -> x
-plot(x,points=TRUE)
-
-y <- getInfo(x)
-plot(y,points=TRUE)
+playSIR(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1) |>
+  getInfo() |>
+  plot(points=TRUE)
 
 playSIR(Beta=30,gamma=1,psi=2,S0=100,I0=5,R0=0,times=0.1,t0=0) -> x
 y <- getInfo(x,prune=FALSE,compact=FALSE)
@@ -72,6 +55,7 @@ plot(y,points=TRUE)
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{continue}()},
 \code{\link{siir}}
 }
 \concept{Genealogy processes}

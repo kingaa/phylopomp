@@ -38,8 +38,8 @@ getInfo <- function (data, ...) {
 getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
   x <- switch(
     attr(data,"model"),
-    SIR = .Call(P_get_SIR_info,attr(data,"state"),prune,compact),
-    SIIR = .Call(P_get_SIIR_info,attr(data,"state"),prune,compact),
+    SIR = .Call(P_infoSIR,attr(data,"state"),prune,compact),
+    SIIR = .Call(P_infoSIIR,attr(data,"state"),prune,compact),
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
   x$tree <- gsub("nan","NA",x$tree)
@@ -55,3 +55,5 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
 ##' @docType import
 ##' @export
 yaml::as.yaml
+
+

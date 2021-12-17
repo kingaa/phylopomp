@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.0.999.0
-Date: 2021-12-15
+Version: 0.0.999.1
+Date: 2021-12-17
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
 	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
@@ -20,8 +20,9 @@ RoxygenNote: 7.1.2
 Collate: 
     'package.R'
     'aaa.R'
-    'foreach.R'
     'getinfo.R'
+    'continue.R'
+    'foreach.R'
     'newick2df.R'
     'print.R'
     'siir.R'

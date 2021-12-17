@@ -7,8 +7,8 @@
 ##' @include getinfo.R
 ##' 
 ##' @family Genealogy processes
-##' 
-##' @param data optional data frame; output from \code{playSIR}.
+##'
+##' @inheritParams continue
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
@@ -16,9 +16,6 @@
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
 ##' @param t0 initial time
-##' @param times times at which output is requested.
-##' @param tree logical; represent the genealogical tree in Newick format?
-##' @param compact logical; return the tree in compact format?
 ##' 
 ##' @return A \code{tibble} with \code{state} attribute.
 ##'
@@ -31,32 +28,29 @@
 ##' @rdname sir
 ##' @export
 playSIR <- function (
-  data = NULL,
-  Beta, gamma, psi, S0,
-  I0, R0,
-  t0 = 0, times,
-  tree = FALSE, 
-  compact = TRUE
+  Beta = 2, gamma = 1, psi = 1,
+  S0 = 100, I0 = 2, R0 = 0,
+  t0 = 0, times
 ) {
-  state <- attr(data,"state")
-  if (missing(Beta)) Beta <- NULL
-  if (missing(gamma)) gamma <- NULL
-  if (missing(psi)) psi <- NULL
-  if (missing(S0)) S0 <- NULL
-  if (missing(I0)) I0 <- NULL
-  if (missing(R0)) R0 <- NULL
-  x <- .Call(P_playSIR,Beta,gamma,psi,S0,I0,R0,times,t0,tree,compact,state)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi)
+  ics <- c(S0=S0,I0=I0,R0=R0)
+  x <- .Call(P_makeSIR,params,ics,t0)
+  x <- .Call(P_runSIR,x,times)
   state <- x$state
   x$state <- NULL
-  data |>
-    bind_rows(
-      x |> as_tibble() |> filter(!is.na(count))
-    ) -> x
-  if (exists("tree",where=x))
-    x$tree <- sapply(x$tree,\(t) gsub("nan","NA",t)) 
+  x |> as_tibble() |> filter(!is.na(count)) -> x
   attr(x,"state") <- state
   attr(x,"model") <- "SIR"
-  if (!inherits(x,"gpsim")) class(x) <- c("gpsim",class(x))
+  class(x) <- c("gpsim",class(x))
+  x
+}
+
+continueSIR <- function (
+  state, times, Beta = NA, gamma = NA, psi = NA
+) {
+  params <- c(Beta=Beta,gamma=gamma,psi=psi)
+  x <- .Call(P_reviveSIR,state,params)
+  x <- .Call(P_runSIR,x,times)
   x
 }
 
