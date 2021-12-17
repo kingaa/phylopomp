@@ -4,7 +4,14 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(tree, time = NULL, root_time = 0, ladderize = TRUE, points = FALSE)
+treeplot(
+  tree,
+  time = NULL,
+  root_time = 0,
+  ladderize = TRUE,
+  points = FALSE,
+  palette = "Set1"
+)
 }
 \arguments{
 \item{tree}{character; tree representation in Newick format.}
@@ -16,6 +23,9 @@ treeplot(tree, time = NULL, root_time = 0, ladderize = TRUE, points = FALSE)
 \item{ladderize}{Ladderize?}
 
 \item{points}{Show nodes and tips?}
+
+\item{palette}{character; color palette to use for branches.
+See \code{\link[ggplot2]{scale_color_brewer}} for details.}
 }
 \value{
 A printable \code{ggtree} object.

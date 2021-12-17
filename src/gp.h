@@ -1,6 +1,5 @@
 // -*- C++ -*-
 // Generic Genealogy Process (GP) Simulator (C++)
-// State of the GP is represented as a "tableau".
 
 #ifndef _GP_H_
 #define _GP_H_
@@ -31,20 +30,19 @@ typedef size_t name_t;
 typedef double slate_t;
 
 const name_t na = name_t(R_NaInt);
-const slate_t inf = R_PosInf;
-const slate_t default_slate = R_NaReal;
 static const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
 
 static const char *colores[] = {"green", "black", "blue", "red", "grey", "purple"};
 static const char *colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 
-// TABLEAU CLASS
-// the class to hold the state of the genealogy process (a "tableau")..
+// GENEALOGY CLASS
+// the class to hold the state of the genealogy process.
 // - STATE is a datatype that holds the state of the Markov process.
 // - PARAMETERS is a datatype for the model parameters
+// - NEVENT is the number of event-types
 // - NDEME is the number of demes
-template <class STATE, class PARAMETERS, size_t NDEME = 1>
-class tableau_t  {
+template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
+class genealogy_t  {
 
 private:
 
@@ -63,7 +61,7 @@ private:
   typedef std::set<ball_t*> pocket_t;
   typedef typename pocket_t::const_iterator ball_it;
 
-  // TABLEAU data:
+  // GENEALOGY data:
   // - a counter of serial numbers
   // - an initial time
   // - the current time
@@ -78,6 +76,10 @@ private:
   slate_t _t0;                  // initial time
   slate_t _time;                // current time
   nodes_t nodes;                // sequence of pointers to nodes
+  // time of next event
+  slate_t _next;
+  // mark of next event
+  name_t _event;
 
 protected:
 
@@ -154,7 +156,10 @@ private:
     };
     // machine-readable color symbols
     std::string color_symbol (void) const {
-      return colorsymb[color];
+      if (is(green) && holder()==owner())
+	return "m";
+      else 
+	return colorsymb[color];
     };
     // human-readable info
     std::string describe (void) const {
@@ -176,7 +181,7 @@ private:
       } else {
         o += "ball:\n" + tab;
       }
-      o += "color: " + color_name() + "\n"      
+      o += "color: " + color_symbol() + "\n"      
         + tab + "name: " + std::to_string(uniq) + "\n";
       if (color==black) {
         o += tab + "deme: " + std::to_string(deme) + "\n";
@@ -241,6 +246,14 @@ private:
     // n-th deme
     pocket_t & operator[] (const name_t n) {
       return _inven[n];
+    };
+    // are all demes empty?
+    bool empty (void) const {
+      bool q = true;
+      for (name_t i = 0; i < NDEME; i++) {
+	q = q && _inven[i].empty();
+      }
+      return q;
     };
     // random ball
     ball_t* random_ball (name_t i) const {
@@ -473,7 +486,7 @@ private:
     std::string compact_newick (const slate_t& tnow, const slate_t& tpar) const {
       std::string o1 = "(";
       std::string o2 = "";
-      std::string o3 = ")g_";
+      std::string o3 = (holds_own()) ? ")m_" : ")g_";
       bool rednode = holds(red);
       int n = nchildren(true);
       for (ball_it i = pocket.begin(); i != pocket.end(); i++, n--) {
@@ -557,7 +570,7 @@ private:
     for (node_it i = nodes.begin(); i != nodes.end(); i++) delete *i;
     nodes.clear();
     for (size_t d = 0; d < NDEME; d++) inventory[d].clear();
-    _time = default_slate;
+    _time = R_NaReal;
     _unique = 0;
   };
 
@@ -565,17 +578,17 @@ public:
 
   // size of serialized binary form
   size_t size (void) const {
-    size_t s = 2*sizeof(name_t) + 2*sizeof(slate_t)
+    size_t s = 3*sizeof(name_t) + 3*sizeof(slate_t)
       + sizeof(state_t) + sizeof(parameters_t);
     for (node_it i = nodes.begin(); i != nodes.end(); i++)
       s += (*i)->size();
     return s;
   };
 
-  // binary serialization of tableau_t
-  friend raw_t* operator<< (raw_t *o, const tableau_t &T) {
-    name_t A[2]; A[0] = T._unique; A[1] = T.nodes.size();
-    slate_t B[2]; B[0] = T._t0; B[1] = T._time;
+  // binary serialization of genealogy_t
+  friend raw_t* operator<< (raw_t *o, const genealogy_t &T) {
+    name_t A[3]; A[0] = T._unique; A[1] = T.nodes.size(); A[2] = name_t(T._event);
+    slate_t B[3]; B[0] = T._t0; B[1] = T._time; B[2] = T._next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
     memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
@@ -586,10 +599,10 @@ public:
     return o;
   }
 
-  // binary deserialization of tableau_t
-  friend raw_t* operator>> (raw_t *o, tableau_t &T) {
-    name_t A[2];
-    slate_t B[2];
+  // binary deserialization of genealogy_t
+  friend raw_t* operator>> (raw_t *o, genealogy_t &T) {
+    name_t A[3];
+    slate_t B[3];
     std::unordered_map<name_t,node_t*> nodeptr;
     typename std::unordered_map<name_t,node_t*>::const_iterator npit;
     T.clean();
@@ -598,6 +611,7 @@ public:
     memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
     T._unique = A[0]; T._t0 = B[0]; T._time = B[1];
+    T._next = B[2]; T._event = A[2];
     nodeptr.reserve(A[1]);
     for (name_t i = 0; i < A[1]; i++) {
       node_t *p = new node_t();
@@ -626,26 +640,26 @@ public:
 
 public:
   
-  // basic constructor for tableau class
+  // basic constructor for genealogy class
   //  t0 = initial time
-  tableau_t (slate_t t0 = 0) {
+  genealogy_t (slate_t t0 = 0) {
     clean();
     _time = _t0 = t0;
   };
   // constructor from serialized binary form
-  tableau_t (raw_t *o) {
+  genealogy_t (raw_t *o) {
     o >> *this;
   };
   // copy constructor
-  tableau_t (const tableau_t & T) {
+  genealogy_t (const genealogy_t & T) {
     raw_t *o = new raw_t[T.size()];
     o << T; o >> *this;
     delete[] o;
   };
   // move constructor
-  tableau_t (tableau_t &&) = delete;
+  genealogy_t (genealogy_t &&) = delete;
   // copy assignment operator
-  tableau_t & operator= (const tableau_t & T) {
+  genealogy_t & operator= (const genealogy_t & T) {
     clean();
     raw_t *o = new raw_t[T.size()];
     o << T; o >> *this;
@@ -653,8 +667,8 @@ public:
     return *this;
   };
   // move assignment operator
-  tableau_t & operator= (tableau_t &&) = delete;  // destructor
-  virtual ~tableau_t (void) {
+  genealogy_t & operator= (genealogy_t &&) = delete;  // destructor
+  virtual ~genealogy_t (void) {
     clean();
   };
   // is empty?
@@ -680,10 +694,10 @@ protected:
 private:
 
   slate_t dawn (void) const {
-    return (nodes.empty()) ? default_slate : nodes.front()->slate;
+    return (nodes.empty()) ? R_NaReal : nodes.front()->slate;
   };
   slate_t dusk (void) const {
-    return (nodes.empty()) ? default_slate : nodes.back()->slate;
+    return (nodes.empty()) ? R_NaReal : nodes.back()->slate;
   }
 
 private:
@@ -737,7 +751,7 @@ private:
     if (prefix) {
       o += "- ";
     } else {
-      o += "tableau:\n" + tab;
+      o += "genealogy:\n" + tab;
     }
     o += "ndemes: " + std::to_string(NDEME) + "\n"
       + tab + "time: " + std::to_string(time()) + "\n"
@@ -764,7 +778,7 @@ private:
 
 public:
 
-  friend SEXP lineage_count (const tableau_t& T) {
+  friend SEXP lineage_count (const genealogy_t& T) {
     SEXP t, ell, out, outn;
     int nt = T.lineage_count();
     PROTECT(t = NEW_NUMERIC(nt));
@@ -780,11 +794,11 @@ public:
   }
 
   // create a human-readable description
-  friend void describe (SEXP x, int k, const tableau_t &T) {
+  friend void describe (SEXP x, int k, const genealogy_t &T) {
     SET_STRING_ELT(x,k,mkChar(T.describe().c_str()));
   }
   
-  friend SEXP describe (const tableau_t &T) {
+  friend SEXP describe (const genealogy_t &T) {
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
     SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
@@ -793,11 +807,11 @@ public:
   }
 
   // create a machine-readable description
-  friend void yaml (SEXP x, int k, const tableau_t &T) {
+  friend void yaml (SEXP x, int k, const genealogy_t &T) {
     SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
   }
   
-  friend SEXP yaml (const tableau_t &T) {
+  friend SEXP yaml (const genealogy_t &T) {
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
     SET_STRING_ELT(out,0,mkChar(T.yaml().c_str()));
@@ -807,11 +821,11 @@ public:
   
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, const tableau_t* T, bool compact = false) {
+  friend void newick (SEXP x, int k, const genealogy_t* T, bool compact = false) {
     SET_STRING_ELT(x,k,mkChar(T->newick(compact).c_str()));
   }
 
-  friend SEXP newick (const tableau_t &T, bool compact = false) {
+  friend SEXP newick (const genealogy_t &T, bool compact = false) {
     SEXP x;
     PROTECT(x = NEW_CHARACTER(1));
     SET_STRING_ELT(x,0,mkChar(T.newick(compact).c_str()));
@@ -821,21 +835,21 @@ public:
 
 protected:
 
-  // check the validity of the tableau.
+  // check the validity of the genealogy.
   void valid (void) const {};
 
 public:
 
-  void check_tableau_size (size_t grace = 0) const {
+  void check_genealogy_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
     if (nodes.size() > maxq+grace) 
-      err("maximum tableau size exceeded!");
+      err("maximum genealogy size exceeded!");
   };
 
 private:
 
   node_t* make_node (color_t col, name_t d = 0) {
-    check_tableau_size(1);
+    check_genealogy_size(1);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green);
@@ -910,6 +924,12 @@ private:
 
 private:
 
+private:
+
+  // returns time of next event
+  double clock (void) const {
+    return _next;
+  };
   // draw random black ball from deme i
   ball_t *random_black_ball (name_t i = 0) const {
     return inventory.random_ball(i);
@@ -980,7 +1000,7 @@ public:
   };
   
   // prune the tree (drop all black balls)
-  tableau_t &prune (void) {
+  genealogy_t &prune (void) {
     for (size_t d = 0; d < NDEME; d++) {
       while (!inventory[d].empty()) {
         ball_t *b = *(inventory[d].begin());
@@ -990,8 +1010,8 @@ public:
     return *this;
   };
 
-  friend tableau_t* prune (tableau_t & T) {
-    tableau_t *U = new tableau_t(T);
+  friend genealogy_t* prune (genealogy_t & T) {
+    genealogy_t *U = new genealogy_t(T);
     U->prune();
     return U;
   }
@@ -1000,14 +1020,10 @@ public:
   
   // initialize the state
   virtual void rinit (void) = 0;
-  // determines if process is still alive
-  virtual bool live (void) const = 0;
-  // returns time of next event
-  virtual slate_t clock (void) const = 0;
-  // updates clocks
-  virtual void update_clocks (void) = 0;
-  // makes a move
-  virtual void jump (void) = 0;
+  // compute event rates
+  virtual double event_rates (double *) const = 0;
+  // makes a jump
+  virtual void jump (name_t) = 0;
   // set parameters 
   virtual void update_params (double*) = 0;
   // set initial conditions
@@ -1015,17 +1031,38 @@ public:
 
 public:
 
+  // updates clock and next event
+  void update_clocks (void) {
+    double rate[NEVENT];
+    double total_rate = event_rates(rate);
+    if (total_rate > 0) {
+      _next = time()+rexp(1/total_rate);
+    } else {
+      _next = R_PosInf;
+    }
+    double u = runif(0,total_rate);
+    size_t k = 0;
+    while (u > rate[k] && k < NEVENT) {
+      if (rate[k] < 0) err("invalid rate[%ld]=%lg",k,rate[k]); // # nocov
+      u -= rate[k];
+      k++;
+    }
+    _event = name_t(k);
+    if (_event >= NEVENT) err("invalid event %ld!",_event); // # nocov
+  };
+
   // run process to a specified time.
   // return number of events that have occurred.
   int play (double tfin) {
     int count = R_NaInt;
-    check_tableau_size();
-    if (!live()) return count;
+    check_genealogy_size();
+    if (inventory.empty()) return count;
     double next = clock();
     count = 0;
-    while (next < tfin && live()) {
+    while (next < tfin && !inventory.empty()) {
       _time = next;
-      jump();
+      jump(_event);
+      update_clocks();
       next = clock();
       count++;
     }
@@ -1050,7 +1087,7 @@ SEXP serial (GPTYPE& T) {
 }
 
 template<class GPTYPE>
-SEXP make_tableau (SEXP Params, SEXP ICs, SEXP T0) {
+SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
   SEXP o;
   PROTECT(Params = AS_NUMERIC(Params));
   PROTECT(ICs = AS_NUMERIC(ICs));
@@ -1060,6 +1097,7 @@ SEXP make_tableau (SEXP Params, SEXP ICs, SEXP T0) {
   A.update_params(REAL(Params));
   A.update_ICs(REAL(ICs));
   A.rinit();
+  A.update_clocks();
   PutRNGstate();
   PROTECT(o = NEW_RAW(A.size()));
   RAW(o) << A;
@@ -1068,7 +1106,7 @@ SEXP make_tableau (SEXP Params, SEXP ICs, SEXP T0) {
 }
 
 template<class GPTYPE>
-SEXP revive_tableau (SEXP State, SEXP Params) {
+SEXP revive_gp (SEXP State, SEXP Params) {
   SEXP o;
   GPTYPE A(RAW(State));
   PROTECT(Params = AS_NUMERIC(Params));
@@ -1086,7 +1124,6 @@ SEXP run_gp (SEXP State, SEXP Times) {
   int ntimes = LENGTH(Times);
   GPTYPE A(RAW(State));
   GetRNGstate();
-  A.update_clocks();
   A.valid();
   SEXP times, count;
   PROTECT(times = AS_NUMERIC(duplicate(Times)));
@@ -1114,8 +1151,60 @@ SEXP run_gp (SEXP State, SEXP Times) {
 
 // extract/compute basic information.
 template <class GPTYPE>
-SEXP get_info (SEXP State, SEXP Prune, SEXP Compact) {
-  // reconstruct the tableau from its serialization
+SEXP tree_gp (SEXP State, SEXP Prune, SEXP Compact) {
+  // reconstruct the genealogy from its serialization
+  GPTYPE A(RAW(State));
+  // extract current time
+  SEXP t0, tout;
+  PROTECT(t0 = NEW_NUMERIC(1));
+  *REAL(t0) = A.timezero();
+  PROTECT(tout = NEW_NUMERIC(1));
+  *REAL(tout) = A.time();
+
+  bool compact = *LOGICAL(AS_LOGICAL(Compact));
+
+  // prune if requested
+  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
+
+  // pack up return values in a list
+  int nout = 3;
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout));
+  PROTECT(outnames = NEW_CHARACTER(nout));
+  k = set_list_elem(out,outnames,t0,"t0",k);
+  k = set_list_elem(out,outnames,tout,"time",k);
+  k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(4);
+  return out;
+}
+
+// extract/compute basic information.
+template <class GPTYPE>
+SEXP structure_gp (SEXP State, SEXP Prune) {
+  // reconstruct the genealogy from its serialization
+  GPTYPE A(RAW(State));
+  // prune if requested
+  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
+  // pack up return values in a list
+  int nout = 1;
+  int k = 0;
+  SEXP out, outnames;
+  PROTECT(out = NEW_LIST(nout));
+  PROTECT(outnames = NEW_CHARACTER(nout));
+  k = set_list_elem(out,outnames,yaml(A),"yaml",k);
+  SET_NAMES(out,outnames);
+
+  UNPROTECT(2);
+  return out;
+}
+
+// extract/compute basic information.
+template <class GPTYPE>
+SEXP info_gp (SEXP State, SEXP Prune, SEXP Compact) {
+  // reconstruct the genealogy from its serialization
   GPTYPE A(RAW(State));
   // extract current time
   SEXP t0, tout;

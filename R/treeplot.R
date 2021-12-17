@@ -10,22 +10,24 @@
 ##' @param time numeric; times of the genealogies.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
-##'
+##' @param palette character; color palette to use for branches.
+##' See \code{\link[ggplot2]{scale_color_brewer}} for details.
 ##' @return A printable \code{ggtree} object.
 ##'
 ##' @importFrom foreach foreach
 ##' @importFrom ape read.tree
-##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous scale_color_manual guides fortify
+##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify scale_colour_brewer
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
 ##' @importFrom dplyr mutate group_by ungroup
 ##' @importFrom tidyr separate
 ##' @importFrom scales alpha
 ##' @importFrom utils globalVariables
+##' 
 ##'
 ##' @rdname treeplot
 ##' @export
 treeplot <- function (tree, time = NULL, root_time = 0,
-  ladderize = TRUE, points = FALSE) {
+  ladderize = TRUE, points = FALSE, palette = "Set1") {
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   read.tree(text=tree) |>
@@ -61,18 +63,39 @@ treeplot <- function (tree, time = NULL, root_time = 0,
       geom_tree(aes(alpha=vis,color=deme))+
       expand_limits(x=dat$x)+
       scale_x_continuous()+
-      scale_color_brewer(type="qual")+
+      scale_colour_brewer(type="qual",palette=palette)+
       scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
       guides(alpha="none",color="none")+
       theme_tree2() -> pl
     if (points) {
       pl+
-        geom_nodepoint(shape=21,fill="darkgreen",color="darkgreen",aes(alpha=nodecol %in% c("g","p")))+
-        geom_nodepoint(shape=21,fill="royalblue2",color="royalblue2",aes(alpha=nodecol %in% c("b")))+
-        geom_tippoint(shape=21,fill="red2",color="red2",aes(alpha=nodecol %in% c("r")))+
-        geom_tippoint(shape=21,fill="royalblue2",color="royalblue2",aes(alpha=nodecol %in% c("b")))+
-        geom_tippoint(shape=21,fill="black",color="black",aes(alpha=nodecol %in% c("o")))+
-        scale_shape_manual(values=c(i=NA,o=19,g=17,p=17,r=19,b=19))+
+        geom_nodepoint(
+          shape=21,fill=ball_colors["g"],color=ball_colors["g"],
+          aes(alpha=nodecol %in% c("g","p"))
+        )+
+        geom_nodepoint(
+          shape=21,fill=ball_colors["b"],color=ball_colors["blue"],
+          aes(alpha=nodecol %in% c("b"))
+        )+
+        geom_nodepoint(
+          shape=21,fill=ball_colors["m"],color=ball_colors["m"],
+          aes(alpha=nodecol %in% c("m"))
+        )+
+        geom_tippoint(
+          shape=21,fill=ball_colors["r"],color=ball_colors["r"],
+          aes(alpha=nodecol %in% c("r"))
+        )+
+        geom_tippoint(
+          shape=21,fill=ball_colors["b"],color=ball_colors["b"],
+          aes(alpha=nodecol %in% c("b"))
+        )+
+        geom_tippoint(
+          shape=21,fill=ball_colors["o"],color=ball_colors["o"],
+          aes(alpha=nodecol %in% c("o"))
+        )+
+        scale_shape_manual(
+          values=c(i=NA,o=19,g=17,p=17,r=19,b=19)
+        )+
         guides(shape="none") -> pl
     }
     pl
@@ -83,7 +106,7 @@ ball_colors <- c(
   g="darkgreen",
   b="royalblue2",
   r="red2",
-  n="saddlebrown",
+  m="saddlebrown",
   o="black",
   p="purple",
   i=alpha("white",0)

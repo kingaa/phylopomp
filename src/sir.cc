@@ -10,110 +10,73 @@ typedef struct {
 } sir_state_t;
 
 typedef struct {
-  double N;                   // host population size
   double beta;                // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
+  double N;                   // host population size
   int S0;                     // initial susceptibles
   int I0;                     // initial infecteds
   int R0;                     // initial recoveries
 } sir_parameters_t;
 
-class sir_tableau_t : public tableau_t<sir_state_t,sir_parameters_t> {
-
-private:
-
-  // clocks: times to next...
-  double nextI;                 // ...infection
-  double nextR;                 // ...recovery
-  double nextS;                 // ...sample
+class sir_genealogy_t : public genealogy_t<sir_state_t,sir_parameters_t,3> {
 
 public:
 
-  sir_tableau_t (void) = default;
   // basic constructor
-  sir_tableau_t (double t0 = 0) : tableau_t(t0) { };
+  sir_genealogy_t (double t0 = 0) : genealogy_t(t0) { };
   // constructor from serialized binary form
-  sir_tableau_t (raw_t *o) {
+  sir_genealogy_t (raw_t *o) {
     o >> *this;
+    valid();
   };
   // copy constructor
-  sir_tableau_t (const sir_tableau_t &T) {
+  sir_genealogy_t (const sir_genealogy_t &T) {
     raw_t *o = new raw_t[T.size()];
     o << T; o >> *this;
     delete[] o;
+    valid();
   };
-  // move constructor
-  sir_tableau_t (sir_tableau_t &&) = delete;
-  // copy assignment operator
-  sir_tableau_t & operator= (const sir_tableau_t &) = delete;
-  // move assignment operator
-  sir_tableau_t & operator= (sir_tableau_t &&) = delete;
-  // destructor
-  ~sir_tableau_t (void) = default;
-
+  
   void valid (void) const {
-    this->tableau_t::valid();
+    this->genealogy_t::valid();
     if (params.N <= 0) err("total population size must be positive!");
     if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
-    if (params.N != state.S+state.I+state.R) err("population leakage!");
-    if (clock() < time()) err("invalid clock");
   };
 
-  bool live (void) const {
-    return (state.I > 0);
+  void rinit (void) {
+    state.S = double(params.S0);
+    state.I = double(params.I0);
+    state.R = double(params.R0);
+    for (int j = 0; j < params.I0; j++) graft();
   };
 
-  void update_clocks (void) {
-    double rate;
-    rate = params.beta * state.S * state.I / params.N;
-    if (rate > 0) {
-      nextI = time()+rexp(1/rate);
-    } else {
-      nextI = R_PosInf;
-    }
-    rate = params.gamma*state.I;
-    if (rate > 0) {
-      nextR = time()+rexp(1/rate);
-    } else {
-      nextR = R_PosInf;
-    }
-    rate = params.psi*state.I;
-    if (rate > 0) {
-      nextS = time()+rexp(1/rate);
-    } else {
-      nextS = R_PosInf;
-    }
+  double event_rates (double *rate) const {
+    rate[0] = params.beta * state.S * state.I / params.N; // infection
+    rate[1] = params.gamma * state.I;			  // recovery
+    rate[2] = params.psi * state.I;			  // sample
+    return rate[0] + rate[1] + rate[2];
   };
 
-  // time to next event
-  double clock (void) const {
-    double next;
-    if (nextI < nextR && nextI < nextS) {
-      next = nextI;
-    } else if (nextS < nextI && nextS < nextR) {
-      next = nextS;
-    } else if (nextR < nextI && nextR < nextS) {
-      next = nextR;
-    } else {
-      next = R_PosInf;
-    }
-    return next;
-  };
-    
-  void jump (void) {
-    if (nextI < nextR && nextI < nextS) {
+  void jump (name_t event) {
+    switch (event) {
+    case 0:			// infection
       state.S -= 1.0;
       state.I += 1.0;
       birth();
-    } else if (nextS < nextI && nextS < nextR) {
-      sample();
-    } else if (nextR < nextI && nextR < nextS) {
+      break;
+    case 1:			// recovery
       state.I -= 1.0;
       state.R += 1.0;
       death();
+      break;
+    case 2:			// sample
+      sample();
+      break;
+    default:
+      err("in SIR 'jump': c'est impossible! (%ld)",event); // # nocov
+      break;
     }
-    update_clocks();
   };
 
   void update_params (double *p) {
@@ -129,31 +92,32 @@ public:
     params.N = double(params.S0+params.I0+params.R0);
   }
 
-  void rinit (void) {
-    state.S = double(params.S0);
-    state.I = double(params.I0);
-    state.R = double(params.R0);
-    for (name_t j = 0; j < name_t(params.I0); j++) graft();
-  };
-
 };
 
 extern "C" {
 
   SEXP makeSIR (SEXP Params, SEXP ICs, SEXP T0) {
-    return make_tableau<sir_tableau_t>(Params,ICs,T0);
+    return make_gp<sir_genealogy_t>(Params,ICs,T0);
   }
 
   SEXP reviveSIR (SEXP State, SEXP Params) {
-    return revive_tableau<sir_tableau_t>(State,Params);
+    return revive_gp<sir_genealogy_t>(State,Params);
   }
 
   SEXP runSIR (SEXP State, SEXP Times) {
-    return run_gp<sir_tableau_t>(State,Times);
+    return run_gp<sir_genealogy_t>(State,Times);
+  }
+
+  SEXP treeSIR (SEXP State, SEXP Prune, SEXP Compact) {
+    return tree_gp<sir_genealogy_t>(State,Prune,Compact);
+  }
+
+  SEXP structSIR (SEXP State, SEXP Prune) {
+    return structure_gp<sir_genealogy_t>(State,Prune);
   }
 
   SEXP infoSIR (SEXP State, SEXP Prune, SEXP Compact) {
-    return get_info<sir_tableau_t>(State,Prune,Compact);
+    return info_gp<sir_genealogy_t>(State,Prune,Compact);
   }
 
 }

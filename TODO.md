@@ -4,6 +4,6 @@
 - deme-specific lineage functions
 - improve `newick2df` for use with more general formats
 - include `code` column in `lineage_count`
-- put illustration facility back in
-  - plot method for diagrams
-  - `illustrate` -> `diagram`?
+- list structure natively (rather than via `read_yaml`)
+- routines to get trees, diagrams separately from `getInfo`
+- brown balls?

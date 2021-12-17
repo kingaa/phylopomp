@@ -47,6 +47,8 @@ Type 'q()' to quit R.
 +   plot(points=TRUE)
 [[1]]
 
+Warning message:
+Removed 161 rows containing missing values (geom_point_g_gtree). 
 > 
 > playSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,times=1) |>
 +   continue(times=100) |>
@@ -54,6 +56,8 @@ Type 'q()' to quit R.
 +   plot(points=TRUE)
 [[1]]
 
+Warning message:
+Removed 213 rows containing missing values (geom_point_g_gtree). 
 > 
 > dev.off()
 null device 
