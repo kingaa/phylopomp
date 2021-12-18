@@ -43,7 +43,6 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
     stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
   )
   x$tree <- gsub("nan","NA",x$tree)
-  x$structure <- read_yaml(text=x$yaml)$genealogy
   x$lineages <- as_tibble(x$lineages)
   attr(x,"model") <- attr(data,"model")
   attr(x,"state") <- attr(data,"state")

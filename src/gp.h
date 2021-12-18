@@ -171,6 +171,28 @@ private:
       o += ")";
       return o;
     };
+    // R list description
+    SEXP structure (void) const {
+      SEXP O, On, Name, Color, Deme;
+      int size = (is(black)) ? 3 : 2;
+      PROTECT(O = NEW_LIST(size));
+      PROTECT(On = NEW_CHARACTER(size));
+      PROTECT(Name = NEW_INTEGER(1));
+      *INTEGER(Name) = int(uniq);
+      PROTECT(Color = NEW_CHARACTER(1));
+      SET_STRING_ELT(Color,0,mkChar(colorsymb[color]));
+      set_list_elem(O,On,Name,"name",0);
+      set_list_elem(O,On,Color,"color",1);
+      if (is(black)) {
+	PROTECT(Deme = NEW_INTEGER(1));
+	*INTEGER(Deme) = int(deme);
+	set_list_elem(O,On,Deme,"deme",2);
+	UNPROTECT(1);
+      }
+      SET_NAMES(O,On);
+      UNPROTECT(4);
+      return O;
+    };
     // machine-readable info
     std::string yaml (size_t level = 0, bool prefix = false) const {
       std::string tab(2*level,' ');
@@ -430,6 +452,30 @@ private:
       }
       s += "}, t = " + std::to_string(slate) + "\n";
       return s;
+    };
+    // R list description
+    SEXP structure (void) const {
+      SEXP O, On, Name, Time, Deme, Pocket;
+      PROTECT(O = NEW_LIST(4));
+      PROTECT(On = NEW_CHARACTER(4));
+      PROTECT(Name = NEW_INTEGER(1));
+      *INTEGER(Name) = int(uniq);
+      PROTECT(Time = NEW_NUMERIC(1));
+      *REAL(Time) = double(slate);
+      PROTECT(Deme = NEW_INTEGER(1));
+      *INTEGER(Deme) = int(deme);
+      PROTECT(Pocket = NEW_LIST(pocket.size()));
+      int k = 0;
+      for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
+	SET_ELEMENT(Pocket,k++,(*i)->structure());
+      }
+      set_list_elem(O,On,Name,"name",0);
+      set_list_elem(O,On,Time,"time",1);
+      set_list_elem(O,On,Deme,"deme",2);
+      set_list_elem(O,On,Pocket,"pocket",3);
+      SET_NAMES(O,On);
+      UNPROTECT(6);
+      return O;
     };
     // machine-readable info
     std::string yaml (size_t level = 0, bool prefix = false) const {
@@ -743,6 +789,27 @@ protected:
   };
 
 private:
+  // R list description
+  SEXP structure (void) const {
+    SEXP O, On, Ndeme, Time, Nodes;
+    PROTECT(O = NEW_LIST(3));
+    PROTECT(On = NEW_CHARACTER(3));
+    PROTECT(Ndeme = NEW_INTEGER(1));
+    *INTEGER(Ndeme) = int(NDEME);
+    PROTECT(Time = NEW_NUMERIC(1));
+    *REAL(Time) = double(time());
+    PROTECT(Nodes = NEW_LIST(nodes.size()));
+    int k = 0;
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      SET_ELEMENT(Nodes,k++,(*i)->structure());
+    }
+    set_list_elem(O,On,Ndeme,"ndemes",0);
+    set_list_elem(O,On,Time,"time",1);
+    set_list_elem(O,On,Nodes,"nodes",2);
+    SET_NAMES(O,On);
+    UNPROTECT(5);
+    return O;
+  };
   // machine-readable info
   std::string yaml (size_t level = 0, bool prefix = false) const {
     std::string tab(2*level,' ');
@@ -806,6 +873,15 @@ public:
     return out;
   }
 
+  // create an R list representation
+  friend void structure (SEXP x, int k, const genealogy_t &T) {
+    SET_STRING_ELT(x,k,T.structure());
+  }
+  
+  friend SEXP structure (const genealogy_t &T) {
+    return T.structure();
+  }
+
   // create a machine-readable description
   friend void yaml (SEXP x, int k, const genealogy_t &T) {
     SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
@@ -818,7 +894,7 @@ public:
     UNPROTECT(1);
     return out;
   }
-  
+
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
   friend void newick (SEXP x, int k, const genealogy_t* T, bool compact = false) {
@@ -1219,7 +1295,7 @@ SEXP info_gp (SEXP State, SEXP Prune, SEXP Compact) {
   if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
 
   // pack up return values in a list
-  int nout = 6;
+  int nout = 7;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout));
@@ -1228,6 +1304,7 @@ SEXP info_gp (SEXP State, SEXP Prune, SEXP Compact) {
   k = set_list_elem(out,outnames,tout,"time",k);
   k = set_list_elem(out,outnames,describe(A),"description",k);
   k = set_list_elem(out,outnames,yaml(A),"yaml",k);
+  k = set_list_elem(out,outnames,structure(A),"structure",k);
   k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
   k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
   SET_NAMES(out,outnames);
