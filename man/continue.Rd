@@ -7,14 +7,14 @@
 \usage{
 continue(data, ...)
 
-\method{continue}{gpsim}(data, times, ...)
+\method{continue}{gpsim}(data, time, ...)
 }
 \arguments{
 \item{data}{previously computed \sQuote{gpsim} object.}
 
 \item{...}{additional arguments, for example to change model parameters.}
 
-\item{times}{times at which output is requested.}
+\item{time}{end timepoint of simulation.}
 }
 \value{
 A \code{tibble} with \code{state} attribute.

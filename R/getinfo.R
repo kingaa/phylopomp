@@ -1,20 +1,25 @@
-##' Retrieve information from genealogy process simulation
-##'
 ##' getInfo
+##'
+##' Retrieve information from genealogy process simulation
 ##'
 ##' @name getInfo
 ##' 
 ##' @param data \code{gpsim} object.
-##' @param ... arguments passed to specific methods.
-##' @param prune logical; prune the tree?
+##' @param prune logical; prune the genealogy?
+##' @param time logical; return the current time?
+##' @param t0 logical; return the zero-time?
+##' @param tree logical; return the tree?
 ##' @param compact logical; return the tree in compact representation?
+##' @param description logical; return the description?
+##' @param yaml logical; return the structure in YAML format?
+##' @param structure logical; return the structure in \R list format?
+##' @param lineages logical; return the lineage-count function?
 ##'
 ##' @include package.R
 ##' @importFrom tibble as_tibble
-##' @importFrom yaml read_yaml
 ##'
 ##' @return
-##' A list containing the following elements
+##' A list containing the requested elements, including any or all of:
 ##' \describe{
 ##'   \item{t0}{the initial time}
 ##'   \item{time}{the current time}
@@ -29,24 +34,24 @@
 ##'
 ##' @rdname getinfo
 ##' @export
-getInfo <- function (data, ...) {
-  UseMethod("getInfo",data)
-}
-
-##' @rdname getinfo
-##' @export
-getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
+getInfo <- function (
+  data, prune  = TRUE,
+  t0 = FALSE, time = FALSE,
+  description = FALSE, structure = FALSE, yaml = FALSE,
+  lineages = FALSE,
+  tree = FALSE, compact = TRUE)
+{
   x <- switch(
-    attr(data,"model"),
-    SIR = .Call(P_infoSIR,attr(data,"state"),prune,compact),
-    SIIR = .Call(P_infoSIIR,attr(data,"state"),prune,compact),
-    stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
+    paste0("model",as.character(attr(data,"model"))),
+    modelSIR = .Call(P_infoSIR,data,prune,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    modelSIIR = .Call(P_infoSIIR,data,prune,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    model = stop("no model specified",call.=FALSE),
+    stop("unrecognized model ",sQuote(attr(data,"model")),call.=FALSE)
   )
-  x$tree <- gsub("nan","NA",x$tree)
-  x$lineages <- as_tibble(x$lineages)
-  attr(x,"model") <- attr(data,"model")
-  attr(x,"state") <- attr(data,"state")
-  class(x) <- c("gpsim",class(x))
+  if (!is.null(x$tree)) x$tree <- gsub("nan","NA",x$tree)
+  if (!is.null(x$lineages)) x$lineages <- as_tibble(x$lineages)
   x
 }
 
@@ -54,5 +59,3 @@ getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = TRUE) {
 ##' @docType import
 ##' @export
 yaml::as.yaml
-
-

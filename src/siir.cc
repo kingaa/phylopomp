@@ -129,16 +129,12 @@ extern "C" {
     return run_gp<siir_genealogy_t>(State,Times);
   }
 
-  SEXP treeSIIR (SEXP State, SEXP Prune, SEXP Compact) {
-    return tree_gp<siir_genealogy_t>(State,Prune,Compact);
-  }
-
-  SEXP structSIIR (SEXP State, SEXP Prune) {
-    return structure_gp<siir_genealogy_t>(State,Prune);
-  }
-
-  SEXP infoSIIR (SEXP State, SEXP Prune, SEXP Compact) {
-    return info_gp<siir_genealogy_t>(State,Prune,Compact);
+  SEXP infoSIIR (SEXP State, SEXP Prune, 
+		 SEXP T0, SEXP Time, SEXP Descript,
+		 SEXP Yaml, SEXP Structure, SEXP Lineages,
+		 SEXP Tree, SEXP Compact) {
+    return info_gp<siir_genealogy_t>(State, Prune, T0, Time, Descript,
+				     Yaml,Structure, Lineages, Tree, Compact);
   }
 
 }

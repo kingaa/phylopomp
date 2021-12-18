@@ -28,7 +28,7 @@ treeplot(
 See \code{\link[ggplot2]{scale_color_brewer}} for details.}
 }
 \value{
-A printable \code{ggtree} object.
+A printable \code{ggplot} object.
 }
 \description{
 Plots a genealogical tree.

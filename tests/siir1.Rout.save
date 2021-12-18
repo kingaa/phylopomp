@@ -26,38 +26,24 @@ Type 'q()' to quit R.
 > set.seed(481604604)
 > options(digits=3)
 > 
-> playSIIR(times=1:10) -> x
+> runSIIR(time=10) -> x
 > x
-# A tibble: 10 × 2
-    time count
-   <dbl> <int>
- 1     1    10
- 2     2     7
- 3     3     7
- 4     4    18
- 5     5    23
- 6     6    29
- 7     7    39
- 8     8    31
- 9     9    20
-10    10     1
+<gpsim for model ‘SIIR’>
 > 
-> playSIIR(Beta1=2,Beta2=4,gamma=1,psi=2,S0=100,I1_0=5,I2_0=2,times=1:2) |>
-+   getInfo() |>
+> runSIIR(Beta1=2,Beta2=4,gamma=1,psi=2,S0=100,I1_0=5,I2_0=2,time=2) |>
 +   plot(points=TRUE)
 [[1]]
 
 Warning message:
 Removed 161 rows containing missing values (geom_point_g_gtree). 
 > 
-> playSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,times=1) |>
-+   continue(times=100) |>
-+   getInfo(compact=FALSE) |>
-+   plot(points=TRUE)
+> runSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,time=1) |>
++   continue(time=100) |>
++   plot(points=TRUE,compact=FALSE)
 [[1]]
 
 Warning message:
-Removed 213 rows containing missing values (geom_point_g_gtree). 
+Removed 210 rows containing missing values (geom_point_g_gtree). 
 > 
 > dev.off()
 null device 

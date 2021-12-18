@@ -2,12 +2,21 @@
 % Please edit documentation in R/sir.R
 \name{sir}
 \alias{sir}
-\alias{playSIR}
+\alias{runSIR}
 \alias{SIR}
 \alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
-playSIR(Beta = 2, gamma = 1, psi = 1, S0 = 100, I0 = 2, R0 = 0, t0 = 0, times)
+runSIR(
+  Beta = 2,
+  gamma = 1,
+  psi = 1,
+  S0 = 100,
+  I0 = 2,
+  R0 = 0,
+  t0 = 0,
+  time = 1
+)
 
 sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 }
@@ -26,12 +35,12 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 
 \item{t0}{initial time}
 
-\item{times}{times at which output is requested.}
+\item{time}{end timepoint of simulation.}
 
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 }
 \value{
-A \code{tibble} with \code{state} attribute.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
 }
 \description{
 Run the simulator.
@@ -40,24 +49,17 @@ Run the simulator.
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 }
 \examples{
-playSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,times=0:5) |>
-  continue(Beta=5,gamma=2,times=6:10,psi=3) |>
-  getInfo() |>
+runSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,time=5) |>
+  continue(Beta=5,gamma=2,time=10,psi=3) |>
   plot()
 
-playSIR(Beta=3,gamma=1,psi=2,S0=10,I0=5,R0=0,times=0:5,t0=-1) |>
-  getInfo() |>
+runSIR(Beta=3,gamma=1,psi=2,S0=20,I0=5,R0=0,time=5,t0=-1) |>
   plot(points=TRUE)
 
 library(cowplot)
-playSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,times=2,t0=0) -> x
-y <- getInfo(x,prune=FALSE,compact=FALSE)
-plot(y,points=TRUE)
-y <- getInfo(x)
-plot_grid(plotlist=list(plot(y,points=TRUE)[[1]],diagram(y)),
-  ncol=1,rel_heights=c(2,1))
-
-plot_grid(diagram(y))
+runSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
+plot_grid(plotlist=list(plot(x,points=TRUE)[[1]],diagram(x)),
+  ncol=1,rel_heights=c(4,1))
 }
 \seealso{
 Other Genealogy processes: 

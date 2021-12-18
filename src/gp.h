@@ -632,44 +632,44 @@ public:
   };
 
   // binary serialization of genealogy_t
-  friend raw_t* operator<< (raw_t *o, const genealogy_t &T) {
-    name_t A[3]; A[0] = T._unique; A[1] = T.nodes.size(); A[2] = name_t(T._event);
-    slate_t B[3]; B[0] = T._t0; B[1] = T._time; B[2] = T._next;
+  friend raw_t* operator<< (raw_t *o, const genealogy_t &G) {
+    name_t A[3]; A[0] = G._unique; A[1] = G.nodes.size(); A[2] = name_t(G._event);
+    slate_t B[3]; B[0] = G._t0; B[1] = G._time; B[2] = G._next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    memcpy(o,&T.state,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(o,&T.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    for (node_it i = T.nodes.begin(); i != T.nodes.end(); i++) {
+    memcpy(o,&G.state,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(o,&G.params,sizeof(parameters_t)); o += sizeof(parameters_t);
+    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
       o = (o << **i);
     }
     return o;
   }
 
   // binary deserialization of genealogy_t
-  friend raw_t* operator>> (raw_t *o, genealogy_t &T) {
+  friend raw_t* operator>> (raw_t *o, genealogy_t &G) {
     name_t A[3];
     slate_t B[3];
     std::unordered_map<name_t,node_t*> nodeptr;
     typename std::unordered_map<name_t,node_t*>::const_iterator npit;
-    T.clean();
+    G.clean();
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    memcpy(&T.state,o,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(&T.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    T._unique = A[0]; T._t0 = B[0]; T._time = B[1];
-    T._next = B[2]; T._event = A[2];
+    memcpy(&G.state,o,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(&G.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
+    G._unique = A[0]; G._t0 = B[0]; G._time = B[1];
+    G._next = B[2]; G._event = A[2];
     nodeptr.reserve(A[1]);
     for (name_t i = 0; i < A[1]; i++) {
       node_t *p = new node_t();
       o = (o >> *p);
-      T.nodes.push_back(p);
+      G.nodes.push_back(p);
       nodeptr.insert({p->uniq,p});
     }
-    for (node_it i = T.nodes.begin(); i != T.nodes.end(); i++) {
+    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
       node_t *p = *i;
       for (ball_it j = p->pocket.begin(); j != p->pocket.end(); j++) {
         ball_t *b = *j;
-        T.inventory.insert(b,b->deme);
+        G.inventory.insert(b,b->deme);
         if (b->is(green)) {
           npit = nodeptr.find(b->uniq);
           if (npit == nodeptr.end()) {
@@ -697,23 +697,24 @@ public:
     o >> *this;
   };
   // copy constructor
-  genealogy_t (const genealogy_t & T) {
-    raw_t *o = new raw_t[T.size()];
-    o << T; o >> *this;
+  genealogy_t (const genealogy_t & G) {
+    raw_t *o = new raw_t[G.size()];
+    o << G; o >> *this;
     delete[] o;
   };
   // move constructor
   genealogy_t (genealogy_t &&) = delete;
   // copy assignment operator
-  genealogy_t & operator= (const genealogy_t & T) {
+  genealogy_t & operator= (const genealogy_t & G) {
     clean();
-    raw_t *o = new raw_t[T.size()];
-    o << T; o >> *this;
+    raw_t *o = new raw_t[G.size()];
+    o << G; o >> *this;
     delete[] o;
     return *this;
   };
   // move assignment operator
-  genealogy_t & operator= (genealogy_t &&) = delete;  // destructor
+  genealogy_t & operator= (genealogy_t &&) = delete;
+  // destructor
   virtual ~genealogy_t (void) {
     clean();
   };
@@ -728,6 +729,18 @@ public:
   // get zero time.
   slate_t timezero (void) const {
     return _t0;
+  };
+
+  friend SEXP timezero (genealogy_t& G) {
+    SEXP o = NEW_NUMERIC(1);
+    *REAL(o) = G.timezero();
+    return o;
+  };
+
+  friend SEXP time (genealogy_t& G) {
+    SEXP o = NEW_NUMERIC(1);
+    *REAL(o) = G.time();
+    return o;
   };
 
 protected:
@@ -845,9 +858,9 @@ private:
 
 public:
 
-  friend SEXP lineage_count (const genealogy_t& T) {
+  friend SEXP lineage_count (const genealogy_t& G) {
     SEXP t, ell, out, outn;
-    int nt = T.lineage_count();
+    int nt = G.lineage_count();
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(ell = NEW_INTEGER(nt));
     PROTECT(out = NEW_LIST(2));
@@ -855,56 +868,56 @@ public:
     set_list_elem(out,outn,t,"time",0);
     set_list_elem(out,outn,ell,"lineages",1);
     SET_NAMES(out,outn);
-    T.lineage_count(REAL(t),INTEGER(ell));
+    G.lineage_count(REAL(t),INTEGER(ell));
     UNPROTECT(4);
     return out;
   }
 
   // create a human-readable description
-  friend void describe (SEXP x, int k, const genealogy_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.describe().c_str()));
+  friend void describe (SEXP x, int k, const genealogy_t& G) {
+    SET_STRING_ELT(x,k,mkChar(G.describe().c_str()));
   }
   
-  friend SEXP describe (const genealogy_t &T) {
+  friend SEXP describe (const genealogy_t& G) {
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(T.describe().c_str()));
+    SET_STRING_ELT(out,0,mkChar(G.describe().c_str()));
     UNPROTECT(1);
     return out;
   }
 
   // create an R list representation
-  friend void structure (SEXP x, int k, const genealogy_t &T) {
-    SET_STRING_ELT(x,k,T.structure());
+  friend void structure (SEXP x, int k, const genealogy_t& G) {
+    SET_STRING_ELT(x,k,G.structure());
   }
   
-  friend SEXP structure (const genealogy_t &T) {
-    return T.structure();
+  friend SEXP structure (const genealogy_t& G) {
+    return G.structure();
   }
 
   // create a machine-readable description
-  friend void yaml (SEXP x, int k, const genealogy_t &T) {
-    SET_STRING_ELT(x,k,mkChar(T.yaml().c_str()));
+  friend void yaml (SEXP x, int k, const genealogy_t& G) {
+    SET_STRING_ELT(x,k,mkChar(G.yaml().c_str()));
   }
   
-  friend SEXP yaml (const genealogy_t &T) {
+  friend SEXP yaml (const genealogy_t& G) {
     SEXP out;
     PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(T.yaml().c_str()));
+    SET_STRING_ELT(out,0,mkChar(G.yaml().c_str()));
     UNPROTECT(1);
     return out;
   }
 
   // extract the tree structure in Newick form.
   // store in element k of character-vector x.
-  friend void newick (SEXP x, int k, const genealogy_t* T, bool compact = false) {
-    SET_STRING_ELT(x,k,mkChar(T->newick(compact).c_str()));
+  friend void newick (SEXP x, int k, const genealogy_t* G, bool compact = false) {
+    SET_STRING_ELT(x,k,mkChar(G->newick(compact).c_str()));
   }
 
-  friend SEXP newick (const genealogy_t &T, bool compact = false) {
+  friend SEXP newick (const genealogy_t& G, bool compact = false) {
     SEXP x;
     PROTECT(x = NEW_CHARACTER(1));
-    SET_STRING_ELT(x,0,mkChar(T.newick(compact).c_str()));
+    SET_STRING_ELT(x,0,mkChar(G.newick(compact).c_str()));
     UNPROTECT(1);
     return x;
   }
@@ -1086,12 +1099,6 @@ public:
     return *this;
   };
 
-  friend genealogy_t* prune (genealogy_t & T) {
-    genealogy_t *U = new genealogy_t(T);
-    U->prune();
-    return U;
-  }
-
 public:
   
   // initialize the state
@@ -1132,7 +1139,8 @@ public:
   int play (double tfin) {
     int count = R_NaInt;
     check_genealogy_size();
-    if (inventory.empty()) return count;
+    if (time() > tfin)
+      err("cannot simulate backward! (t > tout)",time(),tfin);
     double next = clock();
     count = 0;
     while (next < tfin && !inventory.empty()) {
@@ -1141,6 +1149,7 @@ public:
       update_clocks();
       next = clock();
       count++;
+      R_CheckUserInterrupt();
     }
     if (next > tfin)  _time = tfin; // relies on Markov property
     return count;
@@ -1154,10 +1163,10 @@ public:
 
 // create the serialized state:
 template <class GPTYPE>
-SEXP serial (GPTYPE& T) {
+SEXP serial (GPTYPE& G) {
   SEXP out;
-  PROTECT(out = NEW_RAW(T.size()));
-  RAW(out) << T;
+  PROTECT(out = NEW_RAW(G.size()));
+  RAW(out) << G;
   UNPROTECT(1);
   return out;
 }
@@ -1193,35 +1202,19 @@ SEXP revive_gp (SEXP State, SEXP Params) {
   return o;
 }
 
-// play a genealogy process
+// run a genealogy process
 template<class GPTYPE>
-SEXP run_gp (SEXP State, SEXP Times) {
-  int nout = 3;
-  int ntimes = LENGTH(Times);
+SEXP run_gp (SEXP State, SEXP Tout) {
+  SEXP out;
   GPTYPE A(RAW(State));
   GetRNGstate();
   A.valid();
-  SEXP times, count;
-  PROTECT(times = AS_NUMERIC(duplicate(Times)));
-  PROTECT(count = NEW_INTEGER(ntimes));
-  int *xc = INTEGER(count);
-  slate_t *xt = REAL(times);
-  if (A.time() > xt[0])
-    err("must not have t0 = %lg > %g = times[1]!",A.time(),xt[0]);
-  for (int k = 0; k < ntimes; k++, xc++, xt++) {
-    *xc = A.play(*xt);
-    R_CheckUserInterrupt();
-  }
+  PROTECT(Tout = AS_NUMERIC(Tout));
+  slate_t t = slate_t(*REAL(Tout));
+  A.play(t);
   PutRNGstate();
-  // pack everything up in a list
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout));
-  PROTECT(outnames = NEW_CHARACTER(nout));
-  set_list_elem(out,outnames,times,"time",0);
-  set_list_elem(out,outnames,count,"count",1);
-  set_list_elem(out,outnames,serial(A),"state",2);
-  SET_NAMES(out,outnames);
-  UNPROTECT(4);
+  PROTECT(out = serial(A));
+  UNPROTECT(2);
   return out;
 }
 
@@ -1231,11 +1224,9 @@ SEXP tree_gp (SEXP State, SEXP Prune, SEXP Compact) {
   // reconstruct the genealogy from its serialization
   GPTYPE A(RAW(State));
   // extract current time
-  SEXP t0, tout;
-  PROTECT(t0 = NEW_NUMERIC(1));
-  *REAL(t0) = A.timezero();
-  PROTECT(tout = NEW_NUMERIC(1));
-  *REAL(tout) = A.time();
+  SEXP time;
+  PROTECT(time = NEW_NUMERIC(1));
+  *REAL(time) = A.time();
 
   bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
@@ -1243,73 +1234,99 @@ SEXP tree_gp (SEXP State, SEXP Prune, SEXP Compact) {
   if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
 
   // pack up return values in a list
-  int nout = 3;
+  int nout = 2;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout));
   PROTECT(outnames = NEW_CHARACTER(nout));
-  k = set_list_elem(out,outnames,t0,"t0",k);
-  k = set_list_elem(out,outnames,tout,"time",k);
+  k = set_list_elem(out,outnames,time,"time",k);
   k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
   SET_NAMES(out,outnames);
 
-  UNPROTECT(4);
+  UNPROTECT(3);
   return out;
 }
 
 // extract/compute basic information.
 template <class GPTYPE>
 SEXP structure_gp (SEXP State, SEXP Prune) {
+  SEXP out;
   // reconstruct the genealogy from its serialization
   GPTYPE A(RAW(State));
   // prune if requested
   if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
   // pack up return values in a list
-  int nout = 1;
-  int k = 0;
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout));
-  PROTECT(outnames = NEW_CHARACTER(nout));
-  k = set_list_elem(out,outnames,yaml(A),"yaml",k);
-  SET_NAMES(out,outnames);
-
-  UNPROTECT(2);
+  PROTECT(out = structure(A));
+  UNPROTECT(1);
   return out;
 }
 
 // extract/compute basic information.
 template <class GPTYPE>
-SEXP info_gp (SEXP State, SEXP Prune, SEXP Compact) {
+SEXP info_gp (SEXP State, SEXP Prune, 
+	      SEXP T0, SEXP Time, SEXP Descript,
+	      SEXP Yaml, SEXP Structure, SEXP Lineages,
+	      SEXP Tree, SEXP Compact) {
   // reconstruct the genealogy from its serialization
   GPTYPE A(RAW(State));
-  // extract current time
-  SEXP t0, tout;
-  PROTECT(t0 = NEW_NUMERIC(1));
-  *REAL(t0) = A.timezero();
-  PROTECT(tout = NEW_NUMERIC(1));
-  *REAL(tout) = A.time();
-
-  bool compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // prune if requested
-  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
+  bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
+  if (do_prune) A.prune();
+
+  size_t nout = 0;
+
+  bool get_t0 = *LOGICAL(AS_LOGICAL(T0));
+  if (get_t0) nout++;
+  
+  bool get_time = *LOGICAL(AS_LOGICAL(Time));
+  if (get_time) nout++;
+
+  bool get_desc = *LOGICAL(AS_LOGICAL(Descript));
+  if (get_desc) nout++;
+
+  bool get_yaml = *LOGICAL(AS_LOGICAL(Yaml));
+  if (get_yaml) nout++;
+
+  bool get_struc = *LOGICAL(AS_LOGICAL(Structure));
+  if (get_struc) nout++;
+
+  bool get_lin = *LOGICAL(AS_LOGICAL(Lineages));
+  if (get_lin) nout++;
+
+  bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
+  if (get_tree) nout++;
+  bool do_compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // pack up return values in a list
-  int nout = 7;
   int k = 0;
   SEXP out, outnames;
   PROTECT(out = NEW_LIST(nout));
   PROTECT(outnames = NEW_CHARACTER(nout));
-  k = set_list_elem(out,outnames,t0,"t0",k);
-  k = set_list_elem(out,outnames,tout,"time",k);
-  k = set_list_elem(out,outnames,describe(A),"description",k);
-  k = set_list_elem(out,outnames,yaml(A),"yaml",k);
-  k = set_list_elem(out,outnames,structure(A),"structure",k);
-  k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
-  k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
+  if (get_t0) {
+    k = set_list_elem(out,outnames,timezero(A),"t0",k);
+  }
+  if (get_time) {
+    k = set_list_elem(out,outnames,time(A),"time",k);
+  }
+  if (get_desc) {
+    k = set_list_elem(out,outnames,describe(A),"description",k);
+  }
+  if (get_yaml) {
+    k = set_list_elem(out,outnames,yaml(A),"yaml",k);
+  }
+  if (get_struc) {
+    k = set_list_elem(out,outnames,structure(A),"structure",k);
+  }
+  if (get_lin) {
+    k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
+  }
+  if (get_tree) {
+    k = set_list_elem(out,outnames,newick(A,do_compact),"tree",k);
+  }
   SET_NAMES(out,outnames);
 
-  UNPROTECT(4);
+  UNPROTECT(2);
   return out;
 }
 

@@ -3,7 +3,7 @@
 ##' Plots a genealogical tree.
 ##'
 ##' @name treeplot
-##' @include package.R
+##' @include getinfo.R
 ##'
 ##' @param tree character; tree representation in Newick format.
 ##' @param root_time numeric; time of the root.
@@ -12,7 +12,7 @@
 ##' @param points Show nodes and tips?
 ##' @param palette character; color palette to use for branches.
 ##' See \code{\link[ggplot2]{scale_color_brewer}} for details.
-##' @return A printable \code{ggtree} object.
+##' @return A printable \code{ggplot} object.
 ##'
 ##' @importFrom foreach foreach
 ##' @importFrom ape read.tree
@@ -117,13 +117,10 @@ utils::globalVariables(
        )
 
 ##' @export
-plot.gpsim <- function (x, y, ...) {
+plot.gpsim <- function (x, y, ..., prune = TRUE, compact = TRUE) {
   if (!missing(y))
     warning("in ",sQuote("plot.gpsim"),": ",
       sQuote('y')," is ignored.",call.=FALSE)
-  tree <- getElement(x,"tree")
-  if (is.null(tree))
-    stop("no ",sQuote("tree")," element supplied!",call.=FALSE)
-  time <- getElement(x,"time")
-  treeplot(tree=x$tree,time=time,...)
+  out <- getInfo(x,tree=TRUE,time=TRUE,prune=prune,compact=compact)
+  treeplot(tree=out$tree,time=out$time,...)
 }

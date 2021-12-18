@@ -3,11 +3,15 @@
 ##' Produces a diagram of the genealogy process state.
 ##'
 ##' @name diagram
-##' @include package.R treeplot.R
+##' @include getinfo.R
 ##'
 ##' @inheritParams getInfo
 ##' @inheritParams grid::gTree
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
+##' @param m width of plotting window, in nodes.
+##' By default, the nodes will be adjusted in width to fit the window.
+##' @param n height of the pockets, in balls.
+##' By default, the balls will be adjusted in size to fit the space available.
 ##' 
 ##' @return A \pkg{grid} graphics object (\code{grob}), invisibly.
 ##'
@@ -18,15 +22,39 @@
 ##'
 NULL
 
-
 ##' @rdname diagram
 ##' @export
-diagram <- function (data, ..., vp = NULL) {
-  data$structure |>
+diagram <- function (data, prune = TRUE, m = NULL, n = NULL, ..., vp = NULL) {
+  data |>
+    getInfo(structure=TRUE,prune=prune) |>
+    getElement("structure") |>
     genealogyGrob(
+      m=m,n=n,
       vp=viewport(height=0.95,width=0.95,gp=gpar(...))
-    ) |>
-    invisible()
+    ) -> x
+  class(x) <- c("gpdiag",class(x))
+  x
+}
+
+##' @rdname internals
+##' @keywords internals
+##' @method print gpdiag
+##' @importFrom grid grid.newpage grid.draw seekViewport pushViewport upViewport
+##' @export
+print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
+  if (newpage) grid.newpage()
+  if (is.null(vp)) {
+    grid.draw(x)
+  } else {
+    if (is.character(vp)) {
+      seekViewport(vp)
+    } else {
+      pushViewport(vp)
+    }
+    grid.draw(x)
+    upViewport()
+  }
+  invisible(x)
 }
 
 ##' Diagramming internals
@@ -43,10 +71,13 @@ diagram <- function (data, ..., vp = NULL) {
 ##' @param n length of longest genealogy
 ##' 
 ##' @importFrom grid viewport gList gTree
+##' @inheritParams diagram
 ##' @inheritParams grid::grob
 ##' 
 ##' @export
-genealogyGrob <- function (data, n = length(data$nodes), vp = NULL) {
+genealogyGrob <- function (data, m = NULL, n = NULL, vp = NULL) {
+  if (is.null(m)) m <- length(data$nodes)
+  if (is.null(n)) n <- max(sapply(data$nodes,\(node)length(node$pocket)))
   gTree(
     children=do.call(
       gList,
@@ -55,12 +86,11 @@ genealogyGrob <- function (data, n = length(data$nodes), vp = NULL) {
         function (k) {
           nodeGrob(
             data$nodes[[k]],
+            n=n,
             vp=viewport(
-              x=(k-1/2)/n,
-              width=0.95/n,
-              height=0.95,
-              xscale=c(0,1),
-              yscale=c(0,4)
+              x=(k-1/2)/m,
+              width=0.95/m,
+              height=0.95
             )
           )
         }
@@ -73,10 +103,13 @@ genealogyGrob <- function (data, n = length(data$nodes), vp = NULL) {
 ##' @rdname internals
 ##' @keywords internal
 ##' @param data list; node structure
+##' @param digits non-negative integer;
+##' number of decimal digits to print in the node time
 ##' @importFrom grid roundrectGrob linesGrob textGrob gpar grobTree
+##' @inheritParams diagram
 ##' @inheritParams grid::grob
 ##' @export
-nodeGrob <- function (data, vp = NULL) {
+nodeGrob <- function (data, digits = 1, n = NULL, vp = NULL) {
   gTree(
     name=data$name,
     children=gList(
@@ -89,7 +122,7 @@ nodeGrob <- function (data, vp = NULL) {
       resizingTextGrob(
         label=if_else(
           is.finite(data$time),
-          as.character(round(data$time,1)),
+          as.character(round(data$time,digits)),
           "-\u221E"
         ),
         vp=viewport(y=1/8,height=1/4),
@@ -97,6 +130,7 @@ nodeGrob <- function (data, vp = NULL) {
       ),
       pocketGrob(
         data$pocket,
+        n=n,
         vp=viewport(y=1/2,height=1/2)
       )
     ),
@@ -110,8 +144,8 @@ nodeGrob <- function (data, vp = NULL) {
 ##' @importFrom grid roundrectGrob linesGrob textGrob gpar grobTree
 ##' @inheritParams grid::grob
 ##' @export
-pocketGrob <- function (data, vp = NULL) {
-  n <- length(data)
+pocketGrob <- function (data, n = NULL, vp = NULL) {
+  if (is.null(n)) n <- length(data)
   gTree(
     children=do.call(
       gList,
@@ -121,9 +155,8 @@ pocketGrob <- function (data, vp = NULL) {
           ballGrob(
             data[[k]],
             vp=viewport(
-              y=(k-1/2)/n,
-              width=1,
-              height=0.5/n
+              y=(n-k+1/2)/n,
+              width=1
             )
           )
         }
@@ -148,13 +181,13 @@ ballGrob <- function (data, vp = NULL) {
         col=ball_colors[data$color]
       )
     ),
-    tg=if (data$color %in% c("m","r")) {
-         NULL
-       } else {
+    tg=if (data$color %in% c("g","o")) {
          textGrob(
            label=data$name,
            gp=gpar(col="white")
          )
+       } else {
+         NULL
        },
     vp=vp,
     cl="ballGrob"

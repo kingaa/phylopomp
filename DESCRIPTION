@@ -25,6 +25,7 @@ Collate:
     'treeplot.R'
     'diagram.R'
     'foreach.R'
+    'lineages.R'
     'newick2df.R'
     'print.R'
     'siir.R'

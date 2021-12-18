@@ -2,24 +2,44 @@
 % Please edit documentation in R/getinfo.R
 \name{getInfo}
 \alias{getInfo}
-\alias{getInfo.gpsim}
-\title{Retrieve information from genealogy process simulation}
+\title{getInfo}
 \usage{
-getInfo(data, ...)
-
-\method{getInfo}{gpsim}(data, ..., prune = TRUE, compact = TRUE)
+getInfo(
+  data,
+  prune = TRUE,
+  t0 = FALSE,
+  time = FALSE,
+  description = FALSE,
+  structure = FALSE,
+  yaml = FALSE,
+  lineages = FALSE,
+  tree = FALSE,
+  compact = TRUE
+)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}
 
-\item{...}{arguments passed to specific methods.}
+\item{prune}{logical; prune the genealogy?}
 
-\item{prune}{logical; prune the tree?}
+\item{t0}{logical; return the zero-time?}
+
+\item{time}{logical; return the current time?}
+
+\item{description}{logical; return the description?}
+
+\item{structure}{logical; return the structure in \R list format?}
+
+\item{yaml}{logical; return the structure in YAML format?}
+
+\item{lineages}{logical; return the lineage-count function?}
+
+\item{tree}{logical; return the tree?}
 
 \item{compact}{logical; return the tree in compact representation?}
 }
 \value{
-A list containing the following elements
+A list containing the requested elements, including any or all of:
 \describe{
   \item{t0}{the initial time}
   \item{time}{the current time}
@@ -31,21 +51,20 @@ A list containing the following elements
 }
 }
 \description{
-getInfo
+Retrieve information from genealogy process simulation
 }
 \examples{
-playSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,times=0:3,t0=0) |>
-  continue(Beta1=5,Beta2=10,gamma=2,times=4:10,psi=10) |>
-  getInfo() |>
+runSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,time=3,t0=0) |>
+  continue(Beta1=5,Beta2=10,gamma=2,time=10,psi=10) |>
   plot()
 
-playSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,times=0,t0=-1) |>
-  continue(psi=10,times=1:5) |>
-  getInfo(prune=FALSE) -> y
-plot(y,points=TRUE)
+runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=0,t0=-1) |>
+  continue(psi=10,time=2) |>
+  plot(points=TRUE,prune=FALSE)
 
 library(ggplot2)
-y$lineages |>
+runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=5) |>
+  lineages() |>
   ggplot(aes(x=time,y=lineages))+
   geom_step()
 }

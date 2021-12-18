@@ -4,10 +4,18 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(data, ..., vp = NULL)
+diagram(data, prune = TRUE, m = NULL, n = NULL, ..., vp = NULL)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}
+
+\item{prune}{logical; prune the genealogy?}
+
+\item{m}{width of plotting window, in nodes.
+By default, the nodes will be adjusted in width to fit the window.}
+
+\item{n}{height of the pockets, in balls.
+By default, the balls will be adjusted in size to fit the space available.}
 
 \item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
 
@@ -21,12 +29,8 @@ Produces a diagram of the genealogy process state.
 }
 \examples{
 library(cowplot)
-playSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,times=2,t0=0) -> x
-y <- getInfo(x,prune=FALSE,compact=FALSE)
-plot(y,points=TRUE)
-y <- getInfo(x)
-plot_grid(plotlist=list(plot(y,points=TRUE)[[1]],diagram(y)),
-  ncol=1,rel_heights=c(2,1))
-
-plot_grid(diagram(y))
+runSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
+plot(x,points=TRUE,prune=FALSE,compact=FALSE)
+plot_grid(plotlist=list(plot(x,points=TRUE)[[1]],diagram(x)),
+  ncol=1,rel_heights=c(4,1))
 }

@@ -37,7 +37,9 @@ If \code{time} is furnished, it is assumed that the absence of samples between t
 Invisible nodes (labeled 'X_' for any X) are dropped.
 }
 \examples{
-playSIR(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,times=c(0,5),t0=0) -> x
-y <- getInfo(x)
-newick2df(y$tree) -> z
+runSIR(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,time=5,t0=0) |>
+  getInfo(tree=TRUE) |>
+  getElement("tree") |>
+  newick2df()
+  
 }

@@ -2,11 +2,11 @@
 % Please edit documentation in R/siir.R
 \name{siir}
 \alias{siir}
-\alias{playSIIR}
+\alias{runSIIR}
 \alias{SIIR}
 \title{SIIR with sampling simulator.}
 \usage{
-playSIIR(
+runSIIR(
   Beta1 = 2,
   Beta2 = 2,
   gamma = 1,
@@ -16,7 +16,7 @@ playSIIR(
   I2_0 = 1,
   R0 = 0,
   t0 = 0,
-  times
+  time = 1
 )
 }
 \arguments{
@@ -36,27 +36,26 @@ playSIIR(
 
 \item{t0}{initial time}
 
-\item{times}{times at which output is requested.}
+\item{time}{end timepoint of simulation.}
 }
 \value{
-A \code{tibble} with \code{state} attribute.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
 }
 \description{
 Run the simulator.
 }
 \examples{
-playSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,times=0:3,t0=0) |>
-  continue(Beta1=5,Beta2=10,gamma=2,times=4:10,psi=10) |>
-  getInfo() |>
+runSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,time=3,t0=0) |>
+  continue(Beta1=5,Beta2=10,gamma=2,time=10,psi=10) |>
   plot()
 
-playSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,times=0,t0=-1) |>
-  continue(psi=10,times=1:5) |>
-  getInfo(prune=FALSE) -> y
-plot(y,points=TRUE)
+runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=0,t0=-1) |>
+  continue(psi=10,time=2) |>
+  plot(points=TRUE,prune=FALSE)
 
 library(ggplot2)
-y$lineages |>
+runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=5) |>
+  lineages() |>
   ggplot(aes(x=time,y=lineages))+
   geom_step()
 }

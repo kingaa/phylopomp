@@ -7,15 +7,11 @@ static const R_CallMethodDef callMethods[] = {
   {"makeSIR", (DL_FUNC) &makeSIR, 3},
   {"reviveSIR", (DL_FUNC) &reviveSIR, 2},
   {"runSIR", (DL_FUNC) &runSIR, 2},
-  {"treeSIR", (DL_FUNC) &treeSIR, 3},
-  {"structSIR", (DL_FUNC) &structSIR, 2},
-  {"infoSIR", (DL_FUNC) &infoSIR, 3},
+  {"infoSIR", (DL_FUNC) &infoSIR, 10},
   {"makeSIIR", (DL_FUNC) &makeSIIR, 3},
   {"reviveSIIR", (DL_FUNC) &reviveSIIR, 2},
   {"runSIIR", (DL_FUNC) &runSIIR, 2},
-  {"treeSIIR", (DL_FUNC) &treeSIIR, 3},
-  {"structSIIR", (DL_FUNC) &structSIIR, 2},
-  {"infoSIIR", (DL_FUNC) &infoSIIR, 3},
+  {"infoSIIR", (DL_FUNC) &infoSIIR, 10},
   {NULL, NULL, 0}
 };
 
