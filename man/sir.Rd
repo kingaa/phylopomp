@@ -2,8 +2,9 @@
 % Please edit documentation in R/sir.R
 \name{sir}
 \alias{sir}
-\alias{runSIR}
 \alias{SIR}
+\alias{runSIR}
+\alias{continueSIR}
 \alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
@@ -17,6 +18,8 @@ runSIR(
   t0 = 0,
   time = 1
 )
+
+continueSIR(object, time, Beta = NA, gamma = NA, psi = NA)
 
 sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 }
@@ -35,7 +38,9 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 
 \item{t0}{initial time}
 
-\item{time}{end timepoint of simulation.}
+\item{time}{final time}
+
+\item{object}{previously computed \sQuote{gpsim} object}
 
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 }
@@ -49,7 +54,7 @@ Run the simulator.
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 }
 \examples{
-runSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,time=5) |>
+simulate("SIR",Beta=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>
   continue(Beta=5,gamma=2,time=10,psi=3) |>
   plot()
 
@@ -63,7 +68,7 @@ plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
 }
 \seealso{
 Other Genealogy processes: 
-\code{\link{continue}()},
-\code{\link{siir}}
+\code{\link{siir}},
+\code{\link{simulate}()}
 }
 \concept{Genealogy processes}

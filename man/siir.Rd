@@ -2,8 +2,9 @@
 % Please edit documentation in R/siir.R
 \name{siir}
 \alias{siir}
-\alias{runSIIR}
 \alias{SIIR}
+\alias{runSIIR}
+\alias{continueSIIR}
 \title{SIIR with sampling simulator.}
 \usage{
 runSIIR(
@@ -18,6 +19,8 @@ runSIIR(
   t0 = 0,
   time = 1
 )
+
+continueSIIR(object, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA)
 }
 \arguments{
 \item{Beta1, Beta2}{transmission rates from each of the infectious classes.}
@@ -36,16 +39,18 @@ runSIIR(
 
 \item{t0}{initial time}
 
-\item{time}{end timepoint of simulation.}
+\item{time}{final time}
+
+\item{object}{previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIIR"}.
 }
 \description{
 Run the simulator.
 }
 \examples{
-runSIIR(Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,R0=0,time=3,t0=0) |>
+simulate("SIIR",Beta1=2,Beta2=4,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,time=3,t0=0) |>
   continue(Beta1=5,Beta2=10,gamma=2,time=10,psi=10) |>
   plot()
 
@@ -54,14 +59,14 @@ runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=0,t0=-1) 
   plot(points=TRUE,prune=FALSE)
 
 library(ggplot2)
-runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,R0=0,time=5) |>
+simulate("SIIR",Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,time=5) |>
   lineages() |>
   ggplot(aes(x=time,y=lineages))+
   geom_step()
 }
 \seealso{
 Other Genealogy processes: 
-\code{\link{continue}()},
+\code{\link{simulate}()},
 \code{\link{sir}}
 }
 \concept{Genealogy processes}

@@ -34,7 +34,7 @@
 ##'
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 fortify
-##' @importFrom dplyr mutate arrange select filter summarize n group_by ungroup
+##' @importFrom dplyr mutate arrange select filter summarize n bind_rows group_by ungroup
 ##' @importFrom tidyr separate
 ##' @importFrom utils globalVariables
 ##' @importFrom tibble tibble

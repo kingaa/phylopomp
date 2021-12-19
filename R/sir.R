@@ -8,23 +8,20 @@
 ##' 
 ##' @family Genealogy processes
 ##'
-##' @inheritParams continue
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
+##' @param time final time
 ##' @param t0 initial time
 ##' 
 ##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
 ##'
 ##' @example examples/sir.R
-##'
-##' @importFrom dplyr bind_rows filter
-##' @importFrom tibble as_tibble
-##' @importFrom utils globalVariables
-##'
+NULL
+
 ##' @rdname sir
 ##' @export
 runSIR <- function (
@@ -41,16 +38,17 @@ runSIR <- function (
   x
 }
 
+##' @rdname sir
+##' @inheritParams continue
+##' @export
 continueSIR <- function (
-  data, time, Beta = NA, gamma = NA, psi = NA
+  object, time, Beta = NA, gamma = NA, psi = NA
 ) {
   params <- c(Beta=Beta,gamma=gamma,psi=psi)
-  x <- .Call(P_reviveSIR,data,params)
+  x <- .Call(P_reviveSIR,object,params)
   x <- .Call(P_runSIR,x,time)
   x
 }
-
-utils::globalVariables("count")
 
 ##' @name sir_pomp
 ##' @rdname sir
@@ -62,7 +60,6 @@ utils::globalVariables("count")
 ##' @importFrom pomp pomp onestep covariate_table
 ##'
 ##' @export
-
 sir_pomp <- function (data, Beta, gamma, psi, S0, I0, R0, t0=0)
 {
   S0 <- as.integer(S0)

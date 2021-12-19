@@ -21,7 +21,6 @@ Collate:
     'package.R'
     'aaa.R'
     'getinfo.R'
-    'continue.R'
     'treeplot.R'
     'diagram.R'
     'foreach.R'
@@ -30,3 +29,4 @@ Collate:
     'print.R'
     'siir.R'
     'sir.R'
+    'simulate.R'

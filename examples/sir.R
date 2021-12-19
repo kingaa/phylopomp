@@ -1,4 +1,4 @@
-runSIR(Beta=2,gamma=1,psi=2,S0=1000,I0=5,R0=0,time=5) |>
+simulate("SIR",Beta=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>
   continue(Beta=5,gamma=2,time=10,psi=3) |>
   plot()
 

@@ -17,14 +17,12 @@
 ##' @param I2_0 initial size of I2 population.
 ##' @param R0 initial size of recovered population.
 ##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIIR"}.
 ##'
 ##' @example examples/siir.R
 ##'
-##' @importFrom dplyr bind_rows filter
-##' @importFrom tibble as_tibble
-##' @importFrom utils globalVariables
-##'
+NULL
+
 ##' @rdname siir
 ##' @export
 runSIIR <- function (
@@ -41,13 +39,14 @@ runSIIR <- function (
   x
 }
 
+##' @rdname siir
+##' @inheritParams continue
+##' @export
 continueSIIR <- function (
-  data, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA
+  object, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA
 ) {
   params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi=psi)
-  x <- .Call(P_reviveSIIR,data,params)
+  x <- .Call(P_reviveSIIR,object,params)
   x <- .Call(P_runSIIR,x,time)
   x
 }
-
-utils::globalVariables("count")

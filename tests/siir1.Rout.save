@@ -32,8 +32,6 @@ Type 'q()' to quit R.
 > 
 > runSIIR(Beta1=2,Beta2=4,gamma=1,psi=2,S0=100,I1_0=5,I2_0=2,time=2) |>
 +   plot(points=TRUE)
-Warning message:
-Removed 161 rows containing missing values (geom_point_g_gtree). 
 > 
 > runSIIR(Beta=2,Beta2=5,gamma=1,psi=2,S0=100,I1_0=5,I2_0=1,time=1) |>
 +   continue(time=100) |>
