@@ -24,7 +24,7 @@ NULL
 
 ##' @rdname diagram
 ##' @export
-diagram <- function (data, prune = TRUE, m = NULL, n = NULL, ..., vp = NULL) {
+diagram <- function (data, prune = TRUE, m = NULL, n = NULL, ...) {
   data |>
     getInfo(structure=TRUE,prune=prune) |>
     getElement("structure") |>
@@ -275,3 +275,7 @@ preDrawDetails.ballGrob <- function (x) {
 postDrawDetails.ballGrob <- function (x) {
   popViewport()
 }
+
+##' @importFrom grid viewport
+##' @export
+grid::viewport

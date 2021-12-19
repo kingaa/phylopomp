@@ -4,7 +4,7 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(data, prune = TRUE, m = NULL, n = NULL, ..., vp = NULL)
+diagram(data, prune = TRUE, m = NULL, n = NULL, ...)
 }
 \arguments{
 \item{data}{\code{gpsim} object.}
@@ -18,8 +18,6 @@ By default, the nodes will be adjusted in width to fit the window.}
 By default, the balls will be adjusted in size to fit the space available.}
 
 \item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
-
-\item{vp}{a \code{\link[grid]{viewport}} object (or \code{NULL}).}
 }
 \value{
 A \pkg{grid} graphics object (\code{grob}), invisibly.
