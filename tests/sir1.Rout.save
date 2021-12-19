@@ -32,16 +32,12 @@ Type 'q()' to quit R.
 > 
 > runSIR(Beta=3,gamma=1,psi=5,S0=100,I0=5,time=2) |>
 +   plot(points=TRUE)
-[[1]]
-
 Warning message:
-Removed 197 rows containing missing values (geom_point_g_gtree). 
+Removed 198 rows containing missing values (geom_point_g_gtree). 
 > 
 > runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
 +   continue(time=100) |>
 +   plot(points=TRUE)
-[[1]]
-
 Warning message:
 Removed 202 rows containing missing values (geom_point_g_gtree). 
 > 

@@ -2,6 +2,7 @@
 % Please edit documentation in R/treeplot.R
 \name{treeplot}
 \alias{treeplot}
+\alias{plot.gpsim}
 \title{Fancy tree plotter}
 \usage{
 treeplot(
@@ -12,6 +13,8 @@ treeplot(
   points = FALSE,
   palette = "Set1"
 )
+
+\method{plot}{gpsim}(x, ..., prune = TRUE, compact = TRUE)
 }
 \arguments{
 \item{tree}{character; tree representation in Newick format.}
@@ -26,6 +29,14 @@ treeplot(
 
 \item{palette}{character; color palette to use for branches.
 See \code{\link[ggplot2]{scale_color_brewer}} for details.}
+
+\item{x}{object of class \sQuote{gpsim}}
+
+\item{...}{passed to \code{\link{treeplot}}}
+
+\item{prune}{logical; prune the genealogy?}
+
+\item{compact}{logical; return the tree in compact representation?}
 }
 \value{
 A printable \code{ggplot} object.
