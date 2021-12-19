@@ -180,7 +180,7 @@ private:
       PROTECT(Name = NEW_INTEGER(1));
       *INTEGER(Name) = int(uniq);
       PROTECT(Color = NEW_CHARACTER(1));
-      SET_STRING_ELT(Color,0,mkChar(colorsymb[color]));
+      SET_STRING_ELT(Color,0,mkChar(color_symbol().c_str()));
       set_list_elem(O,On,Name,"name",0);
       set_list_elem(O,On,Color,"color",1);
       if (is(black)) {

@@ -131,7 +131,7 @@ nodeGrob <- function (data, digits = 1, n = NULL, vp = NULL) {
       pocketGrob(
         data$pocket,
         n=n,
-        vp=viewport(y=1/2,height=1/2)
+        vp=viewport(y=1/2,height=0.5,width=0.95)
       )
     ),
     vp=vp

@@ -87,43 +87,46 @@ treeplot <- function (tree, time = NULL, root_time = 0,
     if (ncolors["g_node",] > 0) {
       pl+geom_nodepoint(
            shape=21,fill=ball_colors["g"],color=ball_colors["g"],
-           aes(alpha=nodecol %in% c("g","p"))
+           aes(alpha=nodecol=="g")
          ) -> pl
     }
     if (ncolors["b_node",] > 0) {
       pl+geom_nodepoint(
-           shape=21,fill=ball_colors["b"],color=ball_colors["blue"],
-           aes(alpha=nodecol %in% c("b"))
+           shape=21,fill=ball_colors["b"],color=ball_colors["b"],
+           aes(alpha=nodecol=="b")
          ) -> pl
     }
     if (ncolors["m_node",] > 0) {
       pl+geom_nodepoint(
            shape=21,fill=ball_colors["m"],color=ball_colors["m"],
-           aes(alpha=nodecol %in% c("m"))
+           aes(alpha=nodecol=="m")
+         )->pl
+    }
+    if (ncolors["p_node",] > 0) {
+      pl+geom_nodepoint(
+           shape=21,fill=ball_colors["p"],color=ball_colors["p"],
+           aes(alpha=nodecol=="p")
          )->pl
     }
     if (ncolors["r_tip",] > 0) {
       pl+geom_tippoint(
            shape=21,fill=ball_colors["r"],color=ball_colors["r"],
-           aes(alpha=nodecol %in% c("r"))
+           aes(alpha=nodecol=="r")
          ) -> pl
     }
     if (ncolors["b_tip",] > 0) {
       pl+geom_tippoint(
            shape=21,fill=ball_colors["b"],color=ball_colors["b"],
-           aes(alpha=nodecol %in% c("b"))
+           aes(alpha=nodecol=="b")
          ) -> pl
     }
     if (ncolors["o_tip",] > 0) {
       pl+geom_tippoint(
            shape=21,fill=ball_colors["o"],color=ball_colors["o"],
-           aes(alpha=nodecol %in% c("o"))
+           aes(alpha=nodecol=="o")
          ) -> pl
     }
-    pl+scale_shape_manual(
-         values=c(i=NA,o=19,g=17,p=17,r=19,b=19)
-       )+
-      guides(shape="none") -> pl
+    pl+guides(shape="none") -> pl
   }
   pl
 }
