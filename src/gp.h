@@ -803,11 +803,10 @@ protected:
 
   // human-readable info
   std::string describe (void) const {
-    std::string o = "";
+    std::string o = "time = " + std::to_string(time()) + "\n";
     for (node_it p = nodes.begin(); p != nodes.end(); p++) {
       o += (*p)->describe();
     }
-    o += "time = " + std::to_string(time()) + "\n";
     return o;
   };
 

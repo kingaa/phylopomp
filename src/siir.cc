@@ -10,7 +10,7 @@ typedef struct {
 } siir_state_t;
 
 typedef struct {
-  double beta1, beta2;        // transmission rate
+  double Beta1, Beta2;        // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
   double N;                   // host population size
@@ -55,8 +55,8 @@ public:
   };
 
   double event_rates (double *rate) const {
-    rate[0] = params.beta1 * state.S * state.I1 / params.N;
-    rate[1] = params.beta2 * state.S * state.I2 / params.N;
+    rate[0] = params.Beta1 * state.S * state.I1 / params.N;
+    rate[1] = params.Beta2 * state.S * state.I2 / params.N;
     rate[2] = params.gamma * state.I1;
     rate[3] = params.gamma * state.I2;
     rate[4] = params.psi * state.I1;
@@ -99,8 +99,8 @@ public:
   };
 
   void update_params (double *p) {
-    if (!ISNA(p[0])) params.beta1 = p[0];
-    if (!ISNA(p[1])) params.beta2 = p[1];
+    if (!ISNA(p[0])) params.Beta1 = p[0];
+    if (!ISNA(p[1])) params.Beta2 = p[1];
     if (!ISNA(p[2])) params.gamma = p[2];
     if (!ISNA(p[3])) params.psi = p[3];
   };
@@ -111,7 +111,7 @@ public:
     if (!ISNA(p[2])) params.I2_0 = int(p[2]);
     if (!ISNA(p[3])) params.R0 = int(p[3]);
     params.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
-  }
+  };
 
 };
 

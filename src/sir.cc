@@ -10,7 +10,7 @@ typedef struct {
 } sir_state_t;
 
 typedef struct {
-  double beta;                // transmission rate
+  double Beta;                // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
   double N;                   // host population size
@@ -52,7 +52,7 @@ public:
   };
 
   double event_rates (double *rate) const {
-    rate[0] = params.beta * state.S * state.I / params.N; // infection
+    rate[0] = params.Beta * state.S * state.I / params.N; // infection
     rate[1] = params.gamma * state.I;			  // recovery
     rate[2] = params.psi * state.I;			  // sample
     return rate[0] + rate[1] + rate[2];
@@ -80,7 +80,7 @@ public:
   };
 
   void update_params (double *p) {
-    if (!ISNA(p[0])) params.beta = p[0];
+    if (!ISNA(p[0])) params.Beta = p[0];
     if (!ISNA(p[1])) params.gamma = p[1];
     if (!ISNA(p[2])) params.psi = p[2];
   };
@@ -90,7 +90,7 @@ public:
     if (!ISNA(p[1])) params.I0 = int(p[1]);
     if (!ISNA(p[2])) params.R0 = int(p[2]);    
     params.N = double(params.S0+params.I0+params.R0);
-  }
+  };
 
 };
 
