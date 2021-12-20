@@ -56,9 +56,19 @@ private:
   class inventory_t;
   class node_t;
 
+  // ordering for balls in pockets
+  // without this, order depends on machine state,
+  // defeating reproducibility
+  struct ball_compare {
+    bool operator() (const ball_t* a, const ball_t* b) const {
+      return (a->uniq < b->uniq) ||
+	((a->uniq == b->uniq) && (a->color < b->color));
+    }
+  };
+  
   typedef std::list<node_t*> nodes_t;
   typedef typename nodes_t::const_iterator node_it;
-  typedef std::set<ball_t*> pocket_t;
+  typedef std::set<ball_t*,ball_compare> pocket_t;
   typedef typename pocket_t::const_iterator ball_it;
 
   // GENEALOGY data:
@@ -428,10 +438,10 @@ private:
       if (compact) {
         for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
           switch ((*i)->color) {
-          case green: case black: case grey:
+          case green: case black:
             n++;
             break;
-          case blue: case red: case purple:
+          case blue: case red: case purple: case grey:
             break;
           }
         }
@@ -988,7 +998,7 @@ private:
       p->pocket.erase(a);
       inventory.remove(a);
       delete a;
-    } else {       // pocket is tight: action depends on the other ball
+    } else {	  // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
       case blue:                // change black ball for red ball
@@ -998,12 +1008,12 @@ private:
       case purple:      // swap black ball for green ball, delete node
         swap(a,p->green_ball());
         destroy_node(p);
-        drop(a);              // recursively pursue dropping ball a
+        drop(a);		// recursively pursue dropping ball a
         break;
-      case red: case grey: // # nocov
+      case red: case grey:			// # nocov
         err("in 'drop': inconceivable error."); // # nocov
         break;
-      case black: case green: default: // swap other for green, delete node
+      case black: case green:	// swap other for green, delete node
         swap(b,p->green_ball());
         destroy_node(p);
         break;
