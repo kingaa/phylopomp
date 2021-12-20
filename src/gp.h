@@ -213,7 +213,7 @@ private:
       } else {
         o += "ball:\n" + tab;
       }
-      o += "color: " + color_symbol() + "\n"      
+      o += "color: " + color_name() + "\n"      
         + tab + "name: " + std::to_string(uniq) + "\n";
       if (color==black) {
         o += tab + "deme: " + std::to_string(deme) + "\n";

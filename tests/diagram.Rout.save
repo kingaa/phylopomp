@@ -1,0 +1,84 @@
+
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(phylopomp)
+
+Attaching package: ‘phylopomp’
+
+The following object is masked from ‘package:stats’:
+
+    simulate
+
+> 
+> set.seed(94429846)
+> png(filename="misc-01.png",res=100,
++   width=178,height=217,units="px")
+> simulate("SIR",time=1) |> diagram()
+> dev.off()
+null device 
+          1 
+> png(filename="misc-02.png",res=100,
++   width=1024,height=175,units="px")
+> simulate("SIIR",time=0.3) |> diagram()
+> dev.off()
+null device 
+          1 
+> 
+> simulate("SIIR",time=0.3) |>
++   getInfo(description=TRUE) |>
++   getElement("description") |>
++   cat()
+time = 0.300000
+node(10,1) {green(10), green(22)}, t = 0.000000
+node(2,1) {green(2), green(23)}, t = 0.000000
+node(22,1) {purple(22), green(37)}, t = 0.112352
+node(23,1) {blue(23), red(33)}, t = 0.133989
+node(37,0) {red(10), blue(37)}, t = 0.273024
+> 
+> simulate("SIR",time=1) |>
++   getInfo(yaml=TRUE,t0=TRUE) |>
++   getElement("yaml") |>
++   cat()
+genealogy:
+  ndemes: 1
+  time: 1.000000
+  nodes:
+  - name: 1
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 4
+  - name: 4
+    deme: 0
+    time: 0.828919
+    pocket:
+    - color: red
+      name: 2
+    - color: blue
+      name: 4
+> 
+> try(
++   simulate("SIR",time=1) |>
++     simulate(time=0.1)
++ )
+Error : cannot simulate backward! (current t=1, requested t=0.1)
+> 
