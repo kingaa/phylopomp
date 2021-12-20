@@ -1159,6 +1159,32 @@ public:
   // return new time.
   slate_t play1 (void);
 
+  // truncate the genealogy by removing nodes
+  // with times later than tnew
+  // NB: this destroys the genealogy inasmuch
+  // as the state is no longer correct.
+  void truncate (slate_t tnew) {
+    if (!nodes.empty()) {
+      node_t *n = nodes.back();
+      while (!nodes.empty() && n->slate > tnew) {
+	if (n->holds(black)) {
+	  ball_t *b = n->ball(black);
+	  drop(b);
+	} else if (n->holds(red)) {
+	  ball_t *b = n->ball(red);
+	  b->color = black;
+	  inventory.insert(b,b->deme);
+	  swap(b,n->green_ball());
+	  destroy_node(n);
+	} else {
+	  err("in 'truncate': inconceivable error."); // #nocov
+	}
+	n = nodes.back();
+      }
+      time(tnew);
+    }
+  };
+
 };
 
 // create the serialized state:
@@ -1215,49 +1241,6 @@ SEXP run_gp (SEXP State, SEXP Tout) {
   PutRNGstate();
   PROTECT(out = serial(A));
   UNPROTECT(2);
-  return out;
-}
-
-// extract/compute basic information.
-template <class GPTYPE>
-SEXP tree_gp (SEXP State, SEXP Prune, SEXP Compact) {
-  // reconstruct the genealogy from its serialization
-  GPTYPE A(RAW(State));
-  // extract current time
-  SEXP time;
-  PROTECT(time = NEW_NUMERIC(1));
-  *REAL(time) = A.time();
-
-  bool compact = *LOGICAL(AS_LOGICAL(Compact));
-
-  // prune if requested
-  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
-
-  // pack up return values in a list
-  int nout = 2;
-  int k = 0;
-  SEXP out, outnames;
-  PROTECT(out = NEW_LIST(nout));
-  PROTECT(outnames = NEW_CHARACTER(nout));
-  k = set_list_elem(out,outnames,time,"time",k);
-  k = set_list_elem(out,outnames,newick(A,compact),"tree",k);
-  SET_NAMES(out,outnames);
-
-  UNPROTECT(3);
-  return out;
-}
-
-// extract/compute basic information.
-template <class GPTYPE>
-SEXP structure_gp (SEXP State, SEXP Prune) {
-  SEXP out;
-  // reconstruct the genealogy from its serialization
-  GPTYPE A(RAW(State));
-  // prune if requested
-  if (*(LOGICAL(AS_LOGICAL(Prune)))) A.prune();
-  // pack up return values in a list
-  PROTECT(out = structure(A));
-  UNPROTECT(1);
   return out;
 }
 
