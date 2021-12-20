@@ -8,19 +8,30 @@
 \title{SIIR with sampling simulator.}
 \usage{
 runSIIR(
-  Beta1 = 2,
+  Beta1 = 5,
   Beta2 = 2,
   gamma = 1,
   psi = 1,
+  sigma12 = 1,
+  sigma21 = 10,
   S0 = 100,
   I1_0 = 1,
-  I2_0 = 1,
+  I2_0 = 10,
   R0 = 0,
   t0 = 0,
   time = 1
 )
 
-continueSIIR(object, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA)
+continueSIIR(
+  object,
+  time,
+  Beta1 = NA,
+  Beta2 = NA,
+  gamma = NA,
+  psi = NA,
+  sigma21 = NA,
+  sigma12 = NA
+)
 }
 \arguments{
 \item{Beta1, Beta2}{transmission rates from each of the infectious classes.}
@@ -28,6 +39,8 @@ continueSIIR(object, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA)
 \item{gamma}{recovery rate.}
 
 \item{psi}{sampling rate.}
+
+\item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
 
 \item{S0}{initial size of susceptible population.}
 

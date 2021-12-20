@@ -13,13 +13,14 @@ typedef struct {
   double Beta1, Beta2;        // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
+  double sigma12, sigma21;    // movement rates
   double N;                   // host population size
   int S0;                     // initial susceptibles
   int I1_0, I2_0;             // initial infecteds
   int R0;                     // initial recoveries
 } siir_parameters_t;
 
-class siir_genealogy_t : public genealogy_t<siir_state_t,siir_parameters_t,6,2> {
+class siir_genealogy_t : public genealogy_t<siir_state_t,siir_parameters_t,8,2> {
 
 public:
 
@@ -61,7 +62,10 @@ public:
     rate[3] = params.gamma * state.I2;
     rate[4] = params.psi * state.I1;
     rate[5] = params.psi * state.I2;
-    return rate[0] + rate[1] + rate[2] + rate[3] + rate[4] + rate[5];
+    rate[6] = params.sigma12 * state.I1;
+    rate[7] = params.sigma21 * state.I2;
+    return rate[0] + rate[1] + rate[2] + rate[3] +
+      rate[4] + rate[5] + rate[6] + rate[7];
   };
 
   void jump (name_t event) {
@@ -86,11 +90,21 @@ public:
       state.R += 1.0;
       death(1);
       break;
-    case 4:
+    case 4:                     // sample from deme 1
       sample(0);
       break;
-    case 5:
+    case 5:                     // sample from deme 2
       sample(1);
+      break;
+    case 6:                     // move from deme 1 -> 2
+      state.I1 -= 1.0;
+      state.I2 += 1.0;
+      migrate(0,1);
+      break;
+    case 7:                     // move from deme 2 -> 1
+      state.I1 += 1.0;
+      state.I2 -= 1.0;
+      migrate(1,0);
       break;
     default:
       err("in SIIR 'jump': c'est impossible! (%ld)",event); // # nocov
@@ -103,6 +117,8 @@ public:
     if (!ISNA(p[1])) params.Beta2 = p[1];
     if (!ISNA(p[2])) params.gamma = p[2];
     if (!ISNA(p[3])) params.psi = p[3];
+    if (!ISNA(p[4])) params.sigma12 = p[4];
+    if (!ISNA(p[5])) params.sigma21 = p[5];
   };
 
   void update_ICs (double *p) {
@@ -130,11 +146,11 @@ extern "C" {
   }
 
   SEXP infoSIIR (SEXP State, SEXP Prune, 
-		 SEXP T0, SEXP Time, SEXP Descript,
-		 SEXP Yaml, SEXP Structure, SEXP Lineages,
-		 SEXP Tree, SEXP Compact) {
+                 SEXP T0, SEXP Time, SEXP Descript,
+                 SEXP Yaml, SEXP Structure, SEXP Lineages,
+                 SEXP Tree, SEXP Compact) {
     return info_gp<siir_genealogy_t>(State, Prune, T0, Time, Descript,
-				     Yaml,Structure, Lineages, Tree, Compact);
+                                     Yaml,Structure, Lineages, Tree, Compact);
   }
 
 }
