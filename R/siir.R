@@ -40,7 +40,7 @@ runSIIR <- function (
 }
 
 ##' @rdname siir
-##' @inheritParams continue
+##' @inheritParams simulate
 ##' @export
 continueSIIR <- function (
   object, time, Beta1 = NA, Beta2 = NA, gamma = NA, psi = NA

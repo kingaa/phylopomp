@@ -39,7 +39,7 @@ runSIR <- function (
 }
 
 ##' @rdname sir
-##' @inheritParams continue
+##' @inheritParams simulate
 ##' @export
 continueSIR <- function (
   object, time, Beta = NA, gamma = NA, psi = NA

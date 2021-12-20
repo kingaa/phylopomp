@@ -2,22 +2,24 @@
 % Please edit documentation in R/simulate.R
 \name{simulate}
 \alias{simulate}
-\alias{continue}
-\alias{continue.gpsim}
+\alias{simulate.default}
+\alias{simulate.character}
+\alias{simulate.gpsim}
 \title{simulate}
 \usage{
-simulate(model, ...)
+\method{simulate}{default}(object, ...)
 
-continue(object, ...)
+simulate(object, ...)
 
-\method{continue}{gpsim}(object, time, ...)
+\method{simulate}{character}(object, time, ...)
+
+\method{simulate}{gpsim}(object, time, ...)
 }
 \arguments{
-\item{model}{name of model to simulate}
+\item{object}{either the name of the model to simulate
+\emph{or} a previously computed \sQuote{gpsim} object}
 
 \item{...}{additional arguments to the model-specific simulation functions}
-
-\item{object}{previously computed \sQuote{gpsim} object}
 
 \item{time}{end timepoint of simulation}
 }
@@ -27,11 +29,11 @@ An object of \sQuote{gpsim} class.
 \description{
 Simulate Markov genealogy processes
 }
-\section{Note}{
-
-One cannot change initial conditions or \code{t0} with \code{continue}.
+\details{
+When \code{object} is of class \sQuote{gpsim}, i.e., the result of a genealogy-process
+simulation, \code{simulate} acts to continue the simulation to a later timepoint.
+Note that, one cannot change initial conditions or \code{t0} when continuing a simulation.
 }
-
 \seealso{
 Other Genealogy processes: 
 \code{\link{siir}},

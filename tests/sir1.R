@@ -14,7 +14,7 @@ runSIR(Beta=3,gamma=1,psi=5,S0=100,I0=5,time=2) |>
   plot(points=TRUE)
 
 runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
-  continue(time=100) |>
+  simulate(time=100) |>
   plot(points=TRUE)
 
 dev.off()

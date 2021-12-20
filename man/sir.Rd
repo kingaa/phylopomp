@@ -40,7 +40,8 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 
 \item{time}{final time}
 
-\item{object}{previously computed \sQuote{gpsim} object}
+\item{object}{either the name of the model to simulate
+\emph{or} a previously computed \sQuote{gpsim} object}
 
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 }
@@ -55,7 +56,7 @@ Run the simulator.
 }
 \examples{
 simulate("SIR",Beta=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>
-  continue(Beta=5,gamma=2,time=10,psi=3) |>
+  simulate(Beta=5,gamma=2,time=10,psi=3) |>
   plot()
 
 runSIR(Beta=3,gamma=1,psi=2,S0=20,I0=5,R0=0,time=5,t0=-1) |>

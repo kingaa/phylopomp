@@ -991,7 +991,7 @@ private:
   // drop the node holding black ball a.
   void drop (ball_t *a) {
     if (!a->is(black))
-      err("in 'drop': inconceivable!"); // # nocov
+      err("in 'drop': inconceivable! color: %s",colores[a->color]); // # nocov
     node_t *p = a->holder();
     if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
       p->pocket.erase(a);
@@ -1149,7 +1149,7 @@ public:
     int count = R_NaInt;
     check_genealogy_size();
     if (time() > tfin)
-      err("cannot simulate backward! (t > tout)",time(),tfin);
+      err("cannot simulate backward! (current t=%lg, requested t=%lg)",time(),tfin);
     double next = clock();
     count = 0;
     while (next < tfin && !inventory.empty()) {

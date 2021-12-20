@@ -79,7 +79,13 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##' @export
 genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
   if (is.null(m)) m <- length(object$nodes)
-  if (is.null(n)) n <- max(sapply(object$nodes,\(node)length(node$pocket)))
+  if (is.null(n)) {
+    object$nodes |>
+      lapply(\(node)length(node$pocket)) |>
+      as.integer() |>
+      c(1L) |>
+      max() -> n
+  }
   gTree(
     children=do.call(
       gList,
