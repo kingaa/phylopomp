@@ -18,13 +18,13 @@
 \usage{
 \method{print}{gpdiag}(x, newpage = is.null(vp), vp = NULL, ...)
 
-genealogyGrob(data, m = NULL, n = NULL, vp = NULL)
+genealogyGrob(object, m = NULL, n = NULL, vp = NULL, ...)
 
-nodeGrob(data, digits = 1, n = NULL, vp = NULL)
+nodeGrob(object, digits = 1, n = NULL, vp = NULL)
 
-pocketGrob(data, n = NULL, vp = NULL)
+pocketGrob(object, n = NULL, vp = NULL)
 
-ballGrob(data, vp = NULL)
+ballGrob(object, vp = NULL)
 
 resizingTextGrob(..., vp = NULL)
 
@@ -49,7 +49,7 @@ resizingTextGrob(..., vp = NULL)
 
 \item{...}{arguments to be passed to \code{\link[grid:textGrob]{textGrob}}.}
 
-\item{data}{list; pocket structure}
+\item{object}{list; pocket structure}
 
 \item{m}{width of plotting window, in nodes.
 By default, the nodes will be adjusted in width to fit the window.}

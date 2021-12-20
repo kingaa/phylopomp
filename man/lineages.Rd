@@ -4,10 +4,10 @@
 \alias{lineages}
 \title{Lineage-count function}
 \usage{
-lineages(data, prune = TRUE)
+lineages(object, prune = TRUE)
 }
 \arguments{
-\item{data}{\code{gpsim} object.}
+\item{object}{\code{gpsim} object.}
 
 \item{prune}{logical; prune the genealogy?}
 }

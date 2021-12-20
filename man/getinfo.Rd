@@ -5,7 +5,7 @@
 \title{getInfo}
 \usage{
 getInfo(
-  data,
+  object,
   prune = TRUE,
   t0 = FALSE,
   time = FALSE,
@@ -18,7 +18,7 @@ getInfo(
 )
 }
 \arguments{
-\item{data}{\code{gpsim} object.}
+\item{object}{\code{gpsim} object.}
 
 \item{prune}{logical; prune the genealogy?}
 

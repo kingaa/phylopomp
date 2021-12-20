@@ -4,10 +4,10 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(data, prune = TRUE, m = NULL, n = NULL, ...)
+diagram(object, prune = TRUE, m = NULL, n = NULL, ..., digits = 1)
 }
 \arguments{
-\item{data}{\code{gpsim} object.}
+\item{object}{\code{gpsim} object.}
 
 \item{prune}{logical; prune the genealogy?}
 
@@ -18,6 +18,9 @@ By default, the nodes will be adjusted in width to fit the window.}
 By default, the balls will be adjusted in size to fit the space available.}
 
 \item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
+
+\item{digits}{non-negative integer;
+number of decimal digits to print in the node time}
 }
 \value{
 A \pkg{grid} graphics object (\code{grob}), invisibly.
