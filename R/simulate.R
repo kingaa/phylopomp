@@ -23,7 +23,7 @@ simulate.default <- function (object, ...) {
     message(
       "Available phylopomp models:\n",
       "- SIR: standard susceptible-infected-recovered model\n",
-      "- SIIR: two-state superspreading infection model\n",
+      "- SIIR: two-strain SIR model\n",
       "- LBDP: linear birth-death-sampling process\n"
     )
   else

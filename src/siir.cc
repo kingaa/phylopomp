@@ -71,16 +71,9 @@ public:
       birth(0,0);
       break;
     case 1:
-      if (state.S < 3.0) {
-	int s = int(state.S);
-	state.S -= s;
-	state.I1 += s;
-	birth(1,0,s);
-      } else {
-	state.S -= 3.0;
-	state.I1 += 3.0;
-	birth(1,0,3);
-      }
+      state.S -= 1.0;
+      state.I2 += 1.0;
+      birth(1,1);
       break;
     case 2:
       state.I1 -= 1.0;

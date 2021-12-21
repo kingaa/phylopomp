@@ -28,7 +28,7 @@ The following object is masked from ‘package:stats’:
 > simulate()
 Available phylopomp models:
 - SIR: standard susceptible-infected-recovered model
-- SIIR: two-state superspreading infection model
+- SIIR: two-strain SIR model
 - LBDP: linear birth-death-sampling process
 
 > try(simulate(22))

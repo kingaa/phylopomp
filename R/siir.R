@@ -30,7 +30,7 @@ runSIIR <- function (
   time, t0 = 0,
   Beta1 = 1, Beta2 = 50, gamma = 1,
   psi1 = 1, psi2 = psi1,
-  sigma12 = 1, sigma21 = 9,
+  sigma12 = 0, sigma21 = 0,
   S0 = 100, I1_0 = 10, I2_0 = 0, R0 = 0
 ) {
   params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,
