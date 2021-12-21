@@ -252,12 +252,6 @@ private:
     size_t size (name_t d) {
       return _inven[d].size();
     };
-    // draw a pair of random integers in the interval [0,n-1]
-    void draw_two (name_t n, name_t *x) const {
-      x[0] = random_integer(n);
-      x[1] = random_integer(n-1);
-      if (x[1] >= x[0]) x[1]++;
-    };
     // n-th deme
     pocket_t & operator[] (const name_t n) {
       return _inven[n];
@@ -309,7 +303,6 @@ private:
       }
     };
     // add black ball to deme i;
-    // remove from existing deme if necessary
     void insert (ball_t *b, name_t i) {
       if (b->is(black)) {
         _inven[i].insert(b);
@@ -317,7 +310,7 @@ private:
       }
     };
     // remove black ball from its deme
-    void remove (ball_t *b) {
+    void erase (ball_t *b) {
       if (b->is(black)) {
         if (_inven[b->deme].empty())
           err("in 'inventory::remove': empty deme %ld.",b->deme); // # nocov
@@ -701,7 +694,7 @@ public:
   // move assignment operator
   genealogy_t & operator= (genealogy_t &&) = delete;
   // destructor
-  virtual ~genealogy_t (void) {
+  ~genealogy_t (void) {
     clean();
   };
   // is empty?
@@ -950,7 +943,7 @@ private:
     if (p->pocket.size() != 2)
       err("cannot destroy a node with more than 2 balls."); // # nocov
     for (ball_it i = p->pocket.begin(); i != p->pocket.end(); i++)
-      inventory.remove(*i);
+      inventory.erase(*i);
     nodes.remove(p);
     delete p;
   };
@@ -979,13 +972,13 @@ private:
     node_t *p = a->holder();
     if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
       p->pocket.erase(a);
-      inventory.remove(a);
+      inventory.erase(a);
       delete a;
     } else {	  // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
       case blue:                // change black ball for red ball
-        inventory.remove(a);
+        inventory.erase(a);
         a->color = red;
         break;
       case purple:      // swap black ball for green ball, delete node
@@ -1059,7 +1052,7 @@ private:
     p->slate = time();
     p->state = s;
     add(p,a);
-    inventory.remove(a);
+    inventory.erase(a);
     inventory.insert(a,j);
   };
 
@@ -1122,15 +1115,25 @@ public:
 public:
   
   // initialize the state
-  virtual void rinit (void) = 0;
+  virtual void rinit (void) {
+    err("the 'rinit' function has not been defined.");
+  };
   // compute event rates
-  virtual double event_rates (double *, int) const = 0;
+  virtual double event_rates (double *rate, int n) const {
+    err("the 'event_rates' function has not been defined.");
+  };
   // makes a jump
-  virtual void jump (int) = 0;
+  virtual void jump (int e) {
+    err("the 'jump' function has not been defined.");
+  };
   // set parameters 
-  virtual void update_params (double*, int) = 0;
+  virtual void update_params (double*, int) {
+    err("the 'update_params' function has not been defined.");
+  };
   // set initial conditions
-  virtual void update_ICs (double*, int) = 0;
+  virtual void update_ICs (double*, int) {
+    err("the 'update_ICs' function has not been defined.");
+  };
 
 public:
 
@@ -1160,17 +1163,15 @@ public:
     int count = R_NaInt;
     if (time() > tfin)
       err("cannot simulate backward! (current t=%lg, requested t=%lg)",time(),tfin);
-    double next = clock();
     count = 0;
-    while (next < tfin && !inventory.empty() && check_genealogy_size(1)) {
-      _time = next;
+    while (_next < tfin && !inventory.empty() && check_genealogy_size(1)) {
+      _time = _next;
       jump(_event);
       update_clocks();
-      next = clock();
       count++;
       R_CheckUserInterrupt();
     }
-    if (next > tfin)  _time = tfin; // relies on Markov property
+    if (_next > tfin)  _time = tfin; // relies on Markov property
     return count;
   };
 
@@ -1183,6 +1184,8 @@ public:
   // NB: this destroys the genealogy inasmuch
   // as the state is no longer correct.
   void truncate (slate_t tnew) {
+    if (!inventory.empty())
+      err("it is a mistake to call 'truncate' on an unpruned genealogy.");
     if (!nodes.empty()) {
       node_t *n = nodes.back();
       while (!nodes.empty() && n->slate > tnew) {
@@ -1219,8 +1222,7 @@ SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
   G.rinit();
   G.update_clocks();
   PutRNGstate();
-  PROTECT(o = NEW_RAW(G.size()));
-  RAW(o) << G;
+  PROTECT(o = serial(G));
   UNPROTECT(4);
   return o;
 }
@@ -1231,8 +1233,7 @@ SEXP revive_gp (SEXP State, SEXP Params) {
   GPTYPE G = RAW(State);
   PROTECT(Params = AS_NUMERIC(Params));
   G.update_params(REAL(Params),LENGTH(Params));
-  PROTECT(o = NEW_RAW(G.size()));
-  RAW(o) << G;
+  PROTECT(o = serial(G));
   UNPROTECT(2);
   return o;
 }
@@ -1242,11 +1243,10 @@ template<class GPTYPE>
 SEXP run_gp (SEXP State, SEXP Tout) {
   SEXP out;
   GPTYPE G = RAW(State);
+  PROTECT(Tout = AS_NUMERIC(Tout));
   GetRNGstate();
   G.valid();
-  PROTECT(Tout = AS_NUMERIC(Tout));
-  double t = *REAL(Tout);
-  G.play(t);
+  G.play(*REAL(Tout));
   PutRNGstate();
   PROTECT(out = serial(G));
   UNPROTECT(2);
