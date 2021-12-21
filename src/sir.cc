@@ -79,13 +79,15 @@ public:
     }
   };
 
-  void update_params (double *p) {
+  void update_params (double *p, int n) {
+    if (n != 3) err("wrong number of parameters!");
     if (!ISNA(p[0])) params.Beta = p[0];
     if (!ISNA(p[1])) params.gamma = p[1];
     if (!ISNA(p[2])) params.psi = p[2];
   };
 
-  void update_ICs (double *p) {
+  void update_ICs (double *p, int n) {
+    if (n != 3) err("wrong number of initial conditions!");
     if (!ISNA(p[0])) params.S0 = int(p[0]);
     if (!ISNA(p[1])) params.I0 = int(p[1]);
     if (!ISNA(p[2])) params.R0 = int(p[2]);    

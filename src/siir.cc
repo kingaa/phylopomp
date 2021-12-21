@@ -119,7 +119,8 @@ public:
     }
   };
 
-  void update_params (double *p) {
+  void update_params (double *p, int n) {
+    if (n != 7) err("wrong number of parameters!");
     if (!ISNA(p[0])) params.Beta1 = p[0];
     if (!ISNA(p[1])) params.Beta2 = p[1];
     if (!ISNA(p[2])) params.gamma = p[2];
@@ -129,7 +130,8 @@ public:
     if (!ISNA(p[6])) params.sigma21 = p[6];
   };
 
-  void update_ICs (double *p) {
+  void update_ICs (double *p, int n) {
+    if (n != 4) err("wrong number of initial conditions!");
     if (!ISNA(p[0])) params.S0 = int(p[0]);
     if (!ISNA(p[1])) params.I1_0 = int(p[1]);
     if (!ISNA(p[2])) params.I2_0 = int(p[2]);

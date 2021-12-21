@@ -1148,9 +1148,9 @@ public:
   // makes a jump
   virtual void jump (name_t) = 0;
   // set parameters 
-  virtual void update_params (double*) = 0;
+  virtual void update_params (double*, int) = 0;
   // set initial conditions
-  virtual void update_ICs (double*) = 0;
+  virtual void update_ICs (double*, int) = 0;
 
 public:
 
