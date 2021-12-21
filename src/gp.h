@@ -338,7 +338,6 @@ private:
     name_t uniq, deme;
     pocket_t pocket;
     slate_t slate;
-    state_t state;
 
     // basic constructor for node class
     node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
@@ -551,7 +550,7 @@ private:
     // size of binary serialization
     size_t size (void) const {
       return 2*sizeof(name_t)+sizeof(slate_t)
-        +sizeof(state_t)+pocket.size()*sizeof(ball_t);
+        +pocket.size()*sizeof(ball_t);
     };
     // binary serialization of node_t
     friend raw_t* operator<< (raw_t *o, const node_t &p) {
@@ -559,7 +558,6 @@ private:
       buf[0] = p.uniq; buf[1] = p.deme; buf[2] = p.pocket.size();
       memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
       memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
-      memcpy(o,&p.state,sizeof(state_t)); o += sizeof(state_t);
       for (ball_it i = p.pocket.begin(); i != p.pocket.end(); i++) 
         o = (o << **i);
       return o;
@@ -569,7 +567,6 @@ private:
       name_t buf[3];
       memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
       memcpy(&p.slate,o,sizeof(slate_t)); o += sizeof(slate_t);
-      memcpy(&p.state,o,sizeof(state_t)); o += sizeof(state_t);
       p.clean();
       p.uniq = buf[0]; p.deme = buf[1];
       for (size_t i = 0; i < buf[2]; i++) {
@@ -1017,7 +1014,6 @@ private:
     ball_t *a = random_black_ball(i);
     node_t *p = make_node(black,j);
     p->slate = time();
-    p->state = s;
     add(p,a);
     for (int k = 1; k < nbirth; k++) {
       ball_t *b = new ball_t(p,unique(),black,j);
@@ -1034,7 +1030,6 @@ private:
   void graft (const state_t &s, name_t i = 0) {
     node_t *p = make_node(black,i);
     p->slate = timezero();
-    p->state = s;
     nodes.push_front(p);
   };
   // insert a sample node into deme i
@@ -1042,7 +1037,6 @@ private:
     ball_t *a = random_black_ball(i);
     node_t *p = make_node(blue,i);
     p->slate = time();
-    p->state = s;
     add(p,a);
   };
   // movement from deme i to deme j
@@ -1050,7 +1044,6 @@ private:
     ball_t *a = random_black_ball(i);
     node_t *p = make_node(purple,i);
     p->slate = time();
-    p->state = s;
     add(p,a);
     inventory.erase(a);
     inventory.insert(a,j);
