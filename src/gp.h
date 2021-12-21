@@ -191,16 +191,9 @@ private:
       return O;
     };
     // machine-readable info
-    std::string yaml (size_t level = 0, bool prefix = false) const {
-      std::string tab(2*level,' ');
-      std::string o = tab;
-      tab.append(2,' ');
-      if (prefix) {
-        o += "- ";
-      } else {
-        o += "ball:\n" + tab;
-      }
-      o += "color: " + color_name() + "\n"      
+    std::string yaml (std::string tab = "") const {
+      std::string o;
+      o = "color: " + color_name() + "\n"      
         + tab + "name: " + std::to_string(uniq) + "\n";
       if (color==black) {
         o += tab + "deme: " + std::to_string(deme) + "\n";
@@ -478,22 +471,15 @@ private:
       return O;
     };
     // machine-readable info
-    std::string yaml (size_t level = 0, bool prefix = false) const {
-      std::string tab(2*level,' ');
-      std::string o = tab;
-      tab.append(2,' ');
-      if (prefix) {
-        o += "- ";
-      } else {
-        o += "node:\n" + tab;
-      }
+    std::string yaml (std::string tab = "") const {
+      std::string o;
+      std::string t = tab + "  ";
       o += "name: " + std::to_string(uniq) + "\n"
         + tab + "deme: " + std::to_string(deme) + "\n"
         + tab + "time: " + std::to_string(slate) + "\n"
         + tab + "pocket:\n";
-      level++;
       for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
-        o += (*i)->yaml(level,true);
+	o += tab + "- " + (*i)->yaml(t);
       }
       return o;
     };
@@ -800,6 +786,19 @@ protected:
     return o;
   };
 
+  // machine-readable info
+  virtual std::string yaml (std::string tab = "") const {
+    std::string o;
+    std::string t = tab + "  ";
+    o = "ndemes: " + std::to_string(ndeme) + "\n"
+      + tab + "time: " + std::to_string(time()) + "\n"
+      + tab + "nodes:\n";
+    for (node_it p = nodes.begin(); p != nodes.end(); p++) {
+      o += tab + "- " + (*p)->yaml(t);
+    }
+    return o;
+  };
+
 private:
   // R list description
   SEXP structure (void) const {
@@ -822,25 +821,7 @@ private:
     UNPROTECT(5);
     return O;
   };
-  // machine-readable info
-  std::string yaml (size_t level = 0, bool prefix = false) const {
-    std::string tab(2*level,' ');
-    std::string o = tab;
-    tab.append(2,' ');
-    if (prefix) {
-      o += "- ";
-    } else {
-      o += "genealogy:\n" + tab;
-    }
-    o += "ndemes: " + std::to_string(ndeme) + "\n"
-      + tab + "time: " + std::to_string(time()) + "\n"
-      + tab + "nodes:\n";
-    level++;
-    for (node_it p = nodes.begin(); p != nodes.end(); p++) {
-      o += (*p)->yaml(level,true);
-    }
-    return o;
-  };
+  
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
     slate_t te = dawn();
@@ -1022,8 +1003,6 @@ private:
       }
     }
   };
-
-private:
 
 private:
 

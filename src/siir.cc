@@ -134,6 +134,31 @@ public:
     params.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
   };
 
+  // human-readable info
+  std::string yaml (std::string tab = "") const {
+    std::string t = tab + "  ";
+    std::string p = tab + "parameter:\n"
+      + t + "Beta1: " + std::to_string(params.Beta1) + "\n"
+      + t + "Beta2: " + std::to_string(params.Beta2) + "\n"
+      + t + "gamma: " + std::to_string(params.gamma) + "\n"
+      + t + "psi1: " + std::to_string(params.psi1) + "\n"
+      + t + "psi2: " + std::to_string(params.psi2) + "\n"
+      + t + "sigma12: " + std::to_string(params.sigma12) + "\n"
+      + t + "sigma21: " + std::to_string(params.sigma21) + "\n"
+      + t + "S0: " + std::to_string(params.S0) + "\n"
+      + t + "I1_0: " + std::to_string(params.I1_0) + "\n"
+      + t + "I2_0: " + std::to_string(params.I2_0) + "\n"
+      + t + "R0: " + std::to_string(params.R0) + "\n";
+    std::string s = tab + "state:\n"
+      + t + "S: " + std::to_string(state.S) + "\n"
+      + t + "I1: " + std::to_string(state.I1) + "\n"
+      + t + "I2: " + std::to_string(state.I2) + "\n"
+      + t + "R: " + std::to_string(state.R) + "\n";
+    std::string g = tab + "genealogy:\n"
+      + t + this->genealogy_t::yaml(t);
+    return p+s+g;
+  };
+
 };
 
 extern "C" {

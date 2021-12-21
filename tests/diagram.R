@@ -21,8 +21,13 @@ simulate("SIIR",time=0.3) |>
   getElement("description") |>
   cat()
 
-simulate("SIR",time=1) |>
-  getInfo(yaml=TRUE,t0=TRUE) |>
+simulate("SIR",time=0.5) |>
+  getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
+  getElement("yaml") |>
+  cat()
+
+simulate("LBDP",time=0.5) |>
+  getInfo(yaml=TRUE) |>
   getElement("yaml") |>
   cat()
 

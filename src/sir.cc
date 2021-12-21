@@ -87,6 +87,25 @@ public:
     params.N = double(params.S0+params.I0+params.R0);
   };
 
+  // human-readable info
+  std::string yaml (std::string tab = "") const {
+    std::string t = tab + "  ";
+    std::string p = tab + "parameter:\n"
+      + t + "Beta: " + std::to_string(params.Beta) + "\n"
+      + t + "gamma: " + std::to_string(params.gamma) + "\n"
+      + t + "psi: " + std::to_string(params.psi) + "\n"
+      + t + "S0: " + std::to_string(params.S0) + "\n"
+      + t + "I0: " + std::to_string(params.I0) + "\n"
+      + t + "R0: " + std::to_string(params.R0) + "\n";
+    std::string s = tab + "state:\n"
+      + t + "S: " + std::to_string(state.S) + "\n"
+      + t + "I: " + std::to_string(state.I) + "\n"
+      + t + "R: " + std::to_string(state.R) + "\n";
+    std::string g = tab + "genealogy:\n"
+      + t + this->genealogy_t::yaml(t);
+    return p+s+g;
+  };
+
 };
 
 extern "C" {

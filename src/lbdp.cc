@@ -74,6 +74,21 @@ public:
     if (!ISNA(p[0])) params.n0 = int(p[0]);
   };
 
+  // human-readable info
+  std::string yaml (std::string tab = "") const {
+    std::string t = tab + "  ";
+    std::string p = tab + "parameter:\n"
+      + t + "lambda: " + std::to_string(params.lambda) + "\n"
+      + t + "mu: " + std::to_string(params.mu) + "\n"
+      + t + "psi: " + std::to_string(params.psi) + "\n"
+      + t + "n0: " + std::to_string(params.n0) + "\n";
+    std::string s = tab + "state:\n"
+      + t + "n: " + std::to_string(state.n) + "\n";
+    std::string g = tab + "genealogy:\n"
+      + t + this->genealogy_t::yaml(t);
+    return p+s+g;
+  };
+
 };
 
 extern "C" {
