@@ -154,16 +154,18 @@ nodeGrob <- function (object, digits = 1, n = NULL, vp = NULL) {
 ##' @export
 pocketGrob <- function (object, n = NULL, vp = NULL) {
   if (is.null(n)) n <- length(object)
+  y0 <- 1+1/2/n
+  dy <- 1/n
   gTree(
     children=do.call(
       gList,
       lapply(
         seq_along(object),
-        function (k) {
+        function (i) {
           ballGrob(
-            object[[k]],
+            object[[i]],
             vp=viewport(
-              y=(n-k+1/2)/n,
+              y=y0-i*dy,
               width=1
             )
           )

@@ -8,22 +8,17 @@
 \alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
-runSIR(
-  Beta = 2,
-  gamma = 1,
-  psi = 1,
-  S0 = 100,
-  I0 = 2,
-  R0 = 0,
-  t0 = 0,
-  time = 1
-)
+runSIR(time, t0 = 0, Beta = 2, gamma = 1, psi = 1, S0 = 100, I0 = 2, R0 = 0)
 
 continueSIR(object, time, Beta = NA, gamma = NA, psi = NA)
 
 sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 }
 \arguments{
+\item{time}{final time}
+
+\item{t0}{initial time}
+
 \item{Beta}{transmission rate.}
 
 \item{gamma}{recovery rate.}
@@ -35,10 +30,6 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 \item{I0}{initial size of infected population.}
 
 \item{R0}{initial size of recovered population.}
-
-\item{t0}{initial time}
-
-\item{time}{final time}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

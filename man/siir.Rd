@@ -8,18 +8,19 @@
 \title{SIIR with sampling simulator.}
 \usage{
 runSIIR(
-  Beta1 = 5,
-  Beta2 = 2,
-  gamma = 1,
-  psi = 1,
-  sigma12 = 1,
-  sigma21 = 10,
-  S0 = 100,
-  I1_0 = 1,
-  I2_0 = 10,
-  R0 = 0,
+  time,
   t0 = 0,
-  time = 1
+  Beta1 = 1,
+  Beta2 = 50,
+  gamma = 1,
+  psi1 = 1,
+  psi2 = psi1,
+  sigma12 = 1,
+  sigma21 = 9,
+  S0 = 100,
+  I1_0 = 10,
+  I2_0 = 0,
+  R0 = 0
 )
 
 continueSIIR(
@@ -28,17 +29,22 @@ continueSIIR(
   Beta1 = NA,
   Beta2 = NA,
   gamma = NA,
-  psi = NA,
+  psi1 = NA,
+  psi2 = NA,
   sigma21 = NA,
   sigma12 = NA
 )
 }
 \arguments{
+\item{time}{final time}
+
+\item{t0}{initial time}
+
 \item{Beta1, Beta2}{transmission rates from each of the infectious classes.}
 
 \item{gamma}{recovery rate.}
 
-\item{psi}{sampling rate.}
+\item{psi1, psi2}{sampling rates.}
 
 \item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
 
@@ -50,10 +56,6 @@ continueSIIR(
 
 \item{R0}{initial size of recovered population.}
 
-\item{t0}{initial time}
-
-\item{time}{final time}
-
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
@@ -64,16 +66,16 @@ An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIIR"}.
 Run the simulator.
 }
 \examples{
-simulate("SIIR",Beta1=5,Beta2=2,gamma=1,psi=5,S0=200,I1_0=5,I2_0=5,time=3) |>
-  simulate(Beta1=5,Beta2=10,gamma=2,time=10,psi=10) |>
+simulate("SIIR",time=3,psi1=1,psi2=0) |>
+  simulate(Beta1=2,gamma=2,time=10,psi1=10,psi2=1) |>
   plot()
 
-runSIIR(Beta1=10,Beta2=8,gamma=1,psi=2,S0=50,I1_0=2,I2_0=20,R0=0,time=0,t0=-1) |>
-  simulate(psi=10,time=2) |>
+runSIIR(Beta1=10,Beta2=8,S0=50,I1_0=10,I2_0=2,R0=0,time=0,t0=-1) |>
+  simulate(psi1=10,time=2) |>
   plot(points=TRUE,prune=FALSE)
 
 library(ggplot2)
-simulate("SIIR",Beta1=10,Beta2=8,gamma=1,psi=2,S0=300,I1_0=2,I2_0=20,time=5) |>
+simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,S0=300,I1_0=20,I2_0=2,time=5) |>
   lineages() |>
   ggplot(aes(x=time,y=lineages))+
   geom_step()

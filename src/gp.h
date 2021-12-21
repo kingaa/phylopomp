@@ -117,12 +117,12 @@ private:
     name_t deme;
   public:
     // basic constructor for ball class
-    ball_t (node_t *who, name_t u = 0, color_t col = green) {
+    ball_t (node_t *who, name_t u = 0, color_t col = green, name_t d = 0) {
       _holder = who;
       _owner = who;
       uniq = u;
       color = col;
-      deme = na;
+      deme = d;
     };
     // copy constructor
     ball_t (const ball_t &b) = delete;
@@ -269,6 +269,10 @@ private:
     inventory_t & operator= (inventory_t &&) = delete;
     // destructor
     ~inventory_t (void) = default;
+    // size of inventory
+    size_t size (name_t d) {
+      return _inven[d].size();
+    };
     // draw a pair of random integers in the interval [0,n-1]
     void draw_two (name_t n, name_t *x) const {
       x[0] = random_integer(n);
@@ -329,7 +333,6 @@ private:
     // remove from existing deme if necessary
     void insert (ball_t *b, name_t i) {
       if (b->is(black)) {
-        if (b->deme != na) _inven[b->deme].erase(b);
         _inven[i].insert(b);
         b->deme = i;
       }
@@ -950,10 +953,9 @@ private:
     check_genealogy_size(1);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
-    ball_t *g = new ball_t(p,u,green);
-    ball_t *b = new ball_t(p,u,col);
+    ball_t *g = new ball_t(p,u,green,d);
+    ball_t *b = new ball_t(p,u,col,d);
     p->green_ball(g);
-    g->deme = na; b->deme = d;
     p->pocket.insert(g);
     p->pocket.insert(b);
     inventory.insert(b,d);
@@ -1038,12 +1040,17 @@ private:
     inventory.random_pair(ballI,ballJ,i,j);
   };
   // birth into deme j with parent in deme i
-  void birth (const state_t &s, name_t i = 0, name_t j = 0) {
+  void birth (const state_t &s, name_t i = 0, name_t j = 0, int nbirth = 1) {
     ball_t *a = random_black_ball(i);
     node_t *p = make_node(black,j);
     p->slate = time();
     p->state = s;
     add(p,a);
+    for (int k = 1; k < nbirth; k++) {
+      ball_t *b = new ball_t(p,unique(),black,j);
+      inventory.insert(b,j);
+      p->pocket.insert(b);
+    }
   };
   // death from deme i
   void death (const state_t &s, name_t i = 0) {
@@ -1072,27 +1079,33 @@ private:
     p->slate = time();
     p->state = s;
     add(p,a);
+    inventory.remove(a);
     inventory.insert(a,j);
   };
 
 public:
   
-  void birth (name_t i = 0, name_t j = 0) {
-    birth(this->state,i,j);
+  // n births into deme j with parent in deme i
+  void birth (name_t i = 0, name_t j = 0, int n = 1) {
+    birth(this->state,i,j,n);
   };
   
+  // death in deme i
   void death (name_t i = 0) {
     death(this->state,i);
   };
   
+  // new root in deme i
   void graft (name_t i = 0) {
     graft(this->state,i);
   };
 
+  // sample in deme i
   void sample (name_t i = 0) {
     sample(this->state,i);
   };
   
+  // migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
     migrate(this->state,i,j);
   };
@@ -1104,6 +1117,24 @@ public:
         ball_t *b = *(inventory[d].begin());
         drop(b);
       }
+    }
+    return *this;
+  };
+
+  // drop all purple balls
+  genealogy_t &visible (void) {
+    pocket_t purples;
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      (*i)->deme = 0;		// erase all information about demes
+      if ((*i)->holds(purple)) {
+	purples.insert((*i)->ball(purple));
+      }
+    }
+    for (ball_it i = purples.begin(); i != purples.end(); i++) {
+      node_t *p = (*i)->holder();
+      ball_t *b = p->other(*i);
+      swap(b,p->green_ball());
+      destroy_node(p);
     }
     return *this;
   };
@@ -1213,14 +1244,14 @@ SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
   PROTECT(ICs = AS_NUMERIC(ICs));
   PROTECT(T0 = AS_NUMERIC(T0));
   GetRNGstate();
-  GPTYPE A(*REAL(T0));
-  A.update_params(REAL(Params));
-  A.update_ICs(REAL(ICs));
-  A.rinit();
-  A.update_clocks();
+  GPTYPE G(*REAL(T0));
+  G.update_params(REAL(Params),LENGTH(Params));
+  G.update_ICs(REAL(ICs),LENGTH(ICs));
+  G.rinit();
+  G.update_clocks();
   PutRNGstate();
-  PROTECT(o = NEW_RAW(A.size()));
-  RAW(o) << A;
+  PROTECT(o = NEW_RAW(G.size()));
+  RAW(o) << G;
   UNPROTECT(4);
   return o;
 }
@@ -1228,11 +1259,11 @@ SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
 template<class GPTYPE>
 SEXP revive_gp (SEXP State, SEXP Params) {
   SEXP o;
-  GPTYPE A(RAW(State));
+  GPTYPE G(RAW(State));
   PROTECT(Params = AS_NUMERIC(Params));
-  A.update_params(REAL(Params));
-  PROTECT(o = NEW_RAW(A.size()));
-  RAW(o) << A;
+  G.update_params(REAL(Params),LENGTH(Params));
+  PROTECT(o = NEW_RAW(G.size()));
+  RAW(o) << G;
   UNPROTECT(2);
   return o;
 }
@@ -1241,14 +1272,14 @@ SEXP revive_gp (SEXP State, SEXP Params) {
 template<class GPTYPE>
 SEXP run_gp (SEXP State, SEXP Tout) {
   SEXP out;
-  GPTYPE A(RAW(State));
+  GPTYPE G(RAW(State));
   GetRNGstate();
-  A.valid();
+  G.valid();
   PROTECT(Tout = AS_NUMERIC(Tout));
   slate_t t = slate_t(*REAL(Tout));
-  A.play(t);
+  G.play(t);
   PutRNGstate();
-  PROTECT(out = serial(A));
+  PROTECT(out = serial(G));
   UNPROTECT(2);
   return out;
 }
@@ -1260,11 +1291,11 @@ SEXP info_gp (SEXP State, SEXP Prune,
 	      SEXP Yaml, SEXP Structure, SEXP Lineages,
 	      SEXP Tree, SEXP Compact) {
   // reconstruct the genealogy from its serialization
-  GPTYPE A(RAW(State));
+  GPTYPE G(RAW(State));
 
   // prune if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
-  if (do_prune) A.prune();
+  if (do_prune) G.prune().visible();
 
   size_t nout = 0;
 
@@ -1296,25 +1327,25 @@ SEXP info_gp (SEXP State, SEXP Prune,
   PROTECT(out = NEW_LIST(nout));
   PROTECT(outnames = NEW_CHARACTER(nout));
   if (get_t0) {
-    k = set_list_elem(out,outnames,timezero(A),"t0",k);
+    k = set_list_elem(out,outnames,timezero(G),"t0",k);
   }
   if (get_time) {
-    k = set_list_elem(out,outnames,time(A),"time",k);
+    k = set_list_elem(out,outnames,time(G),"time",k);
   }
   if (get_desc) {
-    k = set_list_elem(out,outnames,describe(A),"description",k);
+    k = set_list_elem(out,outnames,describe(G),"description",k);
   }
   if (get_yaml) {
-    k = set_list_elem(out,outnames,yaml(A),"yaml",k);
+    k = set_list_elem(out,outnames,yaml(G),"yaml",k);
   }
   if (get_struc) {
-    k = set_list_elem(out,outnames,structure(A),"structure",k);
+    k = set_list_elem(out,outnames,structure(G),"structure",k);
   }
   if (get_lin) {
-    k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
+    k = set_list_elem(out,outnames,lineage_count(G),"lineages",k);
   }
   if (get_tree) {
-    k = set_list_elem(out,outnames,newick(A,do_compact),"tree",k);
+    k = set_list_elem(out,outnames,newick(G,do_compact),"tree",k);
   }
   SET_NAMES(out,outnames);
 

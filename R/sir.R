@@ -25,9 +25,9 @@ NULL
 ##' @rdname sir
 ##' @export
 runSIR <- function (
+  time,  t0 = 0, 
   Beta = 2, gamma = 1, psi = 1,
-  S0 = 100, I0 = 2, R0 = 0,
-  t0 = 0, time = 1
+  S0 = 100, I0 = 2, R0 = 0
 ) {
   params <- c(Beta=Beta,gamma=gamma,psi=psi)
   ics <- c(S0=S0,I0=I0,R0=R0)

@@ -12,7 +12,7 @@ typedef struct {
 typedef struct {
   double Beta1, Beta2;        // transmission rate
   double gamma;               // recovery rate
-  double psi;                 // sampling rate
+  double psi1, psi2;	      // sampling rates
   double sigma12, sigma21;    // movement rates
   double N;                   // host population size
   int S0;                     // initial susceptibles
@@ -60,8 +60,8 @@ public:
     rate[1] = params.Beta2 * state.S * state.I2 / params.N;
     rate[2] = params.gamma * state.I1;
     rate[3] = params.gamma * state.I2;
-    rate[4] = params.psi * state.I1;
-    rate[5] = params.psi * state.I2;
+    rate[4] = params.psi1 * state.I1;
+    rate[5] = params.psi2 * state.I2;
     rate[6] = params.sigma12 * state.I1;
     rate[7] = params.sigma21 * state.I2;
     return rate[0] + rate[1] + rate[2] + rate[3] +
@@ -76,9 +76,16 @@ public:
       birth(0,0);
       break;
     case 1:
-      state.S -= 1.0;
-      state.I2 += 1.0;
-      birth(1,1);
+      if (state.S < 3.0) {
+	int s = int(state.S);
+	state.S -= s;
+	state.I1 += s;
+	birth(1,0,s);
+      } else {
+	state.S -= 3.0;
+	state.I1 += 3.0;
+	birth(1,0,3);
+      }
       break;
     case 2:
       state.I1 -= 1.0;
@@ -116,9 +123,10 @@ public:
     if (!ISNA(p[0])) params.Beta1 = p[0];
     if (!ISNA(p[1])) params.Beta2 = p[1];
     if (!ISNA(p[2])) params.gamma = p[2];
-    if (!ISNA(p[3])) params.psi = p[3];
-    if (!ISNA(p[4])) params.sigma12 = p[4];
-    if (!ISNA(p[5])) params.sigma21 = p[5];
+    if (!ISNA(p[3])) params.psi1 = p[3];
+    if (!ISNA(p[4])) params.psi2 = p[4];
+    if (!ISNA(p[5])) params.sigma12 = p[5];
+    if (!ISNA(p[6])) params.sigma21 = p[6];
   };
 
   void update_ICs (double *p) {

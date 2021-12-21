@@ -27,14 +27,14 @@ The following object is masked from ‘package:stats’:
 
 > 
 > set.seed(94429846)
-> png(filename="misc-01.png",res=100,
-+   width=178,height=217,units="px")
+> png(filename="diagram-01.png",res=100,
++   width=240,height=291,units="px")
 > simulate("SIR",time=1) |> diagram()
 > dev.off()
 null device 
           1 
-> png(filename="misc-02.png",res=100,
-+   width=1024,height=175,units="px")
+> png(filename="diagram-02.png",res=100,
++   width=618,height=165,units="px")
 > simulate("SIIR",time=0.3) |> diagram()
 > dev.off()
 null device 
@@ -45,11 +45,17 @@ null device
 +   getElement("description") |>
 +   cat()
 time = 0.300000
-node(10,1) {green(10), green(22)}, t = 0.000000
-node(2,1) {green(2), green(23)}, t = 0.000000
-node(22,1) {purple(22), green(37)}, t = 0.112352
-node(23,1) {blue(23), red(33)}, t = 0.133989
-node(37,0) {red(10), blue(37)}, t = 0.273024
+node(7,0) {green(7), green(21)}, t = 0.000000
+node(5,0) {green(5), green(10)}, t = 0.000000
+node(2,0) {green(2), green(34)}, t = 0.000000
+node(10,0) {red(5), blue(10)}, t = 0.007777
+node(21,0) {green(28), green(29)}, t = 0.173768
+node(28,0) {red(23), blue(28)}, t = 0.194111
+node(29,0) {green(32), green(33), green(41)}, t = 0.199216
+node(32,0) {red(29), blue(32)}, t = 0.214580
+node(33,0) {red(31), blue(33)}, t = 0.231662
+node(34,0) {red(2), blue(34)}, t = 0.238780
+node(41,0) {red(37), blue(41)}, t = 0.288850
 > 
 > simulate("SIR",time=1) |>
 +   getInfo(yaml=TRUE,t0=TRUE) |>
@@ -59,22 +65,6 @@ genealogy:
   ndemes: 1
   time: 1.000000
   nodes:
-  - name: 1
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 1
-    - color: green
-      name: 4
-  - name: 4
-    deme: 0
-    time: 0.828919
-    pocket:
-    - color: red
-      name: 2
-    - color: blue
-      name: 4
 > 
 > try(
 +   simulate("SIR",time=1) |>
