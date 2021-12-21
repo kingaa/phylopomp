@@ -1,13 +1,19 @@
 library(phylopomp)
-
 set.seed(94429846)
+
 png(filename="diagram-01.png",res=100,
   width=240,height=291,units="px")
 simulate("SIR",time=1) |> diagram()
 dev.off()
+
 png(filename="diagram-02.png",res=100,
   width=618,height=165,units="px")
 simulate("SIIR",time=0.3) |> diagram()
+dev.off()
+
+png(filename="diagram-03.png",res=100,
+  width=1053,height=307,units="px")
+simulate("SIIR",time=0.3) |> diagram(prune=FALSE)
 dev.off()
 
 simulate("SIIR",time=0.3) |>
