@@ -178,7 +178,6 @@ pocketGrob <- function (object, n = NULL, vp = NULL) {
 
 ##' @rdname internals
 ##' @keywords internal
-##' @include treeplot.R
 ##' @importFrom grid unit circleGrob textGrob grob gpar viewport
 ##' @inheritParams grid::grob
 ##' @export
@@ -206,7 +205,6 @@ ballGrob <- function (object, vp = NULL) {
 
 ##' @rdname internals
 ##' @keywords internal
-##' @include treeplot.R
 ##' @param ... arguments to be passed to \code{\link[grid:textGrob]{textGrob}}.
 ##' @importFrom grid grob textGrob viewport
 ##' @inheritParams grid::textGrob
@@ -289,3 +287,7 @@ postDrawDetails.ballGrob <- function (x) {
 ##' @importFrom grid viewport
 ##' @export
 grid::viewport
+
+##' @importFrom cowplot plot_grid
+##' @export
+cowplot::plot_grid

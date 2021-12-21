@@ -47,6 +47,8 @@ getInfo <- function (
       description,yaml,structure,lineages,tree,compact),
     modelSIIR = .Call(P_infoSIIR,object,prune,t0,time,
       description,yaml,structure,lineages,tree,compact),
+    modelLBDP = .Call(P_infoLBDP,object,prune,t0,time,
+      description,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )

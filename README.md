@@ -9,7 +9,6 @@ Related packages:
 ### new model checklist
 
 - create and edit `src/<model>.cc`
-- edit `src/decls.h`
 - edit `src/init.c`
 - edit `R/getinfo.R`
 - create and edit `R/<model>.R`

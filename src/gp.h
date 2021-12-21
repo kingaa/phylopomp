@@ -12,28 +12,11 @@
 
 #include "internal.h"
 
-// interface with R's integer RNG
-static int random_integer (int n) {
-  return int(floor(R_unif_index(double(n))));
-}
-
-// helper function for filling a return list
-static int set_list_elem (SEXP list, SEXP names, SEXP element,
-                          const char *name, int pos) {
-  SET_ELEMENT(list,pos,element);
-  SET_STRING_ELT(names,pos,mkChar(name));
-  return ++pos;
-}
-
 typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
-typedef size_t name_t;
-typedef double slate_t;
 
-const name_t na = name_t(R_NaInt);
-static const size_t MEMORY_MAX = (1<<26); // roughly 1/4 of mem/cpu
-
-static const char *colores[] = {"green", "black", "blue", "red", "grey", "purple"};
-static const char *colorsymb[] = {"g", "o", "b", "r", "z", "p"};
+static const size_t MEMORY_MAX = (1<<28); // 256MB
+static const char* colores[] = {"green", "black", "blue", "red", "grey", "purple"};
+static const char* colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 
 // GENEALOGY CLASS
 // the class to hold the state of the genealogy process.
@@ -45,13 +28,17 @@ template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
 class genealogy_t  {
 
 private:
-
+  
+  typedef double slate_t;
+  typedef size_t name_t;
   typedef STATE state_t;
   typedef PARAMETERS parameters_t;
+  static const size_t nevent = NEVENT;
+  static const size_t ndeme = NDEME;
 
   // BALL COLORS
   typedef enum {green, black, blue, red, grey, purple} color_t;
-  
+
   class ball_t;
   class inventory_t;
   class node_t;
@@ -222,7 +209,6 @@ private:
     };
     // element of a newick representation
     std::string newick (const slate_t &t) const {
-      if (deme == na) err("undefined deme"); // # nocov
       return color_symbol()
         + "_" + std::to_string(deme)
         + "_" + std::to_string(uniq)
@@ -255,7 +241,7 @@ private:
   
   class inventory_t {
   private:
-    pocket_t _inven[NDEME];
+    pocket_t _inven[ndeme];
   public:
     // basic constructor for inventory class
     inventory_t (void) = default;
@@ -286,7 +272,7 @@ private:
     // are all demes empty?
     bool empty (void) const {
       bool q = true;
-      for (name_t i = 0; i < NDEME; i++) {
+      for (name_t i = 0; i < ndeme; i++) {
 	q = q && _inven[i].empty();
       }
       return q;
@@ -354,6 +340,7 @@ private:
   // - a pocket containting two or more balls
   // - a "slate" with the time
   // - the state of the Markov population process at that time
+  // - a pointer to its own green ball
   class node_t {
 
   private:
@@ -368,8 +355,8 @@ private:
     state_t state;
 
     // basic constructor for node class
-    node_t (name_t u = 0, slate_t t = na, name_t d = 0) {
-      if (d >= NDEME) err("deme %ld does not exist",d); // # nocov
+    node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
+      if (d >= ndeme) err("deme %ld does not exist",d); // # nocov
       uniq = u;
       slate = t;
       deme = d;
@@ -628,7 +615,7 @@ private:
   void clean (void) {
     for (node_it i = nodes.begin(); i != nodes.end(); i++) delete *i;
     nodes.clear();
-    for (size_t d = 0; d < NDEME; d++) inventory[d].clear();
+    for (size_t d = 0; d < ndeme; d++) inventory[d].clear();
     _time = R_NaReal;
     _unique = 0;
   };
@@ -701,9 +688,9 @@ public:
   
   // basic constructor for genealogy class
   //  t0 = initial time
-  genealogy_t (slate_t t0 = 0) {
+  genealogy_t (double t0 = 0) {
     clean();
-    _time = _t0 = t0;
+    _time = _t0 = slate_t(t0);
   };
   // constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -820,7 +807,7 @@ private:
     PROTECT(O = NEW_LIST(3));
     PROTECT(On = NEW_CHARACTER(3));
     PROTECT(Ndeme = NEW_INTEGER(1));
-    *INTEGER(Ndeme) = int(NDEME);
+    *INTEGER(Ndeme) = int(ndeme);
     PROTECT(Time = NEW_NUMERIC(1));
     *REAL(Time) = double(time());
     PROTECT(Nodes = NEW_LIST(nodes.size()));
@@ -845,7 +832,7 @@ private:
     } else {
       o += "genealogy:\n" + tab;
     }
-    o += "ndemes: " + std::to_string(NDEME) + "\n"
+    o += "ndemes: " + std::to_string(ndeme) + "\n"
       + tab + "time: " + std::to_string(time()) + "\n"
       + tab + "nodes:\n";
     level++;
@@ -856,8 +843,8 @@ private:
   };
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
-    slate_t te = dawn(), tl = time();
-    std::string o = std::to_string(tl) + "(i_NA_NA:0.0,i_NA_NA:0.0";
+    slate_t te = dawn();
+    std::string o = "(i_NA_NA:0.0,i_NA_NA:0.0";
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       node_t *p = *i;
       if (p->is_root()) {
@@ -934,6 +921,15 @@ public:
     return x;
   }
 
+  // create the serialized state:
+  friend SEXP serial (const genealogy_t& G) {
+    SEXP out;
+    PROTECT(out = NEW_RAW(G.size()));
+    RAW(out) << G;
+    UNPROTECT(1);
+    return out;
+  }
+
 protected:
 
   // check the validity of the genealogy.
@@ -941,16 +937,21 @@ protected:
 
 public:
 
-  void check_genealogy_size (size_t grace = 0) const {
+  bool check_genealogy_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
-    if (nodes.size() > maxq+grace) 
+    bool ok = true;
+    if (nodes.size() > maxq+grace) {
       err("maximum genealogy size exceeded!");
+    } else if (nodes.size() > maxq) {
+      ok = false;
+    }
+    return ok;
   };
 
 private:
 
   node_t* make_node (color_t col, name_t d = 0) {
-    check_genealogy_size(1);
+    check_genealogy_size(0);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green,d);
@@ -1112,7 +1113,7 @@ public:
   
   // prune the tree (drop all black balls)
   genealogy_t &prune (void) {
-    for (size_t d = 0; d < NDEME; d++) {
+    for (size_t d = 0; d < ndeme; d++) {
       while (!inventory[d].empty()) {
         ball_t *b = *(inventory[d].begin());
         drop(b);
@@ -1144,9 +1145,9 @@ public:
   // initialize the state
   virtual void rinit (void) = 0;
   // compute event rates
-  virtual double event_rates (double *) const = 0;
+  virtual double event_rates (double *, int) const = 0;
   // makes a jump
-  virtual void jump (name_t) = 0;
+  virtual void jump (int) = 0;
   // set parameters 
   virtual void update_params (double*, int) = 0;
   // set initial conditions
@@ -1156,8 +1157,8 @@ public:
 
   // updates clock and next event
   void update_clocks (void) {
-    double rate[NEVENT];
-    double total_rate = event_rates(rate);
+    double rate[nevent];
+    double total_rate = event_rates(rate,nevent);
     if (total_rate > 0) {
       _next = time()+rexp(1/total_rate);
     } else {
@@ -1165,25 +1166,24 @@ public:
     }
     double u = runif(0,total_rate);
     size_t k = 0;
-    while (u > rate[k] && k < NEVENT) {
+    while (u > rate[k] && k < nevent) {
       if (rate[k] < 0) err("invalid rate[%ld]=%lg",k,rate[k]); // # nocov
       u -= rate[k];
       k++;
     }
     _event = name_t(k);
-    if (_event >= NEVENT) err("invalid event %ld!",_event); // # nocov
+    if (_event >= nevent) err("invalid event %ld!",_event); // # nocov
   };
 
   // run process to a specified time.
   // return number of events that have occurred.
   int play (double tfin) {
     int count = R_NaInt;
-    check_genealogy_size();
     if (time() > tfin)
       err("cannot simulate backward! (current t=%lg, requested t=%lg)",time(),tfin);
     double next = clock();
     count = 0;
-    while (next < tfin && !inventory.empty()) {
+    while (next < tfin && !inventory.empty() && check_genealogy_size(1)) {
       _time = next;
       jump(_event);
       update_clocks();
@@ -1227,16 +1227,6 @@ public:
 
 };
 
-// create the serialized state:
-template <class GPTYPE>
-SEXP serial (GPTYPE& G) {
-  SEXP out;
-  PROTECT(out = NEW_RAW(G.size()));
-  RAW(out) << G;
-  UNPROTECT(1);
-  return out;
-}
-
 template<class GPTYPE>
 SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
   SEXP o;
@@ -1244,7 +1234,7 @@ SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
   PROTECT(ICs = AS_NUMERIC(ICs));
   PROTECT(T0 = AS_NUMERIC(T0));
   GetRNGstate();
-  GPTYPE G(*REAL(T0));
+  GPTYPE G = *REAL(T0);
   G.update_params(REAL(Params),LENGTH(Params));
   G.update_ICs(REAL(ICs),LENGTH(ICs));
   G.rinit();
@@ -1259,7 +1249,7 @@ SEXP make_gp (SEXP Params, SEXP ICs, SEXP T0) {
 template<class GPTYPE>
 SEXP revive_gp (SEXP State, SEXP Params) {
   SEXP o;
-  GPTYPE G(RAW(State));
+  GPTYPE G = RAW(State);
   PROTECT(Params = AS_NUMERIC(Params));
   G.update_params(REAL(Params),LENGTH(Params));
   PROTECT(o = NEW_RAW(G.size()));
@@ -1272,11 +1262,11 @@ SEXP revive_gp (SEXP State, SEXP Params) {
 template<class GPTYPE>
 SEXP run_gp (SEXP State, SEXP Tout) {
   SEXP out;
-  GPTYPE G(RAW(State));
+  GPTYPE G = RAW(State);
   GetRNGstate();
   G.valid();
   PROTECT(Tout = AS_NUMERIC(Tout));
-  slate_t t = slate_t(*REAL(Tout));
+  double t = *REAL(Tout);
   G.play(t);
   PutRNGstate();
   PROTECT(out = serial(G));
@@ -1291,7 +1281,7 @@ SEXP info_gp (SEXP State, SEXP Prune,
 	      SEXP Yaml, SEXP Structure, SEXP Lineages,
 	      SEXP Tree, SEXP Compact) {
   // reconstruct the genealogy from its serialization
-  GPTYPE G(RAW(State));
+  GPTYPE G = RAW(State);
 
   // prune if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));

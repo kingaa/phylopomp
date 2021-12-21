@@ -26,17 +26,9 @@ public:
   // basic constructor
   sir_genealogy_t (double t0 = 0) : genealogy_t(t0) { };
   // constructor from serialized binary form
-  sir_genealogy_t (raw_t *o) {
-    o >> *this;
-    valid();
-  };
+  sir_genealogy_t (raw_t *o) : genealogy_t(o) {};
   // copy constructor
-  sir_genealogy_t (const sir_genealogy_t &T) {
-    raw_t *o = new raw_t[T.size()];
-    o << T; o >> *this;
-    delete[] o;
-    valid();
-  };
+  sir_genealogy_t (const sir_genealogy_t &G) : genealogy_t(G) {};
   
   void valid (void) const {
     this->genealogy_t::valid();
@@ -51,14 +43,15 @@ public:
     for (int j = 0; j < params.I0; j++) graft();
   };
 
-  double event_rates (double *rate) const {
+  double event_rates (double *rate, int n) const {
+    if (n != 3) err("wrong number of events!");
     rate[0] = params.Beta * state.S * state.I / params.N; // infection
     rate[1] = params.gamma * state.I;			  // recovery
     rate[2] = params.psi * state.I;			  // sample
     return rate[0] + rate[1] + rate[2];
   };
 
-  void jump (name_t event) {
+  void jump (int event) {
     switch (event) {
     case 0:			// infection
       state.S -= 1.0;

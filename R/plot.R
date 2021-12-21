@@ -2,20 +2,19 @@
 ##'
 ##' Plots a genealogical tree.
 ##'
-##' @name treeplot
-##' @include getinfo.R
+##' @name plot
+##' @include getinfo.R diagram.R
 ##'
 ##' @param tree character; tree representation in Newick format.
-##' @param root_time numeric; time of the root.
-##' @param time numeric; times of the genealogies.
+##' @param t0 numeric; time of the root.
+##' @param time numeric; time of the genealogy.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
-##' @param palette character; color palette to use for branches.
-##' See \code{\link[ggplot2]{scale_color_brewer}} for details.
+##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##'
 ##' @importFrom ape read.tree
-##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify scale_colour_brewer
+##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify scale_color_hue
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
 ##' @importFrom dplyr mutate left_join count coalesce
 ##' @importFrom tibble column_to_rownames
@@ -23,32 +22,29 @@
 ##' @importFrom scales alpha
 ##' @importFrom utils globalVariables
 ##'
-##' @rdname treeplot
+##' @example examples/movie.R
+##' 
+##' @rdname plot
 ##' @export
-treeplot <- function (tree, time = NULL, root_time = 0,
-  ladderize = TRUE, points = FALSE, palette = "Set1") {
+treeplot <- function (tree, time = NULL, t0 = 0,
+  ladderize = TRUE, points = FALSE, ...) {
 
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
-  time <- as.numeric(time)
-  root_time <- as.numeric(root_time)
+  t0 <- as.numeric(t0)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
-  read.tree(text=tree) |>
+  read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
     separate(label,into=c("nodecol","deme","label")) -> dat
+
+  time <- as.numeric(c(time,max(dat$x)))[1L]
   
-  if (is.na(root_time)) { # root time is to be determined from the current time
-    dat |>
-      mutate(
-        x=x-max(x)+time
-      )
+  if (is.na(t0)) { # root time is to be determined from the current time
+    dat |> mutate(x=x-max(x)+time)
   } else {
-    dat |>
-      mutate(
-        x=x-min(x)+root_time
-      )
+    dat |> mutate(x=x-min(x)+t0)
   } |>
     mutate(
       vis=nodecol != "i"
@@ -78,10 +74,12 @@ treeplot <- function (tree, time = NULL, root_time = 0,
     geom_tree(aes(alpha=vis,color=deme))+
     expand_limits(x=dat$x)+
     scale_x_continuous()+
-    scale_colour_brewer(type="qual",palette=palette)+
+    scale_color_hue(l=30,h=c(240,600))+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
-    theme_tree2() -> pl
+    expand_limits(x=c(t0,time))+
+    theme_tree2()+
+    theme(...) -> pl
 
   if (points) {
     if (ncolors["g_node",] > 0) {
@@ -149,9 +147,11 @@ utils::globalVariables(
 ##' @param x object of class \sQuote{gpsim}
 ##' @param ... passed to \code{\link{treeplot}}
 ##' @method plot gpsim
-##' @rdname treeplot
+##' @rdname plot
 ##' @export
-plot.gpsim <- function (x, ..., prune = TRUE, compact = TRUE) {
-  out <- getInfo(x,tree=TRUE,time=TRUE,prune=prune,compact=compact)
-  treeplot(tree=out$tree,time=out$time,...)
+plot.gpsim <- function (x, ..., time, t0, prune = TRUE, compact = TRUE) {
+  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,prune=prune,compact=compact)
+  if (missing(time)) time <- out$time
+  if (missing(t0)) t0 <- out$t0
+  treeplot(tree=out$tree,time=time,t0=t0,...)
 }

@@ -22,8 +22,9 @@ simulate.default <- function (object, ...) {
   if (missing(object) || is.null(object))
     message(
       "Available phylopomp models:\n",
-      "- SIR\n",
-      "- SIIR\n"
+      "- SIR: standard susceptible-infected-recovered model\n",
+      "- SIIR: two-state superspreading infection model\n",
+      "- LBDP: linear birth-death-sampling process\n"
     )
   else
     stop(
@@ -50,6 +51,7 @@ simulate.character <- function (object, time, ...) {
     object,
     SIR = runSIR(time=time,...),
     SIIR = runSIIR(time=time,...),
+    LBDP = runLBDP(time=time,...),
     stop("unrecognized model: ",sQuote(object),".",call.=FALSE)
   ) |>
     structure(model=object,class="gpsim")
@@ -69,6 +71,7 @@ simulate.gpsim <- function (object, time, ...) {
     paste0("model",model),
     modelSIR = continueSIR(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
+    modelLBDP = continueLBDP(object,time=time,...),
     model = stop("no model attribute detected.",call.=FALSE),
     stop("unrecognized model ",sQuote(model),".",call.=FALSE)
   ) |>

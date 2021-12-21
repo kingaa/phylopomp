@@ -9,9 +9,9 @@ Authors@R: c(person(given=c("Aaron","A."),family="King",
 	  )
 Description: Tools for phylodynamic analysis.
 Depends: R(>= 4.1.0)
-Imports: grid, ggtree, yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp
+Imports: grid, ggtree, yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp, cowplot
 LinkingTo: pomp
-Suggests: tidyverse, magrittr, doParallel, doRNG, broom, cowplot
+Suggests: tidyverse, magrittr, doParallel, doRNG, broom
 License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu
@@ -21,11 +21,12 @@ Collate:
     'package.R'
     'aaa.R'
     'getinfo.R'
-    'treeplot.R'
     'diagram.R'
     'foreach.R'
+    'lbdp.R'
     'lineages.R'
     'newick2df.R'
+    'plot.R'
     'print.R'
     'siir.R'
     'sir.R'

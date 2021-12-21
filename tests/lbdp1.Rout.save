@@ -17,21 +17,27 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> library(phylopomp)
-
-Attaching package: ‘phylopomp’
-
-The following object is masked from ‘package:stats’:
-
-    simulate
-
-> simulate()
-Available phylopomp models:
-- SIR: standard susceptible-infected-recovered model
-- SIIR: two-state superspreading infection model
-- LBDP: linear birth-death-sampling process
-
-> try(simulate(22))
-Error : in ‘phylopomp::simulate’: ‘object’ must be specified as either the name of a model or the result of a previous simulation.
-Do ‘simulate()’ to view available models.
+> png(filename="lbdp1-%02d.png",res=100)
+> suppressPackageStartupMessages({
++   library(phylopomp)
++   library(tidyverse)
++ })
+> theme_set(theme_bw())
+> set.seed(847110120)
+> options(digits=3)
+> 
+> runLBDP(time=2) -> x
+> x
+<gpsim for model ‘LBDP’>
+> 
+> simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
++   plot(points=TRUE)
+> 
+> runLBDP(lambda=3,mu=1,psi=1,n0=10,time=1) |>
++   simulate(time=10,lambda=0.2,psi=3) |>
++   plot(points=TRUE)
+> 
+> dev.off()
+null device 
+          1 
 > 

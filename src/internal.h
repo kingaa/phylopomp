@@ -38,6 +38,19 @@ inline SEXP falseSEXP (void) {
   return x;
 }
 
+// interface with R's integer RNG
+inline int random_integer (int n) {
+  return (int) floor(R_unif_index((double) n));
+}
+
+// helper function for filling a return list
+inline int set_list_elem (SEXP list, SEXP names, SEXP element,
+                          const char *name, int pos) {
+  SET_ELEMENT(list,pos,element);
+  SET_STRING_ELT(names,pos,mkChar(name));
+  return ++pos;
+}
+
 #define OPTIONAL_REAL_PAR(x,X,d) double x;	\
   if (isNull(X)) {				\
     x = d;					\
