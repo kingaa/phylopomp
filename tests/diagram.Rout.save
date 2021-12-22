@@ -46,14 +46,10 @@ null device
 +   getElement("description") |>
 +   cat()
 time = 0.300000
-node(9,0) {green(9), green(10)}, t = 0.000000
-node(6,0) {green(6), green(14)}, t = 0.000000
-node(3,0) {green(3), green(12)}, t = 0.000000
-node(10,0) {blue(10), green(15)}, t = 0.035350
-node(12,0) {blue(12), red(17)}, t = 0.050309
-node(14,0) {blue(14), green(16)}, t = 0.103216
-node(15,0) {red(11), blue(15)}, t = 0.111213
-node(16,0) {red(6), blue(16)}, t = 0.203748
+node(6,0) {green(6), green(10)}, t = 0.000000
+node(5,0) {green(5), green(11)}, t = 0.000000
+node(10,0) {red(6), blue(10)}, t = 0.036681
+node(11,0) {red(5), blue(11)}, t = 0.124368
 > 
 > simulate("SIR",time=0.5) |>
 +   getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
@@ -67,9 +63,9 @@ parameter:
   I0: 2
   R0: 0
 state:
-  S: 87.000000
-  I: 12.000000
-  R: 3.000000
+  S: 100.000000
+  I: 1.000000
+  R: 1.000000
 genealogy:
   ndemes: 1
   time: 0.500000
@@ -80,155 +76,8 @@ genealogy:
     pocket:
     - color: green
       name: 1
-    - color: green
-      name: 3
-  - name: 0
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 0
-    - color: green
-      name: 2
-  - name: 2
-    deme: 0
-    time: 0.003913
-    pocket:
-    - color: black
-      name: 2
-      deme: 0
-    - color: green
-      name: 5
-  - name: 3
-    deme: 0
-    time: 0.119356
-    pocket:
-    - color: green
-      name: 4
-    - color: green
-      name: 8
-  - name: 4
-    deme: 0
-    time: 0.164878
-    pocket:
-    - color: blue
-      name: 4
-    - color: red
-      name: 6
-  - name: 5
-    deme: 0
-    time: 0.203636
-    pocket:
-    - color: green
-      name: 7
-    - color: green
-      name: 12
-  - name: 7
-    deme: 0
-    time: 0.268242
-    pocket:
-    - color: green
-      name: 10
-    - color: green
-      name: 14
-  - name: 8
-    deme: 0
-    time: 0.307571
-    pocket:
-    - color: green
-      name: 9
-    - color: green
-      name: 11
-  - name: 9
-    deme: 0
-    time: 0.330999
-    pocket:
-    - color: red
-      name: 8
-    - color: blue
-      name: 9
-  - name: 10
-    deme: 0
-    time: 0.339749
-    pocket:
-    - color: black
-      name: 10
-      deme: 0
-    - color: green
-      name: 17
-  - name: 11
-    deme: 0
-    time: 0.354336
-    pocket:
     - color: black
       name: 1
-      deme: 0
-    - color: black
-      name: 11
-      deme: 0
-  - name: 12
-    deme: 0
-    time: 0.386994
-    pocket:
-    - color: green
-      name: 13
-    - color: green
-      name: 15
-  - name: 13
-    deme: 0
-    time: 0.411911
-    pocket:
-    - color: black
-      name: 12
-      deme: 0
-    - color: blue
-      name: 13
-  - name: 14
-    deme: 0
-    time: 0.441349
-    pocket:
-    - color: black
-      name: 0
-      deme: 0
-    - color: black
-      name: 14
-      deme: 0
-  - name: 15
-    deme: 0
-    time: 0.452319
-    pocket:
-    - color: black
-      name: 15
-      deme: 0
-    - color: green
-      name: 16
-  - name: 16
-    deme: 0
-    time: 0.460665
-    pocket:
-    - color: black
-      name: 5
-      deme: 0
-    - color: black
-      name: 16
-      deme: 0
-  - name: 17
-    deme: 0
-    time: 0.467876
-    pocket:
-    - color: blue
-      name: 17
-    - color: green
-      name: 18
-  - name: 18
-    deme: 0
-    time: 0.495139
-    pocket:
-    - color: black
-      name: 7
-      deme: 0
-    - color: black
-      name: 18
       deme: 0
 > 
 > simulate("LBDP",time=0.5) |>
@@ -241,43 +90,83 @@ parameter:
   psi: 1.000000
   n0: 5
 state:
-  n: 8.000000
+  n: 12.000000
 genealogy:
   ndemes: 1
-  time: 0.500000
-  nodes:
-  - name: 3
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 3
-    - color: green
-      name: 7
-  - name: 2
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 2
-    - color: green
-      name: 9
-  - name: 7
-    deme: 0
-    time: 0.126437
-    pocket:
-    - color: red
-      name: 3
-    - color: blue
-      name: 7
-  - name: 9
-    deme: 0
-    time: 0.372901
-    pocket:
-    - color: red
-      name: 2
-    - color: blue
-      name: 9
+time: 0.500000
+nodes:
+- name: 4
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 4
+  - color: green
+    name: 13
+- name: 3
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 3
+  - color: green
+    name: 16
+- name: 1
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 1
+  - color: green
+    name: 7
+- name: 0
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 0
+  - color: green
+    name: 9
+- name: 7
+  deme: 0
+  time: 0.128620
+  pocket:
+  - color: blue
+    name: 7
+  - color: green
+    name: 17
+- name: 9
+  deme: 0
+  time: 0.232253
+  pocket:
+  - color: red
+    name: 0
+  - color: blue
+    name: 9
+- name: 13
+  deme: 0
+  time: 0.373606
+  pocket:
+  - color: red
+    name: 4
+  - color: blue
+    name: 13
+- name: 16
+  deme: 0
+  time: 0.427337
+  pocket:
+  - color: red
+    name: 3
+  - color: blue
+    name: 16
+- name: 17
+  deme: 0
+  time: 0.492345
+  pocket:
+  - color: red
+    name: 12
+  - color: blue
+    name: 17
 > 
 > try(
 +   simulate("SIR",time=1) |>

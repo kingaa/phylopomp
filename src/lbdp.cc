@@ -1,7 +1,8 @@
 // Linear birth-death-sampling genealogy process simulator (C++)
 
-#include "gp.h"
-#include "internal.h"
+#include "master.h"
+#include "popul_proc.h"
+#include "generics.h"
 
 typedef struct {
   double n;
@@ -9,24 +10,24 @@ typedef struct {
 
 typedef struct {
   double lambda;                // birth rate
-  double mu;			// death rate
-  double psi;			// sampling rate
-  int n0;			// initial population size
+  double mu;                    // death rate
+  double psi;                   // sampling rate
+  int n0;                       // initial population size
 } lbdp_parameters_t;
 
-class lbdp_genealogy_t : public genealogy_t<lbdp_state_t,lbdp_parameters_t,3> {
+class lbdp_genealogy_t : public master_t<popul_proc_t<lbdp_state_t,lbdp_parameters_t,3> > {
 
 public:
 
   // basic constructor
-  lbdp_genealogy_t (double t0 = 0) : genealogy_t(t0) { };
+  lbdp_genealogy_t (double t0 = 0) : master_t(t0) { };
   // constructor from serialized binary form
-  lbdp_genealogy_t (raw_t *o) : genealogy_t(o) {};
+  lbdp_genealogy_t (raw_t *o) : master_t(o) {};
   // copy constructor
-  lbdp_genealogy_t (const lbdp_genealogy_t &G) : genealogy_t(G) {};
+  lbdp_genealogy_t (const lbdp_genealogy_t &G) : master_t(G) {};
   
   void valid (void) const {
-    this->genealogy_t::valid();
+    master_t::valid();
     if (state.n < 0) err("negative population size!");
   };
 
@@ -45,15 +46,15 @@ public:
 
   void jump (int event) {
     switch (event) {
-    case 0:			// birth
+    case 0:                     // birth
       state.n += 1.0;
       birth();
       break;
-    case 1:			// death
+    case 1:                     // death
       state.n -= 1.0;
       death();
       break;
-    case 2:			// sample
+    case 2:                     // sample
       sample();
       break;
     default:
@@ -85,7 +86,7 @@ public:
     std::string s = tab + "state:\n"
       + t + "n: " + std::to_string(state.n) + "\n";
     std::string g = tab + "genealogy:\n"
-      + t + this->genealogy_t::yaml(t);
+      + t + geneal.yaml();
     return p+s+g;
   };
 
@@ -94,23 +95,23 @@ public:
 extern "C" {
 
   SEXP makeLBDP (SEXP Params, SEXP ICs, SEXP T0) {
-    return make_gp<lbdp_genealogy_t>(Params,ICs,T0);
+    return make<lbdp_genealogy_t>(Params,ICs,T0);
   }
 
   SEXP reviveLBDP (SEXP State, SEXP Params) {
-    return revive_gp<lbdp_genealogy_t>(State,Params);
+    return revive<lbdp_genealogy_t>(State,Params);
   }
 
   SEXP runLBDP (SEXP State, SEXP Times) {
-    return run_gp<lbdp_genealogy_t>(State,Times);
+    return run<lbdp_genealogy_t>(State,Times);
   }
 
   SEXP infoLBDP (SEXP State, SEXP Prune, 
-		 SEXP T0, SEXP Time, SEXP Descript,
-		 SEXP Yaml, SEXP Structure, SEXP Lineages,
-		 SEXP Tree, SEXP Compact) {
-    return info_gp<lbdp_genealogy_t>(State, Prune, T0, Time, Descript,
-				    Yaml,Structure, Lineages, Tree, Compact);
+                 SEXP T0, SEXP Time, SEXP Descript,
+                 SEXP Yaml, SEXP Structure, SEXP Lineages,
+                 SEXP Tree, SEXP Compact) {
+    return info<lbdp_genealogy_t>(State, Prune, T0, Time, Descript,
+                                  Yaml,Structure, Lineages, Tree, Compact);
   }
 
 }

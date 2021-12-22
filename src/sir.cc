@@ -1,7 +1,8 @@
 // SIR with Sampling Genealogy Process Simulator (C++)
 
-#include "gp.h"
-#include "internal.h"
+#include "master.h"
+#include "popul_proc.h"
+#include "generics.h"
 
 typedef struct {
   double S;             // number of susceptibles
@@ -19,23 +20,17 @@ typedef struct {
   int R0;                     // initial recoveries
 } sir_parameters_t;
 
-class sir_genealogy_t : public genealogy_t<sir_state_t,sir_parameters_t,3> {
+class sir_genealogy_t : public master_t<popul_proc_t<sir_state_t,sir_parameters_t,3>, 1> {
 
 public:
 
   // basic constructor
-  sir_genealogy_t (double t0 = 0) : genealogy_t(t0) { };
+  sir_genealogy_t (double t0 = 0) : master_t(t0) {};
   // constructor from serialized binary form
-  sir_genealogy_t (raw_t *o) : genealogy_t(o) {};
+  sir_genealogy_t (raw_t *o) : master_t(o) {};
   // copy constructor
-  sir_genealogy_t (const sir_genealogy_t &G) : genealogy_t(G) {};
+  sir_genealogy_t (const sir_genealogy_t &G) : master_t(G) {};
   
-  void valid (void) const {
-    this->genealogy_t::valid();
-    if (params.N <= 0) err("total population size must be positive!");
-    if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
-  };
-
   void rinit (void) {
     state.S = double(params.S0);
     state.I = double(params.I0);
@@ -46,24 +41,24 @@ public:
   double event_rates (double *rate, int n) const {
     if (n != 3) err("wrong number of events!");
     rate[0] = params.Beta * state.S * state.I / params.N; // infection
-    rate[1] = params.gamma * state.I;			  // recovery
-    rate[2] = params.psi * state.I;			  // sample
+    rate[1] = params.gamma * state.I;                     // recovery
+    rate[2] = params.psi * state.I;                       // sample
     return rate[0] + rate[1] + rate[2];
   };
 
   void jump (int event) {
     switch (event) {
-    case 0:			// infection
+    case 0:                     // infection
       state.S -= 1.0;
       state.I += 1.0;
       birth();
       break;
-    case 1:			// recovery
+    case 1:                     // recovery
       state.I -= 1.0;
       state.R += 1.0;
       death();
       break;
-    case 2:			// sample
+    case 2:                     // sample
       sample();
       break;
     default:
@@ -102,7 +97,7 @@ public:
       + t + "I: " + std::to_string(state.I) + "\n"
       + t + "R: " + std::to_string(state.R) + "\n";
     std::string g = tab + "genealogy:\n"
-      + t + this->genealogy_t::yaml(t);
+      + t + geneal.yaml(t);
     return p+s+g;
   };
 
@@ -111,23 +106,25 @@ public:
 extern "C" {
 
   SEXP makeSIR (SEXP Params, SEXP ICs, SEXP T0) {
-    return make_gp<sir_genealogy_t>(Params,ICs,T0);
+    return make<sir_genealogy_t>(Params,ICs,T0);
   }
 
   SEXP reviveSIR (SEXP State, SEXP Params) {
-    return revive_gp<sir_genealogy_t>(State,Params);
+    return revive<sir_genealogy_t>(State,Params);
   }
 
   SEXP runSIR (SEXP State, SEXP Times) {
-    return run_gp<sir_genealogy_t>(State,Times);
+    return run<sir_genealogy_t>(State,Times);
   }
 
   SEXP infoSIR (SEXP State, SEXP Prune, 
-		 SEXP T0, SEXP Time, SEXP Descript,
-		 SEXP Yaml, SEXP Structure, SEXP Lineages,
-		 SEXP Tree, SEXP Compact) {
-    return info_gp<sir_genealogy_t>(State, Prune, T0, Time, Descript,
-				    Yaml,Structure, Lineages, Tree, Compact);
+                SEXP T0, SEXP Time, SEXP Descript,
+                SEXP Yaml, SEXP Structure, SEXP Lineages,
+                SEXP Tree, SEXP Compact) {
+    return info<sir_genealogy_t>(State,
+                                 Prune, T0, Time, Descript,
+                                 Yaml,Structure, Lineages,
+                                 Tree, Compact);
   }
 
 }

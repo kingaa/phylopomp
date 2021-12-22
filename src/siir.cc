@@ -1,7 +1,8 @@
 // SIIR with Sampling Genealogy Process Simulator (C++)
 
-#include "gp.h"
-#include "internal.h"
+#include "master.h"
+#include "popul_proc.h"
+#include "generics.h"
 
 typedef struct {
   double S;             // number of susceptibles
@@ -12,7 +13,7 @@ typedef struct {
 typedef struct {
   double Beta1, Beta2;        // transmission rate
   double gamma;               // recovery rate
-  double psi1, psi2;	      // sampling rates
+  double psi1, psi2;          // sampling rates
   double sigma12, sigma21;    // movement rates
   double N;                   // host population size
   int S0;                     // initial susceptibles
@@ -20,24 +21,22 @@ typedef struct {
   int R0;                     // initial recoveries
 } siir_parameters_t;
 
-class siir_genealogy_t : public genealogy_t<siir_state_t,siir_parameters_t,8,2> {
+class siir_genealogy_t : public master_t<popul_proc_t<siir_state_t,siir_parameters_t,8>, 2> {
 
 public:
 
   // basic constructor
-  siir_genealogy_t (double t0 = 0) : genealogy_t(t0) { };
+  siir_genealogy_t (double t0 = 0) : master_t(t0) { };
   // constructor from serialized binary form
-  siir_genealogy_t (raw_t *o) : genealogy_t(o) {};
+  siir_genealogy_t (raw_t *o) : master_t(o) {};
   // copy constructor
-  siir_genealogy_t (const siir_genealogy_t &G) : genealogy_t(G) {};
+  siir_genealogy_t (const siir_genealogy_t &G) : master_t(G) {};
 
   void valid (void) {
-    this->genealogy_t::valid();
+    master_t::valid();
     if (params.N <= 0) err("total population size must be positive!");
     if (state.S < 0 || state.I1 < 0 || state.I2 < 0 || state.R < 0) err("negative state variables!");
     if (params.N != state.S+state.I1+state.I2+state.R) err("population leakage!");
-    if (size_t(state.I1) != inventory[0].size()) err("inventory misaccounting!");
-    if (size_t(state.I2) != inventory[1].size()) err("inventory misaccounting!");
   };
 
   void rinit (void) {
@@ -148,7 +147,7 @@ public:
       + t + "I2: " + std::to_string(state.I2) + "\n"
       + t + "R: " + std::to_string(state.R) + "\n";
     std::string g = tab + "genealogy:\n"
-      + t + this->genealogy_t::yaml(t);
+      + t + geneal.yaml(t);
     return p+s+g;
   };
 
@@ -157,23 +156,23 @@ public:
 extern "C" {
 
   SEXP makeSIIR (SEXP Params, SEXP ICs, SEXP T0) {
-    return make_gp<siir_genealogy_t>(Params,ICs,T0);
+    return make<siir_genealogy_t>(Params,ICs,T0);
   }
 
   SEXP reviveSIIR (SEXP State, SEXP Params) {
-    return revive_gp<siir_genealogy_t>(State,Params);
+    return revive<siir_genealogy_t>(State,Params);
   }
 
   SEXP runSIIR (SEXP State, SEXP Times) {
-    return run_gp<siir_genealogy_t>(State,Times);
+    return run<siir_genealogy_t>(State,Times);
   }
 
   SEXP infoSIIR (SEXP State, SEXP Prune, 
                  SEXP T0, SEXP Time, SEXP Descript,
                  SEXP Yaml, SEXP Structure, SEXP Lineages,
                  SEXP Tree, SEXP Compact) {
-    return info_gp<siir_genealogy_t>(State, Prune, T0, Time, Descript,
-                                     Yaml,Structure, Lineages, Tree, Compact);
+    return info<siir_genealogy_t>(State, Prune, T0, Time, Descript,
+                                  Yaml,Structure, Lineages, Tree, Compact);
   }
 
 }

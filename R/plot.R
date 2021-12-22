@@ -23,7 +23,22 @@
 ##' @importFrom utils globalVariables
 ##'
 ##' @example examples/movie.R
-##' 
+##'
+NULL
+
+##' @inheritParams getInfo
+##' @param x object of class \sQuote{gpsim}
+##' @param ... passed to \code{\link{treeplot}}
+##' @method plot gpsim
+##' @rdname plot
+##' @export
+plot.gpsim <- function (x, ..., time, t0, prune = TRUE, compact = TRUE) {
+  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,prune=prune,compact=compact)
+  if (missing(time)) time <- out$time
+  if (missing(t0)) t0 <- out$t0
+  treeplot(tree=out$tree,time=time,t0=t0,...)
+}
+
 ##' @rdname plot
 ##' @export
 treeplot <- function (tree, time = NULL, t0 = 0,
@@ -42,14 +57,12 @@ treeplot <- function (tree, time = NULL, t0 = 0,
   time <- as.numeric(c(time,max(dat$x)))[1L]
   
   if (is.na(t0)) { # root time is to be determined from the current time
-    dat |> mutate(x=x-max(x)+time)
+    dat |> mutate(x=x-max(x)+time) -> dat
   } else {
-    dat |> mutate(x=x-min(x)+t0)
-  } |>
-    mutate(
-      vis=nodecol != "i"
-    ) -> dat
-
+    dat |> mutate(x=x-min(x)+t0) -> dat
+  }
+  dat |> mutate(vis=nodecol != "i") -> dat
+  
   ## number of nodes and tips of each color
   expand_grid(
     nodecol=c("o","b","r","g","p","m"),
@@ -142,16 +155,3 @@ ball_colors <- c(
 utils::globalVariables(
          c(".id","k","label","nodecol","deme","vis","x","y","rowname")
        )
-
-##' @inheritParams getInfo
-##' @param x object of class \sQuote{gpsim}
-##' @param ... passed to \code{\link{treeplot}}
-##' @method plot gpsim
-##' @rdname plot
-##' @export
-plot.gpsim <- function (x, ..., time, t0, prune = TRUE, compact = TRUE) {
-  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,prune=prune,compact=compact)
-  if (missing(time)) time <- out$time
-  if (missing(t0)) t0 <- out$t0
-  treeplot(tree=out$tree,time=time,t0=t0,...)
-}

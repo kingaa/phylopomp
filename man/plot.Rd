@@ -2,32 +2,32 @@
 % Please edit documentation in R/plot.R
 \name{plot}
 \alias{plot}
-\alias{treeplot}
 \alias{plot.gpsim}
+\alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-treeplot(tree, time = NULL, t0 = 0, ladderize = TRUE, points = FALSE, ...)
-
 \method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, compact = TRUE)
+
+treeplot(tree, time = NULL, t0 = 0, ladderize = TRUE, points = FALSE, ...)
 }
 \arguments{
-\item{tree}{character; tree representation in Newick format.}
+\item{x}{object of class \sQuote{gpsim}}
+
+\item{...}{passed to \code{\link{treeplot}}}
 
 \item{time}{numeric; time of the genealogy.}
 
 \item{t0}{numeric; time of the root.}
 
-\item{ladderize}{Ladderize?}
-
-\item{points}{Show nodes and tips?}
-
-\item{...}{passed to \code{\link{treeplot}}}
-
-\item{x}{object of class \sQuote{gpsim}}
-
 \item{prune}{logical; prune the genealogy?}
 
 \item{compact}{logical; return the tree in compact representation?}
+
+\item{tree}{character; tree representation in Newick format.}
+
+\item{ladderize}{Ladderize?}
+
+\item{points}{Show nodes and tips?}
 }
 \value{
 A printable \code{ggplot} object.
