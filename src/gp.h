@@ -12,8 +12,6 @@
 
 #include "internal.h"
 
-typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
-
 static const size_t MEMORY_MAX = (1<<28); // 256MB
 static const char* colores[] = {"green", "black", "blue", "red", "grey", "purple"};
 static const char* colorsymb[] = {"g", "o", "b", "r", "z", "p"};

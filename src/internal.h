@@ -22,6 +22,8 @@
 
 #endif
 
+typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
+
 inline SEXP trueSEXP (void) {
   SEXP x;
   PROTECT(x = NEW_LOGICAL(1));
