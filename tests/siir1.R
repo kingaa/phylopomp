@@ -14,7 +14,7 @@ runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=2,time=2) |>
   plot(points=TRUE)
 
 runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=1,time=1) |>
-  simulate(time=10) |>
+  simulate(time=100) |>
   plot(points=TRUE,time=NULL,compact=FALSE)
 
 dev.off()

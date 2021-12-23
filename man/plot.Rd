@@ -8,7 +8,15 @@
 \usage{
 \method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, compact = TRUE)
 
-treeplot(tree, time = NULL, t0 = 0, ladderize = TRUE, points = FALSE, ...)
+treeplot(
+  tree,
+  time = NULL,
+  t0 = 0,
+  ladderize = TRUE,
+  points = FALSE,
+  ...,
+  palette = scales::hue_pal(l = 30, h = c(220, 580))
+)
 }
 \arguments{
 \item{x}{object of class \sQuote{gpsim}}
@@ -28,6 +36,11 @@ treeplot(tree, time = NULL, t0 = 0, ladderize = TRUE, points = FALSE, ...)
 \item{ladderize}{Ladderize?}
 
 \item{points}{Show nodes and tips?}
+
+\item{palette}{color palette for branches.
+This can be furnished either as a function or a vector of colors.
+If this is a function, it should take a single integer argument, the number of colors required.
+If it is a vector, ....}
 }
 \value{
 A printable \code{ggplot} object.

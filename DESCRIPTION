@@ -27,6 +27,7 @@ Collate:
     'lineages.R'
     'newick2df.R'
     'plot.R'
+    'pomp.R'
     'print.R'
     'siir.R'
     'sir.R'

@@ -58,7 +58,7 @@ simulate("SIIR",time=3,psi1=1,psi2=0) |>
   simulate(Beta1=2,gamma=2,time=10,psi1=10,psi2=1) |>
   plot()
 
-runSIIR(Beta1=10,Beta2=8,S0=50,I1_0=10,I2_0=2,R0=0,time=0,t0=-1) |>
+runSIIR(Beta1=10,Beta2=8,S0=200,I1_0=10,I2_0=8,R0=0,time=0,t0=-1) |>
   simulate(psi1=10,time=2) |>
   plot(points=TRUE,prune=FALSE)
 

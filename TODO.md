@@ -1,9 +1,7 @@
 ## To-do List
 
 - streamline pointers to generics.h functions for init.c
-- harmonize simulate methods
 - obscure vs prune in getinfo
-- palette option for plotting
 - separate inventory from genealogy
 
 - repair newick2df

@@ -10,6 +10,10 @@
 ##' @param time numeric; time of the genealogy.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
+##' @param palette color palette for branches.
+##' This can be furnished either as a function or a vector of colors.
+##' If this is a function, it should take a single integer argument, the number of colors required.
+##' If it is a vector, ....
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##'
@@ -40,9 +44,13 @@ plot.gpsim <- function (x, ..., time, t0, prune = TRUE, compact = TRUE) {
 }
 
 ##' @rdname plot
+##' @importFrom scales hue_pal
 ##' @export
-treeplot <- function (tree, time = NULL, t0 = 0,
-  ladderize = TRUE, points = FALSE, ...) {
+treeplot <- function (
+  tree, time = NULL, t0 = 0,
+  ladderize = TRUE, points = FALSE, ...,
+  palette = scales::hue_pal(l=30,h=c(220,580))
+) {
 
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
@@ -52,7 +60,21 @@ treeplot <- function (tree, time = NULL, t0 = 0,
 
   read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
-    separate(label,into=c("nodecol","deme","label")) -> dat
+    separate(label,into=c("nodecol","deme","label")) |>
+    mutate(
+      deme=if_else(deme=="NA",NA_character_,deme),
+      label=if_else(label=="NA",NA_character_,label)
+    ) -> dat
+
+  ndeme <- length(unique(dat$deme))-1L
+  if (is.function(palette)) {
+    palette <- palette(ndeme)
+  } else {
+    if (length(palette) < ndeme)
+      stop("in ",sQuote("treeplot"),": ",sQuote("palette"),
+        " must have length at least ",ndeme,
+        " if specified as a vector.",call.=FALSE)
+  }
 
   time <- as.numeric(c(time,max(dat$x)))[1L]
   
@@ -87,7 +109,7 @@ treeplot <- function (tree, time = NULL, t0 = 0,
     geom_tree(aes(alpha=vis,color=deme))+
     expand_limits(x=dat$x)+
     scale_x_continuous()+
-    scale_color_hue(l=30,h=c(240,600))+
+    scale_color_manual(values=palette,na.value="#ffffff00")+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(t0,time))+
