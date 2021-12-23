@@ -1,14 +1,20 @@
+library(pomp)
 library(phylopomp)
-set.seed(94329846)
+set.seed(147469846)
 
 png(filename="diagram-01.png",res=100,
-  width=318,height=256,units="px")
-simulate("SIR",time=1) |> diagram()
+  width=1006,height=250,units="px")
+freeze(simulate("SIR",time=1),seed=147469846) |> diagram()
 dev.off()
 
 png(filename="diagram-02.png",res=100,
-  width=511,height=134,units="px")
-simulate("SIIR",Beta2=20,psi2=0.1,I2_0=2,time=0.5) |> diagram()
+  width=618,height=165,units="px")
+freeze(simulate("SIIR",time=0.3),seed=788520677) |> diagram()
+dev.off()
+
+png(filename="diagram-03.png",res=100,
+  width=1053,height=307,units="px")
+freeze(simulate("SIIR",time=0.3),seed=459939038) |> diagram(prune=FALSE)
 dev.off()
 
 simulate("SIIR",time=0.3) |>

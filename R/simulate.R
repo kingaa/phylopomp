@@ -16,6 +16,12 @@
 NULL
 
 ##' @rdname simulate
+##' @export
+simulate <- function (object, ...) {
+  UseMethod("simulate")
+}
+
+##' @rdname simulate
 ##' @method simulate default
 ##' @export
 simulate.default <- function (object, ...) {
@@ -37,12 +43,6 @@ simulate.default <- function (object, ...) {
 }
 
 ##' @rdname simulate
-##' @export
-simulate <- function (object, ...) {
-  UseMethod("simulate")
-}
-
-##' @rdname simulate
 ##' @method simulate character
 ##' @param time end timepoint of simulation
 ##' @export
@@ -52,7 +52,9 @@ simulate.character <- function (object, time, ...) {
     SIR = runSIR(time=time,...),
     SIIR = runSIIR(time=time,...),
     LBDP = runLBDP(time=time,...),
-    stop("unrecognized model: ",sQuote(object),".",call.=FALSE)
+    stop("unrecognized model: ",sQuote(object),".",
+      "Do ",sQuote("simulate()")," to view available models.",
+      call.=FALSE)
   ) |>
     structure(model=object,class="gpsim")
 }

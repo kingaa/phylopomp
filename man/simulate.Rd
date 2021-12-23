@@ -7,9 +7,9 @@
 \alias{simulate.gpsim}
 \title{simulate}
 \usage{
-\method{simulate}{default}(object, ...)
-
 simulate(object, ...)
+
+\method{simulate}{default}(object, ...)
 
 \method{simulate}{character}(object, time, ...)
 
