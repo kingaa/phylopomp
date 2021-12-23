@@ -8,11 +8,21 @@
 \alias{sir_pomp}
 \title{SIR with sampling simulator.}
 \usage{
-runSIR(time, t0 = 0, Beta = 2, gamma = 1, psi = 1, S0 = 100, I0 = 2, R0 = 0)
+runSIR(
+  time,
+  t0 = 0,
+  Beta = 2,
+  gamma = 1,
+  psi = 1,
+  delta = 0,
+  S0 = 100,
+  I0 = 2,
+  R0 = 0
+)
 
-continueSIR(object, time, Beta = NA, gamma = NA, psi = NA)
+continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
 
-sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
+sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 }
 \arguments{
 \item{time}{final time}
@@ -24,6 +34,8 @@ sir_pomp(data, Beta, gamma, psi, S0, I0, R0, t0 = 0)
 \item{gamma}{recovery rate.}
 
 \item{psi}{sampling rate.}
+
+\item{delta}{immunity waning rate}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -56,6 +68,8 @@ runSIR(Beta=3,gamma=1,psi=2,S0=20,I0=5,R0=0,time=5,t0=-1) |>
 runSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
 plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
   ncol=1,rel_heights=c(4,1))
+
+simulate("SIR",delta=1,time=20,I0=4) |> plot()
 }
 \seealso{
 Other Genealogy processes: 

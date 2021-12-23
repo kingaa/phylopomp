@@ -24,9 +24,6 @@ continueMoran(object, time, mu = NA, psi = NA)
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
-
-\item{stationary}{logical;
-if TRUE, the process will be initialized in its stationary distribution.}
 }
 \value{
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"Moran"}.

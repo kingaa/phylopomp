@@ -11,8 +11,6 @@
 ##' @param mu event rate
 ##' @param psi sampling rate.
 ##' @param n population size
-##' @param stationary logical;
-##' if TRUE, the process will be initialized in its stationary distribution.
 ##' @param time final time
 ##' @param t0 initial time
 ##' 

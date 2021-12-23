@@ -81,6 +81,7 @@ parameter:
   Beta: 2.000000
   gamma: 1.000000
   psi: 1.000000
+  delta: 0.000000
   S0: 100
   I0: 2
   R0: 0

@@ -14,13 +14,14 @@ typedef struct {
   double Beta;                // transmission rate
   double gamma;               // recovery rate
   double psi;                 // sampling rate
+  double delta;		      // immunity waning rate
   double N;                   // host population size
   int S0;                     // initial susceptibles
   int I0;                     // initial infecteds
   int R0;                     // initial recoveries
 } sir_parameters_t;
 
-class sir_genealogy_t : public master_t<popul_proc_t<sir_state_t,sir_parameters_t,3>, 1> {
+class sir_genealogy_t : public master_t<popul_proc_t<sir_state_t,sir_parameters_t,4>, 1> {
 
 public:
 
@@ -39,11 +40,12 @@ public:
   };
 
   double event_rates (double *rate, int n) const {
-    if (n != 3) err("wrong number of events!");
+    if (n != 4) err("wrong number of events!");
     rate[0] = params.Beta * state.S * state.I / params.N; // infection
     rate[1] = params.gamma * state.I;                     // recovery
     rate[2] = params.psi * state.I;                       // sample
-    return rate[0] + rate[1] + rate[2];
+    rate[3] = params.delta * state.R;			  // waning
+    return rate[0] + rate[1] + rate[2] + rate[3];
   };
 
   void jump (int event) {
@@ -61,6 +63,10 @@ public:
     case 2:                     // sample
       sample();
       break;
+    case 3:			// waning
+      state.S += 1.0;
+      state.R -= 1.0;
+      break;
     default:
       err("in SIR 'jump': c'est impossible! (%ld)",event); // # nocov
       break;
@@ -68,10 +74,11 @@ public:
   };
 
   void update_params (double *p, int n) {
-    if (n != 3) err("wrong number of parameters!");
+    if (n != 4) err("wrong number of parameters!");
     if (!ISNA(p[0])) params.Beta = p[0];
     if (!ISNA(p[1])) params.gamma = p[1];
     if (!ISNA(p[2])) params.psi = p[2];
+    if (!ISNA(p[3])) params.delta = p[3];
   };
 
   void update_ICs (double *p, int n) {
@@ -89,6 +96,7 @@ public:
       + t + "Beta: " + std::to_string(params.Beta) + "\n"
       + t + "gamma: " + std::to_string(params.gamma) + "\n"
       + t + "psi: " + std::to_string(params.psi) + "\n"
+      + t + "delta: " + std::to_string(params.delta) + "\n"
       + t + "S0: " + std::to_string(params.S0) + "\n"
       + t + "I0: " + std::to_string(params.I0) + "\n"
       + t + "R0: " + std::to_string(params.R0) + "\n";
