@@ -103,28 +103,4 @@ public:
 
 };
 
-extern "C" {
-
-  SEXP makeSIR (SEXP Params, SEXP ICs, SEXP T0) {
-    return make<sir_genealogy_t>(Params,ICs,T0);
-  }
-
-  SEXP reviveSIR (SEXP State, SEXP Params) {
-    return revive<sir_genealogy_t>(State,Params);
-  }
-
-  SEXP runSIR (SEXP State, SEXP Times) {
-    return run<sir_genealogy_t>(State,Times);
-  }
-
-  SEXP infoSIR (SEXP State, SEXP Prune, SEXP Obscure,
-                SEXP T0, SEXP Time, SEXP Descript,
-                SEXP Yaml, SEXP Structure, SEXP Lineages,
-                SEXP Tree, SEXP Compact) {
-    return info<sir_genealogy_t>(State, Prune, Obscure,
-				 T0, Time, Descript,
-                                 Yaml,Structure, Lineages,
-                                 Tree, Compact);
-  }
-
-}
+GENERICS(SIR,sir_genealogy_t)

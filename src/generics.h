@@ -195,4 +195,40 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   return out;
 }
 
+#define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP ICs, SEXP T0) { \
+    return make<TYPE>(Params,ICs,T0);					\
+  }									\
+  
+#define REVIVEFN(X,TYPE) SEXP revive ## X (SEXP State, SEXP Params) {	\
+    return revive<TYPE>(State,Params);					\
+  }									\
+
+#define RUNFN(X,TYPE) SEXP run ## X (SEXP State, SEXP Times) {	\
+    return run<TYPE>(State,Times);				\
+  }								\
+
+#define INFOFN(X,TYPE) SEXP info ## X (					\
+				       SEXP State, SEXP Prune, SEXP Obscure, \
+				       SEXP T0, SEXP Time, SEXP Descript, \
+				       SEXP Yaml, SEXP Structure, SEXP Lineages, \
+				       SEXP Tree, SEXP Compact) {	\
+    return info<TYPE>(State, Prune, Obscure,				\
+		      T0, Time, Descript,				\
+		      Yaml,Structure, Lineages,				\
+		      Tree, Compact);					\
+  }									\
+
+#define GENERICS(X,TYPE)						\
+  extern "C" {								\
+									\
+    MAKEFN(X,TYPE)							\
+    									\
+    REVIVEFN(X,TYPE)							\
+									\
+    RUNFN(X,TYPE)							\
+    									\
+    INFOFN(X,TYPE)							\
+									\
+  }									\
+  
 #endif

@@ -14,4 +14,3 @@ Related packages:
 - create and edit `R/<model>.R`
 - add examples to `examples/<model.R>`
 - add tests to `tests/`
-

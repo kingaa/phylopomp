@@ -153,28 +153,4 @@ public:
 
 };
 
-extern "C" {
-
-  SEXP makeSIIR (SEXP Params, SEXP ICs, SEXP T0) {
-    return make<siir_genealogy_t>(Params,ICs,T0);
-  }
-
-  SEXP reviveSIIR (SEXP State, SEXP Params) {
-    return revive<siir_genealogy_t>(State,Params);
-  }
-
-  SEXP runSIIR (SEXP State, SEXP Times) {
-    return run<siir_genealogy_t>(State,Times);
-  }
-
-  SEXP infoSIIR (SEXP State, SEXP Prune, SEXP Obscure,
-                 SEXP T0, SEXP Time, SEXP Descript,
-                 SEXP Yaml, SEXP Structure, SEXP Lineages,
-                 SEXP Tree, SEXP Compact) {
-    return info<siir_genealogy_t>(State, Prune, Obscure,
-				  T0, Time, Descript,
-                                  Yaml,Structure, Lineages,
-				  Tree, Compact);
-  }
-
-}
+GENERICS(SIIR,siir_genealogy_t)

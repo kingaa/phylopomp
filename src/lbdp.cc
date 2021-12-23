@@ -92,28 +92,4 @@ public:
 
 };
 
-extern "C" {
-
-  SEXP makeLBDP (SEXP Params, SEXP ICs, SEXP T0) {
-    return make<lbdp_genealogy_t>(Params,ICs,T0);
-  }
-
-  SEXP reviveLBDP (SEXP State, SEXP Params) {
-    return revive<lbdp_genealogy_t>(State,Params);
-  }
-
-  SEXP runLBDP (SEXP State, SEXP Times) {
-    return run<lbdp_genealogy_t>(State,Times);
-  }
-
-  SEXP infoLBDP (SEXP State, SEXP Prune, SEXP Obscure,
-                 SEXP T0, SEXP Time, SEXP Descript,
-                 SEXP Yaml, SEXP Structure, SEXP Lineages,
-                 SEXP Tree, SEXP Compact) {
-    return info<lbdp_genealogy_t>(State, Prune, Obscure,
-				  T0, Time, Descript,
-                                  Yaml,Structure, Lineages,
-				  Tree, Compact);
-  }
-
-}
+GENERICS(LBDP,lbdp_genealogy_t)
