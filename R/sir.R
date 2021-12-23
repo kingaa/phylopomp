@@ -33,9 +33,7 @@ runSIR <- function (
   ics <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ics,t0)
   x <- .Call(P_runSIR,x,time)
-  attr(x,"model") <- "SIR"
-  class(x) <- "gpsim"
-  x
+  structure(x,model="SIR",class="gpsim")
 }
 
 ##' @rdname sir
@@ -46,8 +44,7 @@ continueSIR <- function (
 ) {
   params <- c(Beta=Beta,gamma=gamma,psi=psi)
   x <- .Call(P_reviveSIR,object,params)
-  x <- .Call(P_runSIR,x,time)
-  x
+  .Call(P_runSIR,x,time)
 }
 
 ##' @name sir_pomp

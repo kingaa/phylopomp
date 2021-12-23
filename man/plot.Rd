@@ -6,7 +6,7 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-\method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, compact = TRUE)
+\method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, obscure = TRUE, compact = TRUE)
 
 treeplot(
   tree,
@@ -28,6 +28,8 @@ treeplot(
 \item{t0}{numeric; time of the root.}
 
 \item{prune}{logical; prune the genealogy?}
+
+\item{obscure}{logical; obscure the demes?}
 
 \item{compact}{logical; return the tree in compact representation?}
 

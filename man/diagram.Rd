@@ -4,12 +4,22 @@
 \alias{diagram}
 \title{Genealogy process diagram}
 \usage{
-diagram(object, prune = TRUE, m = NULL, n = NULL, ..., digits = 1)
+diagram(
+  object,
+  prune = TRUE,
+  obscure = TRUE,
+  m = NULL,
+  n = NULL,
+  ...,
+  digits = 1
+)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
 
 \item{prune}{logical; prune the genealogy?}
+
+\item{obscure}{logical; obscure the demes?}
 
 \item{m}{width of plotting window, in nodes.
 By default, the nodes will be adjusted in width to fit the window.}

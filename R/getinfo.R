@@ -6,6 +6,7 @@
 ##' 
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
+##' @param obscure logical; obscure the demes?
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param tree logical; return the tree?
@@ -35,7 +36,7 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune  = TRUE,
+  object, prune  = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   lineages = FALSE,
@@ -43,11 +44,11 @@ getInfo <- function (
 {
   x <- switch(
     paste0("model",as.character(attr(object,"model"))),
-    modelSIR = .Call(P_infoSIR,object,prune,t0,time,
+    modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
-    modelSIIR = .Call(P_infoSIIR,object,prune,t0,time,
+    modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
-    modelLBDP = .Call(P_infoLBDP,object,prune,t0,time,
+    modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)

@@ -31,9 +31,7 @@ runLBDP <- function (
   ics <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ics,t0)
   x <- .Call(P_runLBDP,x,time)
-  attr(x,"model") <- "LBDP"
-  class(x) <- "gpsim"
-  x
+  structure(x,model="LBDP",class="gpsim")
 }
 
 ##' @rdname lbdp
@@ -44,6 +42,5 @@ continueLBDP <- function (
 ) {
   params <- c(lambda=lambda,mu=mu,psi=psi)
   x <- .Call(P_reviveLBDP,object,params)
-  x <- .Call(P_runLBDP,x,time)
-  x
+  .Call(P_runLBDP,x,time)
 }

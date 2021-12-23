@@ -117,12 +117,12 @@ extern "C" {
     return run<sir_genealogy_t>(State,Times);
   }
 
-  SEXP infoSIR (SEXP State, SEXP Prune, 
+  SEXP infoSIR (SEXP State, SEXP Prune, SEXP Obscure,
                 SEXP T0, SEXP Time, SEXP Descript,
                 SEXP Yaml, SEXP Structure, SEXP Lineages,
                 SEXP Tree, SEXP Compact) {
-    return info<sir_genealogy_t>(State,
-                                 Prune, T0, Time, Descript,
+    return info<sir_genealogy_t>(State, Prune, Obscure,
+				 T0, Time, Descript,
                                  Yaml,Structure, Lineages,
                                  Tree, Compact);
   }

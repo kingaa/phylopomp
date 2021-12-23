@@ -106,12 +106,14 @@ extern "C" {
     return run<lbdp_genealogy_t>(State,Times);
   }
 
-  SEXP infoLBDP (SEXP State, SEXP Prune, 
+  SEXP infoLBDP (SEXP State, SEXP Prune, SEXP Obscure,
                  SEXP T0, SEXP Time, SEXP Descript,
                  SEXP Yaml, SEXP Structure, SEXP Lineages,
                  SEXP Tree, SEXP Compact) {
-    return info<lbdp_genealogy_t>(State, Prune, T0, Time, Descript,
-                                  Yaml,Structure, Lineages, Tree, Compact);
+    return info<lbdp_genealogy_t>(State, Prune, Obscure,
+				  T0, Time, Descript,
+                                  Yaml,Structure, Lineages,
+				  Tree, Compact);
   }
 
 }

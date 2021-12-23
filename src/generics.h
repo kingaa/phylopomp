@@ -127,7 +127,7 @@ SEXP lineage_count (const TYPE& G) {
 
 // extract information
 template <class TYPE>
-SEXP info (SEXP State, SEXP Prune, 
+SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 	   SEXP T0, SEXP Time, SEXP Descript,
 	   SEXP Yaml, SEXP Structure, SEXP Lineages,
 	   SEXP Tree, SEXP Compact) {
@@ -135,7 +135,9 @@ SEXP info (SEXP State, SEXP Prune,
 
   // prune if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
-  if (do_prune) A.geneal.prune().obscure();
+  bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
+  if (do_prune) A.geneal.prune();
+  if (do_obscure) A.geneal.obscure();
 
   size_t nout = 0;
 

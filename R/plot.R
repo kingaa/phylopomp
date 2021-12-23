@@ -36,8 +36,12 @@ NULL
 ##' @method plot gpsim
 ##' @rdname plot
 ##' @export
-plot.gpsim <- function (x, ..., time, t0, prune = TRUE, compact = TRUE) {
-  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,prune=prune,compact=compact)
+plot.gpsim <- function (
+  x, ..., time, t0,
+  prune = TRUE, obscure = TRUE, compact = TRUE
+) {
+  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
+    prune=prune,obscure=obscure,compact=compact)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
   treeplot(tree=out$tree,time=time,t0=t0,...)

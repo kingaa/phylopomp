@@ -9,7 +9,7 @@
 ##' @return A tibble containing the lineage count function.
 ##' @rdname lineages
 ##' @export
-lineages <- function (object, prune = TRUE) {
-  getInfo(object,lineages=TRUE,prune=prune) |>
+lineages <- function (object, prune = TRUE, obscure = TRUE) {
+  getInfo(object,lineages=TRUE,prune=prune,obscure=obscure) |>
     getElement("lineages")
 }

@@ -26,9 +26,13 @@ NULL
 
 ##' @rdname diagram
 ##' @export
-diagram <- function (object, prune = TRUE, m = NULL, n = NULL, ..., digits = 1) {
+diagram <- function (
+  object,
+  prune = TRUE, obscure = TRUE,
+  m = NULL, n = NULL, ..., digits = 1
+) {
   object |>
-    getInfo(structure=TRUE,prune=prune) |>
+    getInfo(structure=TRUE,prune=prune,obscure=obscure) |>
     getElement("structure") |>
     genealogyGrob(
       m=m,n=n,digits=digits,

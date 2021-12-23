@@ -4,12 +4,14 @@
 \alias{lineages}
 \title{Lineage-count function}
 \usage{
-lineages(object, prune = TRUE)
+lineages(object, prune = TRUE, obscure = TRUE)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
 
 \item{prune}{logical; prune the genealogy?}
+
+\item{obscure}{logical; obscure the demes?}
 }
 \value{
 A tibble containing the lineage count function.

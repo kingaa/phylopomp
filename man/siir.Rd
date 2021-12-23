@@ -72,7 +72,7 @@ simulate("SIIR",time=3,psi1=1,psi2=0) |>
 
 runSIIR(Beta1=10,Beta2=8,S0=200,I1_0=10,I2_0=8,R0=0,time=0,t0=-1) |>
   simulate(psi1=10,time=2) |>
-  plot(points=TRUE,prune=FALSE)
+  plot(points=TRUE,obscure=FALSE)
 
 library(ggplot2)
 simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,S0=300,I1_0=20,I2_0=2,time=5) |>
