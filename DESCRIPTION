@@ -25,6 +25,7 @@ Collate:
     'foreach.R'
     'lbdp.R'
     'lineages.R'
+    'moran.R'
     'newick2df.R'
     'plot.R'
     'pomp.R'

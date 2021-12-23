@@ -37,6 +37,7 @@ Note that, one cannot change initial conditions or \code{t0} when continuing a s
 \seealso{
 Other Genealogy processes: 
 \code{\link{lbdp}},
+\code{\link{moran}},
 \code{\link{siir}},
 \code{\link{sir}}
 }

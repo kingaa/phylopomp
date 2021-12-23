@@ -17,22 +17,26 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> library(phylopomp)
-
-Attaching package: ‘phylopomp’
-
-The following object is masked from ‘package:stats’:
-
-    simulate
-
-> simulate()
-Available phylopomp models:
-- SIR: standard susceptible-infected-recovered model
-- SIIR: two-strain SIR model
-- LBDP: linear birth-death-sampling process
-- Moran: Moran process
-
-> try(simulate(22))
-Error : in ‘phylopomp::simulate’: ‘object’ must be specified as either the name of a model or the result of a previous simulation.
-Do ‘simulate()’ to view available models.
+> png(filename="moran1-%02d.png",res=100)
+> suppressPackageStartupMessages({
++   library(phylopomp)
++   library(tidyverse)
++ })
+> theme_set(theme_bw())
+> set.seed(847110120)
+> options(digits=3)
+> 
+> runMoran(time=10)
+<gpsim for model ‘Moran’>
+> 
+> runMoran(n=100,time=100) |>
++   plot()
+> 
+> simulate("Moran",time=100,psi=0) |>
++   simulate(time=105,psi=1) |>
++   plot()
+> 
+> dev.off()
+null device 
+          1 
 > 

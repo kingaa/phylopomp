@@ -49,6 +49,7 @@ simulate("LBDP",time=4) |>
 }
 \seealso{
 Other Genealogy processes: 
+\code{\link{moran}},
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}}

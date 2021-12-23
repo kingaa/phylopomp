@@ -60,6 +60,7 @@ plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
 \seealso{
 Other Genealogy processes: 
 \code{\link{lbdp}},
+\code{\link{moran}},
 \code{\link{siir}},
 \code{\link{simulate}()}
 }

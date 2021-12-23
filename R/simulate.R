@@ -30,7 +30,8 @@ simulate.default <- function (object, ...) {
       "Available phylopomp models:\n",
       "- SIR: standard susceptible-infected-recovered model\n",
       "- SIIR: two-strain SIR model\n",
-      "- LBDP: linear birth-death-sampling process\n"
+      "- LBDP: linear birth-death-sampling process\n",
+      "- Moran: Moran process\n"
     )
   else
     stop(
@@ -52,6 +53,7 @@ simulate.character <- function (object, time, ...) {
     SIR = runSIR(time=time,...),
     SIIR = runSIIR(time=time,...),
     LBDP = runLBDP(time=time,...),
+    Moran = runMoran(time=time,...),
     stop("unrecognized model: ",sQuote(object),".",
       "Do ",sQuote("simulate()")," to view available models.",
       call.=FALSE)
@@ -74,6 +76,7 @@ simulate.gpsim <- function (object, time, ...) {
     modelSIR = continueSIR(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),
+    modelMoran = continueMoran(object,time=time,...),
     model = stop("no model attribute detected.",call.=FALSE),
     stop("unrecognized model ",sQuote(model),".",call.=FALSE)
   ) |>

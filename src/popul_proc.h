@@ -18,7 +18,7 @@
 template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
 class popul_proc_t  {
 
-private:
+protected:
   // TYPE DEFINITIONS
   typedef STATE state_t;
   typedef PARAMETERS parameters_t;
