@@ -57,8 +57,3 @@ getInfo <- function (
   if (!is.null(x$lineages)) x$lineages <- as_tibble(x$lineages)
   x
 }
-
-##' @importFrom yaml as.yaml
-##' @docType import
-##' @export
-yaml::as.yaml

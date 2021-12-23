@@ -32,3 +32,4 @@ Collate:
     'siir.R'
     'sir.R'
     'simulate.R'
+    'yaml.R'
