@@ -7,17 +7,14 @@
 #include <unordered_map>
 #include <string>
 #include <cstring>
+#include <utility>
 
 #include "internal.h"
 #include "ball.h"
-#include "inventory.h"
 #include "node.h"
+#include "inventory.h"
 
 static const size_t MEMORY_MAX = (1<<28); // 256MB
-
-#include <list>
-typedef std::list<node_t*> nodes_t;
-typedef typename nodes_t::const_iterator node_it;
 
 // GENEALOGY CLASS
 // the class to hold the state of the genealogy process.
@@ -62,45 +59,45 @@ private:
 public:
   // SERIALIZATION
   // size of serialized binary form
-  size_t size (void) const {
+  size_t bytesize (void) const {
     size_t s = 2*sizeof(name_t) + 2*sizeof(slate_t);
     for (node_it i = nodes.begin(); i != nodes.end(); i++)
-      s += (*i)->size();
+      s += (*i)->bytesize();
     return s;
   };
   // binary serialization of genealogy_t
-  friend raw_t* operator<< (raw_t *o, const genealogy_t &G) {
-    name_t A[2]; A[0] = G._unique; A[1] = G.nodes.size();
-    slate_t B[2]; B[0] = G._t0; B[1] = G._time;
+  raw_t* serialize (raw_t *o) const {
+    name_t A[2]; A[0] = _unique; A[1] = nodes.size();
+    slate_t B[2]; B[0] = _t0; B[1] = _time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
-      o = (o << **i);
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      o = (*i)->serialize(o);
     }
     return o;
-  }
+  };
   // binary deserialization of genealogy_t
-  friend raw_t* operator>> (raw_t *o, genealogy_t &G) {
+  raw_t* deserialize (raw_t *o) {
+    clean();
     name_t A[2];
     slate_t B[2];
     std::unordered_map<name_t,node_t*> nodeptr;
     typename std::unordered_map<name_t,node_t*>::const_iterator npit;
-    G.clean();
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G._t0 = B[0]; G._time = B[1];
-    nodeptr.reserve(A[1]);
-    for (name_t i = 0; i < A[1]; i++) {
+    _unique = A[0]; _t0 = B[0]; _time = B[1];
+    size_t nnode = A[1];
+    nodeptr.reserve(nnode);
+    for (size_t i = 0; i < nnode; i++) {
       node_t *p = new node_t();
-      o = (o >> *p);
-      G.nodes.push_back(p);
+      o = p->deserialize(o);
+      nodes.push_back(p);
       nodeptr.insert({p->uniq,p});
     }
-    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
-      node_t *p = *i;
-      for (ball_it j = p->pocket.begin(); j != p->pocket.end(); j++) {
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
         ball_t *b = *j;
-        G.inventory.insert(b,b->deme);
+        inventory.insert(b);
         if (b->is(green)) {
           npit = nodeptr.find(b->uniq);
           if (npit == nodeptr.end()) {
@@ -113,6 +110,12 @@ public:
       }
     }
     return o;
+  };
+  friend raw_t* operator<< (raw_t *o, const genealogy_t &G) {
+    return G.serialize(o);
+  }
+  friend raw_t* operator>> (raw_t *o, genealogy_t &G) {
+    return G.deserialize(o);
   }
 
 public:
@@ -129,14 +132,14 @@ public:
   };
   // copy constructor
   genealogy_t (const genealogy_t& G) {
-    raw_t *o = new raw_t[G.size()];
+    raw_t *o = new raw_t[G.bytesize()];
     (o << G) >> *this;
     delete[] o;
   };
   // copy assignment operator
   genealogy_t & operator= (const genealogy_t& G) {
     clean();
-    raw_t *o = new raw_t[G.size()];
+    raw_t *o = new raw_t[G.bytesize()];
     o << G; o >> *this;
     delete[] o;
     return *this;
@@ -311,7 +314,7 @@ private:
     p->green_ball(g);
     p->pocket.insert(g);
     p->pocket.insert(b);
-    inventory.insert(b,d);
+    inventory.insert(b);
     return p;
   };
 
@@ -397,7 +400,7 @@ public:
     add(p,a);
     for (int k = 1; k < nbirth; k++) {
       ball_t *b = new ball_t(p,unique(),black,j);
-      inventory.insert(b,j);
+      inventory.insert(b);
       p->pocket.insert(b);
     }
   };
@@ -430,7 +433,13 @@ public:
     p->slate = time();
     add(p,a);
     inventory.erase(a);
-    inventory.insert(a,j);
+    a->deme = j;
+    inventory.insert(a);
+  };
+
+  // set up for extraction of black balls
+  std::pair<node_it, node_it> extant (void) const {
+    return std::pair<node_it,node_it>(nodes.cbegin(),nodes.cend());
   };
 
   // prune the tree (drop all black balls)
@@ -478,7 +487,7 @@ public:
 	} else if (n->holds(red)) {
 	  ball_t *b = n->ball(red);
 	  b->color = black;
-	  inventory.insert(b,b->deme);
+	  inventory.insert(b);
 	  swap(b,n->green_ball());
 	  destroy_node(n);
 	} else {

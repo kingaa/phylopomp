@@ -14,7 +14,7 @@
 template <class POPN, size_t NDEME = 1>
 class master_t : public POPN {
 
-private:
+public:
 
   typedef POPN popul_t;
   const static size_t ndeme = NDEME;
@@ -25,16 +25,26 @@ public:
 
 public:
   // size of serialized binary form
-  size_t size (void) const {
-    return popul_t::size() + geneal.size();
+  size_t bytesize (void) const {
+    return popul_t::bytesize() + geneal.bytesize();
   };
   // binary serialization
+  raw_t* serialize (raw_t* o) const {
+    o = popul_t::serialize(o);
+    o = geneal.serialize(o);
+    return o;
+  }
   friend raw_t* operator<< (raw_t* o, const master_t& A) {
-    return o << reinterpret_cast<const popul_t&>(A) << A.geneal;
+    return A.serialize(o);
   }
   // binary deserialization
+  raw_t* deserialize (raw_t* o) {
+    o = popul_t::deserialize(o);
+    o = geneal.deserialize(o);
+    return o;
+  }
   friend raw_t* operator>> (raw_t* o, master_t& A) {
-    return o >> reinterpret_cast<popul_t&>(A) >> A.geneal;
+    return A.deserialize(o);
   }
 
 private:
@@ -55,7 +65,7 @@ public:
   // copy assignment operator
   master_t & operator= (const master_t& A) {
     clean();
-    raw_t *o = new raw_t[A.size()];
+    raw_t *o = new raw_t[A.bytesize()];
     (o << A) >> *this;
     delete[] o;
     return *this;

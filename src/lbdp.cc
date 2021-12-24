@@ -5,7 +5,7 @@
 #include "generics.h"
 
 typedef struct {
-  double n;
+  int n;
 } lbdp_state_t;
 
 typedef struct {
@@ -32,7 +32,7 @@ public:
   };
 
   void rinit (void) {
-    state.n = double(params.n0);
+    state.n = params.n0;
     for (int j = 0; j < params.n0; j++) graft();
   };
 

@@ -21,7 +21,7 @@ SEXP time (TYPE& X) {
 template <class TYPE>
 SEXP serial (const TYPE& X) {
   SEXP out;
-  PROTECT(out = NEW_RAW(X.size()));
+  PROTECT(out = NEW_RAW(X.bytesize()));
   RAW(out) << X;
   UNPROTECT(1);
   return out;
@@ -71,7 +71,7 @@ SEXP make (SEXP Params, SEXP ICs, SEXP T0) {
   PROTECT(ICs = AS_NUMERIC(ICs));
   PROTECT(T0 = AS_NUMERIC(T0));
   GetRNGstate();
-  TYPE X = *REAL(T0);
+  TYPE X(*REAL(T0));
   X.update_params(REAL(Params),LENGTH(Params));
   X.update_ICs(REAL(ICs),LENGTH(ICs));
   X.rinit();
@@ -86,7 +86,7 @@ SEXP make (SEXP Params, SEXP ICs, SEXP T0) {
 template<class TYPE>
 SEXP revive (SEXP State, SEXP Params) {
   SEXP o;
-  TYPE X = RAW(State);
+  TYPE X(RAW(State));
   PROTECT(Params = AS_NUMERIC(Params));
   X.update_params(REAL(Params),LENGTH(Params));
   PROTECT(o = serial(X));
@@ -98,7 +98,7 @@ SEXP revive (SEXP State, SEXP Params) {
 template<class TYPE>
 SEXP run (SEXP State, SEXP Tout) {
   SEXP out;
-  TYPE X = RAW(State);
+  TYPE X(RAW(State));
   PROTECT(Tout = AS_NUMERIC(Tout));
   GetRNGstate();
   X.valid();
@@ -131,7 +131,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 	   SEXP T0, SEXP Time, SEXP Descript,
 	   SEXP Yaml, SEXP Structure, SEXP Lineages,
 	   SEXP Tree, SEXP Compact) {
-  TYPE A = RAW(State);
+  TYPE A(RAW(State));
 
   // prune if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));

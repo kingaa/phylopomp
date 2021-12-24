@@ -39,6 +39,41 @@ private:
   void clean (void) {};		// memory cleanup
 
 public:
+  
+  // SERIALIZATION
+  // size of serialized binary form
+  size_t bytesize (void) const {
+    return 3*sizeof(slate_t) + sizeof(size_t)
+      + sizeof(state_t) + sizeof(parameters_t);
+  };
+  // binary serialization
+  raw_t* serialize (raw_t *o) const {
+    slate_t A[3]; A[0] = t0; A[1] = current; A[2] = next;
+    memcpy(o,A,sizeof(A)); o += sizeof(A);
+    memcpy(o,&event,sizeof(size_t)); o += sizeof(size_t);
+    memcpy(o,&state,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(o,&params,sizeof(parameters_t)); o += sizeof(parameters_t);
+    return o;
+  };
+  // binary deserialization
+  raw_t* deserialize (raw_t *o) {
+    clean();
+    slate_t A[3];
+    memcpy(A,o,sizeof(A)); o += sizeof(A);
+    t0 = A[0]; current = A[1]; next = A[2]; 
+    memcpy(&event,o,sizeof(size_t)); o += sizeof(size_t);
+    memcpy(&state,o,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(&params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
+    return o;
+  };
+  friend raw_t* operator<< (raw_t *o, const popul_proc_t &X) {
+    return X.serialize(o);
+  }
+  friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
+    return X.deserialize(o);
+  }
+
+public:
   // CONSTRUCTORS, ETC.
   // basic constructor for popul_proc class
   //  t0 = initial time
@@ -53,14 +88,14 @@ public:
   };
   // copy constructor
   popul_proc_t (const popul_proc_t & X) {
-    raw_t *o = new raw_t[X.size()];
+    raw_t *o = new raw_t[X.bytesize()];
     (o << X) >> *this;
     delete[] o;
   };
   // copy assignment operator
   popul_proc_t & operator= (const popul_proc_t & X) {
     clean();
-    raw_t *o = new raw_t[X.size()];
+    raw_t *o = new raw_t[X.bytesize()];
     (o << X) >> *this;
     delete[] o;
     return *this;
@@ -73,36 +108,6 @@ public:
   ~popul_proc_t (void) {
     clean();
   };
-
-protected:
-  
-  // SERIALIZATION
-  // size of serialized binary form
-  size_t size (void) const {
-    size_t s = 3*sizeof(slate_t) + sizeof(int)
-      + sizeof(state_t) + sizeof(parameters_t);
-    return s;
-  };
-  // binary serialization
-  friend raw_t* operator<< (raw_t *o, const popul_proc_t &X) {
-    slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
-    memcpy(o,A,sizeof(A)); o += sizeof(A);
-    memcpy(o,&X.event,sizeof(int)); o += sizeof(int);
-    memcpy(o,&X.state,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(o,&X.params,sizeof(parameters_t)); o += sizeof(parameters_t);
-    return o;
-  }
-  // binary deserialization
-  friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
-    slate_t A[3];
-    X.clean();
-    memcpy(A,o,sizeof(A)); o += sizeof(A);
-    memcpy(&X.event,o,sizeof(int)); o += sizeof(int);
-    memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
-    X.t0 = A[0]; X.current = A[1]; X.next = A[2]; 
-    return o;
-  }
 
 protected:
   //reset current time
@@ -129,25 +134,15 @@ public:
 protected:
   
   // initialize the state
-  virtual void rinit (void) {
-    err("the 'rinit' function has not been defined.");
-  };
+  virtual void rinit (void) = 0;
   // compute event rates
-  virtual double event_rates (double *rate, int n) const {
-    err("the 'event_rates' function has not been defined.");
-  };
+  virtual double event_rates (double *rate, int n) const = 0;
   // makes a jump
-  virtual void jump (int e) {
-    err("the 'jump' function has not been defined.");
-  };
+  virtual void jump (int e) = 0;
   // set parameters 
-  virtual void update_params (double*, int) {
-    err("the 'update_params' function has not been defined.");
-  };
+  virtual void update_params (double*, int) = 0;
   // set initial conditions
-  virtual void update_ICs (double*, int) {
-    err("the 'update_ICs' function has not been defined.");
-  };
+  virtual void update_ICs (double*, int) = 0;
 
 public:
 

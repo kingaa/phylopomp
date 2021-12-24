@@ -6,22 +6,46 @@
 #ifndef _INVENTORY_H_
 #define _INVENTORY_H_
 
+#include <utility>
 #include "internal.h"
 #include "ball.h"
+#include "node.h"
 
 template<size_t ndeme = 1>
 class inventory_t {
 private:
-  pocket_t _inven[ndeme];
+  pocket_t _inven[ndeme];	// pocket_t is defined in 'ball.h'
 public:
   // basic constructor for inventory class
   inventory_t (void) = default;
+  // constructor from node sequence (via 'extant' operation).
+  // this constructs an inventory from a genealogy.
+  inventory_t (std::pair<node_it,node_it>&& I) {
+    clean();
+    for (node_it i = I.first; i != I.second; i++) {
+      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+  	insert(*j);		// 'insert' checks color
+      }
+    }
+    Rprintf("mysize A = %ld\n",this->size());
+  };
+  // copy an inventory
+  inventory_t& operator= (std::pair<node_it,node_it>&& I) {
+    clean();
+    for (node_it i = I.first; i != I.second; i++) {
+      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+  	insert(*j);		// 'insert' checks color
+      }
+    }
+    Rprintf("mysize B = %ld\n",this->size());
+    return *this;
+  };
   // copy constructor
   inventory_t (const inventory_t &) = default;
-  /// move constructor
-  inventory_t (inventory_t &&) = delete;
   // copy assignment operator
   inventory_t & operator= (const inventory_t &) = delete;
+  // move constructor
+  inventory_t (inventory_t &&) = delete;
   // move assignment operator
   inventory_t & operator= (inventory_t &&) = delete;
   // destructor
@@ -60,7 +84,7 @@ public:
     return q;
   };
   // random ball
-  ball_t* random_ball (name_t i) const {
+  ball_t* random_ball (name_t i = 0) const {
     name_t n = _inven[i].size();
     if (n < 1) err("cannot draw from empty inventory %ld",i); // # nocov
     name_t draw = random_integer(n);
@@ -69,7 +93,7 @@ public:
     return *k;
   };
   // random pair of balls
-  void random_pair (ball_t* ballI, ball_t* ballJ, name_t i, name_t j) const {
+  void random_pair (ball_t* ballI, ball_t* ballJ, name_t i = 0, name_t j = 0) const {
     if (i != j) {
       ballI = random_ball(i);
       ballJ = random_ball(j);
@@ -98,10 +122,9 @@ public:
     }
   };
   // add black ball to deme i;
-  void insert (ball_t *b, name_t i) {
+  void insert (ball_t *b) {
     if (b->is(black)) {
-      _inven[i].insert(b);
-      b->deme = i;
+      _inven[b->deme].insert(b);
     }
   };
   // remove black ball from its deme

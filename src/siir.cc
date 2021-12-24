@@ -5,9 +5,9 @@
 #include "generics.h"
 
 typedef struct {
-  double S;             // number of susceptibles
-  double I1, I2;        // number of infections
-  double R;             // number of recovereds
+  int S;			// number of susceptibles
+  int I1, I2;			// number of infections
+  int R;			// number of recovereds
 } siir_state_t;
 
 typedef struct {
@@ -40,10 +40,10 @@ public:
   };
 
   void rinit (void) {
-    state.S = double(params.S0);
-    state.I1 = double(params.I1_0);
-    state.I2 = double(params.I2_0);
-    state.R = double(params.R0);
+    state.S = params.S0;
+    state.I1 = params.I1_0;
+    state.I2 = params.I2_0;
+    state.R = params.R0;
     for (int j = 0; j < params.I1_0; j++) graft(0);
     for (int j = 0; j < params.I2_0; j++) graft(1);
   };

@@ -5,9 +5,9 @@
 #include "generics.h"
 
 typedef struct {
-  double S;             // number of susceptibles
-  double I;             // number of infections
-  double R;             // number of recovereds
+  int S;			// number of susceptibles
+  int I;			// number of infections
+  int R;			// number of recovereds
 } sir_state_t;
 
 typedef struct {
@@ -33,9 +33,9 @@ public:
   sir_genealogy_t (const sir_genealogy_t &G) : master_t(G) {};
   
   void rinit (void) {
-    state.S = double(params.S0);
-    state.I = double(params.I0);
-    state.R = double(params.R0);
+    state.S = params.S0;
+    state.I = params.I0;
+    state.R = params.R0;
     for (int j = 0; j < params.I0; j++) graft();
   };
 

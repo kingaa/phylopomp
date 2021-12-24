@@ -86,9 +86,9 @@ parameter:
   I0: 2
   R0: 0
 state:
-  S: 92.000000
-  I: 10.000000
-  R: 0.000000
+  S: 92
+  I: 10
+  R: 0
 genealogy:
   ndemes: 1
   time: 0.500000
@@ -242,7 +242,7 @@ parameter:
   psi: 1.000000
   n0: 5
 state:
-  n: 8.000000
+  n: 8
 genealogy:
   ndemes: 1
 time: 0.500000
