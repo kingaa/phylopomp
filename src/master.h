@@ -22,6 +22,7 @@ public:
 public:
   // DATA MEMBERS
   genealogy_t<ndeme> geneal;
+  inventory_t<ndeme> inventory;
 
 public:
   // size of serialized binary form
@@ -34,14 +35,15 @@ public:
     o = geneal.serialize(o);
     return o;
   }
-  friend raw_t* operator<< (raw_t* o, const master_t& A) {
-    return A.serialize(o);
-  }
   // binary deserialization
   raw_t* deserialize (raw_t* o) {
     o = popul_t::deserialize(o);
     o = geneal.deserialize(o);
+    inventory = geneal.extant();
     return o;
+  }
+  friend raw_t* operator<< (raw_t* o, const master_t& A) {
+    return A.serialize(o);
   }
   friend raw_t* operator>> (raw_t* o, master_t& A) {
     return A.deserialize(o);
@@ -61,7 +63,11 @@ public:
     o >> *this;
   };
   // copy constructor
-  master_t (const master_t& A) : popul_t(A), geneal(A.geneal) {};
+  master_t (const master_t& A) {
+    raw_t *o = new raw_t[A.bytesize()];
+    (o << A) >> *this;
+    delete[] o;
+  };
   // copy assignment operator
   master_t & operator= (const master_t& A) {
     clean();
@@ -81,12 +87,12 @@ public:
 
   //reset current time
   void time (const double& t) {
-    this->popul_t::time(t);
+    popul_t::time(t);
     geneal.time(t);
   };
 
   int play (double tfin) {
-    int count = this->popul_t::play(tfin);
+    int count = popul_t::play(tfin);
     geneal.time(tfin);
     return count;
   };
@@ -102,7 +108,7 @@ public:
   };
   // machine/human readable info
   std::string yaml (std::string tab = "") const {
-    return geneal.yaml(tab);
+    return popul_t::yaml(tab) + geneal.yaml(tab);
   };
   // tree in Newick format
   std::string newick (bool compact = true) const {
@@ -121,27 +127,37 @@ public:
   
   // n births into deme j with parent in deme i
   void birth (name_t i = 0, name_t j = 0, int n = 1) {
-    geneal.birth(time(),i,j,n);
+    ball_t *a = inventory.random_ball(i);
+    ball_t *b = geneal.birth(a,time(),j);
+    inventory.insert(b);
   };
   
   // death in deme i
   void death (name_t i = 0) {
-    geneal.death(time(),i);
+    ball_t *a = inventory.random_ball(i);
+    inventory.erase(a);
+    geneal.death(a,time());
   };
   
   // new root in deme i
   void graft (name_t i = 0) {
-    geneal.graft(time(),i);
+    ball_t *a = geneal.graft(time(),i);
+    inventory.insert(a);
   };
 
   // sample in deme i
   void sample (name_t i = 0) {
-    geneal.sample(time(),i);
+    ball_t *a = inventory.random_ball(i);
+    geneal.sample(a,time());
   };
   
   // migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
-    geneal.migrate(time(),i,j);
+    ball_t *a = inventory.random_ball(i);
+    inventory.erase(a);
+    geneal.migrate(a,time(),j);
+    a->deme = j;
+    inventory.insert(a);
   };
 
 };

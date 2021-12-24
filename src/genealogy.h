@@ -36,7 +36,6 @@ private:
 public:
 
   nodes_t nodes;                // sequence of pointers to nodes
-  inventory_t<ndeme> inventory;	// the inventory process
 
 private:
 
@@ -51,7 +50,6 @@ private:
   void clean (void) {
     for (node_it i = nodes.begin(); i != nodes.end(); i++) delete *i;
     nodes.clear();
-    inventory.clear();
     _time = R_NaReal;
     _unique = 0;
   };
@@ -97,7 +95,6 @@ public:
     for (node_it i = nodes.begin(); i != nodes.end(); i++) {
       for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
         ball_t *b = *j;
-        inventory.insert(b);
         if (b->is(green)) {
           npit = nodeptr.find(b->uniq);
           if (npit == nodeptr.end()) {
@@ -314,7 +311,6 @@ private:
     p->green_ball(g);
     p->pocket.insert(g);
     p->pocket.insert(b);
-    inventory.insert(b);
     return p;
   };
 
@@ -323,8 +319,6 @@ private:
       err("cannot destroy a node that does not hold its own green ball."); // # nocov
     if (p->pocket.size() != 2)
       err("cannot destroy a node with more than 2 balls."); // # nocov
-    for (ball_it i = p->pocket.begin(); i != p->pocket.end(); i++)
-      inventory.erase(*i);
     nodes.remove(p);
     delete p;
   };
@@ -353,13 +347,11 @@ private:
     node_t *p = a->holder();
     if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
       p->pocket.erase(a);
-      inventory.erase(a);
       delete a;
     } else {	  // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
       case blue:                // change black ball for red ball
-        inventory.erase(a);
         a->color = red;
         break;
       case purple:      // swap black ball for green ball, delete node
@@ -378,63 +370,51 @@ private:
     }
   };
 
-private:
-
-  // draw random black ball from deme i
-  ball_t *random_black_ball (name_t i = 0) const {
-    return inventory.random_ball(i);
-  };
-  // draw random pair of black balls from demes i,j
-  void random_pair (ball_t* ballI, ball_t* ballJ,
-                    name_t i = 0, name_t j = 0) const {
-    inventory.random_pair(ballI,ballJ,i,j);
-  };
-
 public:
-  // birth into deme j with parent in deme i
-  void birth (slate_t t, name_t i = 0, name_t j = 0, int nbirth = 1) {
+  // birth into deme d 
+  ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time(t);
-    ball_t *a = random_black_ball(i);
-    node_t *p = make_node(black,j);
+    node_t *p = make_node(black,d);
+    ball_t *b = p->ball(black);	// TODO: OBVIATE SEARCH FOR NEW BALL
     p->slate = time();
     add(p,a);
-    for (int k = 1; k < nbirth; k++) {
-      ball_t *b = new ball_t(p,unique(),black,j);
-      inventory.insert(b);
-      p->pocket.insert(b);
-    }
+    return b;		
   };
-  // death from deme i
-  void death (slate_t t, name_t i = 0) {
+  // birth of second or subsequent sibling into deme d
+  ball_t* birth (node_t* p, name_t d = 0) {
+    ball_t *b = new ball_t(p,unique(),black,d);
+    p->pocket.insert(b);
+    return b;
+  };
+  // death
+  void death (ball_t *a, slate_t t) {
     time(t);
-    ball_t *a = random_black_ball(i);
     drop(a);
   };
-  // graft a new lineage into deme i
-  void graft (slate_t t, name_t i = 0) {
+  // graft a new lineage into deme d
+  ball_t* graft (slate_t t, name_t d = 0) {
     time(t);
-    node_t *p = make_node(black,i);
+    node_t *p = make_node(black,d);
+    ball_t *b = p->ball(black);
     p->slate = timezero();
     nodes.push_front(p);
+    return b;
   };
-  // insert a sample node into deme i
-  void sample (slate_t t, name_t i = 0) {
+  // insert a sample node
+  void sample (ball_t* a, slate_t t) {
     time(t);
-    ball_t *a = random_black_ball(i);
-    node_t *p = make_node(blue,i);
+    node_t *p = make_node(blue,a->deme);
     p->slate = time();
     add(p,a);
   };
-  // movement from deme i to deme j
-  void migrate (slate_t t, name_t i = 0, name_t j = 0) {
+  // movement into deme d
+  ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
     time(t);
-    ball_t *a = random_black_ball(i);
-    node_t *p = make_node(purple,i);
+    node_t *p = make_node(purple,a->deme);
     p->slate = time();
+    a->deme = d;
     add(p,a);
-    inventory.erase(a);
-    a->deme = j;
-    inventory.insert(a);
+    return a;
   };
 
   // set up for extraction of black balls
@@ -442,32 +422,51 @@ public:
     return std::pair<node_it,node_it>(nodes.cbegin(),nodes.cend());
   };
 
-  // prune the tree (drop all black balls)
-  genealogy_t& prune (void) {
-    for (size_t d = 0; d < ndeme; d++) {
-      while (!inventory[d].empty()) {
-        ball_t *b = *(inventory[d].begin());
-        drop(b);
+  // all balls of a color
+  pocket_t* colored (color_t col) const {
+    pocket_t *p = new pocket_t;
+    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+	if ((*j)->is(col)) p->insert(*j);
       }
     }
+    return p;
+  };
+
+  // prune the tree (drop all black balls)
+  genealogy_t& prune (void) {
+    pocket_t *blacks = colored(black);
+    while (!blacks->empty()) {
+      ball_t *b = *(blacks->begin());
+      blacks->erase(b);
+      drop(b);
+    }
+    delete blacks;
     return *this;
   };
 
   // drop all purple balls
+  // and erase all deme information
   genealogy_t& obscure (void) {
-    pocket_t purples;
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      (*i)->deme = 0;		// erase all information about demes
-      if ((*i)->holds(purple)) {
-	purples.insert((*i)->ball(purple));
-      }
-    }
-    for (ball_it i = purples.begin(); i != purples.end(); i++) {
-      node_t *p = (*i)->holder();
-      ball_t *b = p->other(*i);
+    pocket_t *purples = colored(purple);
+    while (!purples->empty()) {
+      ball_t *a = *(purples->begin());
+      node_t *p = a->holder();
+      ball_t *b = p->other(a);
       swap(b,p->green_ball());
       destroy_node(p);
+      purples->erase(a);
     }
+    delete purples;
+    pocket_t *blacks = colored(black);
+    while (!blacks->empty()) {
+      ball_t *a = *(blacks->begin());
+      a->deme = 0;
+      blacks->erase(a);
+    }
+    delete blacks;
+    for (node_it i = nodes.begin(); i != nodes.end(); i++)
+      (*i)->deme = 0;
     return *this;
   };
 
@@ -476,8 +475,6 @@ public:
   // NB: this destroys the genealogy inasmuch
   // as the state is no longer correct.
   void truncate (slate_t tnew) {
-    if (!inventory.empty())
-      err("it is a mistake to call 'truncate' on an unpruned genealogy.");
     if (!nodes.empty()) {
       node_t *n = nodes.back();
       while (!nodes.empty() && n->slate > tnew) {
@@ -487,7 +484,6 @@ public:
 	} else if (n->holds(red)) {
 	  ball_t *b = n->ball(red);
 	  b->color = black;
-	  inventory.insert(b);
 	  swap(b,n->green_ball());
 	  destroy_node(n);
 	} else {

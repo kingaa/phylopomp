@@ -27,23 +27,21 @@ public:
   	insert(*j);		// 'insert' checks color
       }
     }
-    Rprintf("mysize A = %ld\n",this->size());
   };
   // copy an inventory
   inventory_t& operator= (std::pair<node_it,node_it>&& I) {
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
-  	insert(*j);		// 'insert' checks color
+  	insert(*j); // 'insert' checks color
       }
     }
-    Rprintf("mysize B = %ld\n",this->size());
     return *this;
   };
   // copy constructor
   inventory_t (const inventory_t &) = default;
   // copy assignment operator
-  inventory_t & operator= (const inventory_t &) = delete;
+  inventory_t & operator= (const inventory_t &) = default;
   // move constructor
   inventory_t (inventory_t &&) = delete;
   // move assignment operator
@@ -121,7 +119,7 @@ public:
       else ballJ = *k;
     }
   };
-  // add black ball to deme i;
+  // add black ball to deme
   void insert (ball_t *b) {
     if (b->is(black)) {
       _inven[b->deme].insert(b);
