@@ -375,7 +375,7 @@ public:
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time(t);
     node_t *p = make_node(black,d);
-    ball_t *b = p->ball(black);	// TODO: OBVIATE SEARCH FOR NEW BALL
+    ball_t *b = p->last_ball();
     p->slate = time();
     add(p,a);
     return b;		
@@ -395,7 +395,7 @@ public:
   ball_t* graft (slate_t t, name_t d = 0) {
     time(t);
     node_t *p = make_node(black,d);
-    ball_t *b = p->ball(black);
+    ball_t *b = p->last_ball();
     p->slate = timezero();
     nodes.push_front(p);
     return b;

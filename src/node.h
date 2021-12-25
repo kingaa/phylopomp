@@ -78,6 +78,10 @@ class node_t {
   bool is_root (void) const {
     return holds_own();
   };
+  // retrieve the last ball
+  ball_t *last_ball (void) const {
+    return *(pocket.crbegin());
+  };
   // retrieve the first ball of the specified color.
   ball_t *ball (const color_t c) const {
     for (ball_it i = pocket.begin(); i != pocket.end(); i++) {
