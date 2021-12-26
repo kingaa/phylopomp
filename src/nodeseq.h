@@ -96,7 +96,7 @@ private:
   pocket_t* colored (color_t col) const {
     pocket_t *p = new pocket_t;
     for (node_it i = begin(); i != end(); i++) {
-      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+      for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
 	if ((*j)->is(col)) p->insert(*j);
       }
     }

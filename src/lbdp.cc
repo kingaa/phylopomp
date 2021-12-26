@@ -85,8 +85,7 @@ public:
       + t + "n0: " + std::to_string(params.n0) + "\n";
     std::string s = tab + "state:\n"
       + t + "n: " + std::to_string(state.n) + "\n";
-    std::string g = tab + "genealogy:\n"
-      + t + geneal.yaml();
+    std::string g = tab + "genealogy:\n" + geneal.yaml(t);
     return p+s+g;
   };
 

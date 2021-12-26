@@ -21,7 +21,7 @@ public:
 
 public:
   // DATA MEMBERS
-  genealogy_t<ndeme> geneal;
+  genealogy_t geneal;
   inventory_t<ndeme> inventory;
 
 public:
@@ -100,7 +100,9 @@ public:
   };
   // machine/human readable info
   std::string yaml (std::string tab = "") const {
-    return popul_t::yaml(tab) + geneal.yaml(tab);
+    std::string t = tab + "  ";
+    std::string s = tab + "genealogy:\n" + geneal.yaml(t);
+    return s;
   };
   // tree in Newick format
   std::string newick (bool compact = true) const {

@@ -90,8 +90,8 @@ state:
   I: 10
   R: 0
 genealogy:
-  ndemes: 1
   time: 0.500000
+  t0: 0.000000
   nodes:
   - name: 1
     deme: 0
@@ -244,41 +244,41 @@ parameter:
 state:
   n: 8
 genealogy:
-  ndemes: 1
-time: 0.500000
-nodes:
-- name: 2
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 2
-  - color: green
-    name: 13
-- name: 1
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 1
-  - color: green
-    name: 14
-- name: 13
-  deme: 0
-  time: 0.402331
-  pocket:
-  - color: red
-    name: 2
-  - color: blue
-    name: 13
-- name: 14
-  deme: 0
-  time: 0.483550
-  pocket:
-  - color: red
-    name: 6
-  - color: blue
-    name: 14
+  time: 0.500000
+  t0: 0.000000
+  nodes:
+  - name: 2
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 2
+    - color: green
+      name: 13
+  - name: 1
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 14
+  - name: 13
+    deme: 0
+    time: 0.402331
+    pocket:
+    - color: red
+      name: 2
+    - color: blue
+      name: 13
+  - name: 14
+    deme: 0
+    time: 0.483550
+    pocket:
+    - color: red
+      name: 6
+    - color: blue
+      name: 14
 > 
 > try(
 +   simulate("SIR",time=1) |>

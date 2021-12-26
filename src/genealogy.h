@@ -15,9 +15,8 @@
 static const size_t MEMORY_MAX = (1<<28); // 256MB
 
 // GENEALOGY CLASS
-// the class to hold the state of the genealogy process.
-template<size_t ndeme = 1>
-class genealogy_t {
+// the class to hold the state of a genealogy process.
+class genealogy_t : public nodeseq_t {
 
 private:
   
@@ -30,10 +29,6 @@ private:
   name_t _unique;               // next unique name
   slate_t _t0;                  // initial time
   slate_t _time;                // current time
-
-public:
-
-  nodeseq_t nodes;                // sequence of pointers to nodes
 
 private:
 
@@ -54,14 +49,14 @@ public:
   // SERIALIZATION
   // size of serialized binary form
   size_t bytesize (void) const {
-    return sizeof(name_t) + 2*sizeof(slate_t) + nodes.bytesize();
+    return sizeof(name_t) + 2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
   // binary serialization
   friend raw_t* operator<< (raw_t* o, const genealogy_t& G) {
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,&G._unique,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    return o << G.nodes;
+    return o << reinterpret_cast<const nodeseq_t&>(G);
   };
   // binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
@@ -70,7 +65,7 @@ public:
     memcpy(&G._unique,o,sizeof(name_t)); o += sizeof(name_t);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     G._t0 = B[0]; G._time = B[1];
-    return o >> G.nodes;
+    return o >> reinterpret_cast<nodeseq_t&>(G);
   };
 
 public:
@@ -108,10 +103,6 @@ public:
     clean();
   };
   
-  // is empty?
-  bool empty (void) const {
-    return nodes.empty();
-  };
   // get current time.
   slate_t time (void) const {
     return _time;
@@ -131,11 +122,11 @@ public:
   size_t lineage_count (double *t = 0, int *ell = 0) const {
     size_t count;
     if (t != 0 && ell != 0) {
-      count = nodes.lineage_count(t,ell);
+      count = nodeseq_t::lineage_count(t,ell);
       t[count] = time();
       ell[count] = 0;
     } else {
-      count = nodes.ntime();
+      count = ntime();
     }
     return count;
   };
@@ -144,16 +135,16 @@ public:
   
   // R list description
   SEXP structure (void) const {
-    SEXP O, On, Ndeme, Time, Nodes;
+    SEXP O, On, T0, Time, Nodes;
     PROTECT(O = NEW_LIST(3));
     PROTECT(On = NEW_CHARACTER(3));
-    PROTECT(Ndeme = NEW_INTEGER(1));
-    *INTEGER(Ndeme) = int(ndeme);
     PROTECT(Time = NEW_NUMERIC(1));
     *REAL(Time) = double(time());
-    PROTECT(Nodes = nodes.structure());
-    set_list_elem(O,On,Ndeme,"ndemes",0);
-    set_list_elem(O,On,Time,"time",1);
+    PROTECT(T0 = NEW_NUMERIC(1));
+    *REAL(T0) = double(timezero());
+    PROTECT(Nodes = nodeseq_t::structure());
+    set_list_elem(O,On,Time,"time",0);
+    set_list_elem(O,On,T0,"t0",1);
     set_list_elem(O,On,Nodes,"nodes",2);
     SET_NAMES(O,On);
     UNPROTECT(5);
@@ -165,7 +156,7 @@ public:
   // human-readable info
   std::string describe (void) const {
     std::string o = "time = " + std::to_string(time()) + "\n"
-      + nodes.describe();
+      + nodeseq_t::describe();
     return o;
   };
 
@@ -175,9 +166,9 @@ public:
   virtual std::string yaml (std::string tab = "") const {
     std::string o;
     std::string t = tab + "  ";
-    o = "ndemes: " + std::to_string(ndeme) + "\n"
-      + tab + "time: " + std::to_string(time()) + "\n"
-      + tab + "nodes:\n" + nodes.yaml(tab);
+    o = tab + "time: " + std::to_string(time()) + "\n"
+      + tab + "t0: " + std::to_string(timezero()) + "\n"      
+      + tab + "nodes:\n" + nodeseq_t::yaml(tab);
     return o;
   };
 
@@ -185,7 +176,7 @@ public:
 
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
-    return nodes.newick(time(),compact);
+    return nodeseq_t::newick(time(),compact);
   };
 
 protected:
@@ -198,9 +189,9 @@ public:
   bool check_genealogy_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
     bool ok = true;
-    if (nodes.size() > maxq+grace) {
+    if (size() > maxq+grace) {
       err("maximum genealogy size exceeded!");
-    } else if (nodes.size() > maxq) {
+    } else if (size() > maxq) {
       ok = false;
     }
     return ok;
@@ -215,17 +206,17 @@ private:
     ball_t *g = new ball_t(p,u,green,d);
     ball_t *b = new ball_t(p,u,col,d);
     p->green_ball(g);
-    p->pocket.insert(g);
-    p->pocket.insert(b);
+    p->insert(g);
+    p->insert(b);
     return p;
   };
 
   void destroy_node (node_t *p) {
     if (!p->holds_own())
       err("cannot destroy a node that does not hold its own green ball."); // # nocov
-    if (p->pocket.size() != 2)
+    if (p->size() != 2)
       err("cannot destroy a node with more than 2 balls."); // # nocov
-    nodes.remove(p);
+    remove(p);
     delete p;
   };
   
@@ -234,8 +225,8 @@ private:
     node_t *p = a->holder();
     node_t *q = b->holder();
     if (p != q) {
-      q->pocket.insert(a); p->pocket.erase(a); a->holder(q);
-      p->pocket.insert(b); q->pocket.erase(b); b->holder(p);
+      q->insert(a); p->erase(a); a->holder(q);
+      p->insert(b); q->erase(b); b->holder(p);
     }
   };
 
@@ -243,7 +234,7 @@ private:
   void add (node_t *p, ball_t *b) {
     swap(b,p->green_ball());
     p->deme = b->deme;
-    nodes.push_back(p);
+    push_back(p);
   };
 
   // drop the node holding black ball a.
@@ -251,8 +242,8 @@ private:
     if (!a->is(black))
       err("in 'drop': inconceivable! color: %s",colores[a->color]); // # nocov
     node_t *p = a->holder();
-    if (p->pocket.size() > 2) { // pocket is large: we simply drop the ball
-      p->pocket.erase(a);
+    if (p->size() > 2) { // pocket is large: we simply drop the ball
+      p->erase(a);
       delete a;
     } else {	  // pocket is tight: action depends on the other ball
       ball_t *b = p->other(a);
@@ -289,7 +280,7 @@ public:
   // birth of second or subsequent sibling into deme d
   ball_t* birth (node_t* p, name_t d = 0) {
     ball_t *b = new ball_t(p,unique(),black,d);
-    p->pocket.insert(b);
+    p->insert(b);
     return b;
   };
   // death
@@ -303,7 +294,7 @@ public:
     node_t *p = make_node(black,d);
     ball_t *b = p->last_ball();
     p->slate = timezero();
-    nodes.push_front(p);
+    push_front(p);
     return b;
   };
   // insert a sample node
@@ -325,12 +316,7 @@ public:
 
   // set up for extraction of black balls
   std::pair<node_it, node_it> extant (void) const {
-    return std::pair<node_it,node_it>(nodes.cbegin(),nodes.cend());
-  };
-
-  // all balls of a color
-  pocket_t* colored (color_t col) const {
-    return nodes.colored(col);
+    return std::pair<node_it,node_it>(cbegin(),cend());
   };
 
   // prune the tree (drop all black balls)
@@ -365,7 +351,7 @@ public:
       blacks->erase(a);
     }
     delete blacks;
-    for (node_it i = nodes.begin(); i != nodes.end(); i++)
+    for (node_it i = begin(); i != end(); i++)
       (*i)->deme = 0;
     return *this;
   };
@@ -375,9 +361,9 @@ public:
   // NB: this destroys the genealogy inasmuch
   // as the state is no longer correct.
   void truncate (slate_t tnew) {
-    if (!nodes.empty()) {
-      node_t *n = nodes.back();
-      while (!nodes.empty() && n->slate > tnew) {
+    if (!empty()) {
+      node_t *n = back();
+      while (!empty() && n->slate > tnew) {
 	if (n->holds(black)) {
 	  ball_t *b = n->ball(black);
 	  drop(b);
@@ -389,7 +375,7 @@ public:
 	} else {
 	  err("in 'truncate': inconceivable error."); // #nocov
 	}
-	n = nodes.back();
+	n = back();
       }
       time(tnew);
     }

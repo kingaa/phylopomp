@@ -23,7 +23,7 @@ public:
   inventory_t (std::pair<node_it,node_it>&& I) {
     clean();
     for (node_it i = I.first; i != I.second; i++) {
-      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+      for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
   	insert(*j);		// 'insert' checks color
       }
     }
@@ -32,7 +32,7 @@ public:
   inventory_t& operator= (std::pair<node_it,node_it>&& I) {
     clean();
     for (node_it i = I.first; i != I.second; i++) {
-      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
+      for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
   	insert(*j); // 'insert' checks color
       }
     }
