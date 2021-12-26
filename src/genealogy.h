@@ -4,14 +4,12 @@
 #ifndef _GENEALOGY_H_
 #define _GENEALOGY_H_
 
-#include <unordered_map>
 #include <string>
 #include <cstring>
 #include <utility>
 
 #include "internal.h"
-#include "ball.h"
-#include "node.h"
+#include "nodeseq.h"
 #include "inventory.h"
 
 static const size_t MEMORY_MAX = (1<<28); // 256MB
@@ -35,7 +33,7 @@ private:
 
 public:
 
-  nodes_t nodes;                // sequence of pointers to nodes
+  nodeseq_t nodes;                // sequence of pointers to nodes
 
 private:
 
@@ -46,67 +44,33 @@ private:
     return u;
   };
 
-  // clean up: delete all nodes, reset globals
+  // clean up
   void clean (void) {
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) delete *i;
-    nodes.clear();
-    _time = R_NaReal;
     _unique = 0;
+    _t0 = _time = R_NaReal;
   };
 
 public:
   // SERIALIZATION
   // size of serialized binary form
   size_t bytesize (void) const {
-    size_t s = 2*sizeof(name_t) + 2*sizeof(slate_t);
-    for (node_it i = nodes.begin(); i != nodes.end(); i++)
-      s += (*i)->bytesize();
-    return s;
+    return sizeof(name_t) + 2*sizeof(slate_t) + nodes.bytesize();
   };
-  // binary serialization of genealogy_t
+  // binary serialization
   friend raw_t* operator<< (raw_t* o, const genealogy_t& G) {
-    name_t A[2]; A[0] = G._unique; A[1] = G.nodes.size();
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
-    memcpy(o,A,sizeof(A)); o += sizeof(A);
+    memcpy(o,&G._unique,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
-      o = (o << **i);
-    }
-    return o;
+    return o << G.nodes;
   };
-  // binary deserialization of genealogy_t
+  // binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
     G.clean();
-    name_t A[2];
     slate_t B[2];
-    std::unordered_map<name_t,node_t*> nodeptr;
-    typename std::unordered_map<name_t,node_t*>::const_iterator npit;
-    memcpy(A,o,sizeof(A)); o += sizeof(A);
+    memcpy(&G._unique,o,sizeof(name_t)); o += sizeof(name_t);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G._t0 = B[0]; G._time = B[1];
-    size_t nnode = A[1];
-    nodeptr.reserve(nnode);
-    for (size_t i = 0; i < nnode; i++) {
-      node_t *p = new node_t();
-      o = (o >> *p);
-      G.nodes.push_back(p);
-      nodeptr.insert({p->uniq,p});
-    }
-    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
-      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
-        ball_t *b = *j;
-        if (b->is(green)) {
-          npit = nodeptr.find(b->uniq);
-          if (npit == nodeptr.end()) {
-            err("cannot find unique id %ld",b->uniq); // # nocov
-          } else {
-            node_t *q = npit->second;
-            b->owner(q); q->green_ball(b);
-          }
-        }
-      }
-    }
-    return o;
+    G._t0 = B[0]; G._time = B[1];
+    return o >> G.nodes;
   };
 
 public:
@@ -131,7 +95,7 @@ public:
   genealogy_t & operator= (const genealogy_t& G) {
     clean();
     raw_t *o = new raw_t[G.bytesize()];
-    o << G; o >> *this;
+    (o << G) >> *this;
     delete[] o;
     return *this;
   };
@@ -161,41 +125,17 @@ public:
     return _t0;
   };
 
-private:
-
-  slate_t dawn (void) const {
-    return (nodes.empty()) ? R_NaReal : nodes.front()->slate;
-  };
-  slate_t dusk (void) const {
-    return (nodes.empty()) ? R_NaReal : nodes.back()->slate;
-  }
-
 public:
   
   // report all the node times and lineage count
   size_t lineage_count (double *t = 0, int *ell = 0) const {
-    size_t count = 1;
-    int n = 0;
-    slate_t tcur = R_NegInf;
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      if ((*i)->is_root()) n++;
-      if (tcur < (*i)->slate) {
-        tcur = (*i)->slate;
-        count++;
-      }
-    }
+    size_t count;
     if (t != 0 && ell != 0) {
-      tcur = R_NegInf;
-      *ell = n;
-      for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-        n += (*i)->nchildren(true)-1;
-        if (tcur < (*i)->slate) {
-          *(t++) = tcur = (*i)->slate;
-          *(ell++) = n;
-        }
-      }
-      *t = time();
-      *ell = 0;
+      count = nodes.lineage_count(t,ell);
+      t[count] = time();
+      ell[count] = 0;
+    } else {
+      count = nodes.ntime();
     }
     return count;
   };
@@ -211,11 +151,7 @@ public:
     *INTEGER(Ndeme) = int(ndeme);
     PROTECT(Time = NEW_NUMERIC(1));
     *REAL(Time) = double(time());
-    PROTECT(Nodes = NEW_LIST(nodes.size()));
-    int k = 0;
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      SET_ELEMENT(Nodes,k++,(*i)->structure());
-    }
+    PROTECT(Nodes = nodes.structure());
     set_list_elem(O,On,Ndeme,"ndemes",0);
     set_list_elem(O,On,Time,"time",1);
     set_list_elem(O,On,Nodes,"nodes",2);
@@ -228,22 +164,10 @@ public:
 
   // human-readable info
   std::string describe (void) const {
-    std::string o = "time = " + std::to_string(time()) + "\n";
-    for (node_it p = nodes.begin(); p != nodes.end(); p++) {
-      o += (*p)->describe();
-    }
+    std::string o = "time = " + std::to_string(time()) + "\n"
+      + nodes.describe();
     return o;
   };
-
-public:
-
-  friend SEXP describe (const genealogy_t& G) {
-    SEXP out;
-    PROTECT(out = NEW_CHARACTER(1));
-    SET_STRING_ELT(out,0,mkChar(G.describe().c_str()));
-    UNPROTECT(1);
-    return out;
-  }
 
 public:
   
@@ -253,10 +177,7 @@ public:
     std::string t = tab + "  ";
     o = "ndemes: " + std::to_string(ndeme) + "\n"
       + tab + "time: " + std::to_string(time()) + "\n"
-      + tab + "nodes:\n";
-    for (node_it p = nodes.begin(); p != nodes.end(); p++) {
-      o += tab + "- " + (*p)->yaml(t);
-    }
+      + tab + "nodes:\n" + nodes.yaml(tab);
     return o;
   };
 
@@ -264,16 +185,7 @@ public:
 
   // put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
-    slate_t te = dawn();
-    std::string o = "(i_NA_NA:0.0,i_NA_NA:0.0";
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      node_t *p = *i;
-      if (p->is_root()) {
-        o += ",(" + ((compact) ? p->compact_newick(time(),te) : p->newick(time(),te)) + ")i_NA_NA:0.0";
-      }
-    }
-    o += ")i_NA_NA;";
-    return o;
+    return nodes.newick(time(),compact);
   };
 
 protected:
@@ -418,13 +330,7 @@ public:
 
   // all balls of a color
   pocket_t* colored (color_t col) const {
-    pocket_t *p = new pocket_t;
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
-	if ((*j)->is(col)) p->insert(*j);
-      }
-    }
-    return p;
+    return nodes.colored(col);
   };
 
   // prune the tree (drop all black balls)

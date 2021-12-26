@@ -1,6 +1,4 @@
 // -*- C++ -*-
-// The BALL and POCKET classes (ball_t, pocket_t) are defined here.
-
 // BALL CLASS
 // each ball has:
 // - a name (uniq)
@@ -52,9 +50,8 @@ public:
   };
  public:
   // basic constructor for ball class
-  ball_t (node_t *who, name_t u = 0, color_t col = green, name_t d = 0) {
-    _holder = who;
-    _owner = who;
+  ball_t (node_t *who = 0, name_t u = 0, color_t col = green, name_t d = 0) {
+    _holder = _owner = who;
     uniq = u;
     color = col;
     deme = d;
@@ -77,8 +74,6 @@ public:
   };
   // change owner
   void owner (node_t *who) {
-    if (color != green)
-      err("meddle not in the ownership of non-green balls."); // # nocov
     _owner = who;
   };
   // in whose pocket do I lie?
@@ -161,22 +156,5 @@ public:
       ((a->uniq == b->uniq) && (a->color < b->color));
   }
 };
-
-// POCKET CLASS
-// A pocket is just a set of balls.
-
-#include <set>
-
-// ordering for balls in pockets
-// without this, order depends on machine state,
-// defeating reproducibility
-struct ball_compare {
-  bool operator() (const ball_t* a, const ball_t* b) const {
-    return compare(a,b);
-  }
-};
-
-typedef std::set<ball_t*,ball_compare> pocket_t;
-typedef typename pocket_t::const_iterator ball_it;
 
 #endif
