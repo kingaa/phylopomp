@@ -30,23 +30,15 @@ public:
     return popul_t::bytesize() + geneal.bytesize();
   };
   // binary serialization
-  raw_t* serialize (raw_t* o) const {
-    o = popul_t::serialize(o);
-    o = geneal.serialize(o);
+  friend raw_t* operator<< (raw_t* o, const master_t& A) {
+    o = (o << reinterpret_cast<const popul_t&>(A) << A.geneal);
     return o;
   }
   // binary deserialization
-  raw_t* deserialize (raw_t* o) {
-    o = popul_t::deserialize(o);
-    o = geneal.deserialize(o);
-    inventory = geneal.extant();
-    return o;
-  }
-  friend raw_t* operator<< (raw_t* o, const master_t& A) {
-    return A.serialize(o);
-  }
   friend raw_t* operator>> (raw_t* o, master_t& A) {
-    return A.deserialize(o);
+    o = (o >> reinterpret_cast<popul_t&>(A) >> A.geneal);
+    A.inventory = A.geneal.extant();
+    return o;
   }
 
 private:
@@ -77,9 +69,9 @@ public:
     return *this;
   };
   // move constructor
-  master_t (master_t &&) = delete;
+  master_t (master_t &&) = default;
   // move assignment operator
-  master_t & operator= (master_t &&) = delete;
+  master_t & operator= (master_t &&) = default;
   // destructor
   ~master_t (void) {
     clean();

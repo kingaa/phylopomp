@@ -246,35 +246,29 @@ class node_t {
       +pocket.size()*(ball_t::bytesize);
   };
   // binary serialization of node_t
-  raw_t* serialize (raw_t *o) const {
+  friend raw_t* operator<< (raw_t *o, const node_t &p) {
     name_t buf[3];
-    buf[0] = uniq; buf[1] = deme; buf[2] = pocket.size();
+    buf[0] = p.uniq; buf[1] = p.deme; buf[2] = p.pocket.size();
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
-    memcpy(o,&slate,sizeof(slate_t)); o += sizeof(slate_t);
-    for (ball_it i = pocket.begin(); i != pocket.end(); i++) 
-      o = (*i)->serialize(o);
+    memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
+    for (ball_it i = p.pocket.begin(); i != p.pocket.end(); i++) 
+      o = (o << **i);
     return o;
   };
   // binary deserialization of node_t
-  raw_t* deserialize (raw_t *o) {
-    clean();
+  friend raw_t* operator>> (raw_t *o, node_t &p) {
+    p.clean();
     name_t buf[3];
     memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
-    memcpy(&slate,o,sizeof(slate_t)); o += sizeof(slate_t);
-    uniq = buf[0]; deme = buf[1];
+    memcpy(&p.slate,o,sizeof(slate_t)); o += sizeof(slate_t);
+    p.uniq = buf[0]; p.deme = buf[1];
     for (size_t i = 0; i < buf[2]; i++) {
-      ball_t *b = new ball_t(this);
-      o = b->deserialize(o);
-      b->holder(this); // owner remains unset
-      pocket.insert(b);
+      ball_t *b = new ball_t(&p);
+      o = (o >> *b);
+      b->holder(&p);
+      p.pocket.insert(b);
     }
     return o;
-  };
-  friend raw_t* operator<< (raw_t *o, const node_t &p) {
-    return p.serialize(o);
-  };
-  friend raw_t* operator>> (raw_t *o, node_t &p) {
-    return p.deserialize(o);
   };
 };
 

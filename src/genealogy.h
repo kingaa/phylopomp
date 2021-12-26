@@ -64,35 +64,35 @@ public:
     return s;
   };
   // binary serialization of genealogy_t
-  raw_t* serialize (raw_t *o) const {
-    name_t A[2]; A[0] = _unique; A[1] = nodes.size();
-    slate_t B[2]; B[0] = _t0; B[1] = _time;
+  friend raw_t* operator<< (raw_t* o, const genealogy_t& G) {
+    name_t A[2]; A[0] = G._unique; A[1] = G.nodes.size();
+    slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
-      o = (*i)->serialize(o);
+    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
+      o = (o << **i);
     }
     return o;
   };
   // binary deserialization of genealogy_t
-  raw_t* deserialize (raw_t *o) {
-    clean();
+  friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
+    G.clean();
     name_t A[2];
     slate_t B[2];
     std::unordered_map<name_t,node_t*> nodeptr;
     typename std::unordered_map<name_t,node_t*>::const_iterator npit;
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    _unique = A[0]; _t0 = B[0]; _time = B[1];
+    G._unique = A[0]; G._t0 = B[0]; G._time = B[1];
     size_t nnode = A[1];
     nodeptr.reserve(nnode);
     for (size_t i = 0; i < nnode; i++) {
       node_t *p = new node_t();
-      o = p->deserialize(o);
-      nodes.push_back(p);
+      o = (o >> *p);
+      G.nodes.push_back(p);
       nodeptr.insert({p->uniq,p});
     }
-    for (node_it i = nodes.begin(); i != nodes.end(); i++) {
+    for (node_it i = G.nodes.begin(); i != G.nodes.end(); i++) {
       for (ball_it j = (*i)->pocket.begin(); j != (*i)->pocket.end(); j++) {
         ball_t *b = *j;
         if (b->is(green)) {
@@ -108,12 +108,6 @@ public:
     }
     return o;
   };
-  friend raw_t* operator<< (raw_t *o, const genealogy_t &G) {
-    return G.serialize(o);
-  }
-  friend raw_t* operator>> (raw_t *o, genealogy_t &G) {
-    return G.deserialize(o);
-  }
 
 public:
   // CONSTRUCTORS

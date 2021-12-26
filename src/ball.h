@@ -35,26 +35,20 @@ public:
   // size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
   // binary serialization
-  raw_t* serialize (raw_t* o) const {
-    memcpy(o,&uniq,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(o,&deme,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(o,&color,sizeof(color_t)); o += sizeof(color_t);
+  friend raw_t* operator<< (raw_t *o, const ball_t &b) {
+    memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(o,&b.deme,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
     return o;
   };
   // binary deserialization
-  raw_t* deserialize (raw_t *o) {
-    memcpy(&uniq,o,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(&deme,o,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(&color,o,sizeof(color_t)); o += sizeof(color_t);
-    _holder = 0;		// must be set elsewhere
-    _owner = 0;			// must be set elsewhere
-    return o;
-  };
-  friend raw_t* operator<< (raw_t *o, const ball_t &b) {
-    return b.serialize(o);
-  };
   friend raw_t* operator>> (raw_t *o, ball_t &b) {
-    return b.deserialize(o);
+    memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(&b.deme,o,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
+    b._holder = 0;		// must be set elsewhere
+    b._owner = 0;		// must be set elsewhere
+    return o;
   };
  public:
   // basic constructor for ball class

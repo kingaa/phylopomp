@@ -47,31 +47,25 @@ public:
       + sizeof(state_t) + sizeof(parameters_t);
   };
   // binary serialization
-  raw_t* serialize (raw_t *o) const {
-    slate_t A[3]; A[0] = t0; A[1] = current; A[2] = next;
+  friend raw_t* operator<< (raw_t *o, const popul_proc_t &X) {
+    slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
-    memcpy(o,&event,sizeof(size_t)); o += sizeof(size_t);
-    memcpy(o,&state,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(o,&params,sizeof(parameters_t)); o += sizeof(parameters_t);
+    memcpy(o,&X.event,sizeof(size_t)); o += sizeof(size_t);
+    memcpy(o,&X.state,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(o,&X.params,sizeof(parameters_t)); o += sizeof(parameters_t);
     return o;
   };
   // binary deserialization
-  raw_t* deserialize (raw_t *o) {
-    clean();
+  friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
+    X.clean();
     slate_t A[3];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
-    t0 = A[0]; current = A[1]; next = A[2]; 
-    memcpy(&event,o,sizeof(size_t)); o += sizeof(size_t);
-    memcpy(&state,o,sizeof(state_t)); o += sizeof(state_t);
-    memcpy(&params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
+    X.t0 = A[0]; X.current = A[1]; X.next = A[2]; 
+    memcpy(&X.event,o,sizeof(size_t)); o += sizeof(size_t);
+    memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
+    memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
     return o;
   };
-  friend raw_t* operator<< (raw_t *o, const popul_proc_t &X) {
-    return X.serialize(o);
-  }
-  friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
-    return X.deserialize(o);
-  }
 
 public:
   // CONSTRUCTORS, ETC.
