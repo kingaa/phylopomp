@@ -102,36 +102,13 @@ private:
     }
     return p;
   };
-  // number of roots
-  size_t nroot (void) const {
-    size_t n = 0;
-    for (node_it i = begin(); i != end(); i++) {
-      if ((*i)->is_root()) n++;
-    }
-    return n;
-  };
   // number of distinct timepoints
   size_t ntime (void) const {
-    size_t count = 1;
+    size_t count = 0;
     slate_t tcur = R_NegInf;
     for (node_it i = begin(); i != end(); i++) {
       if (tcur < (*i)->slate) {
 	tcur = (*i)->slate;
-	count++;
-      }
-    }
-    return count;
-  };
-  size_t lineage_count (double *t, int *ell) const {
-    size_t count = 0;
-    slate_t tcur = R_NegInf;
-    size_t n = nroot();
-    *ell = double(n);
-    for (node_it i = begin(); i != end(); i++) {
-      n += (*i)->nchildren(true)-1;
-      if (tcur < (*i)->slate) {
-	*(t++) = tcur = (*i)->slate;
-	*(ell++) = n;
 	count++;
       }
     }

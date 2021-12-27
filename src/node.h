@@ -91,9 +91,38 @@ class node_t : public pocket_t {
   };
   // number of descendants
   int nchildren (bool compact = false) const {
-    int n = (compact) ? pocket_t::nchildren() : size();
+    int n = 0;
+    if (compact) {
+      for (ball_it i = begin(); i != end(); i++) {
+	switch ((*i)->color) {
+	case green: case black:
+	  n++;
+	  break;
+	default:
+	  break;
+	}
+      }
+    } else {
+      n = size();
+    }
     if (holds_own()) n--;
     return n;
+  };
+  // increment to lineage count
+  void lineage_incr (int *incr) const {
+    incr[deme]--;
+    for (ball_it i = begin(); i != end(); i++) {
+      switch ((*i)->color) {
+      case green:
+	incr[(*i)->child()->deme]++;
+	break;
+      case black:
+	incr[(*i)->deme]++;
+	break;
+      default:
+	break;
+      }
+    }
   };
   // human-readable info
   std::string describe (void) const {

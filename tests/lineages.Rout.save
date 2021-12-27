@@ -17,7 +17,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> png(filename="siir1-%02d.png",res=100)
+> png(filename="lineages-%02d.png",res=100,width=6,height=4,units="in")
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
@@ -26,27 +26,38 @@ Type 'q()' to quit R.
 > set.seed(481604604)
 > options(digits=3)
 > 
-> runSIIR(time=10)
-<gpsim for model ‘SIIR’>
+> simulate("SI2R",time=1) -> x
 > 
-> runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=2,time=2) |>
-+   plot(points=TRUE)
-> 
-> runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=1,time=1) |>
-+   simulate(time=100) |>
-+   plot(points=TRUE,time=NULL,compact=FALSE)
-> 
-> simulate("SIIR",time=2) -> x
-> x |> plot()
-> x |> plot(obscure=FALSE)
-> x |> plot(prune=FALSE)
-> x |> plot(prune=FALSE,obscure=FALSE)
-> 
-> x |>
-+   lineages(prune=FALSE,obscure=FALSE) |>
-+   gather(var,val,deme1,deme2) |>
-+   ggplot(aes(x=time,y=val,group=var,color=var))+
+> bind_rows(
++   A=x |> lineages(),
++   B=x |> lineages(obscure=FALSE) |>
++     mutate(lineages=deme1+deme2) |>
++     select(time,lineages),
++   .id="method"
++ ) |>
++   ggplot(aes(x=time,y=lineages,color=method,group=method))+
 +   geom_step()
+> 
+> plot_grid(
++   plot(x),
++   x |>
++     lineages() |>
++     ggplot(aes(x=time,y=lineages))+
++     geom_step()+
++     theme_classic(),
++   plot(x,obscure=FALSE,palette=c("#00274c","#ffcb05")),
++   x |>
++     lineages(obscure=FALSE) |>
++     mutate(total=deme1+deme2) |>
++     gather(var,val,-time) |>
++     ggplot(aes(x=time,y=val,color=var,group=var))+
++     geom_step()+
++     guides(color="none")+
++     scale_color_manual(values=c("#00274c","#ffcb05","#006597"))+
++     theme_classic(),
++   align="v",axis="b",
++   ncol=2,byrow=FALSE
++ )
 > 
 > dev.off()
 null device 

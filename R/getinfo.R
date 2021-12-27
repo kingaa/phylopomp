@@ -17,6 +17,7 @@
 ##' @param lineages logical; return the lineage-count function?
 ##'
 ##' @include package.R
+##' @importFrom dplyr bind_cols
 ##' @importFrom tibble as_tibble
 ##'
 ##' @return
@@ -58,6 +59,22 @@ getInfo <- function (
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )
   if (!is.null(x$tree)) x$tree <- gsub("nan","NA",x$tree)
-  if (!is.null(x$lineages)) x$lineages <- as_tibble(x$lineages)
+  if (!is.null(x$lineages)) {
+    n <- length(x$lineages$time)
+    m <- length(x$lineages$lineages)/n
+    if (m > 1L) {
+      dig <- ceiling(log10(m))
+      nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
+    } else {
+      nm <- "lineages"
+    }
+    bind_cols(
+      time=x$lineages$time,
+      x$lineages$lineages |>
+        array(dim=c(m,n),dimnames=list(nm,NULL)) |>
+        t() |>
+        as_tibble()
+    ) -> x$lineages
+  }
   x
 }

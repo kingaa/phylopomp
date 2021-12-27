@@ -126,20 +126,6 @@ public:
     err("error in 'other': no other ball"); // # nocov
     return 0;
   };
-  // number of green or black balls
-  int nchildren (void) const {
-    int n = 0;
-    for (ball_it i = begin(); i != end(); i++) {
-      switch ((*i)->color) {
-      case green: case black:
-	n++;
-	break;
-      case blue: case red: case purple: case grey:
-	break;
-      }
-    }
-    return n;
-  };
   // human-readable info
   std::string describe (void) const {
     std::string s = "{";

@@ -17,4 +17,9 @@ runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
   simulate(time=100) |>
   plot(points=TRUE,time=NULL)
 
+simulate("SIR",delta=1,time=20,I0=4) |>
+  lineages() |>
+  ggplot(aes(x=time,y=lineages))+
+  geom_step()
+
 dev.off()

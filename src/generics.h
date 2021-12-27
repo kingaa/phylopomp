@@ -111,18 +111,7 @@ SEXP run (SEXP State, SEXP Tout) {
 
 template <class TYPE>
 SEXP lineage_count (const TYPE& G) {
-  SEXP t, ell, out, outn;
-  int nt = G.lineage_count();
-  PROTECT(t = NEW_NUMERIC(nt));
-  PROTECT(ell = NEW_INTEGER(nt));
-  PROTECT(out = NEW_LIST(2));
-  PROTECT(outn = NEW_CHARACTER(2));
-  set_list_elem(out,outn,t,"time",0);
-  set_list_elem(out,outn,ell,"lineages",1);
-  SET_NAMES(out,outn);
-  G.lineage_count(REAL(t),INTEGER(ell));
-  UNPROTECT(4);
-  return out;
+  return G.lineage_count();
 }
 
 // extract information

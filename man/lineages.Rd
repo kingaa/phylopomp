@@ -14,8 +14,38 @@ lineages(object, prune = TRUE, obscure = TRUE)
 \item{obscure}{logical; obscure the demes?}
 }
 \value{
-A tibble containing the lineage count function.
+A \code{\link[tibble]{tibble}} containing the lineage count function.
+If the genealogy has been obscured (the default), the number in the \code{lineages}
+column is the total number of lineages present at the times in the \code{time} column.
+If the genealogy has not been obscured (\code{obscure = FALSE}), the deme-specific
+lineage counts are returned.
 }
 \description{
 The number of lineages through time
+}
+\examples{
+library(tidyverse)
+
+simulate("SIIR",time=3) -> x
+
+plot_grid(
+  plot(x),
+  x |>
+    lineages() |>
+    ggplot(aes(x=time,y=lineages))+
+    geom_step()+
+    theme_classic(),
+  plot(x,obscure=FALSE,palette=c("#00274c","#ffcb05")),
+  x |>
+    lineages(obscure=FALSE) |>
+    gather(var,val,deme1,deme2) |>
+    ggplot(aes(x=time,y=val,color=var,group=var))+
+    geom_step()+
+    scale_color_manual(values=c("#00274c","#ffcb05"))+
+    theme_classic()+
+    labs(color="")+
+    theme(legend.position=c(0.8,0.9)),
+  align="v",axis="b",
+  ncol=2,byrow=FALSE
+)
 }

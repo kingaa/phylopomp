@@ -16,6 +16,7 @@ static const size_t MEMORY_MAX = (1<<28); // 256MB
 
 // GENEALOGY CLASS
 // the class to hold the state of a genealogy process.
+template <size_t ndeme = 1>
 class genealogy_t : public nodeseq_t {
 
 private:
@@ -29,7 +30,8 @@ private:
   name_t _unique;               // next unique name
   slate_t _t0;                  // initial time
   slate_t _time;                // current time
-
+  bool _obscured; // set to false by default; 'obscure()' sets to true
+  
 private:
 
   // get the next unique name
@@ -43,27 +45,32 @@ private:
   void clean (void) {
     _unique = 0;
     _t0 = _time = R_NaReal;
+    _obscured = false;
   };
 
 public:
   // SERIALIZATION
   // size of serialized binary form
   size_t bytesize (void) const {
-    return sizeof(name_t) + 2*sizeof(slate_t) + nodeseq_t::bytesize();
+    return 2*sizeof(name_t) +
+      2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
   // binary serialization
   friend raw_t* operator<< (raw_t* o, const genealogy_t& G) {
+    name_t A[2]; A[0] = G._unique; A[1] = name_t(G._obscured);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
-    memcpy(o,&G._unique,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
     return o << reinterpret_cast<const nodeseq_t&>(G);
   };
   // binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
     G.clean();
+    name_t A[2];
     slate_t B[2];
-    memcpy(&G._unique,o,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
+    G._unique = A[0]; G._obscured = bool(A[1]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
@@ -75,6 +82,7 @@ public:
   genealogy_t (double t0 = 0) {
     clean();
     _time = _t0 = slate_t(t0);
+    _obscured = false;
   };
   // constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -117,18 +125,38 @@ public:
   };
 
 public:
-  
-  // report all the node times and lineage count
-  size_t lineage_count (double *t = 0, int *ell = 0) const {
-    size_t count;
-    if (t != 0 && ell != 0) {
-      count = nodeseq_t::lineage_count(t,ell);
-      t[count] = time();
-      ell[count] = 0;
-    } else {
-      count = ntime();
+
+  void lineage_count (double *t, int *ell) const {
+    slate_t tcur = *t = timezero();
+    size_t nd = (obscured()) ? 1 : ndeme;
+    for (size_t j = 0; j < nd; j++) ell[j] = 0;
+    for (node_it i = begin(); i != end(); i++) {
+      if (tcur < (*i)->slate) {
+	t++; ell += nd;
+	*t = tcur = (*i)->slate;
+	for (size_t j = 0; j < nd; j++) ell[j] = (ell-nd)[j];
+      }
+      (*i)->lineage_incr(ell);
     }
-    return count;
+    t++; ell += nd;
+    *t = time();
+    for (size_t j = 0; j < nd; j++) ell[j] = 0;
+  };
+
+  SEXP lineage_count (void) const {
+    SEXP t, ell, out, outn;
+    int nt = ntime()+1;
+    int nl = (obscured()) ? nt : ndeme*nt;
+    PROTECT(t = NEW_NUMERIC(nt));
+    PROTECT(ell = NEW_INTEGER(nl));
+    PROTECT(out = NEW_LIST(2));
+    PROTECT(outn = NEW_CHARACTER(2));
+    set_list_elem(out,outn,t,"time",0);
+    set_list_elem(out,outn,ell,"lineages",1);
+    SET_NAMES(out,outn);
+    lineage_count(REAL(t),INTEGER(ell));
+    UNPROTECT(4);
+    return out;
   };
 
 public:
@@ -252,6 +280,7 @@ private:
         a->color = red;
         break;
       case purple:      // swap black ball for green ball, delete node
+	a->deme = p->deme;
         swap(a,p->green_ball());
         destroy_node(p);
         drop(a);		// recursively pursue dropping ball a
@@ -353,9 +382,14 @@ public:
     delete blacks;
     for (node_it i = begin(); i != end(); i++)
       (*i)->deme = 0;
+    _obscured = true;
     return *this;
   };
 
+  bool obscured (void) const {
+    return _obscured;
+  };
+  
   // truncate the genealogy by removing nodes
   // with times later than tnew
   // NB: this destroys the genealogy inasmuch

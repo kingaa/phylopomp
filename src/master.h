@@ -21,7 +21,7 @@ public:
 
 public:
   // DATA MEMBERS
-  genealogy_t geneal;
+  genealogy_t<ndeme> geneal;
   inventory_t<ndeme> inventory;
 
 public:
@@ -109,8 +109,8 @@ public:
     return geneal.newick(compact);
   };
   // lineage count table
-  size_t lineage_count (double *t = 0, int *ell = 0) const {
-    return geneal.lineage_count(t,ell);
+  SEXP lineage_count (void) const {
+    return geneal.lineage_count();
   };
   // structure in R list format
   SEXP structure (void) const {
