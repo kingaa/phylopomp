@@ -1,6 +1,6 @@
-##' Linear birth-death-sampling genealogy process simulator.
+##' LBDP
 ##'
-##' Run the simulator.
+##' Linear birth-death-sampling model.
 ##'
 ##' @name lbdp
 ##' @aliases LBDP
@@ -15,7 +15,7 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"LBDP"}.
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 ##'
 ##' @example examples/lbdp.R
 NULL

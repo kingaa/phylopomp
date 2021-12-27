@@ -51,21 +51,21 @@ public:
   void jump (int event) {
     switch (event) {
     case 0:                     // infection
-      state.S -= 1.0;
-      state.I += 1.0;
+      state.S -= 1;
+      state.I += 1;
       birth();
       break;
     case 1:                     // recovery
-      state.I -= 1.0;
-      state.R += 1.0;
+      state.I -= 1;
+      state.R += 1;
       death();
       break;
     case 2:                     // sample
       sample();
       break;
     case 3:			// waning
-      state.S += 1.0;
-      state.R -= 1.0;
+      state.S += 1;
+      state.R -= 1;
       break;
     default:
       err("in SIR 'jump': c'est impossible! (%ld)",event); // # nocov

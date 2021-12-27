@@ -5,7 +5,7 @@
 \alias{Moran}
 \alias{runMoran}
 \alias{continueMoran}
-\title{Moran genealogy process}
+\title{Moran}
 \usage{
 runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
 
@@ -26,14 +26,15 @@ continueMoran(object, time, mu = NA, psi = NA)
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"Moran"}.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 }
 \description{
-Run the simulator.
+The classical Moran model.
 }
 \seealso{
-Other Genealogy processes: 
+More example genealogy processes: 
 \code{\link{lbdp}},
+\code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}}

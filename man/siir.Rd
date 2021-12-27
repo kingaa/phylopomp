@@ -5,7 +5,7 @@
 \alias{SIIR}
 \alias{runSIIR}
 \alias{continueSIIR}
-\title{SIIR with sampling simulator.}
+\title{SIIR}
 \usage{
 runSIIR(
   time,
@@ -60,10 +60,10 @@ continueSIIR(
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIIR"}.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
 }
 \description{
-Run the simulator.
+Two-strain SIR model.
 }
 \examples{
 simulate("SIIR",time=3,psi1=1,psi2=0) |>
@@ -81,9 +81,10 @@ simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,S0=300,I1_0=20,I2_0=2,time=5) |>
   geom_step()
 }
 \seealso{
-Other Genealogy processes: 
+More example genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{si2r}},
 \code{\link{simulate}()},
 \code{\link{sir}}
 }

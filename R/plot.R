@@ -70,7 +70,7 @@ treeplot <- function (
       label=if_else(label=="NA",NA_character_,label)
     ) -> dat
 
-  ndeme <- length(unique(dat$deme))-1L
+  ndeme <- max(1L,length(unique(dat$deme))-1L)
   if (is.function(palette)) {
     palette <- palette(ndeme)
   } else {

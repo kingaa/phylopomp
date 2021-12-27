@@ -47,11 +47,11 @@ public:
   void jump (int event) {
     switch (event) {
     case 0:                     // birth
-      state.n += 1.0;
+      state.n += 1;
       birth();
       break;
     case 1:                     // death
-      state.n -= 1.0;
+      state.n -= 1;
       death();
       break;
     case 2:                     // sample

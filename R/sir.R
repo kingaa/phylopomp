@@ -1,6 +1,6 @@
-##' SIR with sampling simulator.
+##' SIR
 ##'
-##' Run the simulator.
+##' Classical susceptible-infected-recovered model
 ##'
 ##' @name sir
 ##' @aliases SIR
@@ -18,7 +18,7 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 ##'
 ##' @example examples/sir.R
 NULL

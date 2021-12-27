@@ -124,6 +124,11 @@ public:
     ball_t *a = inventory.random_ball(i);
     ball_t *b = geneal.birth(a,time(),j);
     inventory.insert(b);
+    while (n > 1) {
+      b = geneal.birth(b->holder(),j);
+      inventory.insert(b);
+      n--;
+    }
   };
   
   // death in deme i

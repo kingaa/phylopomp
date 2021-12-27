@@ -3,7 +3,7 @@
 ##' Simulate Markov genealogy processes
 ##'
 ##' @name simulate
-##' @include getinfo.R sir.R siir.R
+##' @include getinfo.R sir.R siir.R si2r.R lbdp.R moran.R
 ##' 
 ##' @family Genealogy processes
 ##' 
@@ -30,8 +30,9 @@ simulate.default <- function (object, ...) {
       "Available phylopomp models:\n",
       "- SIR: standard susceptible-infected-recovered model\n",
       "- SIIR: two-strain SIR model\n",
-      "- LBDP: linear birth-death-sampling process\n",
-      "- Moran: Moran process\n"
+      "- SI2R: superspreading model\n",
+      "- Moran: Moran process\n",
+      "- LBDP: linear birth-death-sampling process\n"
     )
   else
     stop(
@@ -52,6 +53,7 @@ simulate.character <- function (object, time, ...) {
     object,
     SIR = runSIR(time=time,...),
     SIIR = runSIIR(time=time,...),
+    SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
     Moran = runMoran(time=time,...),
     stop("unrecognized model: ",sQuote(object),".",
@@ -75,6 +77,7 @@ simulate.gpsim <- function (object, time, ...) {
     paste0("model",model),
     modelSIR = continueSIR(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
+    modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
     model = stop("no model attribute detected.",call.=FALSE),

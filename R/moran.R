@@ -1,6 +1,6 @@
-##' Moran genealogy process
+##' Moran
 ##'
-##' Run the simulator.
+##' The classical Moran model.
 ##'
 ##' @name moran
 ##' @aliases Moran
@@ -14,7 +14,7 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"Moran"}.
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 ##'
 NULL
 

@@ -5,7 +5,7 @@
 \alias{LBDP}
 \alias{runLBDP}
 \alias{continueLBDP}
-\title{Linear birth-death-sampling genealogy process simulator.}
+\title{LBDP}
 \usage{
 runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
 
@@ -28,10 +28,10 @@ continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"LBDP"}.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 }
 \description{
-Run the simulator.
+Linear birth-death-sampling model.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)
@@ -48,8 +48,9 @@ simulate("LBDP",time=4) |>
 
 }
 \seealso{
-Other Genealogy processes: 
+More example genealogy processes: 
 \code{\link{moran}},
+\code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}}

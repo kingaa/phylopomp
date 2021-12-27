@@ -6,7 +6,7 @@
 \alias{runSIR}
 \alias{continueSIR}
 \alias{sir_pomp}
-\title{SIR with sampling simulator.}
+\title{SIR}
 \usage{
 runSIR(
   time,
@@ -49,10 +49,10 @@ sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 \item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIR"}.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 }
 \description{
-Run the simulator.
+Classical susceptible-infected-recovered model
 }
 \details{
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
@@ -72,9 +72,10 @@ plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
 simulate("SIR",delta=1,time=20,I0=4) |> plot()
 }
 \seealso{
-Other Genealogy processes: 
+More example genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()}
 }

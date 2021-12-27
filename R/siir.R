@@ -1,6 +1,6 @@
-##' SIIR with sampling simulator.
+##' SIIR
 ##'
-##' Run the simulator.
+##' Two-strain SIR model.
 ##'
 ##' @name siir
 ##' @aliases SIIR
@@ -18,7 +18,7 @@
 ##' @param I2_0 initial size of I2 population.
 ##' @param R0 initial size of recovered population.
 ##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{"SIIR"}.
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
 ##'
 ##' @example examples/siir.R
 ##'
