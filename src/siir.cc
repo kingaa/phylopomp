@@ -39,27 +39,50 @@ public:
     if (params.N != state.S+state.I1+state.I2+state.R) err("population leakage!");
   };
 
+  void update_params (double *p, int n) {
+    int m = 0;
+    PARAM_SET(Beta1);
+    PARAM_SET(Beta2);
+    PARAM_SET(gamma);
+    PARAM_SET(psi1);
+    PARAM_SET(psi2);
+    PARAM_SET(sigma12);
+    PARAM_SET(sigma21);
+    if (m != n) err("wrong number of parameters!");
+  };
+
+  void update_ICs (double *p, int n) {
+    int m = 0;
+    PARAM_SET(S0);
+    PARAM_SET(I1_0);
+    PARAM_SET(I2_0);
+    PARAM_SET(R0);
+    params.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
+    if (m != n) err("wrong number of initial conditions!");
+  };
+
   void rinit (void) {
     state.S = params.S0;
     state.I1 = params.I1_0;
     state.I2 = params.I2_0;
     state.R = params.R0;
-    for (int j = 0; j < params.I1_0; j++) graft(0);
-    for (int j = 0; j < params.I2_0; j++) graft(1);
+    graft(0,params.I1_0);
+    graft(1,params.I2_0);
   };
 
   double event_rates (double *rate, int n) const {
-    if (n != 8) err("wrong number of events!");
-    rate[0] = params.Beta1 * state.S * state.I1 / params.N;
-    rate[1] = params.Beta2 * state.S * state.I2 / params.N;
-    rate[2] = params.gamma * state.I1;
-    rate[3] = params.gamma * state.I2;
-    rate[4] = params.psi1 * state.I1;
-    rate[5] = params.psi2 * state.I2;
-    rate[6] = params.sigma12 * state.I1;
-    rate[7] = params.sigma21 * state.I2;
-    return rate[0] + rate[1] + rate[2] + rate[3] +
-      rate[4] + rate[5] + rate[6] + rate[7];
+    int m = 0;
+    double total = 0;
+    RATE_CALC(params.Beta1 * state.S * state.I1 / params.N);
+    RATE_CALC(params.Beta2 * state.S * state.I2 / params.N);
+    RATE_CALC(params.gamma * state.I1);
+    RATE_CALC(params.gamma * state.I2);
+    RATE_CALC(params.psi1 * state.I1);
+    RATE_CALC(params.psi2 * state.I2);
+    RATE_CALC(params.sigma12 * state.I1);
+    RATE_CALC(params.sigma21 * state.I2);
+    if (m != n) err("wrong number of events!");
+    return total;
   };
 
   void jump (int event) {
@@ -104,26 +127,6 @@ public:
       err("in SIIR 'jump': c'est impossible! (%ld)",event); // # nocov
       break;
     }
-  };
-
-  void update_params (double *p, int n) {
-    if (n != 7) err("wrong number of parameters!");
-    if (!ISNA(p[0])) params.Beta1 = p[0];
-    if (!ISNA(p[1])) params.Beta2 = p[1];
-    if (!ISNA(p[2])) params.gamma = p[2];
-    if (!ISNA(p[3])) params.psi1 = p[3];
-    if (!ISNA(p[4])) params.psi2 = p[4];
-    if (!ISNA(p[5])) params.sigma12 = p[5];
-    if (!ISNA(p[6])) params.sigma21 = p[6];
-  };
-
-  void update_ICs (double *p, int n) {
-    if (n != 4) err("wrong number of initial conditions!");
-    if (!ISNA(p[0])) params.S0 = int(p[0]);
-    if (!ISNA(p[1])) params.I1_0 = int(p[1]);
-    if (!ISNA(p[2])) params.I2_0 = int(p[2]);
-    if (!ISNA(p[3])) params.R0 = int(p[3]);
-    params.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
   };
 
   // human-readable info

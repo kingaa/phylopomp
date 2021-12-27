@@ -24,17 +24,32 @@ public:
   mgp_t (raw_t *o) : master_t(o) {};
   // copy constructor
   mgp_t (const mgp_t &G) : master_t(G) {};
-  
+
+  void update_params (double *p, int n) {
+    int m = 0;
+    PARAM_SET(mu);
+    PARAM_SET(psi);
+    if (m != n) err("wrong number of parameters!");
+  };
+
+  void update_ICs (double *p, int n) {
+    int m = 0;
+    PARAM_SET(n);
+    if (m != n) err("wrong number of parameters!");
+  };
+
   void rinit (void) {
     state.m = 0; state.g = 0;
-    for (int j = 0; j < params.n; j++) graft();
+    graft(0,params.n);
   };
 
   double event_rates (double *rate, int n) const {
-    if (n != nevent) err("wrong number of events!");
-    rate[0] = params.mu * params.n; // birth/death
-    rate[1] = params.psi * params.n; // sample
-    return rate[0] + rate[1];
+    int m = 0;
+    double total = 0;
+    RATE_CALC(params.mu * params.n);		// birth/death
+    RATE_CALC(params.psi * params.n);		// sample
+    if (m != n) err("wrong number of events!");
+    return total;
   };
 
   void jump (int event) {
@@ -52,17 +67,6 @@ public:
       err("in moran 'jump': c'est impossible! (%ld)",event); // # nocov
       break;
     }
-  };
-
-  void update_params (double *p, int n) {
-    if (n != 2) err("wrong number of parameters!");
-    if (!ISNA(p[0])) params.mu = p[0];
-    if (!ISNA(p[1])) params.psi = p[1];
-  };
-
-  void update_ICs (double *p, int n) {
-    if (n != 1) err("wrong number of initial conditions!");
-    if (!ISNA(p[0])) params.n = int(p[0]);
   };
 
   // human-readable info

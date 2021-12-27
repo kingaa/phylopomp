@@ -139,9 +139,11 @@ public:
   };
   
   // new root in deme i
-  void graft (name_t i = 0) {
-    ball_t *a = geneal.graft(time(),i);
-    inventory.insert(a);
+  void graft (name_t i = 0, int m = 1) {
+    for (int j = 0; j < m; j++) {
+      ball_t *a = geneal.graft(time(),i);
+      inventory.insert(a);
+    }
   };
 
   // sample in deme i

@@ -32,6 +32,24 @@ public:
   // copy constructor
   sir_genealogy_t (const sir_genealogy_t &G) : master_t(G) {};
   
+  void update_params (double *p, int n) {
+    int m = 0;
+    PARAM_SET(Beta);
+    PARAM_SET(gamma);
+    PARAM_SET(psi);
+    PARAM_SET(delta);
+    if (m != n) err("wrong number of parameters!");
+  };
+
+  void update_ICs (double *p, int n) {
+    int m = 0;
+    PARAM_SET(S0);
+    PARAM_SET(I0);
+    PARAM_SET(R0);
+    params.N = double(params.S0+params.I0+params.R0);
+    if (m != n) err("wrong number of initial conditions!");
+  };
+
   void rinit (void) {
     state.S = params.S0;
     state.I = params.I0;
@@ -40,12 +58,14 @@ public:
   };
 
   double event_rates (double *rate, int n) const {
-    if (n != 4) err("wrong number of events!");
-    rate[0] = params.Beta * state.S * state.I / params.N; // infection
-    rate[1] = params.gamma * state.I;                     // recovery
-    rate[2] = params.psi * state.I;                       // sample
-    rate[3] = params.delta * state.R;			  // waning
-    return rate[0] + rate[1] + rate[2] + rate[3];
+    int m = 0;
+    double total = 0;
+    RATE_CALC(params.Beta * state.S * state.I / params.N); // infection
+    RATE_CALC(params.gamma * state.I);                     // recovery
+    RATE_CALC(params.psi * state.I);                       // sample
+    RATE_CALC(params.delta * state.R);			  // waning
+    if (m != n) err("wrong number of events!");
+    return total;
   };
 
   void jump (int event) {
@@ -71,22 +91,6 @@ public:
       err("in SIR 'jump': c'est impossible! (%ld)",event); // # nocov
       break;
     }
-  };
-
-  void update_params (double *p, int n) {
-    if (n != 4) err("wrong number of parameters!");
-    if (!ISNA(p[0])) params.Beta = p[0];
-    if (!ISNA(p[1])) params.gamma = p[1];
-    if (!ISNA(p[2])) params.psi = p[2];
-    if (!ISNA(p[3])) params.delta = p[3];
-  };
-
-  void update_ICs (double *p, int n) {
-    if (n != 3) err("wrong number of initial conditions!");
-    if (!ISNA(p[0])) params.S0 = int(p[0]);
-    if (!ISNA(p[1])) params.I0 = int(p[1]);
-    if (!ISNA(p[2])) params.R0 = int(p[2]);    
-    params.N = double(params.S0+params.I0+params.R0);
   };
 
   // human-readable info

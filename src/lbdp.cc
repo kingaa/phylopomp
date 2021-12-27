@@ -31,17 +31,33 @@ public:
     if (state.n < 0) err("negative population size!");
   };
 
+  void update_params (double *p, int n) {
+    int m = 0;
+    PARAM_SET(lambda)
+    PARAM_SET(mu)
+    PARAM_SET(psi)
+    if (m != n) err("wrong number of parameters!");
+  };
+
+  void update_ICs (double *p, int n) {
+    int m = 0;
+    PARAM_SET(n0)
+    if (m != n) err("wrong number of initial conditions!");
+  };
+
   void rinit (void) {
     state.n = params.n0;
-    for (int j = 0; j < params.n0; j++) graft();
+    graft(0,params.n0);
   };
 
   double event_rates (double *rate, int n) const {
-    if (n != 3) err("wrong number of events!");
-    rate[0] = params.lambda * state.n; // birth
-    rate[1] = params.mu * state.n;     // death
-    rate[2] = params.psi * state.n;    // sample
-    return rate[0] + rate[1] + rate[2];
+    int m = 0;
+    double total = 0;
+    RATE_CALC(params.lambda * state.n);	       // birth
+    RATE_CALC(params.mu * state.n);	       // death
+    RATE_CALC(params.psi * state.n);	       // sample
+    if (m != n) err("wrong number of events!");
+    return total;
   };
 
   void jump (int event) {
@@ -61,18 +77,6 @@ public:
       err("in LBDP 'jump': c'est impossible! (%ld)",event); // # nocov
       break;
     }
-  };
-
-  void update_params (double *p, int n) {
-    if (n != 3) err("wrong number of parameters!");
-    if (!ISNA(p[0])) params.lambda = p[0];
-    if (!ISNA(p[1])) params.mu = p[1];
-    if (!ISNA(p[2])) params.psi = p[2];
-  };
-
-  void update_ICs (double *p, int n) {
-    if (n != 1) err("wrong number of initial conditions!");
-    if (!ISNA(p[0])) params.n0 = int(p[0]);
   };
 
   // human-readable info

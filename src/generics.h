@@ -195,6 +195,11 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   return out;
 }
 
+#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m]; \
+  m++;							    \
+
+#define RATE_CALC(X) total += rate[m++] = (X);
+
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP ICs, SEXP T0) { \
     return make<TYPE>(Params,ICs,T0);					\
   }									\
