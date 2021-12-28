@@ -25,10 +25,6 @@ plot_grid(
   align="hv",axis="bl"
 )
 x |> yaml() -> y
-x |>
-  lineages(prune=FALSE,obscure=FALSE) |>
-  gather(var,val,deme1,deme2) |>
-  ggplot(aes(x=time,y=val,group=var,color=var))+
-  geom_step()
+x |> lineages(prune=FALSE,obscure=FALSE) |> plot()
 
 dev.off()

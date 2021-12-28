@@ -36,7 +36,6 @@
 ##' @importFrom ggplot2 fortify
 ##' @importFrom dplyr mutate arrange select filter summarize n bind_rows group_by ungroup
 ##' @importFrom tidyr separate
-##' @importFrom utils globalVariables
 ##' @importFrom tibble tibble
 ##'
 ##' @export
@@ -82,4 +81,5 @@ newick2df <- function (tree, time = NA, root_time = 0) {
   dat
 }
 
-utils::globalVariables(c("lineages","isTip","time","code","type"))
+##' @importFrom utils globalVariables
+globalVariables(c("lineages","isTip","time","code","type"))

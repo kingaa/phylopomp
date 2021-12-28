@@ -94,7 +94,7 @@ genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
     children=do.call(
       gList,
       lapply(
-        seq_along(object$nodes),
+        seq_len(m),
         function (k) {
           nodeGrob(
             object$nodes[[k]],

@@ -61,7 +61,7 @@ getInfo <- function (
   if (!is.null(x$tree)) x$tree <- gsub("nan","NA",x$tree)
   if (!is.null(x$lineages)) {
     n <- length(x$lineages$time)
-    m <- length(x$lineages$lineages)/n
+    m <- length(x$lineages$count)/n
     if (m > 1L) {
       dig <- ceiling(log10(m))
       nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
@@ -70,7 +70,8 @@ getInfo <- function (
     }
     bind_cols(
       time=x$lineages$time,
-      x$lineages$lineages |>
+      x$lineages$count |>
+        as.integer() |>
         array(dim=c(m,n),dimnames=list(nm,NULL)) |>
         t() |>
         as_tibble()

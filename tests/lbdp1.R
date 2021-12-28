@@ -12,8 +12,7 @@ x
 x |> yaml() -> y
 x |>
   lineages() |>
-  ggplot(aes(x=time,y=lineages))+
-  geom_step()
+  plot()
 
 simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
   plot(points=TRUE)

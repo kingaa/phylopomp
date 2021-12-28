@@ -10,3 +10,4 @@ plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
   ncol=1,rel_heights=c(4,1))
 
 simulate("SIR",delta=1,time=20,I0=4) |> plot()
+simulate("SIR",delta=1,time=20,I0=4) |> lineages() |> plot()

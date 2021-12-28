@@ -33,7 +33,7 @@ Type 'q()' to quit R.
 > x |> lineages()
 # A tibble: 1,311 × 2
      time lineages
-    <dbl>    <int>
+ *  <dbl>    <int>
  1 0            67
  2 0.0112       66
  3 0.0119       66

@@ -17,15 +17,6 @@
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##'
-##' @importFrom ape read.tree
-##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify scale_color_hue
-##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate left_join count coalesce
-##' @importFrom tibble column_to_rownames
-##' @importFrom tidyr separate unite expand_grid
-##' @importFrom scales alpha
-##' @importFrom utils globalVariables
-##'
 ##' @example examples/movie.R
 ##'
 NULL
@@ -48,7 +39,15 @@ plot.gpsim <- function (
 }
 
 ##' @rdname plot
+##' @importFrom ape read.tree
+##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify
+##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
 ##' @importFrom scales hue_pal
+##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
+##' @importFrom dplyr mutate left_join count coalesce
+##' @importFrom tibble column_to_rownames
+##' @importFrom tidyr separate unite expand_grid
+##' @importFrom scales alpha
 ##' @export
 treeplot <- function (
   tree, time = NULL, t0 = 0,
@@ -178,6 +177,7 @@ ball_colors <- c(
   i=alpha("white",0)
 )
 
-utils::globalVariables(
-         c(".id","k","label","nodecol","deme","vis","x","y","rowname")
-       )
+##' @importFrom utils globalVariables
+globalVariables(
+  c(".id","k","label","nodecol","deme","vis","x","y","rowname")
+)

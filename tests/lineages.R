@@ -21,12 +21,8 @@ bind_rows(
 
 plot_grid(
   plot(x),
-  x |>
-    lineages() |>
-    ggplot(aes(x=time,y=lineages))+
-    geom_step()+
-    theme_classic(),
-  plot(x,obscure=FALSE,palette=c("#00274c","#ffcb05")),
+  x |> lineages() |> plot(),
+  x |> plot(obscure=FALSE,palette=c("#00274c","#ffcb05")),
   x |>
     lineages(obscure=FALSE) |>
     mutate(total=deme1+deme2) |>

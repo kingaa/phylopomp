@@ -103,12 +103,11 @@ private:
     return p;
   };
   // number of distinct timepoints
-  size_t ntime (void) const {
-    size_t count = 0;
-    slate_t tcur = R_NegInf;
+  size_t ntime (slate_t t) const {
+    size_t count = 1;
     for (node_it i = begin(); i != end(); i++) {
-      if (tcur < (*i)->slate) {
-	tcur = (*i)->slate;
+      if (t < (*i)->slate) {
+	t = (*i)->slate;
 	count++;
       }
     }

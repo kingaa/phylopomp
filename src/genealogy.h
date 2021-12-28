@@ -145,14 +145,14 @@ public:
 
   SEXP lineage_count (void) const {
     SEXP t, ell, out, outn;
-    int nt = ntime()+1;
+    int nt = ntime(timezero())+1;
     int nl = (obscured()) ? nt : ndeme*nt;
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(ell = NEW_INTEGER(nl));
     PROTECT(out = NEW_LIST(2));
     PROTECT(outn = NEW_CHARACTER(2));
     set_list_elem(out,outn,t,"time",0);
-    set_list_elem(out,outn,ell,"lineages",1);
+    set_list_elem(out,outn,ell,"count",1);
     SET_NAMES(out,outn);
     lineage_count(REAL(t),INTEGER(ell));
     UNPROTECT(4);
