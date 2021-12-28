@@ -14,6 +14,7 @@ typedef struct {
   double Beta;			// transmission rate
   double mu;			// mean superspreading cluster size
   double gamma;			// recovery rate
+  double delta;			// immune waning rate
   double psi1, psi2;		// sampling rates
   double sigma12, sigma21;	// movement rates
   double N;			// host population size
@@ -22,7 +23,7 @@ typedef struct {
   int R0;			// initial recoveries
 } si2r_parameters_t;
 
-class si2r_genealogy_t : public master_t<popul_proc_t<si2r_state_t,si2r_parameters_t,8>, 2> {
+class si2r_genealogy_t : public master_t<popul_proc_t<si2r_state_t,si2r_parameters_t,9>, 2> {
 
 public:
 
@@ -38,6 +39,7 @@ public:
     PARAM_SET(Beta);
     PARAM_SET(mu);
     PARAM_SET(gamma);
+    PARAM_SET(delta);
     PARAM_SET(psi1);
     PARAM_SET(psi2);
     PARAM_SET(sigma12);
@@ -73,6 +75,7 @@ public:
     RATE_CALC(params.psi2 * state.I2);
     RATE_CALC(params.sigma12 * state.I1);
     RATE_CALC(params.sigma21 * state.I2);
+    RATE_CALC(params.delta * state.R);
     if (m != n) err("wrong number of events!");
     return total;
   };
@@ -123,6 +126,10 @@ public:
       state.I2 -= 1;
       migrate(1,0);
       break;
+    case 8:
+      state.R -= 1;
+      state.S += 1;
+      break;
     default:						    // #nocov
       err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
@@ -136,6 +143,7 @@ public:
       + t + "Beta: " + std::to_string(params.Beta) + "\n"
       + t + "mu: " + std::to_string(params.mu) + "\n"
       + t + "gamma: " + std::to_string(params.gamma) + "\n"
+      + t + "delta:" + std::to_string(params.delta) + "\n"
       + t + "psi1: " + std::to_string(params.psi1) + "\n"
       + t + "psi2: " + std::to_string(params.psi2) + "\n"
       + t + "sigma12: " + std::to_string(params.sigma12) + "\n"

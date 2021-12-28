@@ -13,6 +13,7 @@ runSI2R(
   Beta = 5,
   mu = 5,
   gamma = 1,
+  delta = 0,
   psi1 = 1,
   psi2 = 0,
   sigma12 = 1,
@@ -28,6 +29,7 @@ continueSI2R(
   Beta = NA,
   mu = NA,
   gamma = NA,
+  delta = NA,
   psi1 = NA,
   psi2 = NA,
   sigma21 = NA,
@@ -44,6 +46,8 @@ continueSI2R(
 \item{mu}{mean number of infections from superspreaders}
 
 \item{gamma}{recovery rate}
+
+\item{delta}{rate of waning of immunity}
 
 \item{psi1, psi2}{sampling rates for demes 1 and 2, respectively}
 

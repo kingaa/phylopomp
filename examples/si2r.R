@@ -13,3 +13,17 @@ simulate("SI2R",time=5) |>
 
 simulate("SI2R",time=2) |>
   diagram(m=30)
+
+simulate("SI2R",time=20,delta=0.2,mu=20) -> x
+plot_grid(
+  x |> plot(obscure=FALSE),
+  x |> lineages(obscure=FALSE) |>
+    gather(var,val,-time) |>
+    ggplot(aes(x=time,y=val,color=var,group=var))+
+    geom_step()+
+    labs(y="lineages")+
+    guides(color="none")+
+    theme_classic(),
+  ncol=1,
+  align="v",axis="b"
+)
