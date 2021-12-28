@@ -6,7 +6,7 @@
 \alias{runSIR}
 \alias{continueSIR}
 \alias{sir_pomp}
-\title{SIR}
+\title{Classical susceptible-infected-recovered model}
 \usage{
 runSIR(
   time,
@@ -52,7 +52,7 @@ sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 }
 \description{
-Classical susceptible-infected-recovered model
+A single, unstructured population of hosts.
 }
 \details{
 \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.

@@ -5,7 +5,7 @@
 \alias{LBDP}
 \alias{runLBDP}
 \alias{continueLBDP}
-\title{LBDP}
+\title{Linear birth-death-sampling model}
 \usage{
 runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
 
@@ -31,7 +31,8 @@ continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 }
 \description{
-Linear birth-death-sampling model.
+The genealogy process induced by a simple linear birth-death process
+with constant-rate sampling.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)

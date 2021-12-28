@@ -2,6 +2,7 @@
 % Please edit documentation in R/diagram.R
 \name{diagram}
 \alias{diagram}
+\alias{print.gpdiag}
 \title{Genealogy process diagram}
 \usage{
 diagram(
@@ -13,6 +14,8 @@ diagram(
   ...,
   digits = 1
 )
+
+\method{print}{gpdiag}(x, newpage = is.null(vp), vp = NULL, ...)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
@@ -31,6 +34,10 @@ By default, the balls will be adjusted in size to fit the space available.}
 
 \item{digits}{non-negative integer;
 number of decimal digits to print in the node time}
+
+\item{x}{ An \R object. }
+
+\item{vp}{a \code{\link[grid]{viewport}} object (or \code{NULL}).}
 }
 \value{
 A \pkg{grid} graphics object (\code{grob}), invisibly.

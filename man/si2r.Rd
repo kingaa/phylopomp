@@ -5,7 +5,7 @@
 \alias{SI2R}
 \alias{runSI2R}
 \alias{continueSI2R}
-\title{SI2R}
+\title{Two-deme model of superspreading}
 \usage{
 runSI2R(
   time,
@@ -43,7 +43,7 @@ continueSI2R(
 
 \item{Beta}{transmission rate}
 
-\item{mu}{mean number of infections from superspreaders}
+\item{mu}{mean superspreading-event cluster size}
 
 \item{gamma}{recovery rate}
 
@@ -66,7 +66,8 @@ continueSI2R(
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 }
 \description{
-Two-deme model of superspreading.
+Deme 2 consists of "superspreaders" who engender clusters
+of infection in "superspreading events".
 }
 \details{
 Superspreaders (deme 2) behave differently than ordinary infections:

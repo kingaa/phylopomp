@@ -1,6 +1,6 @@
-##' SIIR
-##'
 ##' Two-strain SIR model.
+##'
+##' Two distinct pathogen strains compete for susceptibles.
 ##'
 ##' @name siir
 ##' @aliases SIIR

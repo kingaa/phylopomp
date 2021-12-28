@@ -42,8 +42,7 @@ diagram <- function (
   x
 }
 
-##' @rdname internals
-##' @keywords internals
+##' @rdname diagram
 ##' @method print gpdiag
 ##' @importFrom grid grid.newpage grid.draw seekViewport pushViewport upViewport
 ##' @export

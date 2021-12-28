@@ -2,6 +2,8 @@
 
 ### an *R* package for POMP inference on genealogies
 
+Manual: https://kingaa.github.io/manuals/phylopomp/
+
 Related packages:
 
 - [**pomp**](https://kingaa.github.io/pomp/)

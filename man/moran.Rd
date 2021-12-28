@@ -5,7 +5,7 @@
 \alias{Moran}
 \alias{runMoran}
 \alias{continueMoran}
-\title{Moran}
+\title{The classical Moran model}
 \usage{
 runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
 
@@ -29,7 +29,9 @@ continueMoran(object, time, mu = NA, psi = NA)
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 }
 \description{
-The classical Moran model.
+The Markov genealogy process induced by the classical Moran process,
+in which birth/death events occur at a constant rate and the
+population size remains constant.
 }
 \seealso{
 More example genealogy processes: 

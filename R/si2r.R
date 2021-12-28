@@ -1,6 +1,7 @@
-##' SI2R
+##' Two-deme model of superspreading
 ##'
-##' Two-deme model of superspreading.
+##' Deme 2 consists of "superspreaders" who engender clusters
+##' of infection in "superspreading events".
 ##'
 ##' @name si2r
 ##' @aliases SI2R
@@ -10,7 +11,7 @@
 ##' 
 ##' @inheritParams sir
 ##' @param Beta transmission rate
-##' @param mu mean number of infections from superspreaders
+##' @param mu mean superspreading-event cluster size
 ##' @param gamma recovery rate
 ##' @param delta rate of waning of immunity
 ##' @param psi1,psi2 sampling rates for demes 1 and 2, respectively

@@ -1,6 +1,6 @@
-##' SIR
-##'
 ##' Classical susceptible-infected-recovered model
+##'
+##' A single, unstructured population of hosts.
 ##'
 ##' @name sir
 ##' @aliases SIR

@@ -1,6 +1,8 @@
-##' Moran
+##' The classical Moran model
 ##'
-##' The classical Moran model.
+##' The Markov genealogy process induced by the classical Moran process,
+##' in which birth/death events occur at a constant rate and the
+##' population size remains constant.
 ##'
 ##' @name moran
 ##' @aliases Moran

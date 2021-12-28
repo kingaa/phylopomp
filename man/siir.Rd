@@ -5,7 +5,7 @@
 \alias{SIIR}
 \alias{runSIIR}
 \alias{continueSIIR}
-\title{SIIR}
+\title{Two-strain SIR model.}
 \usage{
 runSIIR(
   time,
@@ -63,7 +63,7 @@ continueSIIR(
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
 }
 \description{
-Two-strain SIR model.
+Two distinct pathogen strains compete for susceptibles.
 }
 \examples{
 simulate("SIIR",time=3,psi1=1,psi2=0) |>

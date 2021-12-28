@@ -1,6 +1,7 @@
-##' LBDP
+##' Linear birth-death-sampling model
 ##'
-##' Linear birth-death-sampling model.
+##' The genealogy process induced by a simple linear birth-death process
+##' with constant-rate sampling.
 ##'
 ##' @name lbdp
 ##' @aliases LBDP
