@@ -14,5 +14,11 @@ runSI2R(time=2,Beta=2,gamma=1,psi1=2,psi2=2) |>
 
 simulate("SI2R",time=2) -> x
 x |> plot(prune=FALSE,obscure=FALSE)
+x |> yaml() -> y
+x |>
+  lineages(obscure=FALSE) |>
+  gather(var,val,-time) |>
+  ggplot(aes(x=time,y=val,color=var,group=var))+
+  geom_step()
 
 dev.off()

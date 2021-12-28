@@ -26,8 +26,25 @@ Type 'q()' to quit R.
 > set.seed(847110120)
 > options(digits=3)
 > 
-> runMoran(time=10)
+> runMoran(time=10) -> x
+> x
 <gpsim for model ‘Moran’>
+> x |> yaml() -> y
+> x |> lineages()
+# A tibble: 1,311 × 2
+     time lineages
+    <dbl>    <int>
+ 1 0            67
+ 2 0.0112       66
+ 3 0.0119       66
+ 4 0.0242       67
+ 5 0.0260       68
+ 6 0.0323       69
+ 7 0.0365       68
+ 8 0.0371       67
+ 9 0.0375       67
+10 0.0510       67
+# … with 1,301 more rows
 > 
 > runMoran(n=100,time=100) |>
 +   plot()

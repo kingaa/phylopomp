@@ -53,6 +53,7 @@ null device
 +   getElement("description") |>
 +   cat()
 time = 0.300000
+t0 = 0.000000
 node(17,0) {green(17), green(27)}, t = 0.000000
 node(14,0) {green(14), green(45)}, t = 0.000000
 node(9,0) {green(9), green(26)}, t = 0.000000

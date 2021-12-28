@@ -123,8 +123,8 @@ public:
       state.I2 -= 1;
       migrate(1,0);
       break;
-    default:
-      err("in SI2R 'jump': c'est impossible! (%ld)",event); // # nocov
+    default:						    // #nocov
+      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
     }
   };
@@ -134,6 +134,7 @@ public:
     std::string t = tab + "  ";
     std::string p = tab + "parameter:\n"
       + t + "Beta: " + std::to_string(params.Beta) + "\n"
+      + t + "mu: " + std::to_string(params.mu) + "\n"
       + t + "gamma: " + std::to_string(params.gamma) + "\n"
       + t + "psi1: " + std::to_string(params.psi1) + "\n"
       + t + "psi2: " + std::to_string(params.psi2) + "\n"

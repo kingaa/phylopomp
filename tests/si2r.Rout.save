@@ -34,6 +34,12 @@ Type 'q()' to quit R.
 > 
 > simulate("SI2R",time=2) -> x
 > x |> plot(prune=FALSE,obscure=FALSE)
+> x |> yaml() -> y
+> x |>
++   lineages(obscure=FALSE) |>
++   gather(var,val,-time) |>
++   ggplot(aes(x=time,y=val,color=var,group=var))+
++   geom_step()
 > 
 > dev.off()
 null device 

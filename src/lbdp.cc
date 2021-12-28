@@ -73,8 +73,8 @@ public:
     case 2:                     // sample
       sample();
       break;
-    default:
-      err("in LBDP 'jump': c'est impossible! (%ld)",event); // # nocov
+    default:						    // #nocov
+      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
     }
   };

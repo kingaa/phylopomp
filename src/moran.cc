@@ -63,8 +63,8 @@ public:
       state.g += 1;
       sample();
       break;
-    default:
-      err("in moran 'jump': c'est impossible! (%ld)",event); // # nocov
+    default:						    // #nocov
+      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
     }
   };

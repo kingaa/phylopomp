@@ -79,7 +79,7 @@ public:
 	  b->owner(p);
 	  ball_name->insert({b->uniq,b});
 	} else {
-	  err("cannot find ball id %ld",b->uniq); // # nocov
+	  err("in '%s': cannot find ball %ld",__func__,b->uniq); // #nocov
 	}
       }
     }
@@ -123,7 +123,7 @@ public:
     for (ball_it i = begin(); i != end(); i++) {
       if (*i != b) return *i;
     }
-    err("error in 'other': no other ball"); // # nocov
+    err("error in '%s': there is no other.",__func__); // # nocov
     return 0;
   };
   // human-readable info

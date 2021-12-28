@@ -7,7 +7,10 @@ theme_set(theme_bw())
 set.seed(847110120)
 options(digits=3)
 
-runMoran(time=10)
+runMoran(time=10) -> x
+x
+x |> yaml() -> y
+x |> lineages()
 
 runMoran(n=100,time=100) |>
   plot()

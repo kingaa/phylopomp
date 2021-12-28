@@ -87,8 +87,8 @@ public:
       state.S += 1;
       state.R -= 1;
       break;
-    default:
-      err("in SIR 'jump': c'est impossible! (%ld)",event); // # nocov
+    default:						    // #nocov
+      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
     }
   };

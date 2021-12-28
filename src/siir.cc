@@ -123,8 +123,8 @@ public:
       state.I2 -= 1;
       migrate(1,0);
       break;
-    default:
-      err("in SIIR 'jump': c'est impossible! (%ld)",event); // # nocov
+    default:						    // #nocov
+      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
       break;
     }
   };

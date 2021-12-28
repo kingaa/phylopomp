@@ -24,8 +24,7 @@ plot_grid(
   x |> plot(prune=FALSE,obscure=FALSE),
   align="hv",axis="bl"
 )
-  
-
+x |> yaml() -> y
 x |>
   lineages(prune=FALSE,obscure=FALSE) |>
   gather(var,val,deme1,deme2) |>

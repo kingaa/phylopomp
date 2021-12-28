@@ -18,13 +18,13 @@
 
 class node_t : public pocket_t {
 
- private:
+private:
 
   ball_t *_green_ball;
 
   void clean (void) { };
 
- public:
+public:
     
   name_t uniq, deme;
   slate_t slate;
@@ -37,7 +37,7 @@ class node_t : public pocket_t {
     _green_ball = 0;
   };
 
- public:
+public:
   // size of binary serialization
   size_t bytesize (void) const {
     return 2*sizeof(name_t) + sizeof(slate_t)
@@ -94,13 +94,13 @@ class node_t : public pocket_t {
     int n = 0;
     if (compact) {
       for (ball_it i = begin(); i != end(); i++) {
-	switch ((*i)->color) {
-	case green: case black:
-	  n++;
-	  break;
-	default:
-	  break;
-	}
+        switch ((*i)->color) {
+        case green: case black:
+          n++;
+          break;
+        default:
+          break;
+        }
       }
     } else {
       n = size();
@@ -114,13 +114,13 @@ class node_t : public pocket_t {
     for (ball_it i = begin(); i != end(); i++) {
       switch ((*i)->color) {
       case green:
-	incr[(*i)->child()->deme]++;
-	break;
+        incr[(*i)->child()->deme]++;
+        break;
       case black:
-	incr[(*i)->deme]++;
-	break;
+        incr[(*i)->deme]++;
+        break;
       default:
-	break;
+        break;
       }
     }
   };
@@ -171,20 +171,20 @@ class node_t : public pocket_t {
       node_t *p = 0;
       switch (b->color) {
       case green:
-	p = b->child();
-	if (p != this) {
-	  o += p->newick(tnow,slate);
-	}
-	break;
+        p = b->child();
+        if (p != this) {
+          o += p->newick(tnow,slate);
+        }
+        break;
       case black:
-	o += b->newick(tnow-slate);
-	break;
+        o += b->newick(tnow-slate);
+        break;
       case purple: case red: case blue:
-	o += b->newick(0);
-	break;
-      default:                                 // # nocov
-	err("in 'newick': c'est impossible!"); // # nocov
-	break;
+        o += b->newick(0);
+        break;
+      default:					    // # nocov
+        err("in '%s': c'est impossible!",__func__); // # nocov
+        break;
       }
       if (n > 1) o += ",";
     }
@@ -205,27 +205,27 @@ class node_t : public pocket_t {
       node_t *p = 0;
       switch (b->color) {
       case green:
-	p = b->child();
-	if (p != this) {
-	  o2 += p->compact_newick(tnow,slate);
-	}
-	break;
+        p = b->child();
+        if (p != this) {
+          o2 += p->compact_newick(tnow,slate);
+        }
+        break;
       case black:
-	o2 += b->newick(tnow-slate);
-	break;
+        o2 += b->newick(tnow-slate);
+        break;
       case purple:
-	o3 = ")p_";
-	break;
+        o3 = ")p_";
+        break;
       case red:
-	o1 = ""; o2 = ""; o3 = "r_";
-	rednode = true;
-	break;
+        o1 = ""; o2 = ""; o3 = "r_";
+        rednode = true;
+        break;
       case blue:
-	if (!rednode) o3 = ")b_";
-	break;
+        if (!rednode) o3 = ")b_";
+        break;
       default:                                         // # nocov
-	err("in 'compact_newick': c'est impossible!"); // # nocov
-	break;
+        err("in '%s': c'est impossible!",__func__);    // # nocov
+        break;
       }
       if (n > 1) o2 += ",";
     }

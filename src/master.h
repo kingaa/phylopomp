@@ -36,6 +36,7 @@ public:
   }
   // binary deserialization
   friend raw_t* operator>> (raw_t* o, master_t& A) {
+    A.clean();
     o = (o >> reinterpret_cast<popul_t&>(A) >> A.geneal);
     A.inventory = A.geneal.extant();
     return o;
@@ -75,12 +76,6 @@ public:
   // destructor
   ~master_t (void) {
     clean();
-  };
-
-  //reset current time
-  void time (const double& t) {
-    popul_t::time(t);
-    geneal.time(t);
   };
 
   int play (double tfin) {

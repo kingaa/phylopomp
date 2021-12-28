@@ -75,7 +75,7 @@ class nodeseq_t : public std::list<node_t*> {
 	ball_t *b = n->second;
 	p->green_ball(b);
       } else {
-	err("cannot find node id %ld",p->uniq); // # nocov
+	err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
       }
       
     }

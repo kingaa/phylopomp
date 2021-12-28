@@ -84,7 +84,8 @@ public:
   // random ball
   ball_t* random_ball (name_t i = 0) const {
     name_t n = _inven[i].size();
-    if (n < 1) err("cannot draw from empty inventory %ld",i); // # nocov
+    if (n < 1)
+      err("in '%s': cannot draw from empty inventory %ld",__func__,i); // # nocov
     name_t draw = random_integer(n);
     ball_it k = _inven[i].begin();
     while (draw-- > 0) k++;
@@ -97,7 +98,8 @@ public:
       ballJ = random_ball(j);
     } else {
       name_t n = _inven[i].size();
-      if (n < 2) err("cannot draw from inventory %ld",i); // # nocov
+      if (n < 2)
+	err("in '%s': cannot draw from inventory %ld",__func__,i); // # nocov
       name_t d1 = random_integer(n-1);
       name_t d2 = random_integer(n);
       bool toggle = false;
@@ -129,7 +131,7 @@ public:
   void erase (ball_t *b) {
     if (b->is(black)) {
       if (_inven[b->deme].empty())
-	err("in 'inventory::remove': empty deme %ld.",b->deme); // # nocov
+	err("in '%s': empty deme %ld.",__func__,b->deme); // # nocov
       _inven[b->deme].erase(b);
     }
   };

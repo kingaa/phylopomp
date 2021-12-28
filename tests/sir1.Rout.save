@@ -37,7 +37,9 @@ Type 'q()' to quit R.
 +   simulate(time=100) |>
 +   plot(points=TRUE,time=NULL)
 > 
-> simulate("SIR",delta=1,time=20,I0=4) |>
+> simulate("SIR",delta=1,time=20,I0=4) -> x
+> x |> yaml() -> y
+> x |>
 +   lineages() |>
 +   ggplot(aes(x=time,y=lineages))+
 +   geom_step()

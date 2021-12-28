@@ -103,12 +103,6 @@ public:
     clean();
   };
 
-protected:
-  //reset current time
-  virtual void time (const double& t) {
-    current = t;
-  };
-
 public:
   
   // INFORMATION EXTRACTORS
@@ -152,11 +146,13 @@ public:
     double u = runif(0,total_rate);
     event = 0;
     while (u > rate[event] && event < nevent) {
-      if (rate[event] < 0) err("invalid rate[%ld]=%lg",event,rate[event]); // # nocov
+      if (rate[event] < 0)
+	err("in '%s': invalid rate[%ld]=%lg",__func__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;
     }
-    if (event >= nevent) err("invalid event %ld!",event); // # nocov
+    if (event >= nevent)
+      err("in '%s': invalid event %ld!",__func__,event); // #nocov
   };
 
   // run process to a specified time.

@@ -184,6 +184,7 @@ public:
   // human-readable info
   std::string describe (void) const {
     std::string o = "time = " + std::to_string(time()) + "\n"
+      + "t0 = " + std::to_string(timezero()) + "\n"
       + nodeseq_t::describe();
     return o;
   };
@@ -207,12 +208,10 @@ public:
     return nodeseq_t::newick(time(),compact);
   };
 
-protected:
+public:
 
   // check the validity of the genealogy.
   void valid (void) const {};
-
-public:
 
   bool check_genealogy_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
@@ -253,27 +252,28 @@ private:
     node_t *p = a->holder();
     node_t *q = b->holder();
     if (p != q) {
-      q->insert(a); p->erase(a); a->holder(q);
-      p->insert(b); q->erase(b); b->holder(p);
+      p->erase(a); q->insert(a); a->holder(q);
+      q->erase(b); p->insert(b); b->holder(p);
     }
   };
 
-  // add node p; take as parent the node holding ball b.
-  void add (node_t *p, ball_t *b) {
-    swap(b,p->green_ball());
-    p->deme = b->deme;
+  // add node p; take as parent the node holding ball a.
+  // the deme of p is changed to match that of a
+  void add (node_t *p, ball_t *a) {
+    swap(a,p->green_ball());
+    p->deme = a->deme;
     push_back(p);
   };
 
   // drop the node holding black ball a.
   void drop (ball_t *a) {
     if (!a->is(black))
-      err("in 'drop': inconceivable! color: %s",colores[a->color]); // # nocov
+      err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
     node_t *p = a->holder();
-    if (p->size() > 2) { // pocket is large: we simply drop the ball
+    if (p->size() > 2) {   // pocket is large: we simply drop the ball
       p->erase(a);
       delete a;
-    } else {	  // pocket is tight: action depends on the other ball
+    } else {  // pocket contains two: action depends on the other ball
       ball_t *b = p->other(a);
       switch (b->color) {
       case blue:                // change black ball for red ball
@@ -285,12 +285,12 @@ private:
         destroy_node(p);
         drop(a);		// recursively pursue dropping ball a
         break;
-      case red: case grey:			// # nocov
-        err("in 'drop': inconceivable error."); // # nocov
-        break;
       case black: case green:	// swap other for green, delete node
         swap(b,p->green_ball());
         destroy_node(p);
+        break;
+      case red: case grey:			       // #nocov
+        err("in '%s': inconceivable error.",__func__); // #nocov
         break;
       }
     }
@@ -344,6 +344,7 @@ public:
   };
 
   // set up for extraction of black balls
+  // (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {
     return std::pair<node_it,node_it>(cbegin(),cend());
   };
@@ -399,15 +400,15 @@ public:
       node_t *n = back();
       while (!empty() && n->slate > tnew) {
 	if (n->holds(black)) {
-	  ball_t *b = n->ball(black);
+	  ball_t *b = n->last_ball(); // must be black!
 	  drop(b);
 	} else if (n->holds(red)) {
-	  ball_t *b = n->ball(red);
+	  ball_t *b = n->last_ball(); // must be red!
 	  b->color = black;
 	  swap(b,n->green_ball());
 	  destroy_node(n);
 	} else {
-	  err("in 'truncate': inconceivable error."); // #nocov
+	  err("in '%s': inconceivable error.",__func__); // #nocov
 	}
 	n = back();
       }
