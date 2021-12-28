@@ -59,6 +59,28 @@ Type 'q()' to quit R.
 +   ncol=2,byrow=FALSE
 + )
 > 
+> pal <- c("#00274c","#ffcb05","#006597")
+> 
+> simulate("SIIR",time=5,S0=50,sigma12=1,I1_0=3,I2_0=3) -> x
+> 
+> plot_grid(
++   plot_grid(
++     x|>plot(prune=F,obscure=F,points=T,palette=pal),
++     x|>lineages(prune=F,obscure=F)|>
++       mutate(lineages=deme1+deme2)|>
++       gather(var,val,-time)|>
++       ggplot(aes(x=time,y=val,color=var,group=var))+
++       scale_color_discrete(type=pal)+
++       geom_step()+
++       theme_classic()+
++       guides(color="none"),
++     ncol=1,align='v',axis='b'
++   ),
++   x|>diagram(prune=F,obscure=F),
++   ncol=1,
++   rel_heights=c(2,0.3)
++ )
+> 
 > dev.off()
 null device 
           1 

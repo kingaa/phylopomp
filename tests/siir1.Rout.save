@@ -37,10 +37,14 @@ Type 'q()' to quit R.
 +   plot(points=TRUE,time=NULL,compact=FALSE)
 > 
 > simulate("SIIR",time=2) -> x
-> x |> plot()
-> x |> plot(obscure=FALSE)
-> x |> plot(prune=FALSE)
-> x |> plot(prune=FALSE,obscure=FALSE)
+> plot_grid(
++   x |> plot(),
++   x |> plot(obscure=FALSE),
++   x |> plot(prune=FALSE),
++   x |> plot(prune=FALSE,obscure=FALSE),
++   align="hv",axis="bl"
++ )
+>   
 > 
 > x |>
 +   lineages(prune=FALSE,obscure=FALSE) |>

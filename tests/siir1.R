@@ -17,10 +17,14 @@ runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=1,time=1) |>
   plot(points=TRUE,time=NULL,compact=FALSE)
 
 simulate("SIIR",time=2) -> x
-x |> plot()
-x |> plot(obscure=FALSE)
-x |> plot(prune=FALSE)
-x |> plot(prune=FALSE,obscure=FALSE)
+plot_grid(
+  x |> plot(),
+  x |> plot(obscure=FALSE),
+  x |> plot(prune=FALSE),
+  x |> plot(prune=FALSE,obscure=FALSE),
+  align="hv",axis="bl"
+)
+  
 
 x |>
   lineages(prune=FALSE,obscure=FALSE) |>

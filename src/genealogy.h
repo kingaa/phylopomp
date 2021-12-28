@@ -338,8 +338,8 @@ public:
     time(t);
     node_t *p = make_node(purple,a->deme);
     p->slate = time();
-    a->deme = d;
     add(p,a);
+    a->deme = d;
     return a;
   };
 
