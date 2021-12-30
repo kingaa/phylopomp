@@ -22,7 +22,7 @@ template <class TYPE>
 SEXP serial (const TYPE& X) {
   SEXP out;
   PROTECT(out = NEW_RAW(X.bytesize()));
-  RAW(out) << X;
+  X >> RAW(out);
   UNPROTECT(1);
   return out;
 }

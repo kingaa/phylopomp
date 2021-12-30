@@ -30,9 +30,9 @@ public:
     return popul_t::bytesize() + geneal.bytesize();
   };
   // binary serialization
-  friend raw_t* operator<< (raw_t* o, const master_t& A) {
-    o = (o << reinterpret_cast<const popul_t&>(A) << A.geneal);
-    return o;
+  friend raw_t* operator>> (const master_t& A, raw_t* o) {
+    return A.geneal >>
+      (reinterpret_cast<const popul_t&>(A) >> o);
   }
   // binary deserialization
   friend raw_t* operator>> (raw_t* o, master_t& A) {
@@ -58,14 +58,14 @@ public:
   // copy constructor
   master_t (const master_t& A) {
     raw_t *o = new raw_t[A.bytesize()];
-    (o << A) >> *this;
+    A >> o >> *this;
     delete[] o;
   };
   // copy assignment operator
   master_t & operator= (const master_t& A) {
     clean();
     raw_t *o = new raw_t[A.bytesize()];
-    (o << A) >> *this;
+    A >> o >> *this;
     delete[] o;
     return *this;
   };

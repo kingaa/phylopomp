@@ -47,7 +47,7 @@ public:
       + sizeof(state_t) + sizeof(parameters_t);
   };
   // binary serialization
-  friend raw_t* operator<< (raw_t *o, const popul_proc_t &X) {
+  friend raw_t* operator>> (const popul_proc_t &X, raw_t *o) {
     slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,&X.event,sizeof(size_t)); o += sizeof(size_t);
@@ -83,14 +83,14 @@ public:
   // copy constructor
   popul_proc_t (const popul_proc_t & X) {
     raw_t *o = new raw_t[X.bytesize()];
-    (o << X) >> *this;
+    X >> o >> *this;
     delete[] o;
   };
   // copy assignment operator
   popul_proc_t & operator= (const popul_proc_t & X) {
     clean();
     raw_t *o = new raw_t[X.bytesize()];
-    (o << X) >> *this;
+    X >> o >> *this;
     delete[] o;
     return *this;
   };

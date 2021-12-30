@@ -41,11 +41,11 @@ public:
     return sizeof(size_t) + size()*(ball_t::bytesize);
   };
   // binary serialization
-  friend raw_t* operator<< (raw_t *o, const pocket_t &p) {
+  friend raw_t* operator>> (const pocket_t &p, raw_t *o) {
     size_t psize = p.size();
     memcpy(o,&psize,sizeof(size_t)); o += sizeof(size_t);
     for (ball_it i = p.begin(); i != p.end(); i++) 
-      o = (o << **i);
+      o = (**i >> o);
     return o;
   };
   // binary deserialization

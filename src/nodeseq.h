@@ -37,11 +37,11 @@ class nodeseq_t : public std::list<node_t*> {
     return s;
   };
   // binary serialization
-  friend raw_t* operator<< (raw_t* o, const nodeseq_t& G) {
+  friend raw_t* operator>> (const nodeseq_t& G, raw_t* o) {
     size_t nnode = G.size();
     memcpy(o,&nnode,sizeof(size_t)); o += sizeof(size_t);
     for (node_it i = G.begin(); i != G.end(); i++) {
-      o = (o << **i);
+      o = (**i >> o);
     }
     return o;
   };

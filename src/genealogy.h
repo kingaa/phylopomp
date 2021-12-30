@@ -56,12 +56,12 @@ public:
       2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
   // binary serialization
-  friend raw_t* operator<< (raw_t* o, const genealogy_t& G) {
+  friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
     name_t A[2]; A[0] = G._unique; A[1] = name_t(G._obscured);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
-    return o << reinterpret_cast<const nodeseq_t&>(G);
+    return reinterpret_cast<const nodeseq_t&>(G) >> o;
   };
   // binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
@@ -91,14 +91,14 @@ public:
   // copy constructor
   genealogy_t (const genealogy_t& G) {
     raw_t *o = new raw_t[G.bytesize()];
-    (o << G) >> *this;
+    G >> o >> *this;
     delete[] o;
   };
   // copy assignment operator
   genealogy_t & operator= (const genealogy_t& G) {
     clean();
     raw_t *o = new raw_t[G.bytesize()];
-    (o << G) >> *this;
+    G >> o >> *this;
     delete[] o;
     return *this;
   };

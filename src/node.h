@@ -29,14 +29,6 @@ public:
   name_t uniq, deme;
   slate_t slate;
 
-  // basic constructor for node class
-  node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
-    uniq = u;
-    slate = t;
-    deme = d;
-    _green_ball = 0;
-  };
-
 public:
   // size of binary serialization
   size_t bytesize (void) const {
@@ -44,12 +36,12 @@ public:
       + pocket_t::bytesize();
   };
   // binary serialization of node_t
-  friend raw_t* operator<< (raw_t *o, const node_t &p) {
+  friend raw_t* operator>> (const node_t &p, raw_t *o) {
     name_t buf[2];
     buf[0] = p.uniq; buf[1] = p.deme;
     memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
-    return o << reinterpret_cast<const pocket_t&>(p);
+    return reinterpret_cast<const pocket_t&>(p) >> o;
   };
   // binary deserialization of node_t
   friend raw_t* operator>> (raw_t *o, node_t &p) {
@@ -62,7 +54,16 @@ public:
     p.set_holder(&p);
     return o;
   };
+
+public:
   
+  // basic constructor for node class
+  node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
+    uniq = u;
+    slate = t;
+    deme = d;
+    _green_ball = 0;
+  };
   // copy constructor
   node_t (const node_t &p) = delete;
   // move constructor

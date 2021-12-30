@@ -33,7 +33,7 @@ public:
   // size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
   // binary serialization
-  friend raw_t* operator<< (raw_t *o, const ball_t &b) {
+  friend raw_t* operator>> (const ball_t &b, raw_t *o) {
     memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,&b.deme,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
