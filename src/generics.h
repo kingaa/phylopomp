@@ -65,15 +65,15 @@ SEXP newick (const TYPE& X, bool compact = true) {
 
 // initialization
 template<class TYPE>
-SEXP make (SEXP Params, SEXP ICs, SEXP T0) {
+SEXP make (SEXP Params, SEXP IVPs, SEXP T0) {
   SEXP o;
   PROTECT(Params = AS_NUMERIC(Params));
-  PROTECT(ICs = AS_NUMERIC(ICs));
+  PROTECT(IVPs = AS_NUMERIC(IVPs));
   PROTECT(T0 = AS_NUMERIC(T0));
   GetRNGstate();
   TYPE X = *REAL(T0);
   X.update_params(REAL(Params),LENGTH(Params));
-  X.update_ICs(REAL(ICs),LENGTH(ICs));
+  X.update_IVPs(REAL(IVPs),LENGTH(IVPs));
   X.rinit();
   X.update_clocks();
   PutRNGstate();
@@ -86,7 +86,7 @@ SEXP make (SEXP Params, SEXP ICs, SEXP T0) {
 template<class TYPE>
 SEXP revive (SEXP State, SEXP Params) {
   SEXP o;
-  TYPE X = RAW(State);
+  TYPE X = State;
   PROTECT(Params = AS_NUMERIC(Params));
   X.update_params(REAL(Params),LENGTH(Params));
   PROTECT(o = serial(X));
@@ -98,7 +98,7 @@ SEXP revive (SEXP State, SEXP Params) {
 template<class TYPE>
 SEXP run (SEXP State, SEXP Tout) {
   SEXP out;
-  TYPE X = RAW(State);
+  TYPE X = State;
   PROTECT(Tout = AS_NUMERIC(Tout));
   GetRNGstate();
   X.valid();
@@ -184,13 +184,8 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   return out;
 }
 
-#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m]; \
-  m++;							    \
-
-#define RATE_CALC(X) total += rate[m++] = (X);
-
-#define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP ICs, SEXP T0) { \
-    return make<TYPE>(Params,ICs,T0);					\
+#define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
+    return make<TYPE>(Params,IVPs,T0);					\
   }									\
   
 #define REVIVEFN(X,TYPE) SEXP revive ## X (SEXP State, SEXP Params) {	\

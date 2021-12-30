@@ -117,20 +117,22 @@ public:
 
 public:
 
-  void valid (void) const {};
+  virtual void valid (void) const {};
 
-protected:
+public:
   
-  // initialize the state
-  virtual void rinit (void) = 0;
-  // compute event rates
-  virtual double event_rates (double *rate, int n) const = 0;
-  // makes a jump
-  virtual void jump (int e) = 0;
   // set parameters 
-  virtual void update_params (double*, int) = 0;
-  // set initial conditions
-  virtual void update_ICs (double*, int) = 0;
+  void update_params (double*, int);
+  // set initial-value parameters
+  void update_IVPs (double*, int);
+  // compute event rates
+  double event_rates (double *rate, int n) const;
+  // initialize the state
+  virtual void rinit (void);
+  // makes a jump
+  virtual void jump (int e);
+  // machine/human readable info
+  std::string yaml (std::string tab) const;
 
 public:
 
@@ -157,7 +159,7 @@ public:
 
   // run process to a specified time.
   // return number of events that have occurred.
-  virtual int play (double tfin) {
+  int play (double tfin) {
     int count = 0;
     if (current > tfin)
       err("cannot simulate backward! (current t=%lg, requested t=%lg)",current,tfin);
@@ -173,5 +175,11 @@ public:
   };
 
 };
+
+#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m];	    \
+  m++;
+#define RATE_CALC(X) total += rate[m++] = (X);
+#define YAML_PARAM(X) (t + #X + ": " + std::to_string(params.X) + "\n")
+#define YAML_STATE(X) (t + #X + ": " + std::to_string(state.X) + "\n")
 
 #endif

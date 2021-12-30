@@ -21,97 +21,99 @@ typedef struct {
   int R0;                     // initial recoveries
 } sir_parameters_t;
 
-class sir_genealogy_t : public master_t<popul_proc_t<sir_state_t,sir_parameters_t,4>, 1> {
+using sir_proc_t = popul_proc_t<sir_state_t,sir_parameters_t,4>;
+using sir_genealogy_t = master_t<sir_proc_t>;
 
-public:
+// human-readable info
+template<>
+std::string sir_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
+    + YAML_PARAM(Beta)
+    + YAML_PARAM(gamma)
+    + YAML_PARAM(psi)
+    + YAML_PARAM(delta)
+    + YAML_PARAM(S0)
+    + YAML_PARAM(I0)
+    + YAML_PARAM(R0);
+  std::string s = tab + "state:\n"
+    + YAML_STATE(S)
+    + YAML_STATE(I)
+    + YAML_STATE(R);
+  return p+s;
+}
 
-  // basic constructor
-  sir_genealogy_t (double t0 = 0) : master_t(t0) {};
-  // constructor from serialized binary form
-  sir_genealogy_t (raw_t *o) : master_t(o) {};
-  // copy constructor
-  sir_genealogy_t (const sir_genealogy_t &G) : master_t(G) {};
-  
-  void update_params (double *p, int n) {
-    int m = 0;
-    PARAM_SET(Beta);
-    PARAM_SET(gamma);
-    PARAM_SET(psi);
-    PARAM_SET(delta);
-    if (m != n) err("wrong number of parameters!");
-  };
+template<>
+void sir_proc_t::valid (void) const {
+  if (params.N <= 0) err("total population size must be positive!");
+  if (state.S < 0 || state.I < 0 || state.R < 0) err("negative state variables!");
+  if (params.N != state.S+state.I+state.R) err("population leakage!");
+}
 
-  void update_ICs (double *p, int n) {
-    int m = 0;
-    PARAM_SET(S0);
-    PARAM_SET(I0);
-    PARAM_SET(R0);
-    params.N = double(params.S0+params.I0+params.R0);
-    if (m != n) err("wrong number of initial conditions!");
-  };
+template<>
+void sir_proc_t::update_params (double *p, int n) {
+  int m = 0;
+  PARAM_SET(Beta);
+  PARAM_SET(gamma);
+  PARAM_SET(psi);
+  PARAM_SET(delta);
+  if (m != n) err("wrong number of parameters!");
+}
 
-  void rinit (void) {
-    state.S = params.S0;
-    state.I = params.I0;
-    state.R = params.R0;
-    for (int j = 0; j < params.I0; j++) graft();
-  };
+template<>
+void sir_proc_t::update_IVPs (double *p, int n) {
+  int m = 0;
+  PARAM_SET(S0);
+  PARAM_SET(I0);
+  PARAM_SET(R0);
+  params.N = double(params.S0+params.I0+params.R0);
+  if (m != n) err("wrong number of initial-value parameters!");
+}
 
-  double event_rates (double *rate, int n) const {
-    int m = 0;
-    double total = 0;
-    RATE_CALC(params.Beta * state.S * state.I / params.N); // infection
-    RATE_CALC(params.gamma * state.I);                     // recovery
-    RATE_CALC(params.psi * state.I);                       // sample
-    RATE_CALC(params.delta * state.R);			  // waning
-    if (m != n) err("wrong number of events!");
-    return total;
-  };
+template<>
+double sir_proc_t::event_rates (double *rate, int n) const {
+  int m = 0;
+  double total = 0;
+  RATE_CALC(params.Beta * state.S * state.I / params.N); // infection
+  RATE_CALC(params.gamma * state.I);                     // recovery
+  RATE_CALC(params.psi * state.I);                       // sample
+  RATE_CALC(params.delta * state.R);			  // waning
+  if (m != n) err("wrong number of events!");
+  return total;
+}
 
-  void jump (int event) {
-    switch (event) {
-    case 0:                     // infection
-      state.S -= 1;
-      state.I += 1;
-      birth();
-      break;
-    case 1:                     // recovery
-      state.I -= 1;
-      state.R += 1;
-      death();
-      break;
-    case 2:                     // sample
-      sample();
-      break;
-    case 3:			// waning
-      state.S += 1;
-      state.R -= 1;
-      break;
-    default:						    // #nocov
-      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
-      break;
-    }
-  };
+template<>
+void sir_genealogy_t::rinit (void) {
+  state.S = params.S0;
+  state.I = params.I0;
+  state.R = params.R0;
+  graft(0,params.I0);
+}
 
-  // human-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string p = tab + "parameter:\n"
-      + t + "Beta: " + std::to_string(params.Beta) + "\n"
-      + t + "gamma: " + std::to_string(params.gamma) + "\n"
-      + t + "psi: " + std::to_string(params.psi) + "\n"
-      + t + "delta: " + std::to_string(params.delta) + "\n"
-      + t + "S0: " + std::to_string(params.S0) + "\n"
-      + t + "I0: " + std::to_string(params.I0) + "\n"
-      + t + "R0: " + std::to_string(params.R0) + "\n";
-    std::string s = tab + "state:\n"
-      + t + "S: " + std::to_string(state.S) + "\n"
-      + t + "I: " + std::to_string(state.I) + "\n"
-      + t + "R: " + std::to_string(state.R) + "\n";
-    std::string g = tab + "genealogy:\n" + geneal.yaml(t);
-    return p+s+g;
-  };
-
-};
+template<>
+void sir_genealogy_t::jump (int event) {
+  switch (event) {
+  case 0:                     // infection
+    state.S -= 1;
+    state.I += 1;
+    birth();
+    break;
+  case 1:                     // recovery
+    state.I -= 1;
+    state.R += 1;
+    death();
+    break;
+  case 2:                     // sample
+    sample();
+    break;
+  case 3:			// waning
+    state.S += 1;
+    state.R -= 1;
+    break;
+  default:						    // #nocov
+    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+    break;
+  }
+}
 
 GENERICS(SIR,sir_genealogy_t)

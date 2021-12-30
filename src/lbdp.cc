@@ -15,84 +15,79 @@ typedef struct {
   int n0;                       // initial population size
 } lbdp_parameters_t;
 
-class lbdp_genealogy_t : public master_t<popul_proc_t<lbdp_state_t,lbdp_parameters_t,3> > {
-
-public:
-
-  // basic constructor
-  lbdp_genealogy_t (double t0 = 0) : master_t(t0) { };
-  // constructor from serialized binary form
-  lbdp_genealogy_t (raw_t *o) : master_t(o) {};
-  // copy constructor
-  lbdp_genealogy_t (const lbdp_genealogy_t &G) : master_t(G) {};
+using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,3>;
+using lbdp_genealogy_t = master_t<lbdp_proc_t>;
   
-  void valid (void) const {
-    master_t::valid();
-    if (state.n < 0) err("negative population size!");
-  };
+template<>
+void lbdp_proc_t::update_params (double *p, int n) {
+  int m = 0;
+  PARAM_SET(lambda);
+  PARAM_SET(mu);
+  PARAM_SET(psi);
+  if (m != n) err("wrong number of parameters!");
+}
 
-  void update_params (double *p, int n) {
-    int m = 0;
-    PARAM_SET(lambda)
-    PARAM_SET(mu)
-    PARAM_SET(psi)
-    if (m != n) err("wrong number of parameters!");
-  };
+template<>
+void lbdp_proc_t::update_IVPs (double *p, int n) {
+  int m = 0;
+  PARAM_SET(n0);
+  if (m != n) err("wrong number of initial-value parameters!");
+}
 
-  void update_ICs (double *p, int n) {
-    int m = 0;
-    PARAM_SET(n0)
-    if (m != n) err("wrong number of initial conditions!");
-  };
+// human-readable info
+template<>
+std::string lbdp_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
+    + YAML_PARAM(lambda)
+    + YAML_PARAM(mu)
+    + YAML_PARAM(psi)
+    + YAML_PARAM(n0);
+  std::string s = tab + "state:\n"
+    + YAML_STATE(n);
+  return p+s;
+}
 
-  void rinit (void) {
-    state.n = params.n0;
-    graft(0,params.n0);
-  };
+template<>
+double lbdp_proc_t::event_rates (double *rate, int n) const {
+  int m = 0;
+  double total = 0;
+  RATE_CALC(params.lambda * state.n);	       // birth
+  RATE_CALC(params.mu * state.n);	       // death
+  RATE_CALC(params.psi * state.n);	       // sample
+  if (m != n) err("wrong number of events!");
+  return total;
+}
 
-  double event_rates (double *rate, int n) const {
-    int m = 0;
-    double total = 0;
-    RATE_CALC(params.lambda * state.n);	       // birth
-    RATE_CALC(params.mu * state.n);	       // death
-    RATE_CALC(params.psi * state.n);	       // sample
-    if (m != n) err("wrong number of events!");
-    return total;
-  };
+template<>
+void lbdp_proc_t::valid (void) const {
+  if (state.n < 0) err("negative population size!");
+}
 
-  void jump (int event) {
-    switch (event) {
-    case 0:                     // birth
-      state.n += 1;
-      birth();
-      break;
-    case 1:                     // death
-      state.n -= 1;
-      death();
-      break;
-    case 2:                     // sample
-      sample();
-      break;
-    default:						    // #nocov
-      err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
-      break;
-    }
-  };
+template<>
+void lbdp_genealogy_t::rinit (void) {
+  state.n = params.n0;
+  graft(0,params.n0);
+}
 
-  // human-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string p = tab + "parameter:\n"
-      + t + "lambda: " + std::to_string(params.lambda) + "\n"
-      + t + "mu: " + std::to_string(params.mu) + "\n"
-      + t + "psi: " + std::to_string(params.psi) + "\n"
-      + t + "n0: " + std::to_string(params.n0) + "\n";
-    std::string s = tab + "state:\n"
-      + t + "n: " + std::to_string(state.n) + "\n";
-    std::string g = tab + "genealogy:\n" + geneal.yaml(t);
-    return p+s+g;
-  };
-
-};
+template<>
+void lbdp_genealogy_t::jump (int event) {
+  switch (event) {
+  case 0:                     // birth
+    state.n += 1;
+    birth();
+    break;
+  case 1:                     // death
+    state.n -= 1;
+    death();
+    break;
+  case 2:                     // sample
+    sample();
+    break;
+  default:						    // #nocov
+    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+    break;
+  }
+}
 
 GENERICS(LBDP,lbdp_genealogy_t)

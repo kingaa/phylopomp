@@ -47,7 +47,7 @@ By default, the nodes will be adjusted in width to fit the window.}
 
 \item{n}{length of longest genealogy}
 
-\item{vp}{a \code{\link[grid]{viewport}} object (or \code{NULL}).}
+\item{vp}{viewport to draw plot in}
 
 \item{...}{arguments to be passed to \code{\link[grid:textGrob]{textGrob}}.}
 

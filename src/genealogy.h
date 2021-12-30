@@ -132,9 +132,9 @@ public:
     for (size_t j = 0; j < nd; j++) ell[j] = 0;
     for (node_it i = begin(); i != end(); i++) {
       if (tcur < (*i)->slate) {
-	t++; ell += nd;
-	*t = tcur = (*i)->slate;
-	for (size_t j = 0; j < nd; j++) ell[j] = (ell-nd)[j];
+        t++; ell += nd;
+        *t = tcur = (*i)->slate;
+        for (size_t j = 0; j < nd; j++) ell[j] = (ell-nd)[j];
       }
       (*i)->lineage_incr(ell);
     }
@@ -195,8 +195,8 @@ public:
   virtual std::string yaml (std::string tab = "") const {
     std::string o;
     std::string t = tab + "  ";
-    o = tab + "time: " + std::to_string(time()) + "\n"
-      + tab + "t0: " + std::to_string(timezero()) + "\n"      
+    o = tab + "t0: " + std::to_string(timezero()) + "\n"
+      + tab + "time: " + std::to_string(time()) + "\n"
       + tab + "nodes:\n" + nodeseq_t::yaml(tab);
     return o;
   };
@@ -280,16 +280,16 @@ private:
         a->color = red;
         break;
       case purple:      // swap black ball for green ball, delete node
-	a->deme = p->deme;
+        a->deme = p->deme;
         swap(a,p->green_ball());
         destroy_node(p);
-        drop(a);		// recursively pursue dropping ball a
+        drop(a);                // recursively pursue dropping ball a
         break;
-      case black: case green:	// swap other for green, delete node
+      case black: case green:   // swap other for green, delete node
         swap(b,p->green_ball());
         destroy_node(p);
         break;
-      case red: case grey:			       // #nocov
+      case red: case grey:                             // #nocov
         err("in '%s': inconceivable error.",__func__); // #nocov
         break;
       }
@@ -304,7 +304,7 @@ public:
     ball_t *b = p->last_ball();
     p->slate = time();
     add(p,a);
-    return b;		
+    return b;           
   };
   // birth of second or subsequent sibling into deme d
   ball_t* birth (node_t* p, name_t d = 0) {
@@ -399,18 +399,18 @@ public:
     if (!empty()) {
       node_t *n = back();
       while (!empty() && n->slate > tnew) {
-	if (n->holds(black)) {
-	  ball_t *b = n->last_ball(); // must be black!
-	  drop(b);
-	} else if (n->holds(red)) {
-	  ball_t *b = n->last_ball(); // must be red!
-	  b->color = black;
-	  swap(b,n->green_ball());
-	  destroy_node(n);
-	} else {
-	  err("in '%s': inconceivable error.",__func__); // #nocov
-	}
-	n = back();
+        if (n->holds(black)) {
+          ball_t *b = n->last_ball(); // must be black!
+          drop(b);
+        } else if (n->holds(red)) {
+          ball_t *b = n->last_ball(); // must be red!
+          b->color = black;
+          swap(b,n->green_ball());
+          destroy_node(n);
+        } else {
+          err("in '%s': inconceivable error.",__func__); // #nocov
+        }
+        n = back();
       }
       time(tnew);
     }

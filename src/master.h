@@ -55,6 +55,12 @@ public:
   master_t (raw_t *o) {
     o >> *this;
   };
+  // constructor from RAW SEXP
+  master_t (SEXP o) {
+    PROTECT(o = AS_RAW(o));
+    RAW(o) >> *this;
+    UNPROTECT(1);
+  };
   // copy constructor
   master_t (const master_t& A) {
     raw_t *o = new raw_t[A.bytesize()];
@@ -96,7 +102,8 @@ public:
   // machine/human readable info
   std::string yaml (std::string tab = "") const {
     std::string t = tab + "  ";
-    std::string s = tab + "genealogy:\n" + geneal.yaml(t);
+    std::string s = popul_t::yaml(tab)
+      + "genealogy:\n" + geneal.yaml(t);
     return s;
   };
   // tree in Newick format
@@ -155,6 +162,11 @@ public:
     a->deme = j;
     inventory.insert(a);
   };
+
+  // initialize the state
+  void rinit (void);
+  // makes a jump
+  void jump (int e);
 
 };
 

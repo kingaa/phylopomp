@@ -44,6 +44,9 @@ diagram <- function (
 
 ##' @rdname diagram
 ##' @method print gpdiag
+##' @param newpage draw new empty page first?
+##' @param vp viewport to draw plot in
+##' @param ... other arguments, ignored.
 ##' @importFrom grid grid.newpage grid.draw seekViewport pushViewport upViewport
 ##' @export
 print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {

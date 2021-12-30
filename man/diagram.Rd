@@ -30,14 +30,16 @@ By default, the nodes will be adjusted in width to fit the window.}
 \item{n}{height of the pockets, in balls.
 By default, the balls will be adjusted in size to fit the space available.}
 
-\item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
+\item{...}{other arguments, ignored.}
 
 \item{digits}{non-negative integer;
 number of decimal digits to print in the node time}
 
 \item{x}{ An \R object. }
 
-\item{vp}{a \code{\link[grid]{viewport}} object (or \code{NULL}).}
+\item{newpage}{draw new empty page first?}
+
+\item{vp}{viewport to draw plot in}
 }
 \value{
 A \pkg{grid} graphics object (\code{grob}), invisibly.

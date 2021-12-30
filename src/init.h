@@ -5,7 +5,7 @@
 #include <R_ext/Rdynload.h>
 
 #define DECLARATIONS(X)						\
-  SEXP make ## X (SEXP Params, SEXP ICs, SEXP T0);		\
+  SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0);		\
   SEXP revive ## X (SEXP State, SEXP Params);			\
   SEXP run ## X (SEXP State, SEXP Times);			\
   SEXP info ## X (SEXP State, SEXP Prune, SEXP Obscure,		\
