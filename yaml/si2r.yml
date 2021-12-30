@@ -1,0 +1,121 @@
+name: SI2R
+description: Two-deme model of superspreading
+details: |-
+  Deme 1 consists of "ordinary infections" that transmit at rate \code{Beta}. Deme 2 consists of "superspreaders" who engender clusters of infection in "superspreading events".
+ndeme: 2
+parameter:
+  Beta:
+    name: Beta
+    description: transmission rate
+    type: double
+    default: 5
+  mu:
+    name: mu
+    description: mean superspreading-event cluster size
+    type: double
+    default: 5
+  gamma:
+    name: gamma
+    description: recovery rate
+    type: double
+    default: 1
+  delta:
+    name: delta
+    description: rate of waning of immunity
+    default: 0
+    type: double
+  psi1:
+    name: psi1
+    description: sampling rate for deme 1
+    default: 1
+    type: double
+  psi2:
+    name: psi2
+    description: sampling rate for deme 2
+    default: 0
+    type: double
+  sigma12:
+    name: sigma12
+    description: rate of movement from deme 1 to deme 2
+    default: 1
+    type: double
+  sigma21:
+    name: sigma21
+    description: rate of movement from deme 2 to deme 1
+    default: 3
+    type: double
+ivp:
+  S0:
+    name: S0
+    description: initial size of susceptible population
+    default: 500
+    type: int
+  I0:
+    name: I0
+    description: initial size of deme-1 infected population
+    default: 10
+    type: int
+  R0:
+    name: R0
+    description: initial size of immune population
+    default: 0
+    type: int
+state:
+  S:
+    name: S
+    type: int
+  I1:
+    name: I1
+    type: int
+  I2:
+    name: I2
+    type: int
+  R:
+    name: R
+    type: int
+  'N':
+    name: 'N'
+    type: double
+rinit: |-
+    state.S = params.S0;
+    state.I1 = params.I0;
+    state.I2 = 0;
+    state.R = params.R0;
+    state.N = double(params.S0+params.I0+params.R0);
+    graft(0,params.I0);
+events:
+  I1infect:
+    rate: params.Beta * state.S * state.I1 / state.N
+    jump: state.S -= 1; state.I1 += 1; birth(0,0);
+  I2infect:
+    jump: |-
+      {
+        int n = 1+int(rgeom(1.0/params.mu));
+        if (state.S >= n) {
+          state.S -= n; state.I1 += n; birth(1,0,n);
+        } else {
+          birth(1,0,state.S); state.I1 += state.S; state.S = 0;
+        }
+      }
+    rate: params.Beta * state.S * state.I2 / state.N
+  I1recov:
+    jump: state.I1 -= 1; state.R += 1; death(0);
+    rate: params.gamma * state.I1
+  I2recov:
+    jump: state.I2 -= 1; state.R += 1; death(1);
+    rate: params.gamma * state.I2
+  sample1:
+    rate: params.psi1 * state.I1
+    jump: sample(0);
+  sample2:
+    rate: params.psi2 * state.I2
+    jump: sample(1);
+  move12:
+    jump: state.I1 -= 1; state.I2 += 1; migrate(0,1);
+    rate: params.sigma12 * state.I1
+  move21:
+    jump: state.I1 += 1; state.I2 -= 1; migrate(1,0);
+    rate: params.sigma21 * state.I2
+  waning:
+    jump: state.R -= 1; state.S += 1;
+    rate: params.delta * state.R

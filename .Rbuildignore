@@ -21,6 +21,7 @@ TODO\.md$
 \.Rprofile
 Makefile
 rules.mk
+yaml/
 lib
 library
 check
