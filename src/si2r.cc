@@ -5,22 +5,25 @@
 #include "generics.h"
 
 typedef struct {
-  int S;			// number of susceptibles
-  int I1, I2;			// number of infections
-  int R;			// number of recovereds
+  int S;
+  int I1;
+  int I2;
+  int R;
+  double N;
 } si2r_state_t;
 
 typedef struct {
-  double Beta;			// transmission rate
-  double mu;			// mean superspreading cluster size
-  double gamma;			// recovery rate
-  double delta;			// immune waning rate
-  double psi1, psi2;		// sampling rates
-  double sigma12, sigma21;	// movement rates
-  double N;			// host population size
-  int S0;			// initial susceptibles
-  int I0;			// initial infecteds
-  int R0;			// initial recoveries
+  double Beta;
+  double mu;
+  double gamma;
+  double delta;
+  double psi1;
+  double psi2;
+  double sigma12;
+  double sigma21;
+  int S0;
+  int I0;
+  int R0;
 } si2r_parameters_t;
 
 using si2r_proc_t = popul_proc_t<si2r_state_t,si2r_parameters_t,9>;
@@ -70,7 +73,6 @@ void si2r_proc_t::update_IVPs (double *p, int n) {
   PARAM_SET(S0);
   PARAM_SET(I0);
   PARAM_SET(R0);
-  params.N = double(params.S0+params.I0+params.R0);
   if (m != n) err("wrong number of initial-value parameters!");
 }
 
@@ -78,8 +80,8 @@ template<>
 double si2r_proc_t::event_rates (double *rate, int n) const {
   int m = 0;
   double total = 0;
-  RATE_CALC(params.Beta * state.S * state.I1 / params.N);
-  RATE_CALC(params.Beta * state.S * state.I2 / params.N);
+  RATE_CALC(params.Beta * state.S * state.I1 / state.N);
+  RATE_CALC(params.Beta * state.S * state.I2 / state.N);
   RATE_CALC(params.gamma * state.I1);
   RATE_CALC(params.gamma * state.I2);
   RATE_CALC(params.psi1 * state.I1);
@@ -97,6 +99,7 @@ void si2r_genealogy_t::rinit (void) {
   state.I1 = params.I0;
   state.I2 = 0;
   state.R = params.R0;
+  state.N = double(params.S0+params.I0+params.R0);
   graft(0,params.I0);
 }
 

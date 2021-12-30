@@ -44,7 +44,7 @@ NULL
 runSI2R <- function (
   time, t0 = 0,
   Beta = 5, mu = 5, gamma = 1, delta = 0,
-  psi1 = 1, psi2 = 0, 
+  psi1 = 1, psi2 = 0,
   sigma12 = 1, sigma21 = 3,
   S0 = 500, I0 = 10, R0 = 0
 ) {
@@ -53,8 +53,8 @@ runSI2R <- function (
     psi1=psi1,psi2=psi2,
     sigma12=sigma12,sigma21=sigma21
   )
-  ics <- c(S0=S0,I0=I0,R0=R0)
-  x <- .Call(P_makeSI2R,params,ics,t0)
+  ivps <- c(S0=S0,I0=I0,R0=R0)
+  x <- .Call(P_makeSI2R,params,ivps,t0)
   x <- .Call(P_runSI2R,x,time)
   structure(x,model="SI2R",class="gpsim")
 }
@@ -66,7 +66,7 @@ continueSI2R <- function (
   object, time,
   Beta = NA, mu = NA, gamma = NA, delta = NA,
   psi1 = NA, psi2 = NA,
-  sigma21 = NA, sigma12 = NA
+  sigma12 = NA, sigma21 = NA
 ) {
   params <- c(
     Beta=Beta,mu=mu,gamma=gamma,delta=delta,

@@ -27,8 +27,8 @@ runMoran <- function (
   mu = 1, psi = 1
 ) {
   params <- c(mu=mu,psi=psi)
-  ics <- c(n=n)
-  x <- .Call(P_makeMoran,params,ics,t0)
+  ivps <- c(n=n)
+  x <- .Call(P_makeMoran,params,ivps,t0)
   .Call(P_runMoran,x,time) |>
     structure(model="Moran",class="gpsim")
 }

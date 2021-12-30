@@ -35,8 +35,8 @@ runSIIR <- function (
 ) {
   params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,
     psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21)
-  ics <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
-  x <- .Call(P_makeSIIR,params,ics,t0)
+  ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
+  x <- .Call(P_makeSIIR,params,ivps,t0)
   x <- .Call(P_runSIIR,x,time)
   structure(x,model="SIIR",class="gpsim")
 }

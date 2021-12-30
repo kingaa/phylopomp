@@ -32,8 +32,8 @@ continueSI2R(
   delta = NA,
   psi1 = NA,
   psi2 = NA,
-  sigma21 = NA,
-  sigma12 = NA
+  sigma12 = NA,
+  sigma21 = NA
 )
 }
 \arguments{

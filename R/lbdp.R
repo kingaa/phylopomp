@@ -29,8 +29,8 @@ runLBDP <- function (
   n0 = 5
 ) {
   params <- c(lambda=lambda,mu=mu,psi=psi)
-  ics <- c(n0=n0)
-  x <- .Call(P_makeLBDP,params,ics,t0)
+  ivps <- c(n0=n0)
+  x <- .Call(P_makeLBDP,params,ivps,t0)
   x <- .Call(P_runLBDP,x,time)
   structure(x,model="LBDP",class="gpsim")
 }

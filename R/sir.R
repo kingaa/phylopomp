@@ -31,8 +31,8 @@ runSIR <- function (
   S0 = 100, I0 = 2, R0 = 0
 ) {
   params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
-  ics <- c(S0=S0,I0=I0,R0=R0)
-  x <- .Call(P_makeSIR,params,ics,t0)
+  ivps <- c(S0=S0,I0=I0,R0=R0)
+  x <- .Call(P_makeSIR,params,ivps,t0)
   x <- .Call(P_runSIR,x,time)
   structure(x,model="SIR",class="gpsim")
 }
