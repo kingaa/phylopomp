@@ -128,9 +128,9 @@ public:
   // compute event rates
   double event_rates (double *rate, int n) const;
   // initialize the state
-  virtual void rinit (void);
+  virtual void rinit (void) = 0;
   // makes a jump
-  virtual void jump (int e);
+  virtual void jump (int e) = 0;
   // machine/human readable info
   std::string yaml (std::string tab) const;
 
