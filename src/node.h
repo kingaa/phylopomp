@@ -81,7 +81,7 @@ public:
     return _green_ball;
   };
   // set green ball
-  void green_ball (ball_t *g) {
+  void set_owner (ball_t *g) {
     _green_ball = g;
   };
   bool holds_own (void) const {

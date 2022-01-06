@@ -232,7 +232,7 @@ private:
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green,d);
     ball_t *b = new ball_t(p,u,col,d);
-    p->green_ball(g);
+    p->set_owner(g);
     p->insert(g);
     p->insert(b);
     return p;

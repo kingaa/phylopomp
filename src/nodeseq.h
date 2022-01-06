@@ -63,17 +63,17 @@ class nodeseq_t : public std::list<node_t*> {
     for (node_it i = G.begin(); i != G.end(); i++) {
       (*i)->set_owners(node_names,&ball_names);
     }
-    G.set_green_balls(ball_names);
+    G.set_owners(ball_names);
     return o;
   };
-  void set_green_balls (std::unordered_map<name_t,ball_t*>& names) {
+  void set_owners (std::unordered_map<name_t,ball_t*>& names) {
     std::unordered_map<name_t,ball_t*>::const_iterator n;
     for (node_it i = begin(); i != end(); i++) {
       node_t *p = *i;
       n = names.find(p->uniq);
       if (n != names.end()) {
 	ball_t *b = n->second;
-	p->green_ball(b);
+	p->set_owner(b);
       } else {
 	err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
       }
