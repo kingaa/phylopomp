@@ -118,7 +118,7 @@ public:
         incr[(*i)->child()->deme]++;
         break;
       case black:
-        incr[(*i)->deme]++;
+        incr[(*i)->deme()]++;
         break;
       default:
         break;

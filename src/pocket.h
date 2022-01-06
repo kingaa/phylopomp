@@ -64,7 +64,7 @@ public:
   // inform all balls as to their holder
   void set_holder (node_t* p) {
     for (ball_it i = begin(); i != end(); i++) {
-      (*i)->holder(p);
+      (*i)->holder() = p;
     }
   };
   void set_owners (const std::unordered_map<name_t,node_t*>& node_name,
@@ -76,7 +76,7 @@ public:
 	n = node_name.find(b->uniq);
 	if (n != node_name.end()) {
 	  node_t *p = n->second;
-	  b->owner(p);
+	  b->owner() = p;
 	  ball_name->insert({b->uniq,b});
 	} else {
 	  err("in '%s': cannot find ball %ld",__func__,b->uniq); // #nocov
@@ -107,11 +107,11 @@ public:
     return result;
   };
   // retrieve the last ball
-  ball_t *last_ball (void) const {
+  ball_t* last_ball (void) const {
     return *crbegin();
   };
   // retrieve the first ball of the specified color.
-  ball_t *ball (const color_t c) const {
+  ball_t* ball (const color_t c) const {
     for (ball_it i = begin(); i != end(); i++) {
       if ((*i)->color == c) return *i;
     }
@@ -119,7 +119,7 @@ public:
     return 0;
   };
   // return a pointer to another ball
-  ball_t *other (const ball_t *b) const {
+  ball_t* other (const ball_t *b) const {
     for (ball_it i = begin(); i != end(); i++) {
       if (*i != b) return *i;
     }

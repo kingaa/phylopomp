@@ -124,15 +124,15 @@ public:
   // add black ball to deme
   void insert (ball_t *b) {
     if (b->is(black)) {
-      _inven[b->deme].insert(b);
+      _inven[b->deme()].insert(b);
     }
   };
   // remove black ball from its deme
   void erase (ball_t *b) {
     if (b->is(black)) {
-      if (_inven[b->deme].empty())
-	err("in '%s': empty deme %ld.",__func__,b->deme); // # nocov
-      _inven[b->deme].erase(b);
+      if (_inven[b->deme()].empty())
+	err("in '%s': empty deme %ld.",__func__,b->deme()); // # nocov
+      _inven[b->deme()].erase(b);
     }
   };
 };

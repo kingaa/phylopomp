@@ -86,7 +86,7 @@ public:
 
   int play (double tfin) {
     int count = popul_t::play(tfin);
-    geneal.time(tfin);
+    geneal.time() = tfin;
     return count;
   };
 
@@ -159,7 +159,7 @@ public:
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.migrate(a,time(),j);
-    a->deme = j;
+    a->deme() = j;
     inventory.insert(a);
   };
 

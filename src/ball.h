@@ -15,6 +15,8 @@
 #include "internal.h"
 
 // BALL COLORS
+// NB:
+// The correctness of the algorithms depends on green being the first color.
 typedef enum {green, black, blue, red, grey, purple} color_t;
 static const char* colores[] = {"green", "black", "blue", "red", "grey", "purple"};
 static const char* colorsymb[] = {"g", "o", "b", "r", "z", "p"};
@@ -25,24 +27,24 @@ class ball_t {
  private:
   node_t *_holder;
   node_t *_owner;
+  name_t _deme;
  public:
   name_t uniq;
   color_t color;
-  name_t deme;
 public:
   // size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
   // binary serialization
   friend raw_t* operator>> (const ball_t &b, raw_t *o) {
     memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(o,&b.deme,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(o,&b._deme,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
     return o;
   };
   // binary deserialization
   friend raw_t* operator>> (raw_t *o, ball_t &b) {
     memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(&b.deme,o,sizeof(name_t)); o += sizeof(name_t);
+    memcpy(&b._deme,o,sizeof(name_t)); o += sizeof(name_t);
     memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
     b._holder = 0;		// must be set elsewhere
     b._owner = 0;		// must be set elsewhere
@@ -54,7 +56,7 @@ public:
     _holder = _owner = who;
     uniq = u;
     color = col;
-    deme = d;
+    _deme = d;
   };
   // copy constructor
   ball_t (const ball_t&) = delete;
@@ -66,26 +68,24 @@ public:
   ball_t & operator= (ball_t&&) = delete;
   // destructor
   ~ball_t (void) = default;
-  // who owns me?
-  node_t* owner (void) const {
+  // view/change deme
+  name_t& deme (void) {
+    if (color != black)
+      err("meddle not in the deme of a non-black ball!"); // #nocov
+    return _deme;
+  };
+  // view/change owner
+  node_t*& owner (void) {
     if (color != green)
-      err("ask not who owns a ball that is not green."); // # nocov
+      err("meddle not with the owner of a ball that is not green."); // #nocov
     return _owner;
   };
-  // change owner
-  void owner (node_t *who) {
-    _owner = who;
-  };
   // in whose pocket do I lie?
-  node_t* holder (void) const {
+  node_t*& holder (void) {
     return _holder;
   };
-  // change pockets
-  void holder (node_t *who) {
-    _holder = who;
-  };
   node_t* child (void) const {
-    return owner();
+    return _owner;
   };
   bool is (color_t c) const {
     return color==c;
@@ -96,7 +96,7 @@ public:
   };
   // machine-readable color symbols
   std::string color_symbol (void) const {
-    if (is(green) && holder()==owner())
+    if (is(green) && _holder==_owner)
       return "m";		// brown balls
     else 
       return colorsymb[color];
@@ -106,7 +106,7 @@ public:
     std::string o = color_name()
       + "(" + std::to_string(uniq);
     if (is(black)) {
-      o += "," + std::to_string(deme);
+      o += "," + std::to_string(_deme);
     }
     o += ")";
     return o;
@@ -125,7 +125,7 @@ public:
     set_list_elem(O,On,Color,"color",1);
     if (is(black)) {
       PROTECT(Deme = NEW_INTEGER(1));
-      *INTEGER(Deme) = int(deme);
+      *INTEGER(Deme) = int(_deme);
       set_list_elem(O,On,Deme,"deme",2);
       UNPROTECT(1);
     }
@@ -139,14 +139,14 @@ public:
     o = "color: " + color_name() + "\n"      
       + tab + "name: " + std::to_string(uniq) + "\n";
     if (color==black) {
-      o += tab + "deme: " + std::to_string(deme) + "\n";
+      o += tab + "deme: " + std::to_string(_deme) + "\n";
     }
     return o;
   };
   // element of a newick representation
   std::string newick (const slate_t &t) const {
     return color_symbol()
-      + "_" + std::to_string(deme)
+      + "_" + std::to_string(_deme)
       + "_" + std::to_string(uniq)
       + ":" + std::to_string(t);
   };

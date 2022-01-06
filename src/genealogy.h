@@ -111,13 +111,13 @@ public:
     clean();
   };
   
-  // get current time.
-  slate_t time (void) const {
+  // view/set current time.
+  slate_t& time (void) {
     return _time;
   };
-  // reset current time.
-  void time (slate_t t) {
-    _time = t;
+  // view current time.
+  slate_t time (void) const {
+    return _time;
   };
   // get zero time.
   slate_t timezero (void) const {
@@ -252,8 +252,8 @@ private:
     node_t *p = a->holder();
     node_t *q = b->holder();
     if (p != q) {
-      p->erase(a); q->insert(a); a->holder(q);
-      q->erase(b); p->insert(b); b->holder(p);
+      p->erase(a); q->insert(a); a->holder() = q;
+      q->erase(b); p->insert(b); b->holder() = p;
     }
   };
 
@@ -261,7 +261,7 @@ private:
   // the deme of p is changed to match that of a
   void add (node_t *p, ball_t *a) {
     swap(a,p->green_ball());
-    p->deme = a->deme;
+    p->deme = a->deme();
     push_back(p);
   };
 
@@ -280,7 +280,7 @@ private:
         a->color = red;
         break;
       case purple:      // swap black ball for green ball, delete node
-        a->deme = p->deme;
+        a->deme() = p->deme;
         swap(a,p->green_ball());
         destroy_node(p);
         drop(a);                // recursively pursue dropping ball a
@@ -299,7 +299,7 @@ private:
 public:
   // birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
-    time(t);
+    time() = t;
     node_t *p = make_node(black,d);
     ball_t *b = p->last_ball();
     p->slate = time();
@@ -314,12 +314,12 @@ public:
   };
   // death
   void death (ball_t *a, slate_t t) {
-    time(t);
+    time() = t;
     drop(a);
   };
   // graft a new lineage into deme d
   ball_t* graft (slate_t t, name_t d = 0) {
-    time(t);
+    time() = t;
     node_t *p = make_node(black,d);
     ball_t *b = p->last_ball();
     p->slate = timezero();
@@ -328,18 +328,18 @@ public:
   };
   // insert a sample node
   void sample (ball_t* a, slate_t t) {
-    time(t);
-    node_t *p = make_node(blue,a->deme);
+    time() = t;
+    node_t *p = make_node(blue,a->deme());
     p->slate = time();
     add(p,a);
   };
   // movement into deme d
   ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
-    time(t);
-    node_t *p = make_node(purple,a->deme);
+    time() = t;
+    node_t *p = make_node(purple,a->deme());
     p->slate = time();
     add(p,a);
-    a->deme = d;
+    a->deme() = d;
     return a;
   };
 
@@ -377,7 +377,7 @@ public:
     pocket_t *blacks = colored(black);
     while (!blacks->empty()) {
       ball_t *a = *(blacks->begin());
-      a->deme = 0;
+      a->deme() = 0;
       blacks->erase(a);
     }
     delete blacks;
@@ -412,7 +412,7 @@ public:
         }
         n = back();
       }
-      time(tnew);
+      time() = tnew;
     }
   };
 };
