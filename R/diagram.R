@@ -2,35 +2,67 @@
 ##'
 ##' Produces a diagram of the genealogy process state.
 ##'
-##' @include package.R treeplot.R
+##' @name diagram
+##' @include getinfo.R
 ##'
-##' @param illus character;
-##' illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.
+##' @inheritParams getInfo
+##' @inheritParams grid::gTree
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
+##' @param m width of plotting window, in nodes.
+##' By default, the nodes will be adjusted in width to fit the window.
+##' @param n height of the pockets, in balls.
+##' By default, the balls will be adjusted in size to fit the space available.
+##' @param digits non-negative integer;
+##' number of decimal digits to print in the node time
 ##' 
-##' @return A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
+##' @return A \pkg{grid} graphics object (\code{grob}), invisibly.
 ##'
 ##' @example examples/diagram.R
 ##'
 ##' @importFrom dplyr if_else
-##' @importFrom readr read_csv
+##' @importFrom grid gpar viewport
 ##'
-##' @name diagram
+NULL
+
 ##' @rdname diagram
-##' 
 ##' @export
-##'
-diagram <- function (illus, ...) {
-  dat <- lapply(illus,read_csv,show_col_types=FALSE)
-  nmax <- max(sapply(dat,nrow)) # longest tableau
-  vp <- viewport(height=0.95,width=0.95,gp=gpar(...))
-  tg <- lapply(
-    dat,
-    function (d) {
-      tableauGrob(d,n=nmax,vp=vp)
+diagram <- function (
+  object,
+  prune = TRUE, obscure = TRUE,
+  m = NULL, n = NULL, ..., digits = 1
+) {
+  object |>
+    getInfo(structure=TRUE,prune=prune,obscure=obscure) |>
+    getElement("structure") |>
+    genealogyGrob(
+      m=m,n=n,digits=digits,
+      vp=viewport(height=0.95,width=0.95,gp=gpar(...))
+    ) -> x
+  class(x) <- c("gpdiag",class(x))
+  x
+}
+
+##' @rdname diagram
+##' @method print gpdiag
+##' @param newpage draw new empty page first?
+##' @param vp viewport to draw plot in
+##' @param ... other arguments, ignored.
+##' @importFrom grid grid.newpage grid.draw seekViewport pushViewport upViewport
+##' @export
+print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
+  if (newpage) grid.newpage()
+  if (is.null(vp)) {
+    grid.draw(x)
+  } else {
+    if (is.character(vp)) {
+      seekViewport(vp)
+    } else {
+      pushViewport(vp)
     }
-  )
-  invisible(tg)
+    grid.draw(x)
+    upViewport()
+  }
+  invisible(x)
 }
 
 ##' Diagramming internals
@@ -43,77 +75,152 @@ diagram <- function (illus, ...) {
 ##' 
 ##' @rdname internals
 ##' @keywords internal
-##' @param data illustration vector
-##' @param n length of longest tableau
+##' @param object list; genealogy structure
+##' @param n length of longest genealogy
 ##' 
 ##' @importFrom grid viewport gList gTree
+##' @inheritParams diagram
 ##' @inheritParams grid::grob
 ##' 
 ##' @export
-tableauGrob <- function (data, n, vp = NULL) {
-  gbb <- gList()
-  for (k in seq_along(data$player)) {
-    gb <- playerGrob(
-      name=data$player[k],
-      ballA=data$ballA[k],
-      ballB=data$ballB[k],
-      ballAcol=data$ballAcol[k],
-      ballBcol=data$ballBcol[k],
-      slate=data$slate[k],
-      vp=viewport(x=(k-1/2)/n,width=0.95/n,height=0.95,
-        xscale=c(0,1),yscale=c(0,4))
-    )
-    gbb <- gList(gbb,gb)
+genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
+  if (is.null(m)) m <- length(object$nodes)
+  if (is.null(n)) {
+    object$nodes |>
+      lapply(\(node)length(node$pocket)) |>
+      as.integer() |>
+      c(1L) |>
+      max() -> n
   }
   gTree(
-    children=gbb,
+    children=do.call(
+      gList,
+      lapply(
+        seq_len(m),
+        function (k) {
+          nodeGrob(
+            object$nodes[[k]],
+            n=n, ...,
+            vp=viewport(
+              x=(k-1/2)/m,
+              width=0.95/m,
+              height=0.95
+            )
+          )
+        }
+      )
+    ),
     vp=vp
   )
 }
 
 ##' @rdname internals
 ##' @keywords internal
-##' @param name player name
-##' @param ballA,ballB ball names
-##' @param ballAcol,ballBcol ball colors
-##' @param slate time
+##' @param object list; node structure
+##' @param digits non-negative integer;
+##' number of decimal digits to print in the node time
+##' @importFrom grid roundrectGrob linesGrob textGrob gpar grobTree
+##' @inheritParams diagram
+##' @inheritParams grid::grob
+##' @export
+nodeGrob <- function (object, digits = 1, n = NULL, vp = NULL) {
+  gTree(
+    name=object$name,
+    children=gList(
+      roundrectGrob(),
+      linesGrob(x=c(0,1),y=25/32),
+      resizingTextGrob(
+        label=object$name,
+        vp=viewport(y=7/8,height=1/4)
+      ),
+      resizingTextGrob(
+        label=if_else(
+          is.finite(object$time),
+          as.character(round(object$time,digits)),
+          "-\u221E"
+        ),
+        vp=viewport(y=1/8,height=1/4),
+        gp=gpar(fontface="italic",col="black")
+      ),
+      pocketGrob(
+        object$pocket,
+        n=n,
+        vp=viewport(y=1/2,height=0.5,width=0.95)
+      )
+    ),
+    vp=vp
+  )
+}
+
+##' @rdname internals
+##' @keywords internal
+##' @param object list; pocket structure
 ##' @importFrom grid roundrectGrob linesGrob textGrob gpar grobTree
 ##' @inheritParams grid::grob
 ##' @export
-playerGrob <- function (name, ballA, ballAcol, ballB, ballBcol, slate, vp = NULL) {
-  rr <- roundrectGrob(vp=vp)
-  lg <- linesGrob(x=c(0,1),y=25/32,vp=vp)
-  nm <- resizingTextGrob(label=name,y=7/8,vp=vp)
-  bgA <- ballGrob(y=5/8,label=ballA,color=ballAcol,vp=vp)
-  bgB <- ballGrob(y=3/8,label=ballB,color=ballBcol,vp=vp)
-  tt <- resizingTextGrob(
-    label=if_else(is.finite(slate),as.character(round(slate,1)),"-\u221E"),
-    y=1/8,
-    gp=gpar(fontface="italic",col="black"),
+pocketGrob <- function (object, n = NULL, vp = NULL) {
+  if (is.null(n)) n <- length(object)
+  y0 <- 1+1/2/n
+  dy <- 1/n
+  gTree(
+    children=do.call(
+      gList,
+      lapply(
+        seq_along(object),
+        function (i) {
+          ballGrob(
+            object[[i]],
+            vp=viewport(
+              y=y0-i*dy,
+              width=1
+            )
+          )
+        }
+      )
+    ),
     vp=vp
-  )
-  grobTree(
-    name=name,
-    Frame=rr,
-    Div=lg,
-    Name=nm,
-    Time=tt,
-    BallA=bgA,
-    BallB=bgB
   )
 }
 
 ##' @rdname internals
 ##' @keywords internal
-##' @include treeplot.R
+##' @importFrom grid unit circleGrob textGrob grob gpar viewport
+##' @inheritParams grid::grob
+##' @export
+ballGrob <- function (object, vp = NULL) {
+  grob(
+    cg=circleGrob(
+      r=unit(0.48,"native"),
+      gp=gpar(
+        fill=ball_colors[object$color],
+        col=ball_colors[object$color]
+      )
+    ),
+    tg=if (object$color %in% c("g","o")) {
+         textGrob(
+           label=object$name,
+           gp=gpar(col="white")
+         )
+       } else {
+         NULL
+       },
+    vp=vp,
+    cl="ballGrob"
+  )
+}
+
+##' @rdname internals
+##' @keywords internal
 ##' @param ... arguments to be passed to \code{\link[grid:textGrob]{textGrob}}.
 ##' @importFrom grid grob textGrob viewport
 ##' @inheritParams grid::textGrob
 ##' @export
-resizingTextGrob <- function (y, ..., vp = NULL) {
-  vp1 <- viewport(y=y,width=1,height=1/4)
-  tg <- textGrob(...,vp=vp1)
-  grob(tg=tg,vp=vp,cl="resizingTextGrob")
+resizingTextGrob <- function (..., vp = NULL) {
+  grob(
+    tg=textGrob(...,vp=viewport(height=1/3)),
+    vp=vp,
+    cl="resizingTextGrob"
+  )
 }
 
 ##' @rdname internals
@@ -149,28 +256,6 @@ postDrawDetails.resizingTextGrob <- function (x) {
   popViewport()
 }
 
-
-##' @rdname internals
-##' @keywords internal
-##' @include treeplot.R
-##' @param y height
-##' @param label ball name
-##' @param color ball color
-##' @importFrom grid unit circleGrob textGrob grob gpar viewport
-##' @inheritParams grid::grob
-##' @export
-ballGrob <- function (y, label, color, ..., vp = NULL) {
-  vp1 <- viewport(y=y,width=1,height=1/4)
-  cg <- circleGrob(r=unit(0.48,"native"),
-    gp=gpar(fill=ball_colors[color],col=ball_colors[color]),vp=vp1)
-  if (color=="r") {
-    tg <- NULL
-  } else {
-    tg <- textGrob(label=label,gp=gpar(col="white"),vp=vp1)
-  }
-  grob(cg=cg,tg=tg,vp=vp,cl="ballGrob")
-}
-
 ##' @rdname internals
 ##' @keywords internal
 ##' @importFrom grid drawDetails grid.draw
@@ -204,3 +289,11 @@ preDrawDetails.ballGrob <- function (x) {
 postDrawDetails.ballGrob <- function (x) {
   popViewport()
 }
+
+##' @importFrom grid viewport
+##' @export
+grid::viewport
+
+##' @importFrom cowplot plot_grid
+##' @export
+cowplot::plot_grid

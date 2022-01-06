@@ -8,7 +8,7 @@
 #define I0        (__p[__parindex[4]])
 #define R0        (__p[__parindex[5]])
 #define N         (__p[__parindex[6]])
-#define Delta     (__p[__parindex[7]])
+#define delta     (__p[__parindex[7]])
 #define lineages  (__covars[__covindex[0]])
 #define code	  (__covars[__covindex[1]])
 #define S         (__x[__stateindex[0]])
@@ -51,7 +51,7 @@ void sirs_gill (double *__x, const double *__p, const int *__stateindex, const i
   int event;
   cutoff[0] = Beta*S*I/N;	// transmission
   cutoff[1] = gamma*I;		// recovery
-  cutoff[2] = Delta*R;		// loss of immunity
+  cutoff[2] = delta*R;		// loss of immunity
   event_rate = cutoff[0] + cutoff[1] + cutoff[2];
   tstep = exp_rand()/event_rate;
   while (t + tstep < tmax) {
@@ -80,7 +80,7 @@ void sirs_gill (double *__x, const double *__p, const int *__stateindex, const i
       R -= 1;
       S += 1;
       cutoff[0] = Beta*S*I/N;
-      cutoff[2] = Delta*R;
+      cutoff[2] = delta*R;
       break;
     default:
       error("impossible error in 'sirs_pomp'!");
@@ -96,61 +96,6 @@ void sirs_gill (double *__x, const double *__p, const int *__stateindex, const i
    
 }
 
-
-void sirs_euler (double *__x, const double *__p, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t, double dt)
-{
-    int ind = nearbyint(code);
-    // params
-    double lambda = Beta*S/N;
-    if (ll < 1e-300 && ll > -1e-300) {
-      if (ind == 1) {                // coalescent
-        if (S > 0) {
-          ll += (I > 0) ? log(lambda*I) : R_NegInf;
-          I += 1;
-          S -= 1;
-          ll += (I >= lineages && lineages > 1) ? -log(I*(I-1)) : R_NegInf;
-        } else {
-          ll += R_NegInf;
-        }
-      } else if (ind == 0) {         // dead sample
-        ll += (I >= lineages) ? log(psi) : R_NegInf;
-      } else if (ind == -1) {        // live sample
-        ll += (I > 0) ? log(psi*I) : R_NegInf;
-        ll += (I > lineages) ? log(1-lineages/I) : R_NegInf;
-      }
-    }
-
-    // euler steps
-    int nrate = 2;
-    double rate[nrate], trans[nrate];
-
-    rate[0] = Beta*I/N;
-    rate[1] = gamma;
-
-    // method 1:
-    reulermultinom(1, S, &rate[0], dt, &trans[0]);
-    reulermultinom(1, I, &rate[1], dt, &trans[1]);
-    
-    S -= trans[0];
-    I += trans[0] - trans[1];
-    R += trans[1];
-    
-    // method 2:
-    // trans[0] = rnbinom_mu(n, exp(rate[0]*dt));
-    // reulermultinom(1, trans[0], &rate[1], dt, &n);
-
-    // method 3:
-    // reulermulitnom(1, n, &rate[1], dt, &trans[1]);
-    // n = rbinom_mu(trans[1], exp(rate[0]*dt));
-    
-    // assume all births and deaths occur at the end of the interval
-    if (trans[0] > 0)
-      ll += (I > lineages) ? nearbyint(trans[0])*log(1-(lineages-1)*lineages/(I-1)/(I)) : R_NegInf;
-    
-    ll -= psi*I*dt;
-   
-}
-
 # define lik  (__lik[0])
 
 void sirs_dmeas (double *__lik, const double *__y, const double *__x, const double *__p, int give_log, const int *__obsindex, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t)
@@ -163,7 +108,7 @@ void sirs_dmeas (double *__lik, const double *__y, const double *__x, const doub
 }
 
 #undef lik
-#undef Delta
+#undef delta
 #undef Beta
 #undef gamma
 #undef psi

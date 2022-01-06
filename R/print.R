@@ -1,18 +1,8 @@
-##' Special print functions
-##'
-##' Print functions for \sQuote{gpsim} objects.
-##'
-##' @name print
-##' @keywords internal
-##' 
-##' @param x \code{gpsim} object.
-##' @param ... arguments passed to print.
-##'
-##' @include getinfo.R
-##' 
-##' @rdname print
+##' @rdname internals
+##' @keywords internals
+##' @inheritParams base::print.default
+##' @method print gpsim
 ##' @export
 print.gpsim <- function (x, ...) {
-  attr(x,"state") <- NULL
-  NextMethod("print")
+  cat("<gpsim for model ",sQuote(as.character(attr(x,"model"))),">\n",sep="")
 }

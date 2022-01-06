@@ -2,114 +2,43 @@
 % Please edit documentation in R/moran.R
 \name{moran}
 \alias{moran}
-\alias{MGP}
-\alias{mgp}
-\alias{playMoran}
-\alias{playMoranWChain}
-\title{Moran genealogy process.}
+\alias{Moran}
+\alias{runMoran}
+\alias{continueMoran}
+\title{The classical Moran model}
 \usage{
-playMoran(
-  data = NULL,
-  n,
-  mu,
-  t0 = 0,
-  times,
-  sample = TRUE,
-  tree = FALSE,
-  ill = FALSE,
-  stationary = TRUE
-)
+runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
 
-playMoranWChain(
-  data = NULL,
-  n,
-  mu,
-  t0 = 0,
-  ntimes,
-  tree = TRUE,
-  ill = TRUE,
-  stationary = TRUE
-)
+continueMoran(object, time, mu = NA, psi = NA)
 }
 \arguments{
-\item{data}{optional data frame; output from \code{playMoran} or \code{playMoranWChain}}
-
-\item{n}{population size}
-
-\item{mu}{Moran event rate.}
+\item{time}{final time}
 
 \item{t0}{initial time}
 
-\item{times}{times at which output is requested.}
+\item{n}{population size}
 
-\item{sample}{logical;
-if \code{sample=TRUE}, a sample is taken at each of the specified times.}
+\item{mu}{event rate}
 
-\item{tree}{logical; represent the genealogical tree in Newick format?}
+\item{psi}{sampling rate.}
 
-\item{ill}{logical; return an illustration?}
-
-\item{stationary}{logical;
-should the initial genealogy be drawn from the stationary distribution?}
-
-\item{ntimes}{integer; number of timesteps to advance the chain.}
+\item{object}{either the name of the model to simulate
+\emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-A \code{tibble} with \code{state} attribute.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 }
 \description{
-Run the MGP simulator.
-}
-\examples{
-library(tidyverse)
-library(cowplot)
-
-playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -> x
-playMoran(x,times=11:20,tree=TRUE) -> x
-plot(x)
-
-playMoran(n=5,mu=10,times=0:10,t0=-3) |>
-  getInfo() -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x,points=TRUE)
-
-y <- getInfo(x,prune=FALSE)
-plot(y,points=TRUE)
-
-playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x,points=TRUE,diagram=TRUE)
-
-y <- getInfo(x)
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) -> x
-x |> getInfo(prune=FALSE,compact=TRUE) -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-x |> getInfo(prune=TRUE,compact=TRUE) -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) |>
-  playMoranWChain(ntimes=4) |>
-  mutate(diag=diagram(illus)) |>
-  pull(diag) |>
-  {\(x)plot_grid(plotlist=x,ncol=1)}()
-
-playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) |>
-  playMoranWChain(ntimes=40) |>
-  mutate(diag=diagram(illus)) |>
-  slice(35:40) |>
-  pull(diag) |>
-  {\(x)plot_grid(plotlist=x,ncol=1)}()
+The Markov genealogy process induced by the classical Moran process,
+in which birth/death events occur at a constant rate and the
+population size remains constant.
 }
 \seealso{
-Other Genealogy processes: 
+More example genealogy processes: 
 \code{\link{lbdp}},
-\code{\link{leventhal}},
-\code{\link{multisirws}},
-\code{\link{sirs}},
-\code{\link{sirws}}
+\code{\link{si2r}},
+\code{\link{siir}},
+\code{\link{simulate}()},
+\code{\link{sir}}
 }
 \concept{Genealogy processes}

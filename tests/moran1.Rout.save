@@ -1,5 +1,5 @@
 
-R version 4.1.1 (2021-08-10) -- "Kick Things"
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
 Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -17,72 +17,41 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
+> png(filename="moran1-%02d.png",res=100)
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
-+   library(broom)
-+   library(doParallel)
-+   library(doRNG)
 + })
-> 
-> options(digits=3)
-> png(filename="moran1-%02d.png",res=100)
-> 
 > theme_set(theme_bw())
+> set.seed(847110120)
+> options(digits=3)
 > 
-> chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-> if (nzchar(chk) && chk == "TRUE") {
-+   ## use 2 cores in CRAN/Travis/AppVeyor
-+   registerDoParallel(2)
-+ } else {
-+   ## use all cores in devtools::test()
-+   registerDoParallel()
-+ }
-> registerDoRNG(110825570)
+> runMoran(time=10) -> x
+> x
+<gpsim for model ‘Moran’>
+> x |> yaml() -> y
+> x |> lineages()
+# A tibble: 1,311 × 2
+     time lineages
+ *  <dbl>    <int>
+ 1 0            67
+ 2 0.0112       66
+ 3 0.0119       66
+ 4 0.0242       67
+ 5 0.0260       68
+ 6 0.0323       69
+ 7 0.0365       68
+ 8 0.0371       67
+ 9 0.0375       67
+10 0.0510       67
+# … with 1,301 more rows
 > 
-> foreach (i=1:500) %dopar% {
-+   playMoran(
-+     n=100,
-+     mu=100,
-+     t0=0,
-+     times=cumsum(rexp(n=100)),
-+     tree=FALSE
-+   ) |>
-+     getInfo(tree=FALSE) |> {
-+       \(x) x$cumhaz |>
-+         mutate(p=exp(-Lambda))
-+     }()
-+ } |>
-+   bind_rows(.id="rep") -> dat
+> runMoran(n=100,time=100) |>
++   plot()
 > 
-> dat |>
-+   do(tidy(ks.test(x=.$p,y=punif))) |>
-+   select(p.value)
-# A tibble: 1 × 1
-  p.value
-    <dbl>
-1   0.422
-> 
-> dat |>
-+   group_by(rep) |>
-+   do(tidy(ks.test(x=.$p,y=punif))) |>
-+   ungroup() |>
-+   select(p.value) -> pvals
-> 
-> pvals |>
-+   do(tidy(ks.test(x=.$p.value,y=punif))) |>
-+   select(p.value) -> ppval
-> 
-> dat |>
-+   ggplot(aes(x=p))+
-+   geom_abline(slope=1)+
-+   stat_ecdf()+
-+   annotate("rug",x=pvals$p.value)+
-+   annotate("text",x=0.2,y=0.8,
-+     label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
-+   coord_equal()+
-+   labs(x=expression(italic(p)),y=expression(italic(F(p))))+
-+   expand_limits(x=c(0,1),y=c(0,1))
+> simulate("Moran",time=100,psi=0) |>
++   simulate(time=105,psi=1) |>
++   plot()
 > 
 > dev.off()
 null device 

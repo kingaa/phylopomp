@@ -3,130 +3,55 @@
 \name{lbdp}
 \alias{lbdp}
 \alias{LBDP}
-\alias{playLBDP}
-\alias{lbdp_exact}
-\alias{lbdp_pomp}
-\title{Linear birth-death process.}
+\alias{runLBDP}
+\alias{continueLBDP}
+\title{Linear birth-death-sampling model}
 \usage{
-playLBDP(
-  data = NULL,
-  lambda,
-  mu,
-  psi,
-  n0 = 1,
-  t0 = 0,
-  times,
-  tree = FALSE,
-  ill = FALSE
-)
+runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
 
-lbdp_exact(data, lambda, mu, psi)
-
-lbdp_pomp(
-  data,
-  lambda,
-  mu,
-  psi,
-  n0 = 1,
-  t0 = 0,
-  method = c("gillespie", "euler"),
-  delta.t = NULL
-)
+continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
 }
 \arguments{
-\item{data}{data frame containing the genealogy event times and event codes.}
-
-\item{lambda}{birth rate}
-
-\item{mu}{death rate}
-
-\item{psi}{sampling rate}
-
-\item{n0}{initial population size}
+\item{time}{final time}
 
 \item{t0}{initial time}
 
-\item{times}{times at which output is requested.}
+\item{lambda}{per capita birth rate}
 
-\item{tree}{logical; represent the genealogical tree in Newick format?}
+\item{mu}{per capita recovery rate.}
 
-\item{ill}{logical; return an illustration?}
+\item{psi}{per capita sampling rate.}
 
-\item{method}{either \dQuote{gillespie} or \dQuote{euler}}
+\item{n0}{initial population size}
 
-\item{delta.t}{time interval in \dQuote{euler} method}
+\item{object}{either the name of the model to simulate
+\emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-\code{playLBDP} returns an object of class \code{gpsim}.
-Available methods for such objects include \code{\link{getInfo}} and \code{\link{plot}}.
-
-\code{lbdp_exact} returns the log likelihood of the genealogy.
-Note that the time since the most recent sample is informative.
+An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 }
 \description{
-Simulation and inference based on linear birth-death-sampling processes.
-}
-\details{
-\code{playLBDP} is a simulator of the genealogy process induced by a linear birth-death-sampling process.
-
-\code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
-The derivation is also given in comments in the code.
-
-The \code{data} argument should in the format returned by \code{\link{newick2df}}.
-
-\code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
-
-It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
+The genealogy process induced by a simple linear birth-death process
+with constant-rate sampling.
 }
 \examples{
-set.seed(1587211495)
-playLBDP(lambda=1,mu=0.5,psi=1,n0=3,times=seq(0,4,by=0.2),tree=TRUE) -> x
-plot(x,points=TRUE)
+simulate("LBDP",time=4) |> plot(points=TRUE)
 
-y <- getInfo(x,prune=FALSE)
-plot(y,points=TRUE)
+simulate("LBDP",lambda=2,mu=1,psi=3,n0=1,time=1) |>
+  simulate(time=10,lambda=1) |>
+  plot()
 
-library(ggplot2)
-y$lineages |>
-  ggplot(aes(x=time,y=lineages))+
-  geom_step()+
-  geom_vline(xintercept=y$etimes,alpha=0.1)
+simulate("LBDP",time=4) |>
+  lineages() |>
+  plot()
 
-y$cumhaz |>
-  ggplot(aes(x=exp(-Lambda)))+
-  stat_ecdf()+
-  geom_abline(slope=1)
-
-playLBDP(lambda=2,mu=1,psi=3,n0=1,times=5) |>
-  getInfo() -> x
-plot(getInfo(x,compact=TRUE),points=TRUE)
-
-library(pomp)
-x$tree |>
-  newick2df(time=5) |>
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="gillespie") |>
-  pfilter(Np=2000) |>
-  logLik()
-
-x$tree |>
-  newick2df(time=5) |>
-  lbdp_pomp(psi=0.5,lambda=2,mu=1,n0=1,method="euler",delta.t=0.001) |>
-  pfilter(Np=2000) |>
-  logLik()
-
-x$tree |>
-  newick2df(time=5) |>
-  lbdp_exact(psi=0.5,lambda=2,mu=1)
-}
-\references{
-\Stadler2010
 }
 \seealso{
-Other Genealogy processes: 
-\code{\link{leventhal}},
+More example genealogy processes: 
 \code{\link{moran}},
-\code{\link{multisirws}},
-\code{\link{sirs}},
-\code{\link{sirws}}
+\code{\link{si2r}},
+\code{\link{siir}},
+\code{\link{simulate}()},
+\code{\link{sir}}
 }
 \concept{Genealogy processes}

@@ -1,66 +1,24 @@
+png(filename="lbdp1-%02d.png",res=100)
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
-  library(broom)
-  library(doParallel)
-  library(doRNG)
 })
-
-options(digits=3)
-png(filename="lbdp1-%02d.png",res=100)
-
 theme_set(theme_bw())
+set.seed(847110120)
+options(digits=3)
 
-chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-if (nzchar(chk) && chk == "TRUE") {
-  ## use 2 cores in CRAN/Travis/AppVeyor
-  registerDoParallel(2)
-} else {
-  ## use all cores in devtools::test()
-  registerDoParallel()
-}
-registerDoRNG(721604604)
+runLBDP(time=2) -> x
+x
+x |> yaml() -> y
+x |>
+  lineages() |>
+  plot()
 
-foreach (i=1:200) %dopar% {
-  playLBDP(
-    lambda=0.2,
-    mu=0.1,
-    psi=1,
-    n0=10,
-    times=10,
-    tree=FALSE
-  ) |>
-    getInfo(tree=FALSE) |> {
-      \(x)
-      x$cumhaz |>
-        mutate(p=exp(-Lambda))
-    }()
-} |>
-  bind_rows(.id="rep") -> dat
+simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
+  plot(points=TRUE)
 
-dat |>
-  do(tidy(ks.test(x=.$p,y=punif))) |>
-  select(p.value)
-
-dat |>
-  group_by(rep) |>
-  do(tidy(ks.test(x=.$p,y=punif))) |>
-  ungroup() |>
-  select(p.value) -> pvals
-
-pvals |>
-  do(tidy(ks.test(x=.$p.value,y=punif))) |>
-  select(p.value) -> ppval
-
-dat |>
-  ggplot(aes(x=p))+
-  geom_abline(slope=1)+
-  stat_ecdf()+
-  annotate("rug",x=pvals$p.value)+
-  annotate("text",x=0.2,y=0.8,
-    label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
-  coord_equal()+
-  labs(x=expression(italic(p)),y=expression(italic(F(p))))+
-  expand_limits(x=c(0,1),y=c(0,1))
+runLBDP(lambda=3,mu=1,psi=1,n0=10,time=1) |>
+  simulate(time=10,lambda=0.2,psi=3) |>
+  plot(points=TRUE)
 
 dev.off()

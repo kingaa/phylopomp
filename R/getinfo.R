@@ -1,42 +1,81 @@
-##' Retrieve information from genealogy process simulation
-##'
 ##' getInfo
+##'
+##' Retrieve information from genealogy process simulation
 ##'
 ##' @name getInfo
 ##' 
-##' @param data \code{gpsim} object.
-##' @param ... arguments passed to specific methods.
-##' @param prune logical; prune the tree?
+##' @param object \code{gpsim} object.
+##' @param prune logical; prune the genealogy?
+##' @param obscure logical; obscure the demes?
+##' @param time logical; return the current time?
+##' @param t0 logical; return the zero-time?
+##' @param tree logical; return the tree?
 ##' @param compact logical; return the tree in compact representation?
+##' @param description logical; return the description?
+##' @param yaml logical; return the structure in YAML format?
+##' @param structure logical; return the structure in \R list format?
+##' @param lineages logical; return the lineage-count function?
 ##'
 ##' @include package.R
+##' @importFrom dplyr bind_cols
 ##' @importFrom tibble as_tibble
+##'
+##' @return
+##' A list containing the requested elements, including any or all of:
+##' \describe{
+##'   \item{t0}{the initial time}
+##'   \item{time}{the current time}
+##'   \item{tree}{the genealogical tree, in Newick format}
+##'   \item{description}{a human readable description of the state of the genealogy process}
+##'   \item{yaml}{the state of the genealogy process in YAML format}
+##'   \item{structure}{the state of the genealogy process in \R list format}
+##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+##' }
 ##' 
-##' @example examples/moran.R
+##' @example examples/siir.R
 ##'
 ##' @rdname getinfo
 ##' @export
-getInfo <- function (data, ...) {
-  UseMethod("getInfo",data)
-}
-
-##' @rdname getinfo
-##' @export
-getInfo.gpsim <- function (data, ..., prune  = TRUE, compact = FALSE) {
+getInfo <- function (
+  object, prune  = TRUE, obscure = TRUE,
+  t0 = FALSE, time = FALSE,
+  description = FALSE, structure = FALSE, yaml = FALSE,
+  lineages = FALSE,
+  tree = FALSE, compact = TRUE)
+{
   x <- switch(
-    attr(data,"model"),
-    SIRS = .Call(P_get_SIRS_info,attr(data,"state"),prune,compact),
-    SIRwS = .Call(P_get_SIRwS_info,attr(data,"state"),prune,compact),
-    multiSIRwS = .Call(P_get_multiSIRwS_info,attr(data,"state"),prune,compact),
-    LBDP = .Call(P_get_LBDP_info,attr(data,"state"),prune,compact),
-    Moran = .Call(P_get_Moran_info,attr(data,"state"),prune,compact),
-    stop("unrecognized ",sQuote("gpsim")," object.",call.=FALSE)
+    paste0("model",as.character(attr(object,"model"))),
+    modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    modelMoran = .Call(P_infoMoran,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
+    model = stop("no model specified",call.=FALSE),
+    stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )
-  x$cumhaz <- as_tibble(x$cumhaz)
-  x$lineages <- as_tibble(x$lineages)
-  x$stimes <- NULL
-  attr(x,"model") <- attr(data,"model")
-  attr(x,"state") <- attr(data,"state")
-  class(x) <- c("gpsim",class(x))
+  if (!is.null(x$tree)) x$tree <- gsub("nan","NA",x$tree)
+  if (!is.null(x$lineages)) {
+    n <- length(x$lineages$time)
+    m <- length(x$lineages$count)/n
+    if (m > 1L) {
+      dig <- ceiling(log10(m))
+      nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
+    } else {
+      nm <- "lineages"
+    }
+    bind_cols(
+      time=x$lineages$time,
+      x$lineages$count |>
+        as.integer() |>
+        array(dim=c(m,n),dimnames=list(nm,NULL)) |>
+        t() |>
+        as_tibble()
+    ) -> x$lineages
+  }
   x
 }

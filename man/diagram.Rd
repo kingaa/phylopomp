@@ -2,39 +2,54 @@
 % Please edit documentation in R/diagram.R
 \name{diagram}
 \alias{diagram}
+\alias{print.gpdiag}
 \title{Genealogy process diagram}
 \usage{
-diagram(illus, ...)
+diagram(
+  object,
+  prune = TRUE,
+  obscure = TRUE,
+  m = NULL,
+  n = NULL,
+  ...,
+  digits = 1
+)
+
+\method{print}{gpdiag}(x, newpage = is.null(vp), vp = NULL, ...)
 }
 \arguments{
-\item{illus}{character;
-illustrations produced by \code{\link{getInfo}} or one of the \code{playX} functions.}
+\item{object}{\code{gpsim} object.}
 
-\item{...}{graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.}
+\item{prune}{logical; prune the genealogy?}
+
+\item{obscure}{logical; obscure the demes?}
+
+\item{m}{width of plotting window, in nodes.
+By default, the nodes will be adjusted in width to fit the window.}
+
+\item{n}{height of the pockets, in balls.
+By default, the balls will be adjusted in size to fit the space available.}
+
+\item{...}{other arguments, ignored.}
+
+\item{digits}{non-negative integer;
+number of decimal digits to print in the node time}
+
+\item{x}{ An \R object. }
+
+\item{newpage}{draw new empty page first?}
+
+\item{vp}{viewport to draw plot in}
 }
 \value{
-A list of \pkg{grid} graphics objects (\code{grob}s), invisibly.
+A \pkg{grid} graphics object (\code{grob}), invisibly.
 }
 \description{
 Produces a diagram of the genealogy process state.
 }
 \examples{
-library(tidyverse)
-playMoran(n=5,mu=10,times=c(0,seq(100,200,by=25)),
-  stationary=FALSE,ill=TRUE,tree=TRUE) -> x
-plot(x[5,],points=TRUE,diagram=TRUE)
-
-playMoran(n=8,mu=8,times=100:130,sample=FALSE,tree=TRUE,ill=TRUE) |>
-  mutate(dg=diagram(illus)) -> x
-plot(x,points=TRUE,diagram=TRUE,root_time=NA)
-
-playMoran(n=8,mu=8,times=0:30,sample=FALSE,tree=TRUE,ill=TRUE,
-  stationary=FALSE) |>
-  mutate(dg=diagram(illus)) -> x
-plot(x,points=TRUE,diagram=TRUE,root_time=NA)
-
-library(cowplot)
-playMoran(n=5,mu=5,times=0:3,stationary=TRUE,tree=TRUE,ill=TRUE) |>
-  mutate(grob=diagram(illus)) -> x
-plot_grid(plotlist=c(x$grob,treeplot(x$tree,points=TRUE)),ncol=2,byrow=FALSE)
+runSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
+plot(x,points=TRUE,prune=FALSE,compact=FALSE)
+plot_grid(plotlist=list(plot(x,points=TRUE)[[1]],diagram(x)),
+  ncol=1,rel_heights=c(4,1))
 }

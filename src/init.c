@@ -1,20 +1,21 @@
-#include "internal.h"
-#include "decls.h"
+#include "init.h"
 
-#include <R_ext/Rdynload.h>
+// edit this file to register new model routines with R
+// for each model, there must be
+// one DECLARATIONS line and one METHODS line.
 
+DECLARATIONS(SIR)
+DECLARATIONS(SIIR)
+DECLARATIONS(LBDP)
+DECLARATIONS(Moran)
+DECLARATIONS(SI2R)  
+  
 static const R_CallMethodDef callMethods[] = {
-  {"playMoran", (DL_FUNC) &playMoran, 9},
-  {"playMoranWChain", (DL_FUNC) &playMoranWChain, 8},
-  {"get_Moran_info", (DL_FUNC) &get_Moran_info, 3},
-  {"playLBDP", (DL_FUNC) &playLBDP, 9},
-  {"get_LBDP_info", (DL_FUNC) &get_LBDP_info, 3},
-  {"playSIRwS", (DL_FUNC) &playSIRwS, 11},
-  {"get_SIRwS_info", (DL_FUNC) &get_SIRwS_info, 3},
-  {"playmultiSIRwS", (DL_FUNC) &playmultiSIRwS, 12},
-  {"get_multiSIRwS_info", (DL_FUNC) &get_multiSIRwS_info, 3},
-  {"playSIRS", (DL_FUNC) &playSIRS, 12},
-  {"get_SIRS_info", (DL_FUNC) &get_SIRS_info, 3},
+  METHODS(SIR),
+  METHODS(SIIR),
+  METHODS(LBDP),
+  METHODS(Moran),
+  METHODS(SI2R),
   {NULL, NULL, 0}
 };
 

@@ -4,7 +4,7 @@
 \alias{newick2df}
 \title{Convert a tree in Newick format to data frame}
 \usage{
-newick2df(tree, time = NA, root_time = 0, show_branches = FALSE)
+newick2df(tree, time = NA, root_time = 0)
 }
 \arguments{
 \item{tree}{tree data in Newick format.}
@@ -12,8 +12,6 @@ newick2df(tree, time = NA, root_time = 0, show_branches = FALSE)
 \item{time}{time of the genealogy.}
 
 \item{root_time}{time of the root.}
-
-\item{show_branches}{whether to show number of new branches at coalescences.}
 }
 \value{
 A data frame suitable for use as \code{pomp} input, containing three columns:
@@ -25,9 +23,8 @@ A data frame suitable for use as \code{pomp} input, containing three columns:
   \item{code}{integer; a code describing the nature of the event.
     1 indicates a coalescence;
     0 indicates a dead sample;
-   -1 indicates a leaf sample;
-    2 indicates the root;
-    9 indicates the end time of sampling.
+   -1 indicates a live sample;
+    2 indicates the root.
   }
 }
 }
@@ -40,11 +37,9 @@ If \code{time} is furnished, it is assumed that the absence of samples between t
 Invisible nodes (labeled 'X_' for any X) are dropped.
 }
 \examples{
-playSIRwS(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,times=c(0,5),t0=0,tree=TRUE) -> x
-y <- getInfo(x)
-newick2df(y$tree, time=5, show_branches=TRUE) -> z
-
-# compare to y$lineages
-y$lineages |>
-  all.equal(tail(z,-1)[,1:2],tolerance=1e-5)
+runSIR(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,time=5,t0=0) |>
+  getInfo(tree=TRUE) |>
+  getElement("tree") |>
+  newick2df()
+  
 }

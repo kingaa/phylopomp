@@ -2,66 +2,72 @@
 % Please edit documentation in R/getinfo.R
 \name{getInfo}
 \alias{getInfo}
-\alias{getInfo.gpsim}
-\title{Retrieve information from genealogy process simulation}
+\title{getInfo}
 \usage{
-getInfo(data, ...)
-
-\method{getInfo}{gpsim}(data, ..., prune = TRUE, compact = FALSE)
+getInfo(
+  object,
+  prune = TRUE,
+  obscure = TRUE,
+  t0 = FALSE,
+  time = FALSE,
+  description = FALSE,
+  structure = FALSE,
+  yaml = FALSE,
+  lineages = FALSE,
+  tree = FALSE,
+  compact = TRUE
+)
 }
 \arguments{
-\item{data}{\code{gpsim} object.}
+\item{object}{\code{gpsim} object.}
 
-\item{...}{arguments passed to specific methods.}
+\item{prune}{logical; prune the genealogy?}
 
-\item{prune}{logical; prune the tree?}
+\item{obscure}{logical; obscure the demes?}
+
+\item{t0}{logical; return the zero-time?}
+
+\item{time}{logical; return the current time?}
+
+\item{description}{logical; return the description?}
+
+\item{structure}{logical; return the structure in \R list format?}
+
+\item{yaml}{logical; return the structure in YAML format?}
+
+\item{lineages}{logical; return the lineage-count function?}
+
+\item{tree}{logical; return the tree?}
 
 \item{compact}{logical; return the tree in compact representation?}
 }
+\value{
+A list containing the requested elements, including any or all of:
+\describe{
+  \item{t0}{the initial time}
+  \item{time}{the current time}
+  \item{tree}{the genealogical tree, in Newick format}
+  \item{description}{a human readable description of the state of the genealogy process}
+  \item{yaml}{the state of the genealogy process in YAML format}
+  \item{structure}{the state of the genealogy process in \R list format}
+  \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+}
+}
 \description{
-getInfo
+Retrieve information from genealogy process simulation
 }
 \examples{
-library(tidyverse)
-library(cowplot)
+simulate("SIIR",time=3,psi1=1,psi2=0) |>
+  simulate(Beta1=2,gamma=2,time=10,psi1=10,psi2=1) |>
+  plot()
 
-playMoran(n=5,mu=5,times=0:10,t0=0,tree=TRUE,ill=TRUE) -> x
-playMoran(x,times=11:20,tree=TRUE) -> x
-plot(x)
+runSIIR(Beta1=10,Beta2=8,
+  S0=200,I1_0=10,I2_0=8,R0=0,time=0,t0=-1) |>
+  simulate(psi1=10,time=2) |>
+  plot(points=TRUE,obscure=FALSE)
 
-playMoran(n=5,mu=10,times=0:10,t0=-3) |>
-  getInfo() -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=20,mu=20,times=0:20,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x,points=TRUE)
-
-y <- getInfo(x,prune=FALSE)
-plot(y,points=TRUE)
-
-playMoran(n=5,mu=5,t0=-1,times=0:3,stationary=FALSE,tree=TRUE,ill=TRUE) -> x
-plot(x,points=TRUE,diagram=TRUE)
-
-y <- getInfo(x)
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=20,mu=10,times=1:10,sample=TRUE,stationary=FALSE) -> x
-x |> getInfo(prune=FALSE,compact=TRUE) -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-x |> getInfo(prune=TRUE,compact=TRUE) -> y
-plot(y,points=TRUE,diagram=TRUE)
-
-playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=TRUE) |>
-  playMoranWChain(ntimes=4) |>
-  mutate(diag=diagram(illus)) |>
-  pull(diag) |>
-  {\(x)plot_grid(plotlist=x,ncol=1)}()
-
-playMoran(n=8,mu=8,times=0,tree=TRUE,ill=TRUE,sample=FALSE,stationary=FALSE) |>
-  playMoranWChain(ntimes=40) |>
-  mutate(diag=diagram(illus)) |>
-  slice(35:40) |>
-  pull(diag) |>
-  {\(x)plot_grid(plotlist=x,ncol=1)}()
+simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
+  S0=300,I1_0=20,I2_0=2,time=5) |>
+  lineages() |>
+  plot()
 }

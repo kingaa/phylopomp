@@ -1,62 +1,88 @@
-// Moran Genealogy Process with Sampling Simulator (C++)
+// Moran genealogy process simulator (C++)
 
-#include "moran.h"
-#include "internal.h"
+#include "master.h"
+#include "popul_proc.h"
+#include "generics.h"
 
-moran_tableau_t *makeGP (SEXP N, SEXP Mu, SEXP T0, SEXP Stat, SEXP State) {
-  moran_tableau_t *gp;
-  OPTIONAL_INT_PAR(n,N,100);
-  OPTIONAL_REAL_PAR(mu,Mu,1);
-  if (isNull(State)) {		// a fresh GP
-    double t0 = *REAL(AS_NUMERIC(T0));
-    int stat = *INTEGER(AS_INTEGER(Stat));
-    GetRNGstate();
-    gp = new moran_tableau_t(n,mu,t0,stat);
-    PutRNGstate();
-  }  else {		    // restart the GP from the specified state
-    gp = new moran_tableau_t(RAW(State));
-    // optionally override the stored parameters
-    if (!isNull(N)) gp->popsize(n);
-    if (!isNull(Mu)) gp->moran_rate(mu);
-  }
-  return gp;
+typedef struct {
+  int m, g;
+} moran_state_t;
+
+typedef struct {
+  double mu;			// event rate
+  double psi;                   // sampling rate
+  int n;			// population size
+} moran_parameters_t;
+
+using moran_proc_t = popul_proc_t<moran_state_t,moran_parameters_t,2>;
+using mgp_t = master_t<moran_proc_t>;
+
+// human-readable info
+template<>
+std::string moran_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
+    + YAML_PARAM(mu)
+    + YAML_PARAM(psi)
+    + YAML_PARAM(n);
+  std::string s = tab + "state:\n"
+    + YAML_STATE(m)
+    + YAML_STATE(g);
+  return p+s;
 }
 
-extern "C" {
-
-  // (Sampled or unsampled) Moran genealogy process.
-  // If 'sample = TRUE', one sample is taken at each timepoint.
-  // optionally compute genealogies in Newick form ('tree = TRUE').
-  // optionally return state in diagrammable form ('ill = TRUE').
-  SEXP playMoran (SEXP N, SEXP Mu, SEXP Times, SEXP T0, SEXP Sample, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
-    moran_tableau_t *gp;
-    SEXP out = R_NilValue;
-    GetRNGstate();
-    gp = makeGP(N,Mu,T0,Stat,State);
-    if (*INTEGER(AS_INTEGER(Sample))) {
-      PROTECT(out = playSGP<moran_tableau_t>(gp,Times,Tree,Ill));
-    } else {
-      PROTECT(out = playGP<moran_tableau_t>(gp,Times,Tree,Ill));
-    }
-    PutRNGstate();
-    delete gp;
-    UNPROTECT(1);
-    return out;
-  }
-
-  // Play unsampled Moran W chain
-  // optionally compute genealogies in Newick form ('tree = TRUE').
-  // optionally return state in diagrammable form ('ill = TRUE').
-  SEXP playMoranWChain (SEXP N, SEXP Mu, SEXP Ntimes, SEXP T0, SEXP Tree, SEXP Ill, SEXP Stat, SEXP State) {
-    moran_tableau_t *gp;
-    SEXP out = R_NilValue;
-    GetRNGstate();
-    gp = makeGP(N,Mu,T0,Stat,State);
-    PROTECT(out = playWChain<moran_tableau_t>(gp,Ntimes,Tree,Ill));
-    PutRNGstate();
-    delete gp;
-    UNPROTECT(1);
-    return out;
-  }
-
+template<>
+void moran_proc_t::update_params (double *p, int n) {
+  int m = 0;
+  PARAM_SET(mu);
+  PARAM_SET(psi);
+  if (m != n) err("wrong number of parameters!");
 }
+
+template<>
+void moran_proc_t::update_IVPs (double *p, int n) {
+  int m = 0;
+  PARAM_SET(n);
+  if (m != n) err("wrong number of parameters!");
+}
+
+template<>
+void moran_proc_t::valid (void) const {
+  if (params.mu <= 0) err("'mu' should be positive!");
+}
+
+template<>
+double moran_proc_t::event_rates (double *rate, int n) const {
+  int m = 0;
+  double total = 0;
+  RATE_CALC(params.mu * params.n);		// birth/death
+  RATE_CALC(params.psi * params.n);		// sample
+  if (m != n) err("wrong number of events!");
+  return total;
+}
+
+template<>
+void mgp_t::rinit (void) {
+  state.m = 0; state.g = 0;
+  graft(0,params.n);
+}
+
+template<>
+void mgp_t::jump (int event) {
+  switch (event) {
+  case 0:                     // birth
+    state.m += 1;
+    birth();
+    death();
+    break;
+  case 1:                     // sample
+    state.g += 1;
+    sample();
+    break;
+  default:						    // #nocov
+    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+    break;
+  }
+}
+
+GENERICS(Moran,mgp_t)

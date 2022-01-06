@@ -1,7 +1,5 @@
-playSIRwS(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,times=c(0,5),t0=0,tree=TRUE) -> x
-y <- getInfo(x)
-newick2df(y$tree, time=5, show_branches=TRUE) -> z
-
-# compare to y$lineages
-y$lineages |>
-  all.equal(tail(z,-1)[,1:2],tolerance=1e-5)
+runSIR(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,time=5,t0=0) |>
+  getInfo(tree=TRUE) |>
+  getElement("tree") |>
+  newick2df()
+  
