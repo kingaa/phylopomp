@@ -1,0 +1,39 @@
+name: Moran
+description: The classical Moran model
+details: |-
+   The Markov genealogy process induced by the classical Moran process, in which birth/death events occur at a constant rate and the population size remains constant.
+ndeme: 1
+parameter:
+  mu:
+    name: mu
+    description: per capita event rate
+    type: double
+    default: 1.0
+  psi:
+    name: psi
+    description: per capita sampling rate
+    default: 1.0
+    type: double
+ivp:
+  'n':
+    name: 'n'
+    description: population size
+    default: 100
+    type: int
+state:
+  'm':
+    name: 'm'
+    type: int
+  g:
+    name: g
+    type: int
+rinit: |-
+    state.m = state.g = 0;
+    graft(0,params.n);
+events:
+  moran:
+    rate: params.mu * params.n
+    jump: state.m += 1; birth(); death();
+  sample:
+    rate: params.psi * params.n
+    jump: state.g += 1; sample();

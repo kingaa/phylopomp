@@ -1,4 +1,4 @@
-// SI2R: Two-deme model of superspreading (C++)
+// SIIR: Two-strain SIR model (C++)
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
@@ -9,11 +9,11 @@ typedef struct {
   int I2;
   int R;
   double N;
-} si2r_state_t;
+} siir_state_t;
 
 typedef struct {
-  double Beta;
-  double mu;
+  double Beta1;
+  double Beta1;
   double gamma;
   double delta;
   double psi1;
@@ -21,19 +21,20 @@ typedef struct {
   double sigma12;
   double sigma21;
   int S0;
-  int I0;
+  int I1_0;
+  int I2_0;
   int R0;
-} si2r_parameters_t;
+} siir_parameters_t;
 
-using si2r_proc_t = popul_proc_t<si2r_state_t,si2r_parameters_t,9>;
-using si2r_genealogy_t = master_t<si2r_proc_t,2>;
+using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
+using siir_genealogy_t = master_t<siir_proc_t,2>;
 
 template<>
-std::string si2r_proc_t::yaml (std::string tab) const {
+std::string siir_proc_t::yaml (std::string tab) const {
   std::string t = tab + "  ";
   std::string p = tab + "parameter:\n"
-    + YAML_PARAM(Beta)
-    + YAML_PARAM(mu)
+    + YAML_PARAM(Beta1)
+    + YAML_PARAM(Beta1)
     + YAML_PARAM(gamma)
     + YAML_PARAM(delta)
     + YAML_PARAM(psi1)
@@ -41,7 +42,8 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(sigma12)
     + YAML_PARAM(sigma21)
     + YAML_PARAM(S0)
-    + YAML_PARAM(I0)
+    + YAML_PARAM(I1_0)
+    + YAML_PARAM(I2_0)
     + YAML_PARAM(R0);
   std::string s = tab + "state:\n"
     + YAML_STATE(S)
@@ -53,10 +55,10 @@ std::string si2r_proc_t::yaml (std::string tab) const {
 }
 
 template<>
-void si2r_proc_t::update_params (double *p, int n) {
+void siir_proc_t::update_params (double *p, int n) {
   int m = 0;
-  PARAM_SET(Beta);
-  PARAM_SET(mu);
+  PARAM_SET(Beta1);
+  PARAM_SET(Beta1);
   PARAM_SET(gamma);
   PARAM_SET(delta);
   PARAM_SET(psi1);
@@ -67,16 +69,17 @@ void si2r_proc_t::update_params (double *p, int n) {
 }
 
 template<>
-void si2r_proc_t::update_IVPs (double *p, int n) {
+void siir_proc_t::update_IVPs (double *p, int n) {
   int m = 0;
   PARAM_SET(S0);
-  PARAM_SET(I0);
+  PARAM_SET(I1_0);
+  PARAM_SET(I2_0);
   PARAM_SET(R0);
   if (m != n) err("wrong number of initial-value parameters!");
 }
 
 template<>
-double si2r_proc_t::event_rates (double *rate, int n) const {
+double siir_proc_t::event_rates (double *rate, int n) const {
   int m = 0;
   double total = 0;
   RATE_CALC(params.Beta * state.S * state.I1 / state.N);
@@ -93,56 +96,50 @@ double si2r_proc_t::event_rates (double *rate, int n) const {
 }
 
 template<>
-void si2r_genealogy_t::rinit (void) {
+void siir_genealogy_t::rinit (void) {
   state.S = params.S0;
-  state.I1 = params.I0;
-  state.I2 = 0;
-  state.R = params.R0;
-  state.N = double(params.S0+params.I0+params.R0);
-  graft(0,params.I0);
+state.I1 = params.I1_0;
+state.I2 = params.I2_0;
+state.R = params.R0;
+state.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
+graft(0,params.I1_0);
+graft(1,params.I2_0);
 }
 
 template<>
-void si2r_genealogy_t::jump (int event) {
+void siir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S -= 1; state.I1 += 1; birth(0,0);
-    break;
-  case 1:
-    {
-      int n = 1+int(rgeom(1.0/params.mu));
-      if (state.S >= n) {
-        state.S -= n; state.I1 += n; birth(1,0,n);
-      } else {
-        birth(1,0,state.S); state.I1 += state.S; state.S = 0;
-      }
-    }
-    break;
-  case 2:
-    state.I1 -= 1; state.R += 1; death(0);
-    break;
-  case 3:
-    state.I2 -= 1; state.R += 1; death(1);
-    break;
-  case 4:
-    sample(0);
-    break;
-  case 5:
-    sample(1);
-    break;
-  case 6:
-    state.I1 -= 1; state.I2 += 1; migrate(0,1);
-    break;
-  case 7:
-    state.I1 += 1; state.I2 -= 1; migrate(1,0);
-    break;
-  case 8:
-    state.R -= 1; state.S += 1;
-    break;
+      state.S -= 1; state.I1 += 1; birth(0,0);
+      break;
+    case 1:
+      state.S -= 1; state.I2 += 1; birth(1,1);
+      break;
+    case 2:
+      state.I1 -= 1; state.R += 1; death(0);
+      break;
+    case 3:
+      state.I2 -= 1; state.R += 1; death(1);
+      break;
+    case 4:
+      sample(0);
+      break;
+    case 5:
+      sample(1);
+      break;
+    case 6:
+      state.I1 -= 1; state.I2 += 1; migrate(0,1);
+      break;
+    case 7:
+      state.I1 += 1; state.I2 -= 1; migrate(1,0);
+      break;
+    case 8:
+      state.R -= 1; state.S += 1;
+      break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
 }
 
-GENERICS(SI2R,si2r_genealogy_t)
+GENERICS(SIIR,siir_genealogy_t)

@@ -1,0 +1,44 @@
+name: LBDP
+description: Linear birth-death-sampling model
+details: |-
+  The genealogy process induced by a simple linear birth-death process with constant-rate sampling.
+ndeme: 1
+parameter:
+  lambda:
+    name: lambda
+    description: per capita birth rate
+    type: double
+    default: 1.3
+  mu:
+    name: mu
+    description: per capita death rate
+    type: double
+    default: 1.0
+  psi:
+    name: psi
+    description: per capita sampling rate
+    default: 1.0
+    type: double
+ivp:
+  n0:
+    name: n0
+    description: initial population size
+    default: 10
+    type: int
+state:
+  'n':
+    name: 'n'
+    type: int
+rinit: |-
+    state.n = params.n0;
+    graft(0,params.n0);
+events:
+  birth:
+    rate: params.lambda * state.n
+    jump: state.n += 1; birth();
+  death:
+    jump: state.n -= 1; death();
+    rate: params.mu * state.n
+  sample:
+    rate: params.psi * state.n
+    jump: sample();
