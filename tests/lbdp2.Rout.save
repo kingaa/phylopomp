@@ -1,0 +1,56 @@
+
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="lbdp2-%02d.png",res=100)
+> suppressPackageStartupMessages({
++   library(phylopomp)
++   library(tidyverse)
++   library(pomp)
++ })
+> theme_set(theme_bw())
+> set.seed(442131820)
+> options(digits=3)
+> 
+> runLBDP(time=2,lambda=4,n0=1) -> x
+> x |> plot()
+> 
+> x |>
++   lineages() |>
++   mutate(
++     code=coalesce(lineages-lag(lineages),2)
++   ) -> dat
+> 
+> dat |> lbdp_exact(lambda=2,mu=1,psi=1)
+[1] 9.21
+> 
+> replicate(
++   n=10,
++   dat |>
++     lbdp_pomp(lambda=2,mu=1,psi=1) |>
++     pfilter(Np=10000) |>
++     logLik()
++ ) |>
++   logmeanexp(se=TRUE)
+           se 
+9.2145 0.0559 
+> 
+> dev.off()
+null device 
+          1 
+> 

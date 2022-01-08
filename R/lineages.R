@@ -85,3 +85,15 @@ plot.gplin <- function (
 globalVariables(
   c("deme","time","lineages")
 )
+
+##' @method as.data.frame gplin
+##' @keywords internal
+##' @inheritParams base::as.data.frame
+##' @details
+##' An object of class \sQuote{gplin} is coerced to a data frame
+##' by means of \code{as.data.frame}.
+##' @export
+as.data.frame.gplin <- function (x, ...) {
+  class(x) <- setdiff(class(x),"gplin")
+  as.data.frame(x)
+}
