@@ -64,7 +64,7 @@ continueLBDP <- function (
 ##' \Stadler2010
 ##' 
 ##' @export
-lbdp_exact <- function (data, lambda, mu, psi) {
+lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Theorem 3.5 in Stadler (2010) with rho=0
 
   ## Here, we reverse the direction of time.
@@ -102,15 +102,21 @@ lbdp_exact <- function (data, lambda, mu, psi) {
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
 
-##' @importFrom utils tail
-  tf <- tail(data$time,1L)
-  x <- tf-data$time[data$code==1 | data$code==2] ## coalescence times (including root time)
-  y <- tf-data$time[data$code==-1]                ## live samples
-  k <- sum(data$code==0)  ## k: no. of dead samples
-  m <- sum(data$code==-1) ## m: no. of live samples
-  ##  if (m - length(x) != data$lineages[1L]-1L)
-  if (m - length(x) != 0L)
+  ndat <- nrow(data)
+  code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
+  code[ndat] <- -2L
+  n0 <- as.integer(n0)
+  if (n0 < 1) stop(sQuote("n0")," must be a positive integer.",call.=FALSE)
+  tf <- data$time[ndat]
+  x0 <- tf-data$time[1L]      ## root time
+  x <- tf-data$time[code==1]  ## coalescence times
+  y <- tf-data$time[code==-1] ## live samples
+  n <- data$lineages[1L]      ## number of roots
+  k <- sum(code==0)           ## number of dead samples
+  m <- sum(code==-1)          ## number of live samples
+  if (m - n != length(x))
     stop("internal inconsistency in ",sQuote("data"),".",call.=FALSE)
+  ##  print(c(x0=x0,tf=tf,m=m,n=n,k=k,n0=n0))
 
   ## A simple fractional linear transformation (1-z)/(1+z),
   ## defined on the whole of the Riemann sphere.
@@ -130,7 +136,7 @@ lbdp_exact <- function (data, lambda, mu, psi) {
   a <- (lambda+mu+psi)/2/lambda
   b <- d/2/lambda
   z0 <- f((1-a)/b)
-
+  
   p0 <- function (t) {
     a+b*f(z0*exp(d*t))
   }
@@ -141,27 +147,43 @@ lbdp_exact <- function (data, lambda, mu, psi) {
     e/g/g
   }
 
-  (m-1)*log(2*lambda)+(k+m)*log(psi)+
+  lchoose(n0,n)+
+    lfactorial(n)+
+    (n0-n)*log(p0(x0))+
+    (m-n)*log(2*lambda)+
+    (k+m)*log(psi)+
+    n*log(Q(x0))+
     sum(log(Q(x)))+
     sum(log(p0(y)/Q(y)))
 }
 
 ##' @name lbdp_pomp
 ##' @rdname lbdp
-##'
 ##' @details
 ##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 ##'
 ##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
 ##'
-##' @importFrom pomp pomp onestep covariate_table
+##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact
+##' @param method integration method
+##' @param delta.t Euler step-size when \code{method="euler"} is chosen
 ##'
 ##' @export
 
-lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0,
+  method = c("gillespie", "euler"), delta.t = NULL)
 {
   data <- as.data.frame(data)
+  ndat <- nrow(data)
+  code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
+  code[ndat] <- -2L
+  data$code <- code
+  method <- match.arg(method)
+  delta.t <- as.double(delta.t)
+  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
+    stop(sQuote("delta.t")," must be specified when method = ",
+      dQuote("euler"),".",.call=FALSE)
   data["time"] |>
     pomp(
       times="time",t0=t0,
@@ -177,6 +199,11 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
         times="time",
         order="constant"
       ),
-      rprocess=onestep("lbdp_gill")
+      rprocess=
+        if (method=="gillespie") {
+          onestep("lbdp_gill")
+        } else {
+          euler("lbdp_euler",delta.t=delta.t)
+        }
     )
 }

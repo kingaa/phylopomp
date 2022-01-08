@@ -86,6 +86,10 @@ globalVariables(
   c("deme","time","lineages")
 )
 
+##' @title Coerce to a Data Frame
+##' @description Functions to coerce an object to a data frame.
+##' @name as.data.frame
+##' @rdname as_data_frame
 ##' @method as.data.frame gplin
 ##' @keywords internal
 ##' @inheritParams base::as.data.frame
