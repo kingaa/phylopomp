@@ -92,15 +92,9 @@ dt {
 }
 </style>
 
-### Illustration of the Genealogy Process
-
-- [Moran genealogy process](./mgp.html)
-
 ### Checking the theoretical formulae for several models.
 
-- [Moran process](./moran.html)
-- [Linear birth-death process](./lbdp.html)
-- [SIR with sampling (SIRwS)](./sirws.html)
+- [Linear birth-death-sampling process](./lbdp_compar.html)
 
 - <a href="#" onclick="goBack()">Back to the **phylopomp** package index</a>
 

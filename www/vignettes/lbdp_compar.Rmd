@@ -1,0 +1,173 @@
+---
+title: Comparison of particle-filter likelihood with exact formula for the linear birth-death-sampling process
+author: A.A. King
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Verification of LBDP computations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitr_setup,include=FALSE,purl=FALSE,cache=FALSE}
+library(knitr)
+opts_chunk$set(
+             progress=TRUE,
+             prompt=FALSE,tidy=FALSE,highlight=TRUE,
+             strip.white=TRUE,
+             message=FALSE,
+             warning=FALSE,
+             error=TRUE,
+             echo=TRUE,
+             cache=TRUE,
+             cache.extra=rand_seed,
+             results='markup',
+             fig.show='asis',
+             fig.path=paste0("tmp/","lbdp_compar","/"),
+             cache.path=paste0("tmp/","lbdp_compar","/"),
+             size='small',
+             fig.align='center',
+             fig.dim=c(6,6),
+             dpi=100,
+             dev='png',
+             dev.args=list(bg='transparent')
+           )
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+```
+
+```{r packages,include=FALSE,cache=FALSE}
+library(tidyverse)
+library(pomp)
+library(phylopomp)
+library(cowplot)
+stopifnot(getRversion() >= "4.1")
+stopifnot(packageVersion("pomp")>="3.2")
+stopifnot(packageVersion("phylopomp")>="0.0.999.7")
+theme_set(theme_bw(base_family="serif"))
+options(dplyr.summarise.inform=FALSE)
+set.seed(1159254136)
+```
+
+The following codes simulate a realization of the genealogy process induced by a linear birth-death-sampling process with birth rate $\lambda$, death rate $\mu$ and sampling rate $\psi$.
+
+
+```{r lbdp1}
+runLBDP(lambda=1.5,mu=0.8,psi=1,time=5,n0=5) -> x
+x |> lineages() -> lbdp_dat
+```
+
+```{r lbdp1_plot,echo=FALSE}
+plot_grid(
+  x |> plot(points=TRUE),
+  lbdp_dat |> plot(),
+  ncol=1,
+  align="hv",
+  rel_heights=c(2,1)
+)
+```
+
+The following designs a slice through parameter space in the $\lambda$ direction.
+In addition, three different levels of computational effort are applied (as measured by the number of particles, `Np`).
+
+
+```{r lbdp2}
+expand_grid(
+  rep=1:4,
+  lambda=seq(0.7,2.5,by=0.1),
+  mu=0.8,
+  psi=1,
+  time=5,
+  n0=5,
+  Np=c(1000,10000,100000)
+) -> params
+```
+
+Next, we perform a sequential Monte Carlo (particle filter) computation at each point in the above design.
+
+```{r lbdp3,eval=FALSE}
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+registerDoRNG(728604304)
+foreach (
+  p=iter(params,"row"),
+  .inorder=FALSE,
+  .packages=c("magrittr","phylopomp","pomp"),
+  .combine=bind_rows
+) %dopar% {
+  p %$% {
+    lbdp_dat |>
+      lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
+  } -> ll1
+  p %$% {
+    lbdp_dat |>
+      lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
+      pfilter(Np=Np) |>
+      logLik()
+  } -> ll2
+  bind_cols(p,exact=ll1,pf=ll2)
+}-> params
+```
+```{r lbdp3_eval,include=FALSE}
+bake(
+  file="lbdp_compar.rds",
+  dependson=c("x","params"),
+  {
+    <<lbdp3>>
+  }
+) -> params
+```
+
+```{r lbdp3_plot,echo=FALSE}
+params |>
+  pivot_longer(c(exact,pf)) |>
+  unite(name,name,Np) |>
+  mutate(
+    name=if_else(grepl("exact",name),"exact",name),
+    name=gsub("pf_","",name)
+  ) |>
+  group_by(lambda,mu,psi,time,n0,name) |>
+  summarize(
+    type=c("logLik","logLik_se"),
+    value=logmeanexp(value,se=TRUE)
+  ) |>
+  ungroup() |>
+  pivot_wider(names_from=type) |>
+  mutate(
+    y=logLik,
+    ymax=logLik+2*logLik_se,
+    ymin=logLik-2*logLik_se
+  ) |>
+  filter(logLik>max(logLik)-16) |>
+  ggplot(aes(x=lambda,group=name,color=name,
+    y=y,ymin=ymin,ymax=ymax))+
+  geom_errorbar(
+    position="dodge"
+  )+
+  geom_vline(xintercept=1.5,linetype=2)+
+  scale_color_manual(
+    labels=c(
+      exact="exact",
+      `1000`="1000 particles",
+      `10000`="10000 particles",
+      `1e+05`="100000 particles"
+    ),
+    values=c(
+      exact="black",
+      `1000`="blue",
+      `10000`="red",
+      `1e+05`="goldenrod"
+    )
+  )+
+  labs(
+    color=character(0),
+    y="log likelihood",
+    x=expression(lambda)
+  )+
+  theme(
+    legend.position=c(0.5,0.22),
+    legend.background=element_rect(fill="white")
+  )
+```

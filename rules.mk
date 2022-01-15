@@ -1,4 +1,5 @@
 REXE = R --vanilla
+RINT = emacs -f R
 RCMD = $(REXE) CMD
 RCMD_ALT = R --no-save --no-restore CMD
 RSCRIPT = Rscript --vanilla
@@ -64,9 +65,9 @@ library/$(PKG)/html/NEWS.html: inst/NEWS.Rd
 	$(RCMD) Rdconv -t html $^ -o $@
 
 session: install
-	exec $(REXE)
+	exec $(RINT)
 
-debug: REXE = R -d gdb
+debug: RINT = R -d gdb
 debug: session
 
 revdeps: install
@@ -200,3 +201,4 @@ clean:
 	$(RM) -r lib
 	$(RM) -r *-Ex.Rout *-Ex.timings *-Ex.pdf
 	$(RM) *.tar.gz $(PKGVERS).zip $(PKGVERS).tgz $(PKG).pdf
+	$(MAKE)	-C www/vignettes clean

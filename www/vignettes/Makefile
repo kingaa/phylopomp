@@ -5,7 +5,7 @@ CP = cp
 TOUCH = touch
 INSTALL = install
 
-default: index.html sirws.html moran.html lbdp.html lbdp_test.html mgp.html
+default: index.html lbdp_compar.html
 
 %.tex: %.Rnw
 	$(RSCRIPT) -e "library(knitr); knit(\"$*.Rnw\")"
@@ -40,5 +40,5 @@ default: index.html sirws.html moran.html lbdp.html lbdp_test.html mgp.html
 %.R: %.Rmd
 	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"
 
-fresh:
+clean:
 	$(RM) -r tmp
