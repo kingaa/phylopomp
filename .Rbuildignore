@@ -9,6 +9,7 @@ inst/doc/(.+?).Rmd
 inst/doc/(.+?)\.Rout$
 inst/doc/CLUSTER(.*)
 man/roxygen
+Doxyfile
 LICENSE\.md$
 README\.md$
 TODO\.md$

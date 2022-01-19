@@ -92,6 +92,8 @@ list-style: none;
 }
 </style>
 
+- <a href="https://kingaa.github.io/manuals/phylopomp/">**phylopomp** manual</a>
+
 - <a href="#" onclick="goBack()">Back to the **phylopomp** package index</a>
 
 <script>

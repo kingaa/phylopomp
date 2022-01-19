@@ -50,9 +50,11 @@ htmlhelp: install news manual
 	(cd $(MANUALDIR); (cat links.ed && echo w ) | ed - html/00Index.html)
 	$(CP) $(PKG).pdf $(MANUALDIR)
 	$(CP) $(REPODIR)/assets/R.css $(MANUALDIR)/html
+	doxygen
 
 vignettes: manual install
 	$(MAKE)	-C www/vignettes
+	rsync --delete -a www/vignettes/ $(MANUALDIR)/vignettes
 
 news: library/$(PKG)/html/NEWS.html
 
@@ -92,7 +94,6 @@ publish: dist manual htmlhelp
 	$(RSCRIPT) -e 'drat::insertPackage("$(PKGVERS).tar.gz",repodir="$(REPODIR)",action="prune")'
 	-$(RSCRIPT) -e 'drat::insertPackage("$(PKGVERS).tgz",repodir="$(REPODIR)",action="prune")'
 	-$(RSCRIPT) -e 'drat::insertPackage("$(PKGVERS).zip",repodir="$(REPODIR)",action="prune")'
-	$(CP) $(PKG).pdf $(MANUALDIR)
 
 rhub:
 	$(REXE) -e 'library(rhub); check_for_cran(); check_on_windows(); check(platform="macos-highsierra-release-cran");'
