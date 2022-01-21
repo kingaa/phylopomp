@@ -64,28 +64,33 @@ public:
     }
     return o;
   };
-  //! inform all balls as to their holder
-  //! needed in deserialization
-  void set_holder (node_t* p) {
+
+protected:
+  //! Needed in deserialization.
+  //! Inform all balls as to their holder.
+  void repair_holder (node_t* p) {
     for (ball_it i = begin(); i != end(); i++) {
       (*i)->holder() = p;
     }
   };
-  //! Sets the owner: needed in deserialization.
-  void set_owners (const std::unordered_map<name_t,node_t*>& node_name,
-		   std::unordered_map<name_t,ball_t*> *ball_name) {
+  
+public:
+  //! Needed in deserialization.
+  //! This function repairs the links green balls and their names.
+  void repair_owners (const std::unordered_map<name_t,node_t*>& node_name,
+                      std::unordered_map<name_t,ball_t*> *ball_name) {
     std::unordered_map<name_t,node_t*>::const_iterator n;
     for (ball_it i = begin(); i != end(); i++) {
       ball_t *b = *i;
       if (b->is(green)) {
-	n = node_name.find(b->uniq);
-	if (n != node_name.end()) {
-	  node_t *p = n->second;
-	  b->owner() = p;
-	  ball_name->insert({b->uniq,b});
-	} else {
-	  err("in '%s': cannot find ball %ld",__func__,b->uniq); // #nocov
-	}
+        n = node_name.find(b->uniq);
+        if (n != node_name.end()) {
+          node_t *p = n->second;
+          b->owner() = p;
+          ball_name->insert({b->uniq,b});
+        } else {
+          err("in '%s': cannot find ball %ld",__func__,b->uniq); // #nocov
+        }
       }
     }
   };

@@ -239,7 +239,7 @@ private:
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green,d);
     ball_t *b = new ball_t(p,u,col,d);
-    p->set_owner(g);
+    p->green_ball() = g;
     p->insert(g);
     p->insert(b);
     return p;
@@ -408,11 +408,11 @@ public:
       while (!empty() && n->slate > tnew) {
         if (n->holds(black)) {
           ball_t *b = n->last_ball(); // must be black!
-          if (!b->is(black)) err("cannot happen!"); // #nocov
+          if (!b->is(black)) err("in '%s': inconceivable!",__func__); // #nocov
           drop(b);
         } else if (n->holds(red)) {
           ball_t *b = n->last_ball(); // must be red!
-          if (!b->is(red)) err("cannot happen!"); // #nocov
+          if (!b->is(red)) err("in '%s': inconceivable!",__func__); // #nocov
           b->color = black;
           swap(b,n->green_ball());
           destroy_node(n);

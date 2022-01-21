@@ -16,14 +16,14 @@ typedef typename std::list<node_t*>::const_iterator node_it;
 //! A sequence of nodes.
 class nodeseq_t : public std::list<node_t*> {
 
- private:
+private:
   //! clean up: delete all nodes, reset globals
   void clean (void) {
     for (node_it i = begin(); i != end(); i++) delete *i;
     clear();
   };
 
- public:
+public:
   //! destructor
   ~nodeseq_t (void) {
     clean();
@@ -62,22 +62,25 @@ class nodeseq_t : public std::list<node_t*> {
       node_names.insert({p->uniq,p});
     }
     for (node_it i = G.begin(); i != G.end(); i++) {
-      (*i)->set_owners(node_names,&ball_names);
+      (*i)->repair_owners(node_names,&ball_names);
     }
-    G.set_owners(ball_names);
+    G.repair_owners(ball_names);
     return o;
   };
-  //! Needed in deserialization
-  void set_owners (std::unordered_map<name_t,ball_t*>& names) {
+
+private:
+  //! Needed in deserialization.
+  //! This function repairs the links green balls and their names.
+  void repair_owners (std::unordered_map<name_t,ball_t*>& names) {
     std::unordered_map<name_t,ball_t*>::const_iterator n;
     for (node_it i = begin(); i != end(); i++) {
       node_t *p = *i;
       n = names.find(p->uniq);
       if (n != names.end()) {
-	ball_t *b = n->second;
-	p->set_owner(b);
+        ball_t *b = n->second;
+        p->green_ball() = b;
       } else {
-	err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
+        err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
       }
       
     }
@@ -94,14 +97,14 @@ private:
     return (empty()) ? R_NaReal : back()->slate;
   }
 
- public:
+public:
   
   //! Get all balls of a color.
   pocket_t* colored (color_t col) const {
     pocket_t *p = new pocket_t;
     for (node_it i = begin(); i != end(); i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-	if ((*j)->is(col)) p->insert(*j);
+        if ((*j)->is(col)) p->insert(*j);
       }
     }
     return p;
@@ -111,8 +114,8 @@ private:
     size_t count = 1;
     for (node_it i = begin(); i != end(); i++) {
       if (t < (*i)->slate) {
-	t = (*i)->slate;
-	count++;
+        t = (*i)->slate;
+        count++;
       }
     }
     return count;

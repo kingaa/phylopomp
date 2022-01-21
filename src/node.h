@@ -53,7 +53,7 @@ public:
     memcpy(&p.slate,o,sizeof(slate_t)); o += sizeof(slate_t);
     p.uniq = buf[0]; p.deme = buf[1];
     o = (o >> reinterpret_cast<pocket_t&>(p));
-    p.set_holder(&p);
+    p.repair_holder(&p);
     return o;
   };
 
@@ -83,8 +83,8 @@ public:
     return _green_ball;
   };
   //! set green ball
-  void set_owner (ball_t *g) {
-    _green_ball = g;
+  ball_t*& green_ball (void) {
+    return _green_ball;
   };
   bool holds_own (void) const {
     return (_green_ball->holder() == this);
@@ -185,7 +185,7 @@ public:
       case purple: case red: case blue:
         o += b->newick(0);
         break;
-      default:					    // # nocov
+      default:                                      // # nocov
         err("in '%s': c'est impossible!",__func__); // # nocov
         break;
       }
