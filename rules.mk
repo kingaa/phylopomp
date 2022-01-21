@@ -50,6 +50,7 @@ htmlhelp: install news manual
 	(cd $(MANUALDIR); (cat links.ed && echo w ) | ed - html/00Index.html)
 	$(CP) $(PKG).pdf $(MANUALDIR)
 	$(CP) $(REPODIR)/assets/R.css $(MANUALDIR)/html
+	mkdir -p $(MANUALDIR)/source
 	doxygen
 
 vignettes: manual install

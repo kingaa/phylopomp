@@ -13,30 +13,31 @@
 
 typedef typename std::list<node_t*>::const_iterator node_it;
 
+//! A sequence of nodes.
 class nodeseq_t : public std::list<node_t*> {
 
  private:
-  // clean up: delete all nodes, reset globals
+  //! clean up: delete all nodes, reset globals
   void clean (void) {
     for (node_it i = begin(); i != end(); i++) delete *i;
     clear();
   };
 
  public:
-  // destructor
+  //! destructor
   ~nodeseq_t (void) {
     clean();
   };
   
   // SERIALIZATION
-  // size of serialized binary form
+  //! size of serialized binary form
   size_t bytesize (void) const {
     size_t s = sizeof(size_t);
     for (node_it i = begin(); i != end(); i++)
       s += (*i)->bytesize();
     return s;
   };
-  // binary serialization
+  //! binary serialization
   friend raw_t* operator>> (const nodeseq_t& G, raw_t* o) {
     size_t nnode = G.size();
     memcpy(o,&nnode,sizeof(size_t)); o += sizeof(size_t);
@@ -45,7 +46,7 @@ class nodeseq_t : public std::list<node_t*> {
     }
     return o;
   };
-  // binary deserialization
+  //! binary deserialization
   friend raw_t* operator>> (raw_t* o, nodeseq_t& G) {
     G.clean();
     std::unordered_map<name_t,node_t*> node_names;
@@ -66,6 +67,7 @@ class nodeseq_t : public std::list<node_t*> {
     G.set_owners(ball_names);
     return o;
   };
+  //! Needed in deserialization
   void set_owners (std::unordered_map<name_t,ball_t*>& names) {
     std::unordered_map<name_t,ball_t*>::const_iterator n;
     for (node_it i = begin(); i != end(); i++) {
@@ -83,16 +85,18 @@ class nodeseq_t : public std::list<node_t*> {
   
 private:
 
+  //! Earliest time in the sequence.
   slate_t dawn (void) const {
     return (empty()) ? R_NaReal : front()->slate;
   };
+  //! Latest time in the sequence.
   slate_t dusk (void) const {
     return (empty()) ? R_NaReal : back()->slate;
   }
 
  public:
   
-  // all balls of a color
+  //! Get all balls of a color.
   pocket_t* colored (color_t col) const {
     pocket_t *p = new pocket_t;
     for (node_it i = begin(); i != end(); i++) {
@@ -102,7 +106,7 @@ private:
     }
     return p;
   };
-  // number of distinct timepoints
+  //! Number of distinct timepoints.
   size_t ntime (slate_t t) const {
     size_t count = 1;
     for (node_it i = begin(); i != end(); i++) {
@@ -113,7 +117,7 @@ private:
     }
     return count;
   };
-  // human-readable info
+  //! human-readable info
   std::string describe (void) const {
     std::string o = "";
     for (node_it p = begin(); p != end(); p++) {
@@ -121,7 +125,7 @@ private:
     }
     return o;
   };
-  // human- & machine-readable info
+  //! human- & machine-readable info
   virtual std::string yaml (std::string tab = "") const {
     std::string o = "";
     std::string t = tab + "  ";
@@ -130,7 +134,7 @@ private:
     }
     return o;
   };
-  // R list description
+  //! R list description
   SEXP structure (void) const {
     SEXP Nodes;
     PROTECT(Nodes = NEW_LIST(size()));
@@ -141,7 +145,7 @@ private:
     UNPROTECT(1);
     return Nodes;
   };
-  // put genealogy at current time into Newick format.
+  //! put genealogy at time `t` into Newick format.
   std::string newick (slate_t t, bool compact = true) const {
     slate_t te = dawn();
     std::string o = "(i_NA_NA:0.0,i_NA_NA:0.0";

@@ -3,10 +3,12 @@
 #include "popul_proc.h"
 #include "generics.h"
 
+//! LBDP process state.
 typedef struct {
   int n;
 } lbdp_state_t;
 
+//! LBDP process parameters.
 typedef struct {
   double lambda;
   double mu;

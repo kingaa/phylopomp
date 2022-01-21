@@ -3,6 +3,7 @@
 #include "popul_proc.h"
 #include "generics.h"
 
+//! SIIR process state.
 typedef struct {
   int S;
   int I1;
@@ -11,11 +12,11 @@ typedef struct {
   double N;
 } siir_state_t;
 
+//! SIIR process parameters.
 typedef struct {
   double Beta1;
-  double Beta1;
+  double Beta2;
   double gamma;
-  double delta;
   double psi1;
   double psi2;
   double sigma12;
@@ -26,7 +27,7 @@ typedef struct {
   int R0;
 } siir_parameters_t;
 
-using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
+using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,8>;
 using siir_genealogy_t = master_t<siir_proc_t,2>;
 
 template<>
@@ -34,9 +35,8 @@ std::string siir_proc_t::yaml (std::string tab) const {
   std::string t = tab + "  ";
   std::string p = tab + "parameter:\n"
     + YAML_PARAM(Beta1)
-    + YAML_PARAM(Beta1)
+    + YAML_PARAM(Beta2)
     + YAML_PARAM(gamma)
-    + YAML_PARAM(delta)
     + YAML_PARAM(psi1)
     + YAML_PARAM(psi2)
     + YAML_PARAM(sigma12)
@@ -58,9 +58,8 @@ template<>
 void siir_proc_t::update_params (double *p, int n) {
   int m = 0;
   PARAM_SET(Beta1);
-  PARAM_SET(Beta1);
+  PARAM_SET(Beta2);
   PARAM_SET(gamma);
-  PARAM_SET(delta);
   PARAM_SET(psi1);
   PARAM_SET(psi2);
   PARAM_SET(sigma12);
@@ -82,15 +81,14 @@ template<>
 double siir_proc_t::event_rates (double *rate, int n) const {
   int m = 0;
   double total = 0;
-  RATE_CALC(params.Beta * state.S * state.I1 / state.N);
-  RATE_CALC(params.Beta * state.S * state.I2 / state.N);
+  RATE_CALC(params.Beta1 * state.S * state.I1 / state.N);
+  RATE_CALC(params.Beta2 * state.S * state.I2 / state.N);
   RATE_CALC(params.gamma * state.I1);
   RATE_CALC(params.gamma * state.I2);
   RATE_CALC(params.psi1 * state.I1);
   RATE_CALC(params.psi2 * state.I2);
   RATE_CALC(params.sigma12 * state.I1);
   RATE_CALC(params.sigma21 * state.I2);
-  RATE_CALC(params.delta * state.R);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -132,9 +130,6 @@ void siir_genealogy_t::jump (int event) {
       break;
     case 7:
       state.I1 += 1; state.I2 -= 1; migrate(1,0);
-      break;
-    case 8:
-      state.R -= 1; state.S += 1;
       break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);

@@ -1,11 +1,5 @@
 // -*- C++ -*-
 // NODE CLASS
-// each node has:
-// - a unique name (uniq)
-// - a deme
-// - a pocket containting two or more balls
-// - a "slate" with the time
-// - a pointer to its own green ball
 
 #ifndef _NODE_H_
 #define _NODE_H_
@@ -16,6 +10,14 @@
 #include <string>
 #include <cstring>
 
+//! Encodes a genealogical node.
+
+//! Each node has:
+//! - a unique name (uniq)
+//! - a deme
+//! - a pocket containting two or more balls
+//! - a "slate" with the time
+//! - a pointer to its own green ball
 class node_t : public pocket_t {
 
 private:
@@ -30,12 +32,12 @@ public:
   slate_t slate;
 
 public:
-  // size of binary serialization
+  //! size of binary serialization
   size_t bytesize (void) const {
     return 2*sizeof(name_t) + sizeof(slate_t)
       + pocket_t::bytesize();
   };
-  // binary serialization of node_t
+  //! binary serialization of node_t
   friend raw_t* operator>> (const node_t &p, raw_t *o) {
     name_t buf[2];
     buf[0] = p.uniq; buf[1] = p.deme;
@@ -43,7 +45,7 @@ public:
     memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
     return reinterpret_cast<const pocket_t&>(p) >> o;
   };
-  // binary deserialization of node_t
+  //! binary deserialization of node_t
   friend raw_t* operator>> (raw_t *o, node_t &p) {
     p.clean();
     name_t buf[2];
@@ -57,30 +59,30 @@ public:
 
 public:
   
-  // basic constructor for node class
+  //! basic constructor for node class
   node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
     uniq = u;
     slate = t;
     deme = d;
     _green_ball = 0;
   };
-  // copy constructor
+  //! copy constructor
   node_t (const node_t &p) = delete;
-  // move constructor
+  //! move constructor
   node_t (node_t && p) = delete;
-  // copy assignment operator
+  //! copy assignment operator
   node_t & operator= (const node_t & p) = delete;
-  // move assignment operator
+  //! move assignment operator
   node_t & operator= (node_t && p) = delete;
-  // destructor
+  //! destructor
   ~node_t (void) {
     clean();
   };
-  // pointer to my green ball
+  //! pointer to my green ball
   ball_t* green_ball (void) const {
     return _green_ball;
   };
-  // set green ball
+  //! set green ball
   void set_owner (ball_t *g) {
     _green_ball = g;
   };
@@ -90,7 +92,7 @@ public:
   bool is_root (void) const {
     return holds_own();
   };
-  // number of descendants
+  //! number of descendants
   int nchildren (bool compact = false) const {
     int n = 0;
     if (compact) {
@@ -109,7 +111,7 @@ public:
     if (holds_own()) n--;
     return n;
   };
-  // increment to lineage count
+  //! increment to lineage count
   void lineage_incr (int *incr) const {
     incr[deme]--;
     for (ball_it i = begin(); i != end(); i++) {
@@ -125,7 +127,7 @@ public:
       }
     }
   };
-  // human-readable info
+  //! human-readable info
   std::string describe (void) const {
     std::string s = "node(" + std::to_string(uniq)
       + "," + std::to_string(deme) + ") ";
@@ -133,7 +135,7 @@ public:
     s += ", t = " + std::to_string(slate) + "\n";
     return s;
   };
-  // R list description
+  //! R list description
   SEXP structure (void) const {
     SEXP O, On, Name, Time, Deme, Pocket;
     PROTECT(O = NEW_LIST(4));
@@ -153,7 +155,7 @@ public:
     UNPROTECT(6);
     return O;
   };
-  // machine-readable info
+  //! machine-readable info
   std::string yaml (std::string tab = "") const {
     std::string t = tab + "  ";
     std::string o = "name: " + std::to_string(uniq) + "\n"
@@ -163,7 +165,7 @@ public:
       + pocket_t::yaml(tab);
     return o;
   };
-  // Newick format
+  //! Newick format
   std::string newick (const slate_t& tnow, const slate_t& tpar) const {
     std::string o = "(";
     int n = nchildren(false);
@@ -194,7 +196,7 @@ public:
       + ":" + std::to_string(slate - tpar);
     return o;
   };
-  // compact Newick format
+  //! compact Newick format
   std::string compact_newick (const slate_t& tnow, const slate_t& tpar) const {
     std::string o1 = "(";
     std::string o2 = "";

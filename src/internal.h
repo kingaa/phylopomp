@@ -55,18 +55,4 @@ inline int set_list_elem (SEXP list, SEXP names, SEXP element,
   return ++pos;
 }
 
-#define OPTIONAL_REAL_PAR(x,X,d) double x;	\
-  if (isNull(X)) {				\
-    x = d;					\
-  } else {					\
-    x = *(REAL(AS_NUMERIC(X)));			\
-  }						\
-  
-#define OPTIONAL_INT_PAR(x,X,d) int x;		\
-  if (isNull(X)) {				\
-    x = d;					\
-  } else {					\
-    x = *(INTEGER(AS_INTEGER(X)));		\
-  }						\
-  
 #endif

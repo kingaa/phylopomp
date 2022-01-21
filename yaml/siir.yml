@@ -10,7 +10,7 @@ parameter:
     type: double
     default: 5
   Beta2:
-    name: Beta1
+    name: Beta2
     description: transmission rate for strain 2
     type: double
     default: 5
@@ -19,11 +19,6 @@ parameter:
     description: recovery rate
     type: double
     default: 1
-  delta:
-    name: delta
-    description: rate of waning of immunity
-    default: 0
-    type: double
   psi1:
     name: psi1
     description: sampling rate for deme 1
@@ -91,10 +86,10 @@ rinit: |-
     graft(1,params.I2_0);
 events:
   I1infect:
-    rate: params.Beta * state.S * state.I1 / state.N
+    rate: params.Beta1 * state.S * state.I1 / state.N
     jump: state.S -= 1; state.I1 += 1; birth(0,0);
   I2infect:
-    rate: params.Beta * state.S * state.I2 / state.N
+    rate: params.Beta2 * state.S * state.I2 / state.N
     jump: state.S -= 1; state.I2 += 1; birth(1,1);
   I1recov:
     jump: state.I1 -= 1; state.R += 1; death(0);
@@ -114,6 +109,3 @@ events:
   move21:
     jump: state.I1 += 1; state.I2 -= 1; migrate(1,0);
     rate: params.sigma21 * state.I2
-  waning:
-    jump: state.R -= 1; state.S += 1;
-    rate: params.delta * state.R

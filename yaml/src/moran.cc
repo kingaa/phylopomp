@@ -3,11 +3,13 @@
 #include "popul_proc.h"
 #include "generics.h"
 
+//! Moran process state.
 typedef struct {
   int m;
   int g;
 } moran_state_t;
 
+//! Moran process parameters.
 typedef struct {
   double mu;
   double psi;

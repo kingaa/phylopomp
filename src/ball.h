@@ -1,12 +1,5 @@
 // -*- C++ -*-
 // BALL CLASS
-// each ball has:
-// - a name (uniq)
-// - a color
-// - a 'holder': a pointer to the node in whose pocket it lies
-// - an 'owner': a pointer to the node in which it was originally created
-// - a deme
-
 #ifndef _BALL_H_
 #define _BALL_H_
   
@@ -14,73 +7,81 @@
 #include <cstring>
 #include "internal.h"
 
-// BALL COLORS
-// NB:
-// The correctness of the algorithms depends on green being the first color.
+//! BALL COLORS
+
+//! NB: The correctness of the algorithms depends on green being the first color.
 typedef enum {green, black, blue, red, grey, purple} color_t;
 static const char* colores[] = {"green", "black", "blue", "red", "grey", "purple"};
 static const char* colorsymb[] = {"g", "o", "b", "r", "z", "p"};
 
 class node_t;
 
+//! Balls function as pointers.
+
+//! Each ball has:
+//! - a globally unique name
+//! - a color
+//! - a "holder": a pointer to the node in whose pocket it lies
+//! - an "owner": a pointer to the node in which it was originally created
+//! - a deme
 class ball_t {
- private:
+private:
   node_t *_holder;
   node_t *_owner;
   name_t _deme;
- public:
+public:
   name_t uniq;
   color_t color;
 public:
-  // size of binary serialization
+  //! size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
-  // binary serialization
+  //! binary serialization
   friend raw_t* operator>> (const ball_t &b, raw_t *o) {
     memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,&b._deme,sizeof(name_t)); o += sizeof(name_t);
     memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
     return o;
   };
-  // binary deserialization
+  //! binary deserialization
   friend raw_t* operator>> (raw_t *o, ball_t &b) {
     memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
     memcpy(&b._deme,o,sizeof(name_t)); o += sizeof(name_t);
     memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
-    b._holder = 0;		// must be set elsewhere
-    b._owner = 0;		// must be set elsewhere
+    b._holder = 0;              // must be set elsewhere
+    b._owner = 0;               // must be set elsewhere
     return o;
   };
- public:
-  // basic constructor for ball class
+public:
+  //! basic constructor for ball class
   ball_t (node_t *who = 0, name_t u = 0, color_t col = green, name_t d = 0) {
     _holder = _owner = who;
     uniq = u;
     color = col;
     _deme = d;
   };
-  // copy constructor
+  //! copy constructor
   ball_t (const ball_t&) = delete;
-  // move constructor
+  //! move constructor
   ball_t (ball_t&&) = delete;
-  // copy assignment operator
+  //! copy assignment operator
   ball_t & operator= (const ball_t&) = delete;
-  // move assignment operator
+  //! move assignment operator
   ball_t & operator= (ball_t&&) = delete;
-  // destructor
+  //! destructor
   ~ball_t (void) = default;
-  // view/change deme
+  //! view/change deme
   name_t& deme (void) {
     if (color != black)
       err("meddle not in the deme of a non-black ball!"); // #nocov
     return _deme;
   };
-  // view/change owner
+  //! view/change owner
   node_t*& owner (void) {
     if (color != green)
       err("meddle not with the owner of a ball that is not green."); // #nocov
     return _owner;
   };
-  // in whose pocket do I lie?
+  //! in whose pocket do I lie?
   node_t*& holder (void) {
     return _holder;
   };
@@ -90,18 +91,18 @@ public:
   bool is (color_t c) const {
     return color==c;
   };
-  // human-readable colors
+  //! human-readable colors
   std::string color_name (void) const {
     return colores[color];
   };
-  // machine-readable color symbols
+  //! machine-readable color symbols
   std::string color_symbol (void) const {
     if (is(green) && _holder==_owner)
-      return "m";		// brown balls
+      return "m";               // brown balls
     else 
       return colorsymb[color];
   };
-  // human-readable info
+  //! human-readable info
   std::string describe (void) const {
     std::string o = color_name()
       + "(" + std::to_string(uniq);
@@ -111,7 +112,7 @@ public:
     o += ")";
     return o;
   };
-  // R list description
+  //! R list description
   SEXP structure (void) const {
     SEXP O, On, Name, Color, Deme;
     int size = (is(black)) ? 3 : 2;
@@ -133,7 +134,7 @@ public:
     UNPROTECT(4);
     return O;
   };
-  // machine-readable info
+  //! machine-readable info
   std::string yaml (std::string tab = "") const {
     std::string o;
     o = "color: " + color_name() + "\n"      
@@ -143,14 +144,14 @@ public:
     }
     return o;
   };
-  // element of a newick representation
+  //! element of a newick representation
   std::string newick (const slate_t &t) const {
     return color_symbol()
       + "_" + std::to_string(_deme)
       + "_" + std::to_string(uniq)
       + ":" + std::to_string(t);
   };
-  // arbitrary order relation
+  //! arbitrary order relation
   friend bool compare (const ball_t*a, const ball_t* b) {
     return (a->uniq < b->uniq) ||
       ((a->uniq == b->uniq) && (a->color < b->color));

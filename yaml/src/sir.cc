@@ -3,6 +3,7 @@
 #include "popul_proc.h"
 #include "generics.h"
 
+//! SIR process state.
 typedef struct {
   int S;
   int I;
@@ -10,8 +11,9 @@ typedef struct {
   double N;
 } sir_state_t;
 
+//! SIR process parameters.
 typedef struct {
-  double Beta1;
+  double Beta;
   double gamma;
   double psi;
   double delta;
@@ -27,7 +29,7 @@ template<>
 std::string sir_proc_t::yaml (std::string tab) const {
   std::string t = tab + "  ";
   std::string p = tab + "parameter:\n"
-    + YAML_PARAM(Beta1)
+    + YAML_PARAM(Beta)
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
     + YAML_PARAM(delta)
@@ -45,7 +47,7 @@ std::string sir_proc_t::yaml (std::string tab) const {
 template<>
 void sir_proc_t::update_params (double *p, int n) {
   int m = 0;
-  PARAM_SET(Beta1);
+  PARAM_SET(Beta);
   PARAM_SET(gamma);
   PARAM_SET(psi);
   PARAM_SET(delta);

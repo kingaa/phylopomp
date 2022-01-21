@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// Generic Markov Population Process Simulator (C++)
+// POPUL_PROC class
 
 #ifndef _POPUL_PROC_H_
 #define _POPUL_PROC_H_
@@ -9,12 +9,13 @@
 
 #include "internal.h"
 
-// POPN_PROC CLASS
-// the class for the simulation of the Markov process
-// - STATE is a datatype that holds the state of the Markov process.
-// - PARAMETERS is a datatype for the model parameters
-// - NEVENT is the number of event-types
-// - NDEME is the number of demes
+//! Population process class.
+
+//! The class for the simulation of the Markov process.
+//! - STATE is a datatype that holds the state of the Markov process.
+//! - PARAMETERS is a datatype for the model parameters
+//! - NEVENT is the number of event-types
+//! - NDEME is the number of demes
 template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
 class popul_proc_t  {
 
@@ -41,12 +42,12 @@ private:
 public:
   
   // SERIALIZATION
-  // size of serialized binary form
+  //! size of serialized binary form
   size_t bytesize (void) const {
     return 3*sizeof(slate_t) + sizeof(size_t)
       + sizeof(state_t) + sizeof(parameters_t);
   };
-  // binary serialization
+  //! binary serialization
   friend raw_t* operator>> (const popul_proc_t &X, raw_t *o) {
     slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
@@ -55,7 +56,7 @@ public:
     memcpy(o,&X.params,sizeof(parameters_t)); o += sizeof(parameters_t);
     return o;
   };
-  // binary deserialization
+  //! binary deserialization
   friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
     X.clean();
     slate_t A[3];
@@ -69,24 +70,24 @@ public:
 
 public:
   // CONSTRUCTORS, ETC.
-  // basic constructor for popul_proc class
-  //  t0 = initial time
+  //! basic constructor for popul_proc class
+  //!  t0 = initial time
   popul_proc_t (double t0 = 0) {
     clean();
     next = current = t0 = slate_t(t0);
     event = 0;
   };
-  // constructor from serialized binary form
+  //! constructor from serialized binary form
   popul_proc_t (raw_t *o) {
     o >> *this;
   };
-  // copy constructor
+  //! copy constructor
   popul_proc_t (const popul_proc_t & X) {
     raw_t *o = new raw_t[X.bytesize()];
     X >> o >> *this;
     delete[] o;
   };
-  // copy assignment operator
+  //! copy assignment operator
   popul_proc_t & operator= (const popul_proc_t & X) {
     clean();
     raw_t *o = new raw_t[X.bytesize()];
@@ -94,11 +95,11 @@ public:
     delete[] o;
     return *this;
   };
-  // move constructor
+  //! move constructor
   popul_proc_t (popul_proc_t &&) = delete;
-  // move assignment operator
+  //! move assignment operator
   popul_proc_t & operator= (popul_proc_t &&) = delete;
-  // destructor
+  //! destructor
   ~popul_proc_t (void) {
     clean();
   };
@@ -106,11 +107,11 @@ public:
 public:
   
   // INFORMATION EXTRACTORS
-  // get current time.
+  //! get current time.
   slate_t time (void) const {
     return current;
   };
-  // get zero time.
+  //! get zero time.
   slate_t timezero (void) const {
     return t0;
   };
@@ -121,22 +122,22 @@ public:
 
 public:
   
-  // set parameters 
+  //! set parameters 
   void update_params (double*, int);
-  // set initial-value parameters
+  //! set initial-value parameters
   void update_IVPs (double*, int);
-  // compute event rates
+  //! compute event rates
   double event_rates (double *rate, int n) const;
-  // initialize the state
+  //! initialize the state
   virtual void rinit (void) = 0;
-  // makes a jump
+  //! makes a jump
   virtual void jump (int e) = 0;
-  // machine/human readable info
+  //! machine/human readable info
   std::string yaml (std::string tab) const;
 
 public:
 
-  // updates clock and next event
+  //! updates clock and next event
   void update_clocks (void) {
     double rate[nevent];
     double total_rate = event_rates(rate,nevent);
@@ -157,8 +158,8 @@ public:
       err("in '%s': invalid event %ld!",__func__,event); // #nocov
   };
 
-  // run process to a specified time.
-  // return number of events that have occurred.
+  //! run process to a specified time.
+  //! return number of events that have occurred.
   int play (double tfin) {
     int count = 0;
     if (current > tfin)

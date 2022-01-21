@@ -27,10 +27,12 @@ cc_template <-   r"{// {%name%}: {%descript%} (C++)
 #include "popul_proc.h"
 #include "generics.h"
 
+//! {%name%} process state.
 typedef struct {
 {%state_decls%}
 } {%state_type%};
 
+//! {%name%} process parameters.
 typedef struct {
 {%param_decls%}
 } {%param_type%};

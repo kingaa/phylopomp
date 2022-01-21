@@ -3,6 +3,7 @@
 #include "popul_proc.h"
 #include "generics.h"
 
+//! SI2R process state.
 typedef struct {
   int S;
   int I1;
@@ -11,6 +12,7 @@ typedef struct {
   double N;
 } si2r_state_t;
 
+//! SI2R process parameters.
 typedef struct {
   double Beta;
   double mu;

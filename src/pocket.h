@@ -1,6 +1,5 @@
 // -*- C++ -*-
-// The POCKET class (pocket_t)
-// A pocket is just a set of balls.
+// The POCKET class
 
 #ifndef _POCKET_H_
 #define _POCKET_H_
@@ -12,9 +11,10 @@
 #include "internal.h"
 #include "ball.h"
 
-// ordering for balls in pockets
-// without this, order depends on machine state,
-// defeating reproducibility
+//! Ordering for balls in pockets.
+
+//! Without this, order depends on machine state,
+//! defeating reproducibility.
 struct ball_compare {
   bool operator() (const ball_t* a, const ball_t* b) const {
     return compare(a,b);
@@ -23,11 +23,14 @@ struct ball_compare {
 
 typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
 
+//! A pocket is a set of balls.
+
+//! An order relation among balls ensures the uniqueness of the internal representation.
 class pocket_t : public std::set<ball_t*,ball_compare> {
   
 private:
   
-  // delete balls and clear pocket
+  //! delete balls and clear pocket
   void clean (void) {
     for (ball_it i = begin(); i != end(); i++) delete *i;
     clear();
@@ -36,11 +39,11 @@ private:
 public:
   
   // SERIALIZATION
-  // size of binary serialization
+  //! size of binary serialization
   size_t bytesize (void) const {
     return sizeof(size_t) + size()*(ball_t::bytesize);
   };
-  // binary serialization
+  //! binary serialization
   friend raw_t* operator>> (const pocket_t &p, raw_t *o) {
     size_t psize = p.size();
     memcpy(o,&psize,sizeof(size_t)); o += sizeof(size_t);
@@ -48,8 +51,8 @@ public:
       o = (**i >> o);
     return o;
   };
-  // binary deserialization
-  // this leaves the balls without knowledge of their holder
+  //! binary deserialization.
+  //! this leaves the balls without knowledge of their holder.
   friend raw_t* operator>> (raw_t *o, pocket_t &p) {
     p.clean();
     size_t psize;
@@ -61,12 +64,14 @@ public:
     }
     return o;
   };
-  // inform all balls as to their holder
+  //! inform all balls as to their holder
+  //! needed in deserialization
   void set_holder (node_t* p) {
     for (ball_it i = begin(); i != end(); i++) {
       (*i)->holder() = p;
     }
   };
+  //! Sets the owner: needed in deserialization.
   void set_owners (const std::unordered_map<name_t,node_t*>& node_name,
 		   std::unordered_map<name_t,ball_t*> *ball_name) {
     std::unordered_map<name_t,node_t*>::const_iterator n;
@@ -87,18 +92,19 @@ public:
   
 public:
 
-  // destructor
+  //! destructor
   ~pocket_t (void) {
     clean();
   };
 
 public:
   
+  //! does this node hold the given ball?
   bool holds (ball_t *b) const {
     ball_it i = find(b);
     return (i != end());
   };
-  // does this node hold a ball of this color?
+  //! does this node hold a ball of this color?
   bool holds (color_t c) const {
     bool result = false;
     for (ball_it i = begin(); !result && i != end(); i++) {
@@ -106,11 +112,11 @@ public:
     }
     return result;
   };
-  // retrieve the last ball
+  //! retrieve the last ball
   ball_t* last_ball (void) const {
     return *crbegin();
   };
-  // retrieve the first ball of the specified color.
+  //! retrieve the first ball of the specified color.
   ball_t* ball (const color_t c) const {
     for (ball_it i = begin(); i != end(); i++) {
       if ((*i)->color == c) return *i;
@@ -118,7 +124,7 @@ public:
     err("no ball of color %s",colores[c]); // # nocov
     return 0;
   };
-  // return a pointer to another ball
+  //! return a pointer to another ball
   ball_t* other (const ball_t *b) const {
     for (ball_it i = begin(); i != end(); i++) {
       if (*i != b) return *i;
@@ -126,7 +132,7 @@ public:
     err("error in '%s': there is no other.",__func__); // # nocov
     return 0;
   };
-  // human-readable info
+  //! human-readable info
   std::string describe (void) const {
     std::string s = "{";
     ball_it i = begin();
@@ -137,7 +143,7 @@ public:
     s += "}";
     return s;
   };
-  // R list description
+  //! R list description
   SEXP structure (void) const {
     SEXP o;
     PROTECT(o = NEW_LIST(size()));
@@ -148,7 +154,7 @@ public:
     UNPROTECT(1);
     return o;
   };
-  // machine-readable info
+  //! human/machine-readable info
   std::string yaml (std::string tab = "") const {
     std::string o = "";
     std::string t = tab + "  ";

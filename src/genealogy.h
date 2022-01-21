@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// Generic Genealogy Process (GP) Simulator (C++)
+// GENEALOGY class
 
 #ifndef _GENEALOGY_H_
 #define _GENEALOGY_H_
@@ -14,8 +14,10 @@
 
 static const size_t MEMORY_MAX = (1<<28); // 256MB
 
-// GENEALOGY CLASS
-// the class to hold the state of a genealogy process.
+//! Encodes a genealogy.
+
+//! A genealogy consists of a sequence of nodes
+//! and the current time.
 template <size_t ndeme = 1>
 class genealogy_t : public nodeseq_t {
 
@@ -27,21 +29,26 @@ private:
   // - the current time
   // - a sequence of nodes
   
-  name_t _unique;               // next unique name
-  slate_t _t0;                  // initial time
-  slate_t _time;                // current time
-  bool _obscured; // set to false by default; 'obscure()' sets to true
+  //! The next unique name.
+  name_t _unique;               
+  //! The initial time.
+  slate_t _t0;
+  //! The current time.
+  slate_t _time;
+  //! Has the genealogy been obscured?
+  //! This is set to false by default; 'obscure()' sets to true.
+  bool _obscured;
   
 private:
 
-  // get the next unique name
+  //! get the next unique name
   name_t unique (void) {
     name_t u = _unique;
     _unique++;
     return u;
   };
 
-  // clean up
+  //! clean up
   void clean (void) {
     _unique = 0;
     _t0 = _time = R_NaReal;
@@ -50,12 +57,12 @@ private:
 
 public:
   // SERIALIZATION
-  // size of serialized binary form
+  //! size of serialized binary form
   size_t bytesize (void) const {
     return 2*sizeof(name_t) +
       2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
-  // binary serialization
+  //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
     name_t A[2]; A[0] = G._unique; A[1] = name_t(G._obscured);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
@@ -63,7 +70,7 @@ public:
     memcpy(o,B,sizeof(B)); o += sizeof(B);
     return reinterpret_cast<const nodeseq_t&>(G) >> o;
   };
-  // binary deserialization
+  //! binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
     G.clean();
     name_t A[2];
@@ -77,24 +84,24 @@ public:
 
 public:
   // CONSTRUCTORS
-  // basic constructor for genealogy class
-  //  t0 = initial time
+  //! basic constructor for genealogy class
+  //!  t0 = initial time
   genealogy_t (double t0 = 0) {
     clean();
     _time = _t0 = slate_t(t0);
     _obscured = false;
   };
-  // constructor from serialized binary form
+  //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
     o >> *this;
   };
-  // copy constructor
+  //! copy constructor
   genealogy_t (const genealogy_t& G) {
     raw_t *o = new raw_t[G.bytesize()];
     G >> o >> *this;
     delete[] o;
   };
-  // copy assignment operator
+  //! copy assignment operator
   genealogy_t & operator= (const genealogy_t& G) {
     clean();
     raw_t *o = new raw_t[G.bytesize()];
@@ -102,24 +109,24 @@ public:
     delete[] o;
     return *this;
   };
-  // move constructor
+  //! move constructor
   genealogy_t (genealogy_t&&) = delete;
-  // move assignment operator
+  //! move assignment operator
   genealogy_t& operator= (genealogy_t&&) = delete;
-  // destructor
+  //! destructor
   ~genealogy_t (void) {
     clean();
   };
   
-  // view/set current time.
+  //! view/set current time.
   slate_t& time (void) {
     return _time;
   };
-  // view current time.
+  //! view current time.
   slate_t time (void) const {
     return _time;
   };
-  // get zero time.
+  //! get zero time.
   slate_t timezero (void) const {
     return _t0;
   };
@@ -161,7 +168,7 @@ public:
 
 public:
   
-  // R list description
+  //! R list description
   SEXP structure (void) const {
     SEXP O, On, T0, Time, Nodes;
     PROTECT(O = NEW_LIST(3));
@@ -181,7 +188,7 @@ public:
   
 public:
 
-  // human-readable info
+  //! human-readable info
   std::string describe (void) const {
     std::string o = "time = " + std::to_string(time()) + "\n"
       + "t0 = " + std::to_string(timezero()) + "\n"
@@ -191,7 +198,7 @@ public:
 
 public:
   
-  // machine-readable info
+  //! machine-readable info
   virtual std::string yaml (std::string tab = "") const {
     std::string o;
     std::string t = tab + "  ";
@@ -203,14 +210,14 @@ public:
 
 public:
 
-  // put genealogy at current time into Newick format.
+  //! put genealogy at current time into Newick format.
   std::string newick (bool compact = true) const {
     return nodeseq_t::newick(time(),compact);
   };
 
 public:
 
-  // check the validity of the genealogy.
+  //! check the validity of the genealogy.
   void valid (void) const {};
 
   bool check_genealogy_size (size_t grace = 0) const {
@@ -247,7 +254,7 @@ private:
     delete p;
   };
   
-  // swap balls a and b, wherever they lie
+  //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
     node_t *q = b->holder();
@@ -257,15 +264,15 @@ private:
     }
   };
 
-  // add node p; take as parent the node holding ball a.
-  // the deme of p is changed to match that of a
+  //! add node p; take as parent the node holding ball a.
+  //! the deme of p is changed to match that of a
   void add (node_t *p, ball_t *a) {
     swap(a,p->green_ball());
     p->deme = a->deme();
     push_back(p);
   };
 
-  // drop the node holding black ball a.
+  //! drop the node holding black ball a.
   void drop (ball_t *a) {
     if (!a->is(black))
       err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
@@ -297,7 +304,7 @@ private:
   };
 
 public:
-  // birth into deme d 
+  //! birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(black,d);
@@ -306,18 +313,18 @@ public:
     add(p,a);
     return b;           
   };
-  // birth of second or subsequent sibling into deme d
+  //! birth of second or subsequent sibling into deme d
   ball_t* birth (node_t* p, name_t d = 0) {
     ball_t *b = new ball_t(p,unique(),black,d);
     p->insert(b);
     return b;
   };
-  // death
+  //! death
   void death (ball_t *a, slate_t t) {
     time() = t;
     drop(a);
   };
-  // graft a new lineage into deme d
+  //! graft a new lineage into deme d
   ball_t* graft (slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(black,d);
@@ -326,14 +333,14 @@ public:
     push_front(p);
     return b;
   };
-  // insert a sample node
+  //! insert a sample node
   void sample (ball_t* a, slate_t t) {
     time() = t;
     node_t *p = make_node(blue,a->deme());
     p->slate = time();
     add(p,a);
   };
-  // movement into deme d
+  //! movement into deme d
   ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(purple,a->deme());
@@ -343,13 +350,13 @@ public:
     return a;
   };
 
-  // set up for extraction of black balls
-  // (see 'inventory.h')
+  //! set up for extraction of black balls
+  //! (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {
     return std::pair<node_it,node_it>(cbegin(),cend());
   };
 
-  // prune the tree (drop all black balls)
+  //! prune the tree (drop all black balls)
   genealogy_t& prune (void) {
     pocket_t *blacks = colored(black);
     while (!blacks->empty()) {
@@ -361,8 +368,8 @@ public:
     return *this;
   };
 
-  // drop all purple balls
-  // and erase all deme information
+  //! drop all purple balls
+  //! and erase all deme information
   genealogy_t& obscure (void) {
     pocket_t *purples = colored(purple);
     while (!purples->empty()) {
@@ -391,19 +398,21 @@ public:
     return _obscured;
   };
   
-  // truncate the genealogy by removing nodes
-  // with times later than tnew
-  // NB: this destroys the genealogy inasmuch
-  // as the state is no longer correct.
+  //! truncate the genealogy by removing nodes
+  //! with times later than tnew
+  //! NB: this destroys the genealogy inasmuch
+  //! as the state is no longer correct.
   void truncate (slate_t tnew) {
     if (!empty()) {
       node_t *n = back();
       while (!empty() && n->slate > tnew) {
         if (n->holds(black)) {
           ball_t *b = n->last_ball(); // must be black!
+          if (!b->is(black)) err("cannot happen!"); // #nocov
           drop(b);
         } else if (n->holds(red)) {
           ball_t *b = n->last_ball(); // must be red!
+          if (!b->is(red)) err("cannot happen!"); // #nocov
           b->color = black;
           swap(b,n->green_ball());
           destroy_node(n);

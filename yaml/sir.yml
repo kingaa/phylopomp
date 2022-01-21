@@ -5,7 +5,7 @@ details: |-
 ndeme: 1
 parameter:
   Beta:
-    name: Beta1
+    name: Beta
     description: transmission rate
     type: double
     default: 4

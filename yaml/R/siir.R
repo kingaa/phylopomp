@@ -6,9 +6,8 @@
 ##' @family Genealogy processes
 ##' @aliases SIIR
 ##' @param Beta1 transmission rate for strain 1
-##' @param Beta1 transmission rate for strain 2
+##' @param Beta2 transmission rate for strain 2
 ##' @param gamma recovery rate
-##' @param delta rate of waning of immunity
 ##' @param psi1 sampling rate for deme 1
 ##' @param psi2 sampling rate for deme 2
 ##' @param sigma12 rate of movement from deme 1 to deme 2
@@ -26,9 +25,9 @@ NULL
 ##' @export
 runSIIR <- function (
   time, t0 = 0,
-  Beta1 = 5, Beta1 = 5, gamma = 1, delta = 0, psi1 = 1, psi2 = 0, sigma12 = 0, sigma21 = 0, S0 = 500, I1_0 = 10, I2_0 = 10, R0 = 0
+  Beta1 = 5, Beta2 = 5, gamma = 1, psi1 = 1, psi2 = 0, sigma12 = 0, sigma21 = 0, S0 = 500, I1_0 = 10, I2_0 = 10, R0 = 0
 ) {
-  params <- c(Beta1=Beta1,Beta1=Beta1,gamma=gamma,delta=delta,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21)
+  params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21)
   ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
   x <- .Call(P_makeSIIR,params,ivps,t0)
   x <- .Call(P_runSIIR,x,time)
@@ -39,10 +38,10 @@ runSIIR <- function (
 ##' @export
 continueSIIR <- function (
   object, time,
-  Beta1 = NA, Beta1 = NA, gamma = NA, delta = NA, psi1 = NA, psi2 = NA, sigma12 = NA, sigma21 = NA
+  Beta1 = NA, Beta2 = NA, gamma = NA, psi1 = NA, psi2 = NA, sigma12 = NA, sigma21 = NA
 ) {
   params <- c(
-    Beta1=Beta1,Beta1=Beta1,gamma=gamma,delta=delta,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21
+    Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21
   )
   x <- .Call(P_reviveSIIR,object,params)
   .Call(P_runSIIR,x,time)

@@ -5,7 +5,7 @@
 ##' @name sir
 ##' @family Genealogy processes
 ##' @aliases SIR
-##' @param Beta1 transmission rate
+##' @param Beta transmission rate
 ##' @param gamma recovery rate
 ##' @param psi per capita sampling rate
 ##' @param delta rate of waning of immunity
@@ -21,9 +21,9 @@ NULL
 ##' @export
 runSIR <- function (
   time, t0 = 0,
-  Beta1 = 4, gamma = 1, psi = 1, delta = 0, S0 = 100, I0 = 5, R0 = 0
+  Beta = 4, gamma = 1, psi = 1, delta = 0, S0 = 100, I0 = 5, R0 = 0
 ) {
-  params <- c(Beta1=Beta1,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ivps,t0)
   x <- .Call(P_runSIR,x,time)
@@ -34,10 +34,10 @@ runSIR <- function (
 ##' @export
 continueSIR <- function (
   object, time,
-  Beta1 = NA, gamma = NA, psi = NA, delta = NA
+  Beta = NA, gamma = NA, psi = NA, delta = NA
 ) {
   params <- c(
-    Beta1=Beta1,gamma=gamma,psi=psi,delta=delta
+    Beta=Beta,gamma=gamma,psi=psi,delta=delta
   )
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time)

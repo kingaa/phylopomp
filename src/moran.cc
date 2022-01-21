@@ -1,23 +1,24 @@
-// Moran genealogy process simulator (C++)
-
+// Moran: The classical Moran model (C++)
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
 
+//! Moran process state.
 typedef struct {
-  int m, g;
+  int m;
+  int g;
 } moran_state_t;
 
+//! Moran process parameters.
 typedef struct {
-  double mu;			// event rate
-  double psi;                   // sampling rate
-  int n;			// population size
+  double mu;
+  double psi;
+  int n;
 } moran_parameters_t;
 
 using moran_proc_t = popul_proc_t<moran_state_t,moran_parameters_t,2>;
-using mgp_t = master_t<moran_proc_t>;
+using moran_genealogy_t = master_t<moran_proc_t,1>;
 
-// human-readable info
 template<>
 std::string moran_proc_t::yaml (std::string tab) const {
   std::string t = tab + "  ";
@@ -43,46 +44,38 @@ template<>
 void moran_proc_t::update_IVPs (double *p, int n) {
   int m = 0;
   PARAM_SET(n);
-  if (m != n) err("wrong number of parameters!");
-}
-
-template<>
-void moran_proc_t::valid (void) const {
-  if (params.mu <= 0) err("'mu' should be positive!");
+  if (m != n) err("wrong number of initial-value parameters!");
 }
 
 template<>
 double moran_proc_t::event_rates (double *rate, int n) const {
   int m = 0;
   double total = 0;
-  RATE_CALC(params.mu * params.n);		// birth/death
-  RATE_CALC(params.psi * params.n);		// sample
+  RATE_CALC(params.mu * params.n);
+  RATE_CALC(params.psi * params.n);
   if (m != n) err("wrong number of events!");
   return total;
 }
 
 template<>
-void mgp_t::rinit (void) {
-  state.m = 0; state.g = 0;
+void moran_genealogy_t::rinit (void) {
+  state.m = state.g = 0;
   graft(0,params.n);
 }
 
 template<>
-void mgp_t::jump (int event) {
+void moran_genealogy_t::jump (int event) {
   switch (event) {
-  case 0:                     // birth
-    state.m += 1;
-    birth();
-    death();
+  case 0:
+    state.m += 1; birth(); death();
     break;
-  case 1:                     // sample
-    state.g += 1;
-    sample();
+  case 1:
+    state.g += 1; sample();
     break;
-  default:						    // #nocov
-    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+  default:
+    err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
 }
 
-GENERICS(Moran,mgp_t)
+GENERICS(Moran,moran_genealogy_t)
