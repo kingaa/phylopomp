@@ -28,16 +28,16 @@ protected:
 
 protected:
   // MEMBER DATA  
-  slate_t next;			// time of next event
-  size_t event;			// mark of next event
-  slate_t t0;			// initial time
-  slate_t current;		// current time
-  state_t state;		// current state
-  parameters_t params;		// model parameters
+  slate_t next;                 // time of next event
+  size_t event;                 // mark of next event
+  slate_t t0;                   // initial time
+  slate_t current;              // current time
+  state_t state;                // current state
+  parameters_t params;          // model parameters
 
 private:
 
-  void clean (void) {};		// memory cleanup
+  void clean (void) {};         // memory cleanup
 
 public:
   
@@ -150,7 +150,7 @@ public:
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-	err("in '%s': invalid rate[%ld]=%lg",__func__,event,rate[event]); // #nocov
+        err("in '%s': invalid rate[%ld]=%lg",__func__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;
     }
@@ -177,7 +177,7 @@ public:
 
 };
 
-#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m];	    \
+#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m];  \
   m++;
 #define RATE_CALC(X) total += rate[m++] = (X);
 #define YAML_PARAM(X) (t + #X + ": " + std::to_string(params.X) + "\n")
