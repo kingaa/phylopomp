@@ -1,5 +1,5 @@
 REXE = R --vanilla
-RINT = emacs -f R
+RSESSION = emacs -f R
 RCMD = $(REXE) CMD
 RCMD_ALT = R --no-save --no-restore CMD
 RSCRIPT = Rscript --vanilla
@@ -68,9 +68,9 @@ library/$(PKG)/html/NEWS.html: inst/NEWS.Rd
 	$(RCMD) Rdconv -t html $^ -o $@
 
 session: install
-	exec $(RINT)
+	exec $(RSESSION)
 
-debug: RINT = R -d gdb
+debug: RSESSION = R -d gdb
 debug: session
 
 revdeps: install

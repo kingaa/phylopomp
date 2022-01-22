@@ -292,9 +292,21 @@ private:
         destroy_node(p);
         drop(a);                // recursively pursue dropping ball a
         break;
-      case black: case green:   // swap other for green, delete node
-        swap(b,p->green_ball());
-        destroy_node(p);
+      case black: 
+        if (b->deme() == p->deme) { // swap other for green, delete node
+          swap(b,p->green_ball());
+          destroy_node(p);
+        } else {              // deme changes here, insert purple ball
+          a->color = purple;
+        }
+        break;
+      case green:
+        if (b->owner()->deme == p->deme) { // swap other for green, delete node
+          swap(b,p->green_ball());
+          destroy_node(p);
+        } else {
+          a->color=purple;
+        }
         break;
       case red: case grey:                             // #nocov
         err("in '%s': inconceivable error.",__func__); // #nocov

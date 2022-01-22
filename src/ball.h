@@ -69,16 +69,28 @@ public:
   ball_t & operator= (ball_t&&) = delete;
   //! destructor
   ~ball_t (void) = default;
-  //! view/change deme
-  name_t& deme (void) {
+  //! view deme
+  name_t deme (void) const {
     if (color != black)
-      err("meddle not in the deme of a non-black ball!"); // #nocov
+      err("ask not the deme of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
-  //! view/change owner
+  //! change deme
+  name_t& deme (void) {
+    if (color != black)
+      err("meddle not in the deme of a %s ball!",colores[color]); // #nocov
+    return _deme;
+  };
+  //! view owner
+  node_t* owner (void) const {
+    if (color != green)
+      err("ask not who owns a %s ball!",colores[color]); // #nocov
+    return _owner;
+  };
+  //! change owner
   node_t*& owner (void) {
     if (color != green)
-      err("meddle not with the owner of a ball that is not green."); // #nocov
+      err("meddle not with the owner of a %s ball!",colores[color]); // #nocov
     return _owner;
   };
   //! in whose pocket do I lie?
