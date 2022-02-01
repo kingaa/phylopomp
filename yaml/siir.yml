@@ -39,6 +39,11 @@ parameter:
     description: rate of movement from deme 2 to deme 1
     default: 0
     type: double
+  delta:
+    name: delta
+    description: rate of loss of immunity
+    default: 0
+    type: double
 ivp:
   S0:
     name: S0
@@ -109,3 +114,6 @@ events:
   move21:
     jump: state.I1 += 1; state.I2 -= 1; migrate(1,0);
     rate: params.sigma21 * state.I2
+  wane:
+    jump: state.S += 1; state.R -= 1;
+    rate: params.delta * state.R

@@ -21,13 +21,14 @@ typedef struct {
   double psi2;
   double sigma12;
   double sigma21;
+  double delta;
   int S0;
   int I1_0;
   int I2_0;
   int R0;
 } siir_parameters_t;
 
-using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,8>;
+using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
 using siir_genealogy_t = master_t<siir_proc_t,2>;
 
 template<>
@@ -41,6 +42,7 @@ std::string siir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(psi2)
     + YAML_PARAM(sigma12)
     + YAML_PARAM(sigma21)
+    + YAML_PARAM(delta)
     + YAML_PARAM(S0)
     + YAML_PARAM(I1_0)
     + YAML_PARAM(I2_0)
@@ -64,6 +66,7 @@ void siir_proc_t::update_params (double *p, int n) {
   PARAM_SET(psi2);
   PARAM_SET(sigma12);
   PARAM_SET(sigma21);
+  PARAM_SET(delta);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -89,6 +92,7 @@ double siir_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.psi2 * state.I2);
   RATE_CALC(params.sigma12 * state.I1);
   RATE_CALC(params.sigma21 * state.I2);
+  RATE_CALC(params.delta * state.R);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -130,6 +134,9 @@ void siir_genealogy_t::jump (int event) {
     break;
   case 7:
     state.I1 += 1; state.I2 -= 1; migrate(1,0);
+    break;
+  case 8:
+    state.S += 1; state.R -= 1;
     break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);
