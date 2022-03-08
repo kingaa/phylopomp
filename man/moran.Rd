@@ -36,6 +36,7 @@ population size remains constant.
 \seealso{
 More example genealogy processes: 
 \code{\link{lbdp}},
+\code{\link{seir}},
 \code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()},

@@ -76,6 +76,7 @@ simulate("SIR",delta=1,time=20,I0=4) |> lineages() |> plot()
 More example genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{seir}},
 \code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()}

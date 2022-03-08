@@ -35,7 +35,7 @@
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 fortify
 ##' @importFrom dplyr mutate arrange select filter summarize n bind_rows group_by ungroup
-##' @importFrom tidyr separate
+##' @importFrom tidyr separate replace_na
 ##' @importFrom tibble tibble
 ##'
 ##' @export
@@ -47,26 +47,16 @@ newick2df <- function (tree, time = NA, root_time = 0) {
   root_time <- as.numeric(root_time)
   read.tree(text=tree) |>
     fortify(ladderize=TRUE) |>
-    separate(label,into=c("type","deme","label")) |>
-    filter(label!="") |>
-    select(label,time=x,isTip) |>
-    arrange(time) |>
-    mutate(
-      ##      ng=sum(!isTip)-cumsum(!isTip), # no. of branch-points to right
-      ##      nt=sum(isTip)-cumsum(isTip),   # no. of tips to right
-      ##      ell=nt-ng                      # no. of lineages
-      lineages = sum(isTip) - cumsum(isTip) - sum(!isTip) + cumsum(!isTip)
+    arrange(x) |>
+    mutate(time = x,
+           newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
+           lineages=sum(isTip) - cumsum(isTip) - sum(newbs) + cumsum(newbs),
     ) |>
-    group_by(time) |>
-    summarize(
-      lineages=lineages[n()],
-      code=1-sum(isTip) # 1 = branch, 0 = dead sample, -1 = live sample
-    ) |>
-    ungroup() |>
-    mutate(
-      time=time+root_time,
-      code=c(2,code[-1]) # root gets code 2
-    ) -> dat
+    group_by(time) |> 
+    summarize(lineages=lineages[n()]) |> 
+    ungroup() |> 
+    mutate(time=time+root_time, 
+           code=c(2, sign(diff(lineages)))) -> dat
 
   time <- as.numeric(time)
   if (length(time)>0 && !is.na(time)) {

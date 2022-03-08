@@ -55,6 +55,8 @@ getInfo <- function (
       description,yaml,structure,lineages,tree,compact),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
+    modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )

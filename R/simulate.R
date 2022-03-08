@@ -3,7 +3,7 @@
 ##' Simulate Markov genealogy processes
 ##'
 ##' @name simulate
-##' @include getinfo.R sir.R siir.R si2r.R lbdp.R moran.R
+##' @include getinfo.R sir.R seir.R siir.R si2r.R lbdp.R moran.R
 ##' 
 ##' @family Genealogy processes
 ##' 
@@ -29,6 +29,7 @@ simulate.default <- function (object, ...) {
     message(
       "Available phylopomp models:\n",
       "- SIR: standard susceptible-infected-recovered model\n",
+      "- SEIR: standard susceptible-exposed-infected-recovered model\n",
       "- SIIR: two-strain SIR model\n",
       "- SI2R: superspreading model\n",
       "- Moran: Moran process\n",
@@ -52,6 +53,7 @@ simulate.character <- function (object, time, ...) {
   switch(
     object,
     SIR = runSIR(time=time,...),
+    SEIR = runSEIR(time=time,...),
     SIIR = runSIIR(time=time,...),
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
@@ -76,6 +78,7 @@ simulate.gpsim <- function (object, time, ...) {
   switch(
     paste0("model",model),
     modelSIR = continueSIR(object,time=time,...),
+    modelSEIR = continueSEIR(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),

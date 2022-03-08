@@ -108,6 +108,7 @@ plot_grid(
 More example genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{seir}},
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}}

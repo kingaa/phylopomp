@@ -8,7 +8,8 @@ DECLARATIONS(SIR)
 DECLARATIONS(SIIR)
 DECLARATIONS(LBDP)
 DECLARATIONS(Moran)
-DECLARATIONS(SI2R)  
+DECLARATIONS(SI2R)
+DECLARATIONS(SEIR)
   
 static const R_CallMethodDef callMethods[] = {
   METHODS(SIR),
@@ -16,6 +17,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
   METHODS(Moran),
   METHODS(SI2R),
+  METHODS(SEIR),
   {NULL, NULL, 0}
 };
 
