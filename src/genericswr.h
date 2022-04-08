@@ -1,5 +1,5 @@
-#ifndef _GENERICS_H_
-#define _GENERICS_H_
+#ifndef _GENERICSWR_H_
+#define _GENERICSWR_H_
 
 #include "internal.h"
 
@@ -128,8 +128,18 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   // prune and/or obscure if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
-  if (do_prune) A.geneal.prune();
-  if (do_obscure) A.geneal.obscure();
+  // if (do_prune) A.geneal.prune();
+  // if (do_obscure) A.geneal.obscure();
+  if (do_prune) {
+    for (name_t s = 0; s < A.nseg; s++) {
+      A.geneal[s].prune();
+    }
+  }
+  if (do_obscure) {
+    for (name_t s = 0; s < A.nseg; s++) {
+      A.geneal[s].obscure();
+    }
+  }
   size_t nout = 0;
 
   bool get_t0 = *LOGICAL(AS_LOGICAL(T0));
@@ -209,7 +219,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
                       Tree, Compact);                                   \
   }                                                                     \
 
-#define GENERICS(X,TYPE)                        \
+#define GENERICSWR(X,TYPE)                        \
   extern "C" {                                  \
                                                 \
     MAKEFN(X,TYPE)                              \

@@ -86,6 +86,18 @@ public:
     }
     return q;
   };
+  //! retrieve ball by order from deme `i`
+  ball_t* get_ball (name_t draw = 0, name_t i = 0) const {
+    name_t n = _inven[i].size();
+    if (n < 1)
+      err("in '%s': cannot draw from empty inventory %ld",__func__,i); // # nocov
+    if (draw > n)
+      err("in '%s': %ld exceeds the size of the inventory",__func__,draw); // # nocov
+    
+    ball_it k = _inven[i].begin();
+    while (draw-- > 0) k++;
+    return *k;
+  }
   //! choose a random ball from deme `i`
   ball_t* random_ball (name_t i = 0) const {
     name_t n = _inven[i].size();

@@ -110,9 +110,9 @@ public:
     return *this;
   };
   //! move constructor
-  genealogy_t (genealogy_t&&) = delete;
+  genealogy_t (genealogy_t&&) = default;
   //! move assignment operator
-  genealogy_t& operator= (genealogy_t&&) = delete;
+  genealogy_t& operator= (genealogy_t&&) = default;
   //! destructor
   ~genealogy_t (void) {
     clean();
@@ -361,6 +361,16 @@ public:
     a->deme() = d;
     return a;
   };
+  //! reassort
+  void reassort (ball_t *a, ball_t *b, slate_t t) {
+    time() = t;
+    node_t *p = a->holder();
+    swap(a,p->green_ball());
+    swap(b,p->green_ball());
+    p->slate = time();
+    remove(p);
+    add(p,a);
+  }
 
   //! set up for extraction of black balls
   //! (see 'inventory.h')
