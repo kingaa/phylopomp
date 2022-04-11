@@ -110,9 +110,23 @@ public:
     return *this;
   };
   //! move constructor
-  genealogy_t (genealogy_t&&) = default;
+  genealogy_t (genealogy_t&& G) {
+    nodeseq_t::operator=(reinterpret_cast<const nodeseq_t&>(G));
+    _unique = G._unique;
+    _t0 = G._t0;
+    _time = G._time;
+    _obscured = G._obscured;
+  };
   //! move assignment operator
-  genealogy_t& operator= (genealogy_t&&) = default;
+  genealogy_t& operator= (genealogy_t&& G) {
+    clean();
+    nodeseq_t::operator=(reinterpret_cast<const nodeseq_t&>(G));
+    _unique = G._unique;
+    _t0 = G._t0;
+    _time = G._time;
+    _obscured = G._obscured;
+    return *this;
+  };
   //! destructor
   ~genealogy_t (void) {
     clean();
@@ -365,7 +379,7 @@ public:
   void reassort (ball_t *a, ball_t *b, slate_t t) {
     time() = t;
     node_t *p = a->holder();
-    swap(a,p->green_ball());
+    swap(p->other(a),p->green_ball());
     swap(b,p->green_ball());
     p->slate = time();
     remove(p);

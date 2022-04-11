@@ -44,9 +44,8 @@ public:
   };
   //! binary serialization
   friend raw_t* operator>> (const master_t& A, raw_t* o) {
-    for (name_t s = 0; s < nseg; s++)
-      A.geneal[s] >> o;
-    reinterpret_cast<const popul_t&>(A) >> o;
+    o = (reinterpret_cast<const popul_t&>(A) >> o);
+    for (name_t s = 0; s < nseg; s++) o = (A.geneal[s] >> o);
     return o;
   }
   //! binary deserialization
@@ -146,25 +145,25 @@ public:
 public:
   //! n births into deme j with parent in deme i
   void birth (name_t i = 0, name_t j = 0, int n = 1) {
-    //! draw one index
-    name_t ind = random_integer((inventory[0])[i].size());
+    int ind = random_integer((inventory[0])[i].size());
+    ball_t *a, *b;
     for (name_t s = 0; s < nseg; s++) {
-      ball_t *a = inventory[s].get_ball(ind, i);
-      ball_t *b = geneal[s].birth(a,time(),j);
-      if (s < 1)  inventory[s].insert(b);
+      a = inventory[s].get_ball_idx(ind,i);
+      b = geneal[s].birth(a,time(),j);
+      inventory[s].insert(b);
       while (n > 1) {
         b = geneal[s].birth(b->holder(),j);
-        if (s < 1)  inventory[s].insert(b);
+        inventory[s].insert(b);
         n--;
       }
     }
   };
   //! death in deme i
   void death (name_t i = 0) {
-    //! draw one index
-    name_t ind = random_integer((inventory[0])[i].size());
+    int ind = random_integer((inventory[0])[i].size());
+    ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
-      ball_t *a = inventory[s].get_ball(ind, i);
+      a = inventory[s].get_ball_idx(ind,i);
       inventory[s].erase(a);
       geneal[s].death(a,time());
     }
@@ -180,19 +179,19 @@ public:
   };
   //! sample in deme i
   void sample (name_t i = 0) {
-    //! draw one index
-    name_t ind = random_integer((inventory[0])[i].size());
+    int ind = random_integer((inventory[0])[i].size());
+    ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
-      ball_t *a = inventory[s].get_ball(ind, i);
+      a = inventory[s].get_ball_idx(ind,i);
       geneal[s].sample(a,time());
     }
   };
   //! migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
-    //! draw one index
-    name_t ind = random_integer((inventory[0])[i].size());
+    int ind = random_integer((inventory[0])[i].size());
+    ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
-      ball_t *a = inventory[s].get_ball(ind, i);
+      a = inventory[s].get_ball_idx(ind,i);
       inventory[s].erase(a);
       geneal[s].migrate(a,time(),j);
       a->deme() = j;
@@ -201,17 +200,13 @@ public:
   };
   //! reassort between deme i and deme j in segment s
   void reassort (name_t i = 0, name_t j = 0, name_t s = 0) {
-    name_t ind1 = random_integer((inventory[0])[i].size());
-    name_t ind2 = random_integer((inventory[0])[j].size());
-    if ((i == j) && (ind1 == ind2)) {
-      if (ind1 < 1) {
-        ind2++;
-      } else {
-        ind2--;
-      }
-    }
-    ball_t *a = inventory[s].get_ball(ind1, i);
-    ball_t *b = inventory[s].get_ball(ind2, i);
+    int inda, indb;
+    inda = random_integer((inventory[0])[i].size());
+    indb = random_integer((inventory[0])[j].size());
+    while ((i==j) && (inda==indb))  indb = random_integer((inventory[0])[j].size());
+    ball_t *a, *b;
+    a = inventory[s].get_ball_idx(inda,i);
+    b = inventory[s].get_ball_idx(indb,i);
     geneal[s].reassort(a,b,time());
   }
   //! initialize the state
