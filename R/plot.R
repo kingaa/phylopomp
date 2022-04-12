@@ -26,6 +26,7 @@ NULL
 ##' @param ... passed to \code{\link{treeplot}}
 ##' @method plot gpsim
 ##' @rdname plot
+##' @importFrom cowplot plot_grid
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
@@ -35,7 +36,11 @@ plot.gpsim <- function (
     prune=prune,obscure=obscure,compact=compact)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
-  treeplot(tree=out$tree,time=time,t0=t0,...)
+  
+  plot_grid(
+    plotlist=lapply(out$tree, function(tr) {
+      treeplot(tr,time=time,t0=t0,...)
+      }),ncol=1)
 }
 
 ##' @rdname plot
@@ -44,41 +49,58 @@ plot.gpsim <- function (
 ##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
 ##' @importFrom scales hue_pal
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate left_join count coalesce
+##' @importFrom dplyr mutate left_join count coalesce case_when
 ##' @importFrom tibble column_to_rownames
 ##' @importFrom tidyr separate unite expand_grid
 ##' @importFrom scales alpha
 ##' @export
 treeplot <- function (
-  tree, time = NULL, t0 = 0,
-  ladderize = TRUE, points = FALSE, ...,
-  palette = scales::hue_pal(l=30,h=c(220,580))
+    tree, time = NULL, t0 = 0,
+    ladderize = TRUE, points = FALSE, ...,
+    palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-
+  
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   t0 <- as.numeric(t0)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
-
+  
+  
   read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(
       deme=if_else(deme=="NA",NA_character_,deme),
       label=if_else(label=="NA",NA_character_,label)
+    ) |>
+    arrange(x) |>
+    mutate(time = x,
+           newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
+           lineages=sum(isTip) - cumsum(isTip) - sum(newbs) + cumsum(newbs),
+           code=c(2, sign(diff(lineages)))
+    ) |>
+    mutate(
+      nodecol=factor(
+        case_when(
+          ((x==0.0) & (newbs<1))~"m",
+          ((x>0.0) & (newbs>0))~"g",
+          ((x>0.0) & (newbs<1) & (code>-1))~"b",
+          ((x>0.0) & (newbs<1) & (code<0))~"r",
+          TRUE~"i"
+        ))
     ) -> dat
-
+  
   ndeme <- max(1L,length(unique(dat$deme))-1L)
   if (is.function(palette)) {
     palette <- palette(ndeme)
   } else {
     if (length(palette) < ndeme)
       stop("in ",sQuote("treeplot"),": ",sQuote("palette"),
-        " must have length at least ",ndeme,
-        " if specified as a vector.",call.=FALSE)
+           " must have length at least ",ndeme,
+           " if specified as a vector.",call.=FALSE)
   }
-
+  
   time <- as.numeric(c(time,max(dat$x)))[1L]
   
   if (is.na(t0)) { # root time is to be determined from the current time
@@ -104,9 +126,9 @@ treeplot <- function (
     unite(rowname,c(nodecol,isTip)) |>
     column_to_rownames() |>
     as.matrix() -> ncolors
-
+  
   attr(dat,"layout") <- "rectangular"
-
+  
   dat |>
     ggplot(aes(x=x,y=y))+
     geom_tree(aes(alpha=vis,color=deme))+
@@ -118,49 +140,49 @@ treeplot <- function (
     expand_limits(x=c(t0,time))+
     theme_tree2()+
     theme(...) -> pl
-
+  
   if (points) {
     if (ncolors["g_node",] > 0) {
       pl+geom_nodepoint(
-           shape=21,fill=ball_colors["g"],color=ball_colors["g"],
-           aes(alpha=nodecol=="g")
-         ) -> pl
+        shape=21,fill=ball_colors["g"],color=ball_colors["g"],
+        aes(alpha=nodecol=="g")
+      ) -> pl
     }
     if (ncolors["b_node",] > 0) {
       pl+geom_nodepoint(
-           shape=21,fill=ball_colors["b"],color=ball_colors["b"],
-           aes(alpha=nodecol=="b")
-         ) -> pl
+        shape=21,fill=ball_colors["b"],color=ball_colors["b"],
+        aes(alpha=nodecol=="b")
+      ) -> pl
     }
     if (ncolors["m_node",] > 0) {
       pl+geom_nodepoint(
-           shape=21,fill=ball_colors["m"],color=ball_colors["m"],
-           aes(alpha=nodecol=="m")
-         )->pl
+        shape=21,fill=ball_colors["m"],color=ball_colors["m"],
+        aes(alpha=nodecol=="m")
+      )->pl
     }
     if (ncolors["p_node",] > 0) {
       pl+geom_nodepoint(
-           shape=21,fill=ball_colors["p"],color=ball_colors["p"],
-           aes(alpha=nodecol=="p")
-         )->pl
+        shape=21,fill=ball_colors["p"],color=ball_colors["p"],
+        aes(alpha=nodecol=="p")
+      )->pl
     }
     if (ncolors["r_tip",] > 0) {
       pl+geom_tippoint(
-           shape=21,fill=ball_colors["r"],color=ball_colors["r"],
-           aes(alpha=nodecol=="r")
-         ) -> pl
+        shape=21,fill=ball_colors["r"],color=ball_colors["r"],
+        aes(alpha=nodecol=="r")
+      ) -> pl
     }
     if (ncolors["b_tip",] > 0) {
       pl+geom_tippoint(
-           shape=21,fill=ball_colors["b"],color=ball_colors["b"],
-           aes(alpha=nodecol=="b")
-         ) -> pl
+        shape=21,fill=ball_colors["b"],color=ball_colors["b"],
+        aes(alpha=nodecol=="b")
+      ) -> pl
     }
     if (ncolors["o_tip",] > 0) {
       pl+geom_tippoint(
-           shape=21,fill=ball_colors["o"],color=ball_colors["o"],
-           aes(alpha=nodecol=="o")
-         ) -> pl
+        shape=21,fill=ball_colors["o"],color=ball_colors["o"],
+        aes(alpha=nodecol=="o")
+      ) -> pl
     }
     pl+guides(shape="none") -> pl
   }

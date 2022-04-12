@@ -125,13 +125,14 @@ public:
   std::string yaml (std::string tab = "") const {
     std::string t = tab + "  ";
     std::string str = popul_t::yaml(tab) + "genealogy:\n";
-    for (name_t s = 0; s < nseg; s++)
-      str += tab + geneal[s].yaml(t) + "\n";
+    for (name_t s = 0; s < nseg; s++) str += tab + geneal[s].yaml(t) + "\n";
     return str;
   };
   //! tree in segment s in Newick format
-  std::string newick (bool compact = true, name_t s = 0) const {
-    return geneal[s].newick(compact);
+  std::string newick (bool compact = true) const {
+    std::string str = "";
+    for (name_t s = 0; s < nseg; s++) str += geneal[s].newick(compact) + "\n";
+    return str;
   };
   //! lineage count table of segment s
   SEXP lineage_count (name_t s = 0) const {
