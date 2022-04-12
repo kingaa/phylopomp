@@ -72,7 +72,8 @@ treeplot <- function (
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(
       deme=if_else(deme=="NA",NA_character_,deme),
-      label=if_else(label=="NA",NA_character_,label)
+      label=if_else(label=="NA",NA_character_,label),
+      x=if_else(nodecol=="m",0.00,x)
     ) |>
     arrange(x) |>
     mutate(time = x,
@@ -81,7 +82,7 @@ treeplot <- function (
            code=c(2, sign(diff(lineages)))
     ) |>
     mutate(
-      nodecol=factor(
+      nodecolor=factor(
         case_when(
           ((x==0.0) & (newbs<1))~"m",
           ((x>0.0) & (newbs>0))~"g",
