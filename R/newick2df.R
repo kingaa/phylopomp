@@ -72,4 +72,4 @@ newick2df <- function (tree, time = NA, root_time = 0) {
 }
 
 ##' @importFrom utils globalVariables
-globalVariables(c("lineages","isTip","time","code","type"))
+globalVariables(c("lineages","isTip","time","code","type","parent","node","newbs"))

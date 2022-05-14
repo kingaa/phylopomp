@@ -11,7 +11,6 @@
 
 #include <string>
 #include <cstring>
-#include "Rmath.h"
 #include "internal.h"
 #include "popul_proc.h"
 #include "genealogy.h"
@@ -113,6 +112,28 @@ public:
   };
 
 public:
+  //! check the consistency of multiple inventories
+  void valid_invens (std::string e) const {
+    size_t n;
+    name_t s, d, i;
+    ball_t *a, *b;
+    for (d = 0; d < ndeme; d++) {
+      n = (inventory[0]).size(d);
+      for (s = 1; s < nseg; s++) {
+        //! check size
+        if ((inventory[s]).size(d) != n)
+          err("Inconsistent sizes between Segment %ld and %ld for deme %ld in event '%s'.", 0, s, d, e.c_str());
+        //! check black ball names
+        for (i = 0; i < n; i++) {
+          a = inventory[0].get_ball_idx(i,d);
+          b = inventory[s].get_ball_idx(i,d);
+          if (a->uniq != b->uniq) {
+            err("For event %s, in deme %ld, ball %ld: Seg 0: %ld; Seg %ld: %ld.\n", e.c_str(), d, i, a->uniq, s, b->uniq);
+          }
+        }
+      }
+    }
+  };
   //! current time
   slate_t time (void) const {
     return popul_t::time();
@@ -146,6 +167,7 @@ public:
 public:
   //! n births into deme j with parent in deme i
   void birth (name_t i = 0, name_t j = 0, int n = 1) {
+    std::string e = "birth";
     int ind = random_integer((inventory[0])[i].size());
     ball_t *a, *b;
     for (name_t s = 0; s < nseg; s++) {
@@ -158,9 +180,11 @@ public:
         n--;
       }
     }
+    valid_invens(e);
   };
   //! death in deme i
   void death (name_t i = 0) {
+    std::string e = "death";
     int ind = random_integer((inventory[0])[i].size());
     ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
@@ -168,27 +192,33 @@ public:
       inventory[s].erase(a);
       geneal[s].death(a,time());
     }
+    valid_invens(e);
   };
   //! new root in deme i
   void graft (name_t i = 0, int m = 1) {
+    std::string e = "graft";
     for (int j = 0; j < m; j++) {
       for (name_t s = 0; s < nseg; s++) {
         ball_t *a = geneal[s].graft(time(),i);
         inventory[s].insert(a);
       }
     }
+    valid_invens(e);
   };
   //! sample in deme i
   void sample (name_t i = 0) {
+    std::string e = "sample";
     int ind = random_integer((inventory[0])[i].size());
     ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
       a = inventory[s].get_ball_idx(ind,i);
       geneal[s].sample(a,time());
     }
+    valid_invens(e);
   };
   //! migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
+    std::string e = "migrate";
     int ind = random_integer((inventory[0])[i].size());
     ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
@@ -198,17 +228,33 @@ public:
       a->deme() = j;
       inventory[s].insert(a);
     }
+    valid_invens(e);
   };
-  //! reassort between deme i and deme j in segment s
-  void reassort (name_t i = 0, name_t j = 0, name_t s = 0) {
+  //! reassort between deme i and deme j in segment array seg
+  void reassort (name_t i = 0, name_t j = 0, name_t* seg = NULL, name_t size = 1) {
+    std::string e = "reassort";
+    bool exist;
+    if (size < 1 || seg == NULL) err("Empty segment array!");
+    if (size > nseg)  err("Requested number of segments larger the total number.");
+    if (size== nseg)  err("All segments reassort simultaneously!");
+    
     int inda, indb;
+    ball_t *a, *b;
     inda = random_integer((inventory[0])[i].size());
     indb = random_integer((inventory[0])[j].size());
     while ((i==j) && (inda==indb))  indb = random_integer((inventory[0])[j].size());
-    ball_t *a, *b;
-    a = inventory[s].get_ball_idx(inda,i);
-    b = inventory[s].get_ball_idx(indb,i);
-    geneal[s].reassort(a,b,time());
+
+    for (name_t k = 0; k < nseg; k++) {
+      exist = anyof(seg, size, k);
+      if (exist) {
+        a = inventory[k].get_ball_idx(inda,i);
+        b = inventory[k].get_ball_idx(indb,i);
+        geneal[k].reassort(a,b,time());
+      } else {
+        geneal[k].update_uniq();
+      }
+    }
+    valid_invens(e);
   }
   //! initialize the state
   void rinit (void);

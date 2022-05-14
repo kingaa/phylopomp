@@ -5,6 +5,7 @@
 #include <Rmath.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
+#include <stdbool.h>
 
 #ifndef STANDALONE
 
@@ -45,6 +46,14 @@ inline SEXP falseSEXP (void) {
 // interface with R's integer RNG
 inline int random_integer (int n) {
   return (int) floor(R_unif_index((double) n));
+}
+
+// whether an element in an array
+inline bool anyof (name_t* arr, size_t len, name_t elem) {
+  for (name_t k = 0; k < len; k++) {
+    if (elem == arr[k]) return true;
+  }
+  return false;
 }
 
 // helper function for filling a return list

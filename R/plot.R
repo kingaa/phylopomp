@@ -69,25 +69,19 @@ treeplot <- function (
   
   read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
+    arrange(x) |>
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(
       deme=if_else(deme=="NA",NA_character_,deme),
       label=if_else(label=="NA",NA_character_,label),
-      x=if_else(nodecol=="m",0.00,x)
-    ) |>
-    arrange(x) |>
-    mutate(time = x,
-           newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
-           lineages=sum(isTip) - cumsum(isTip) - sum(newbs) + cumsum(newbs),
-           code=c(2, sign(diff(lineages)))
-    ) |>
-    mutate(
+      time = x,
+      newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
       nodecolor=factor(
         case_when(
-          ((x==0.0) & (newbs<1))~"m",
+          ((x==0.0) & (!is.na(deme)))~"m",
           ((x>0.0) & (newbs>0))~"g",
-          ((x>0.0) & (newbs<1) & (code>-1))~"b",
-          ((x>0.0) & (newbs<1) & (code<0))~"r",
+          ((x>0.0) & (newbs<1) & (!isTip))~"b",
+          ((x>0.0) & (newbs<1) & (isTip))~"r",
           TRUE~"i"
         ))
     ) -> dat
@@ -202,5 +196,5 @@ ball_colors <- c(
 
 ##' @importFrom utils globalVariables
 globalVariables(
-  c(".id","k","label","nodecol","deme","vis","x","y","rowname")
+  c(".id","k","label","nodecol","deme","vis","x","y","rowname","parent","node","newbs")
 )

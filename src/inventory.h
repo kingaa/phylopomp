@@ -87,7 +87,7 @@ public:
     return q;
   };
   //! retrieve ball with index in deme `i`
-  ball_t* get_ball_idx (int idx, name_t i = 0) const {
+  ball_t* get_ball_idx (name_t idx = 0, name_t i = 0) const {
     name_t n = _inven[i].size();
     if (n < 1)
       err("in '%s': cannot draw from empty inventory %ld",__func__,i); // # nocov

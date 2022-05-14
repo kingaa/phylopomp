@@ -63,11 +63,13 @@ getInfo <- function (
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )
   if (!is.null(x$tree)) {
-    x$tree <- strsplit(gsub("nan","NA",gsub("\\(\\)","",x$tree)), "\n")[[1]]
+    x$tree <- strsplit(gsub("nan","NA",x$tree), "\n")[[1]]
+    # x$tree <- strsplit(gsub("nan","NA",gsub("\\(\\)","",x$tree)), "\n")[[1]]
   }
+  
   if (!is.null(x$lineages)) {
     n <- length(x$lineages$time)
-    m <- length(x$lineages$count)
+    m <- length(x$lineages$count)/n
     if (m > 1L) {
       dig <- ceiling(log10(m))
       nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))

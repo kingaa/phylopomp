@@ -20,12 +20,15 @@ typedef struct {
   double rhoS;
   double rhoM;
   double rhoL;
+  double rhoSM;
+  double rhoSL;
+  double rhoML;
   int S0;
   int I0;
   int R0;
 } sirwr_parameters_t;
 
-using sirwr_proc_t = popul_proc_t<sirwr_state_t,sirwr_parameters_t,7>;
+using sirwr_proc_t = popul_proc_t<sirwr_state_t,sirwr_parameters_t,10>;
 using sirwr_genealogy_t = master_t<sirwr_proc_t,1,3>;
 
 template<>
@@ -39,6 +42,9 @@ std::string sirwr_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(rhoS)
     + YAML_PARAM(rhoM)
     + YAML_PARAM(rhoL)
+    + YAML_PARAM(rhoSM)
+    + YAML_PARAM(rhoSL)
+    + YAML_PARAM(rhoML)
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
@@ -60,6 +66,9 @@ void sirwr_proc_t::update_params (double *p, int n) {
   PARAM_SET(rhoS);
   PARAM_SET(rhoM);
   PARAM_SET(rhoL);
+  PARAM_SET(rhoSM);
+  PARAM_SET(rhoSL);
+  PARAM_SET(rhoML);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -83,6 +92,9 @@ double sirwr_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.rhoS * state.I);
   RATE_CALC(params.rhoM * state.I);
   RATE_CALC(params.rhoL * state.I);
+  RATE_CALC(params.rhoSM * state.I);
+  RATE_CALC(params.rhoSL * state.I);
+  RATE_CALC(params.rhoML * state.I);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -98,6 +110,7 @@ void sirwr_genealogy_t::rinit (void) {
 
 template<>
 void sirwr_genealogy_t::jump (int event) {
+  name_t* seg;
   switch (event) {
   case 0:
     state.S -= 1; state.I += 1; birth();
@@ -112,14 +125,44 @@ void sirwr_genealogy_t::jump (int event) {
     state.R -= 1; state.S += 1;
     break;
   case 4:
-    reassort(0,0,0);
+    seg = (name_t*)malloc(1*sizeof(name_t));
+    seg[0] = 0UL;
+    reassort(0,0,seg,1);
+    free(seg);
     break;
   case 5:
-    reassort(0,0,1);
+    seg = (name_t*)malloc(1*sizeof(name_t));
+    seg[0] = 1UL;
+    reassort(0,0,seg,1);
+    free(seg);
     break;
   case 6:
-    reassort(0,0,2);
+    seg = (name_t*)malloc(1*sizeof(name_t));
+    seg[0] = 2UL;
+    reassort(0,0,seg,1);
+    free(seg);
     break;
+  case 7:
+    seg = (name_t*)malloc(2*sizeof(name_t));
+    seg[0] = 0UL;
+    seg[1] = 1UL;
+    reassort(0,0,seg,2);
+    free(seg);
+    break;  
+  case 8:
+    seg = (name_t*)malloc(2*sizeof(name_t));
+    seg[0] = 0UL;
+    seg[1] = 2UL;
+    reassort(0,0,seg,2);
+    free(seg);
+    break;  
+  case 9:
+    seg = (name_t*)malloc(2*sizeof(name_t));
+    seg[0] = 1UL;
+    seg[1] = 2UL;
+    reassort(0,0,seg,2);
+    free(seg);
+    break;  
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
