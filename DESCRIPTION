@@ -16,7 +16,7 @@ License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Collate: 
     'package.R'
     'aaa.R'
@@ -33,6 +33,7 @@ Collate:
     'seir.R'
     'si2r.R'
     'siir.R'
+    'sirwr.R'
     'sir.R'
     'simulate.R'
     'yaml.R'
