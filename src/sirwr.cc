@@ -1,7 +1,7 @@
 // SIR with three segments and reassortment: Small, Medium, Large (C++)
-#include "masterwr.h"
+#include "master.h"
 #include "popul_proc.h"
-#include "genericswr.h"
+#include "generics.h"
 
 //! SIR process state.
 typedef struct {
@@ -126,4 +126,4 @@ void sirwr_genealogy_t::jump (int event) {
   }
 }
 
-GENERICSWR(SIRwr,sirwr_genealogy_t)
+GENERICS(SIRwr,sirwr_genealogy_t)

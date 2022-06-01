@@ -41,6 +41,7 @@ More example genealogy processes:
 \code{\link{seir}},
 \code{\link{si2r}},
 \code{\link{siir}},
+\code{\link{sirwr}},
 \code{\link{sir}}
 }
 \concept{Genealogy processes}

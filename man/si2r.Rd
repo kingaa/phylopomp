@@ -111,6 +111,7 @@ More example genealogy processes:
 \code{\link{seir}},
 \code{\link{siir}},
 \code{\link{simulate}()},
+\code{\link{sirwr}},
 \code{\link{sir}}
 }
 \concept{Genealogy processes}
