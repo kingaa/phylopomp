@@ -31,8 +31,8 @@ SEXP serial (const TYPE& X) {
 template <class TYPE>
 SEXP yaml (const TYPE& X) {
   SEXP out;
-  PROTECT(out = NEW_CHARACTER(1));
-  SET_STRING_ELT(out,0,mkChar(X.yaml().c_str()));
+  PROTECT(out = NEW_CHARACTER(X.nseg));
+  for (name_t s = 0; s < X.nseg; s++) SET_STRING_ELT(out,s,mkChar(X.yaml(" ", s).c_str()));
   UNPROTECT(1);
   return out;
 }
@@ -41,26 +41,36 @@ SEXP yaml (const TYPE& X) {
 template <class TYPE>
 SEXP describe (const TYPE& X) {
   SEXP out;
-  PROTECT(out = NEW_CHARACTER(1));
-  SET_STRING_ELT(out,0,mkChar(X.describe().c_str()));
+  PROTECT(out = NEW_CHARACTER(X.nseg));
+  for (name_t s = 0; s < X.nseg; s++) SET_STRING_ELT(out,s,mkChar(X.describe(s).c_str()));
   UNPROTECT(1);
   return out;
 }
 
-//! structure in R list format
+//! structure in R list format; something wrong!!!
 template <class TYPE>
 SEXP structure (const TYPE& G) {
-  return G.structure();
+  SEXP out;
+  PROTECT(out = NEW_LIST(G.nseg));
+  for (name_t s = 0; s < G.nseg; s++) SET_VECTOR_ELT(out, s, G.structure(s));
+  UNPROTECT(1);
+  return out;
 }
 
 //! tree in newick format
 template <class TYPE>
 SEXP newick (const TYPE& X, bool compact = true) {
   SEXP out;
-  PROTECT(out = NEW_CHARACTER(1));
-  SET_STRING_ELT(out,0,mkChar(X.newick(compact).c_str()));
+  PROTECT(out = NEW_CHARACTER(X.nseg));
+  for (name_t s = 0; s < X.nseg; s++) SET_STRING_ELT(out,s,mkChar(X.newick(compact,s).c_str()));
   UNPROTECT(1);
   return out;
+}
+
+//! reassortment times
+template<class TYPE>
+SEXP re_times (const TYPE& X) {
+  return X.reassortment_times();
 }
 
 //! initialization
@@ -112,15 +122,17 @@ SEXP run (SEXP State, SEXP Tout) {
 //! number of lineages through time
 template <class TYPE>
 SEXP lineage_count (const TYPE& G) {
-  return G.lineage_count();
+  SEXP out;
+  PROTECT(out = NEW_LIST(G.nseg));
+  for (name_t s = 0; s < G.nseg; s++) SET_VECTOR_ELT(out, s, G.lineage_count(s));
+  UNPROTECT(1);
+  return out;
 }
-
-//! extract requested information
 
 //! prune and/or obscure if requested
 template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
-           SEXP T0, SEXP Time, SEXP Descript,
+           SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes, 
            SEXP Yaml, SEXP Structure, SEXP Lineages,
            SEXP Tree, SEXP Compact) {
   TYPE A = State;
@@ -128,8 +140,12 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   // prune and/or obscure if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
-  if (do_prune) A.geneal.prune();
-  if (do_obscure) A.geneal.obscure();
+  if (do_prune) {
+    for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].prune();
+  }
+  if (do_obscure) {
+    for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].obscure();
+  }
   size_t nout = 0;
 
   bool get_t0 = *LOGICAL(AS_LOGICAL(T0));
@@ -153,6 +169,9 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
   if (get_tree) nout++;
   bool do_compact = *LOGICAL(AS_LOGICAL(Compact));
+  
+  bool get_retimes = *LOGICAL(AS_LOGICAL(Retimes));
+  if (get_retimes) nout++;
 
   // pack up return values in a list
   int k = 0;
@@ -180,6 +199,9 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   if (get_tree) {
     k = set_list_elem(out,outnames,newick(A,do_compact),"tree",k);
   }
+  if (get_retimes) {
+    k = set_list_elem(out,outnames,re_times(A),"retimes",k);
+  }
   SET_NAMES(out,outnames);
 
   UNPROTECT(2);
@@ -200,11 +222,11 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 
 #define INFOFN(X,TYPE) SEXP info ## X (                                 \
                                        SEXP State, SEXP Prune, SEXP Obscure, \
-                                       SEXP T0, SEXP Time, SEXP Descript, \
+                                       SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes, \
                                        SEXP Yaml, SEXP Structure, SEXP Lineages, \
                                        SEXP Tree, SEXP Compact) {       \
     return info<TYPE>(State, Prune, Obscure,                            \
-                      T0, Time, Descript,                               \
+                      T0, Time, Descript, Retimes,                      \
                       Yaml,Structure, Lineages,                         \
                       Tree, Compact);                                   \
   }                                                                     \

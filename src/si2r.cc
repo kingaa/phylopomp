@@ -114,9 +114,9 @@ void si2r_genealogy_t::jump (int event) {
     {
       int n = 1+int(rgeom(1.0/params.mu));
       if (state.S >= n) {
-	state.S -= n; state.I1 += n; birth(1,0,n);
+	      state.S -= n; state.I1 += n; birth(1,0,n);
       } else {
-	birth(1,0,state.S); state.I1 += state.S; state.S = 0;
+	      birth(1,0,state.S); state.I1 += state.S; state.S = 0;
       }
     }
     break;

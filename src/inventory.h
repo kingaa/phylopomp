@@ -26,7 +26,7 @@ public:
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-  	insert(*j);		// 'insert' checks color
+  	    insert(*j);		// 'insert' checks color
       }
     }
   };
@@ -35,7 +35,7 @@ public:
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-  	insert(*j); // 'insert' checks color
+  	    insert(*j); // 'insert' checks color
       }
     }
     return *this;

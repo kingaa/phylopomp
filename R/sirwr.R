@@ -5,7 +5,7 @@
 ##' @name sirwr
 ##' @aliases SIRwr
 ##' @include getinfo.R
-##' 
+##'
 ##' @family Genealogy processes
 ##'
 ##' @param Beta transmission rate.
@@ -23,8 +23,8 @@
 ##' @param R0 initial size of recovered population.
 ##' @param time final time
 ##' @param t0 initial time
-##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+##'
+##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIRwr}.
 ##'
 ##' @example examples/sirwr.R
 NULL
@@ -32,9 +32,9 @@ NULL
 ##' @rdname sirwr
 ##' @export
 runSIRwr <- function (
-  time,  t0 = 0, 
+  time,  t0 = 0,
   Beta = 2, gamma = 1, psi = 1, delta = 0,
-  rhoS = 0, rhoM = .1, rhoL = 0, 
+  rhoS = 0, rhoM = .1, rhoL = 0,
   rhoSM = 0, rhoSL = 0, rhoML = 0,
   S0 = 100, I0 = 2, R0 = 0
 ) {
@@ -52,7 +52,7 @@ runSIRwr <- function (
 ##' @export
 continueSIRwr <- function (
   object, time, Beta = NA, gamma = NA, psi = NA, delta = NA,
-  rhoS = NA, rhoM = NA, rhoL = NA, 
+  rhoS = NA, rhoM = NA, rhoL = NA,
   rhoSM = NA, rhoSL = NA, rhoML = NA
 ) {
   params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,

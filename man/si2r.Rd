@@ -91,7 +91,7 @@ runSI2R(Beta=10,S0=2000,time=1,psi1=0) |>
 
 simulate("SI2R",time=5) |>
   lineages() |>
-  plot()
+  plot.gplin()
 
 simulate("SI2R",time=2) |>
   diagram(m=30)
@@ -99,7 +99,7 @@ simulate("SI2R",time=2) |>
 simulate("SI2R",time=20,delta=0.2,mu=20) -> x
 plot_grid(
   x |> plot(obscure=FALSE),
-  x |> lineages(obscure=FALSE) |> plot(),
+  x |> lineages(obscure=FALSE) |> plot.gplin(),
   ncol=1,
   align="v",axis="b"
 )

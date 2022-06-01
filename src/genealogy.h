@@ -382,7 +382,6 @@ public:
   };
   //! reassort
   void reassort (ball_t *a, ball_t *b, slate_t t) {
-    // printf("Before: %ld, ", _unique);
     if ((!a->is(black)))
       err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
     if ((!b->is(black)))
@@ -393,37 +392,29 @@ public:
       err("non-binary tree!");
     } else {
       ball_t *c = p->other(a);
-      // printf("ball color: %s, ", colores[c->color]);
       swap(c,p->green_ball());
       if (c->is(blue)) {
-        // printf("ball: blue, ");
         node_t *q = make_node(red,p->deme);
         q->slate = p->slate;
         swap(c,q->green_ball());
         push_back(q);
       }
       if (c->is(purple)) {
-        // printf("ball: purple, ");
         node_t *q = c->holder();
         ball_t *d = q->other(c);
         if (d->deme() == q->deme) {
-          // printf("deme: the same, ");
           swap(d,q->green_ball());
           destroy_node(q);
         }
-        // printf("deme: not the same, ");
         update_uniq();
       }
       if (c->is(green)) {
-        // printf("ball: green, ");
         if (p->deme != c->owner()->deme) {
-          // printf("deme: the same, ");
           node_t *q = make_node(purple, p->deme);
           q->slate = p->slate;
           swap(c,q->green_ball());
           push_back(q);
         } else {
-          // printf("deme: not the same, ");
           update_uniq();
         }
       }
@@ -435,7 +426,6 @@ public:
           swap(c,q->green_ball());
           push_back(q);
         } else {
-          // printf("deme: not the same, ");
           update_uniq();
         }
       }
@@ -445,9 +435,7 @@ public:
       add(p,b);
       p->slate = time();
     }
-    // printf("After: %ld.\n", _unique);
   }
-
   //! set up for extraction of black balls
   //! (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {

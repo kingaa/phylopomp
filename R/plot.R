@@ -30,16 +30,18 @@ NULL
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE, compact = TRUE
+  prune = TRUE, obscure = TRUE, compact = TRUE, retimes = FALSE
 ) {
   out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
-    prune=prune,obscure=obscure,compact=compact)
+    prune=prune,obscure=obscure,compact=compact,retimes=retimes)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
   
   plot_grid(
     plotlist=lapply(out$tree, function(tr) {
-      treeplot(tr,time=time,t0=t0,...)
+      treeplot(tr,time=time,t0=t0,...) -> p
+      if (retimes)  p <- p + geom_vline(xintercept=out$retimes, linetype="dashed", alpha=.3)
+      p
       }),ncol=1)
 }
 

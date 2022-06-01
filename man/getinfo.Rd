@@ -11,6 +11,7 @@ getInfo(
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
+  retimes = FALSE,
   structure = FALSE,
   yaml = FALSE,
   lineages = FALSE,
@@ -30,6 +31,8 @@ getInfo(
 \item{time}{logical; return the current time?}
 
 \item{description}{logical; return the description?}
+
+\item{retimes}{logical; return the reassortment times?}
 
 \item{structure}{logical; return the structure in \R list format?}
 
@@ -51,6 +54,7 @@ A list containing the requested elements, including any or all of:
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+  \item{retimes}{a \code{\link[tibble]{tibble}} containing reassortment times}
 }
 }
 \description{
@@ -69,5 +73,5 @@ runSIIR(Beta1=10,Beta2=8,
 simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
   S0=300,I1_0=20,I2_0=2,time=5) |>
   lineages() |>
-  plot()
+  plot.gplin()
 }

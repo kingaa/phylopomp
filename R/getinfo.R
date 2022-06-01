@@ -15,6 +15,7 @@
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
 ##' @param lineages logical; return the lineage-count function?
+##' @param retimes logical; return the reassortment times?
 ##'
 ##' @include package.R
 ##' @importFrom dplyr bind_cols
@@ -30,6 +31,7 @@
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+##'   \item{retimes}{a \code{\link[tibble]{tibble}} containing reassortment times}
 ##' }
 ##' 
 ##' @example examples/siir.R
@@ -39,51 +41,53 @@
 getInfo <- function (
   object, prune  = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
-  description = FALSE, structure = FALSE, yaml = FALSE,
+  description = FALSE, retimes = FALSE,
+  structure = FALSE, yaml = FALSE,
   lineages = FALSE,
   tree = FALSE, compact = TRUE)
 {
   x <- switch(
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelMoran = .Call(P_infoMoran,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     modelSIRwr = .Call(P_infoSIRwr,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,retimes,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )
   if (!is.null(x$tree)) {
-    x$tree <- strsplit(gsub("nan","NA",x$tree), "\n")[[1]]
-    # x$tree <- strsplit(gsub("nan","NA",gsub("\\(\\)","",x$tree)), "\n")[[1]]
+    x$tree <- gsub("nan","NA",x$tree)
   }
   
   if (!is.null(x$lineages)) {
-    n <- length(x$lineages$time)
-    m <- length(x$lineages$count)/n
-    if (m > 1L) {
-      dig <- ceiling(log10(m))
-      nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
-    } else {
-      nm <- "lineages"
-    }
-    bind_cols(
-      time=x$lineages$time,
-      x$lineages$count |>
-        as.integer() |>
-        array(dim=c(m,n),dimnames=list(nm,NULL)) |>
-        t() |>
-        as_tibble()
-    ) -> x$lineages
+    lapply(x$lineages, function(y) {
+      n <- length(y$time)
+      m <- length(y$count)/n
+      if (m > 1L) {
+        dig <- ceiling(log10(m))
+        nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
+      } else {
+        nm <- "lineages"
+      }
+      bind_cols(
+        time=y$time,
+        y$count |>
+          as.integer() |>
+          array(dim=c(m,n),dimnames=list(nm,NULL)) |>
+          t() |>
+          as_tibble()
+      )
+    }) -> x$lineages
   }
   x
 }

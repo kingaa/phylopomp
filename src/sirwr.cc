@@ -1,7 +1,7 @@
 // SIR with three segments and reassortment: Small, Medium, Large (C++)
-#include "masterwr.h"
+#include "master.h"
 #include "popul_proc.h"
-#include "genericswr.h"
+#include "generics.h"
 
 //! SIR process state.
 typedef struct {
@@ -148,25 +148,25 @@ void sirwr_genealogy_t::jump (int event) {
     seg[1] = 1UL;
     reassort(0,0,seg,2);
     free(seg);
-    break;  
+    break;
   case 8:
     seg = (name_t*)malloc(2*sizeof(name_t));
     seg[0] = 0UL;
     seg[1] = 2UL;
     reassort(0,0,seg,2);
     free(seg);
-    break;  
+    break;
   case 9:
     seg = (name_t*)malloc(2*sizeof(name_t));
     seg[0] = 1UL;
     seg[1] = 2UL;
     reassort(0,0,seg,2);
     free(seg);
-    break;  
+    break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
 }
 
-GENERICSWR(SIRwr,sirwr_genealogy_t)
+GENERICS(SIRwr,sirwr_genealogy_t)

@@ -21,7 +21,7 @@
 lineages <- function (object, prune = TRUE, obscure = TRUE) {
   getInfo(object,lineages=TRUE,prune=prune,obscure=obscure) |>
     getElement("lineages") -> x
-  structure(x,obscured=obscure,class=c("gplin",class(x)))
+  lapply(x, function(l) {structure(l,obscured=obscure,class=c("gplin",class(l)))})
 }
 
 ##' @rdname lineages
@@ -37,48 +37,48 @@ plot.gplin <- function (
   x, ...,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-
-  obsc <- attr(x,"obscured")
-  
-  if (!obsc) {
-    x |>
-      pivot_longer(
-        -time,
-        names_to="deme",
-        values_to="lineages"
-      ) |>
-      mutate(
-        deme=gsub("deme","",deme)
-      ) -> x
-  } else {
-    x$deme <- "1"
-  }
-
-  demes <- sort(unique(x$deme))
-  ndeme <- max(1L,length(demes))
-  if (is.function(palette)) {
-    palette <- structure(palette(ndeme),names=demes)
-  } else {
-    if (length(palette) < ndeme)
-      stop("in ",sQuote("plot.gplin"),": ",sQuote("palette"),
-        " must have length at least ",ndeme,
-        " if specified as a vector.",call.=FALSE)
-  }
-
-  x |>
-    ggplot(aes(x=time,y=lineages,color=deme,group=deme))+
-    geom_step()+
-    scale_color_manual(values=palette)+
-    guides(color="none")+
-    theme_classic()+
-    theme(...) -> pl
-  
-  if (!obsc) {
-    pl+
-      guides(color=guide_legend()) -> pl
-  }
-
-  pl
+  plot_grid(plotlist=lapply(x, function(l) {
+    obsc <- attr(l,"obscured")
+    
+    if (!obsc) {
+      l |>
+        pivot_longer(
+          -time,
+          names_to="deme",
+          values_to="lineages"
+        ) |>
+        mutate(
+          deme=gsub("deme","",deme)
+        ) -> l
+    } else {
+      l$deme <- "1"
+    }
+    
+    demes <- sort(unique(l$deme))
+    ndeme <- max(1L,length(demes))
+    if (is.function(palette)) {
+      palette <- structure(palette(ndeme),names=demes)
+    } else {
+      if (length(palette) < ndeme)
+        stop("in ",sQuote("plot.gplin"),": ",sQuote("palette"),
+             " must have length at least ",ndeme,
+             " if specified as a vector.",call.=FALSE)
+    }
+    
+    l |>
+      ggplot(aes(x=time,y=lineages,color=deme,group=deme))+
+      geom_step()+
+      scale_color_manual(values=palette)+
+      guides(color="none")+
+      theme_classic()+
+      theme(...) -> pl
+    
+    if (!obsc) {
+      pl+
+        guides(color=guide_legend()) -> pl
+    }
+    pl
+  }))
 }
 
 ##' @importFrom utils globalVariables

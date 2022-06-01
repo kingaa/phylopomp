@@ -6,7 +6,16 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-\method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, obscure = TRUE, compact = TRUE)
+\method{plot}{gpsim}(
+  x,
+  ...,
+  time,
+  t0,
+  prune = TRUE,
+  obscure = TRUE,
+  compact = TRUE,
+  retimes = FALSE
+)
 
 treeplot(
   tree,
@@ -32,6 +41,8 @@ treeplot(
 \item{obscure}{logical; obscure the demes?}
 
 \item{compact}{logical; return the tree in compact representation?}
+
+\item{retimes}{logical; return the reassortment times?}
 
 \item{tree}{character; tree representation in Newick format.}
 
