@@ -62,7 +62,7 @@ Plots a genealogical tree.
 
   pb <- utils::txtProgressBar(0,length(times),0,style=3)
   x <- simulate("SIIR",time=0,Beta1=5,Beta2=10,gamma=1,delta=0.5,
-    psi1=0.2,psi2=0.1,sigma12=1,sigma21=1,S0=500,I1_0=3,I2_0=2)
+    psi1=0.2,psi2=0.1,sigma12=1,sigma21=1,S0=200,I1_0=3,I2_0=2)
   for (k in seq_len(length(times))) {
     x <- simulate(x,time=times[k])
     ggsave(

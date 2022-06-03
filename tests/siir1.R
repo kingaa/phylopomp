@@ -7,16 +7,16 @@ theme_set(theme_bw())
 set.seed(481604604)
 options(digits=3)
 
-runSIIR(time=10)
+runSIIR(time=10,psi1=1,psi2=1,S0=100)
 
-runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=2,time=2) |>
+runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=2,time=2) |>
   plot(points=TRUE)
 
-runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,S0=100,I1_0=5,I2_0=1,time=1) |>
+runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=1,time=1) |>
   simulate(time=100) |>
   plot(points=TRUE,time=NULL,compact=FALSE)
 
-simulate("SIIR",time=2) -> x
+simulate("SIIR",time=2,S0=100,psi1=1,psi2=1) -> x
 plot_grid(
   x |> plot(),
   x |> plot(obscure=FALSE),
