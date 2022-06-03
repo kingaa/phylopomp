@@ -8,12 +8,18 @@ dev.off()
 
 png(filename="diagram-02.png",res=100,
   width=874,height=198,units="px")
-freeze(simulate("SIIR",time=0.3),seed=788520677) |> diagram()
+freeze(
+  simulate("SIIR",time=0.3,psi1=1,psi2=1,S0=100),
+  seed=788520677
+) |> diagram()
 dev.off()
 
 png(filename="diagram-03.png",res=100,
   width=1277,height=134,units="px")
-freeze(simulate("SIIR",time=0.3),seed=459939038) |> diagram(prune=FALSE)
+freeze(
+  simulate("SIIR",time=0.3,psi1=1,psi2=1,S0=100),
+  seed=459939038
+) |> diagram(prune=FALSE)
 dev.off()
 
 simulate("SIIR",time=0.3) |>

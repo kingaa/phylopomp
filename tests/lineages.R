@@ -38,7 +38,7 @@ plot_grid(
 
 pal <- c("#00274c","#ffcb05","#006597")
 
-simulate("SIIR",time=5,S0=50,sigma12=1,I1_0=3,I2_0=3) -> x
+simulate("SIIR",time=5,S0=50,psi2=1,sigma12=1,I1_0=3,I2_0=3) -> x
 
 plot_grid(
   plot_grid(

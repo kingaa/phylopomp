@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.0.999.2
-Date: 2022-03-07
+Version: 0.0.9999.0
+Date: 2022-06-03
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
 	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
