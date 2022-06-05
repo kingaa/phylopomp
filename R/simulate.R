@@ -3,7 +3,7 @@
 ##' Simulate Markov genealogy processes
 ##'
 ##' @name simulate
-##' @include getinfo.R sir.R seir.R siir.R si2r.R lbdp.R moran.R sirwr.R
+##' @include getinfo.R sir.R seir.R siir.R si2r.R lbdp.R moran.R sirwr.R moranwr.R lbdpwr.R
 ##' 
 ##' @family Genealogy processes
 ##' 
@@ -34,7 +34,9 @@ simulate.default <- function (object, ...) {
       "- SI2R: superspreading model\n",
       "- Moran: Moran process\n",
       "- LBDP: linear birth-death-sampling process\n",
-      "- SIRwr: segmented SIR model\n"
+      "- SIRwr: segmented SIR model\n",
+      "- lbdpwr: segmented linear birth-death-sampling process\n",
+      "- moranwr: segmented Moran model\n"
     )
   else
     stop(
@@ -60,9 +62,11 @@ simulate.character <- function (object, time, ...) {
     LBDP = runLBDP(time=time,...),
     Moran = runMoran(time=time,...),
     SIRwr = runSIRwr(time=time,...),
+    Moranwr = runMoranwr(time=time,...),
+    LBDPwr = runLBDPwr(time=time,...),
     stop("unrecognized model: ",sQuote(object),".",
-      "Do ",sQuote("simulate()")," to view available models.",
-      call.=FALSE)
+         "Do ",sQuote("simulate()")," to view available models.",
+         call.=FALSE)
   ) |>
     structure(model=object,class="gpsim")
 }
@@ -86,6 +90,8 @@ simulate.gpsim <- function (object, time, ...) {
     modelLBDP = continueLBDP(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
     modelSIRwr = continueSIRwr(object,time=time,...),
+    modelMoranwr = continueMoranwr(object,time=time,...),
+    modelLBDPwr = continueLBDPwr(object,time=time,...),
     model = stop("no model attribute detected.",call.=FALSE),
     stop("unrecognized model ",sQuote(model),".",call.=FALSE)
   ) |>

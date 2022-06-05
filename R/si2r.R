@@ -16,6 +16,7 @@
 ##' @param delta rate of waning of immunity
 ##' @param psi1,psi2 sampling rates for demes 1 and 2, respectively
 ##' @param sigma12,sigma21 movement rates from deme 1 to 2 and 2 to 1, respectively
+##' @param frac fraction of batch sampling
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of I1 population (I2 = 0 at t = 0)
 ##' @param R0 initial size of recovered population
@@ -46,12 +47,14 @@ runSI2R <- function (
   Beta = 5, mu = 5, gamma = 1, delta = 0,
   psi1 = 1, psi2 = 0,
   sigma12 = 1, sigma21 = 3,
+  frac=0,
   S0 = 500, I0 = 10, R0 = 0
 ) {
   params <- c(
     Beta=Beta,mu=mu,gamma=gamma,delta=delta,
     psi1=psi1,psi2=psi2,
-    sigma12=sigma12,sigma21=sigma21
+    sigma12=sigma12,sigma21=sigma21,
+    frac=frac
   )
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSI2R,params,ivps,t0)
@@ -66,12 +69,14 @@ continueSI2R <- function (
   object, time,
   Beta = NA, mu = NA, gamma = NA, delta = NA,
   psi1 = NA, psi2 = NA,
-  sigma12 = NA, sigma21 = NA
+  sigma12 = NA, sigma21 = NA,
+  frac = NA
 ) {
   params <- c(
     Beta=Beta,mu=mu,gamma=gamma,delta=delta,
     psi1=psi1,psi2=psi2,
-    sigma12=sigma12,sigma21=sigma21
+    sigma12=sigma12,sigma21=sigma21,
+    frac=frac
   )
   x <- .Call(P_reviveSI2R,object,params)
   .Call(P_runSI2R,x,time)

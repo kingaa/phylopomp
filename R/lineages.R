@@ -3,7 +3,7 @@
 ##' The number of lineages through time
 ##'
 ##' @name lineages
-##' @include getinfo.R
+##' @include getinfo.R plot.R
 ##'
 ##' @inheritParams getInfo
 ##' @return A \code{\link[tibble]{tibble}} containing the lineage count function.

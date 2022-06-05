@@ -15,6 +15,6 @@ runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2) |>
 simulate("SI2R",time=2) -> x
 x |> plot(prune=FALSE,obscure=FALSE)
 x |> yaml() -> y
-x |> lineages(obscure=FALSE) |> plot()
+x |> lineages(obscure=FALSE) |> plot.gplin()
 
 dev.off()

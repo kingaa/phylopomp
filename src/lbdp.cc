@@ -13,6 +13,7 @@ typedef struct {
   double lambda;
   double mu;
   double psi;
+  double frac;
   int n0;
 } lbdp_parameters_t;
 
@@ -26,6 +27,7 @@ std::string lbdp_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(lambda)
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
+    + YAML_PARAM(frac)
     + YAML_PARAM(n0);
   std::string s = tab + "state:\n"
     + YAML_STATE(n);
@@ -38,6 +40,7 @@ void lbdp_proc_t::update_params (double *p, int n) {
   PARAM_SET(lambda);
   PARAM_SET(mu);
   PARAM_SET(psi);
+  PARAM_SET(frac);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -81,6 +84,11 @@ void lbdp_genealogy_t::jump (int event) {
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
+}
+
+template<>
+void lbdp_genealogy_t::batch (void) {
+  batch_sample(params.frac);
 }
 
 GENERICS(LBDP,lbdp_genealogy_t)

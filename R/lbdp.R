@@ -12,6 +12,7 @@
 ##' @param lambda per capita birth rate
 ##' @param mu per capita recovery rate.
 ##' @param psi per capita sampling rate.
+##' @param frac fraction of batch sampling
 ##' @param n0 initial population size
 ##' @param time final time
 ##' @param t0 initial time
@@ -25,10 +26,10 @@ NULL
 ##' @export
 runLBDP <- function (
   time,  t0 = 0, 
-  lambda = 2, mu = 1, psi = 1,
+  lambda = 2, mu = 1, psi = 1, frac = 0,
   n0 = 5
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi)
+  params <- c(lambda=lambda,mu=mu,psi=psi,frac=frac)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
   x <- .Call(P_runLBDP,x,time)
@@ -39,9 +40,9 @@ runLBDP <- function (
 ##' @inheritParams simulate
 ##' @export
 continueLBDP <- function (
-  object, time, lambda = NA, mu = NA, psi = NA
+  object, time, lambda = NA, mu = NA, psi = NA, frac = NA
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi)
+  params <- c(lambda=lambda,mu=mu,psi=psi,frac=frac)
   x <- .Call(P_reviveLBDP,object,params)
   .Call(P_runLBDP,x,time)
 }

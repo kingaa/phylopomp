@@ -1,0 +1,195 @@
+---
+title: "Testing the SMC on the Linear birth-death-sampling model"
+author: "Aaron A. King"
+output:
+  html_document:
+    code_folding: show
+    df_print: paged
+    highlight: tango
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+bibliography: phylopomp.bib
+csl: jss.csl
+params:
+  prefix: "lbdp_smc"
+---
+
+```{r knitr-opts,child="knitr_setup.Rmd"}
+```
+
+Here, we simulate a genealogy under a linear birth-death-sampling process and compute its likelihood using the **phylopomp** SMC algorithm.
+We compare the latter to the exact likelihood as computed using the formula of @Stadler2010.
+
+
+
+```{r pkgs,results="hide",message=FALSE,cache=FALSE}
+library(tidyverse)
+library(pomp)
+library(phylopomp)
+stopifnot(packageVersion("phylopomp")>="0.0.9.0")
+```
+
+```{r simdat,results="hide"}
+set.seed(257012390L)
+playLBDP(lambda=2,mu=1,psi=1,times=3,n0=1) %>%
+  getInfo(prune=TRUE) -> x
+x %>% getInfo(compact=TRUE) %>% plot(points=TRUE)
+x$tree %>%
+  newick2df(time=3) -> dat
+```
+
+```{r smc_loglik1,eval=FALSE}
+dat %>%
+  lbdp_pomp(lambda=2,mu=1,psi=1) -> po
+
+expand_grid(
+  lambda=c(1.9,2.0,2.1),
+  mu=c(0.9,1.0,1.1),
+  psi=c(0.9,1.0,1.1),
+  n0=1,
+  Np=c(1e2,1e3,1e4,1e5,1e6),
+  rep=1:10
+) -> res
+
+library(foreach)
+library(iterators)
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+registerDoRNG(558976750)
+
+foreach (
+  p=iter(res,"row"),
+  .combine=bind_rows,
+  .inorder=FALSE
+) %dopar% {
+  po %>%
+    pfilter(
+      Np=p$Np,
+      params=unlist(p)
+    ) %>%
+    logLik() -> p$loglik
+  dat %>%
+    lbdp_exact(lambda=p$lambda,mu=p$mu,psi=p$psi) -> p$exact
+  p
+} -> res
+```
+
+```{r smc_loglik1_eval,include=FALSE}
+bake(file="smc_loglik1.rds",{
+  <<smc_loglik1>>
+}) -> res
+```
+
+
+```{r smc_loglik_plot,fig.dim=c(6,6),out.width="100%"}
+res %>%
+  ggplot(aes(x=Np,y=loglik,color=factor(lambda)))+
+  geom_point(size=0.5)+
+  geom_hline(aes(color=factor(lambda),yintercept=exact))+
+  labs(
+    color=expression(lambda),
+    x=expression(N[p]),
+    y=expression(log~L)
+  )+
+  scale_x_log10(
+    labels=function(x)aakmisc::scinot(x,simplify=TRUE)
+  )+
+  facet_grid(
+    mu~psi,
+    labeller=label_bquote(
+      rows=mu==.(mu),
+      cols=psi==.(psi)
+    )
+  )+
+  theme_bw(base_size=12)
+```
+
+Dots show the results of SMC computations using the indicated number of particles ($N_p$).
+The horizontal lines are the exact values, as computed by @Stadler2010.
+
+```{r smc_loglik2,eval=FALSE}
+set.seed(151282381L)
+playLBDP(lambda=2,mu=1,psi=1,times=6,n0=1) %>%
+  getInfo(prune=TRUE) -> x
+x %>% getInfo(compact=TRUE) %>% plot(points=TRUE)
+x$tree %>%
+  newick2df(time=6) -> dat
+
+dat %>%
+  lbdp_pomp(lambda=2,mu=1,psi=1) -> po
+
+expand_grid(
+  lambda=c(1.9,2.0,2.1),
+  mu=c(0.9,1.0,1.1),
+  psi=c(0.9,1.0,1.1),
+  n0=1,
+  Np=c(1e2,1e3,1e4,1e5,1e6),
+  rep=1:10
+) -> res
+
+library(foreach)
+library(iterators)
+library(doParallel)
+library(doRNG)
+registerDoParallel()
+registerDoRNG(558976750)
+
+foreach (
+  p=iter(res,"row"),
+  .combine=bind_rows,
+  .inorder=FALSE
+) %dopar% {
+  po %>%
+    pfilter(
+      Np=p$Np,
+      params=unlist(p)
+    ) %>%
+    logLik() -> p$loglik
+  dat %>%
+    lbdp_exact(lambda=p$lambda,mu=p$mu,psi=p$psi) -> p$exact
+  p
+} -> res
+```
+
+```{r smc_loglik2_eval,include=FALSE}
+bake(file="smc_loglik2.rds",{
+  <<smc_loglik2>>
+}) -> res
+```
+
+```{r smc_loglik_plot2,fig.dim=c(6,6),out.width="100%"}
+res %>%
+  filter(Np>1e2) %>%
+  ggplot(aes(x=Np,y=loglik,color=factor(lambda)))+
+  geom_point(size=0.5)+
+  geom_hline(aes(color=factor(lambda),yintercept=exact))+
+  labs(
+    color=expression(lambda),
+    x=expression(N[p]),
+    y=expression(log~L)
+  )+
+  scale_x_log10(
+    labels=function(x)aakmisc::scinot(x,simplify=TRUE)
+  )+
+  facet_grid(
+    mu~psi,
+    labeller=label_bquote(
+      rows=mu==.(mu),
+      cols=psi==.(psi)
+    )
+  )+
+  theme_bw(base_size=12)
+```
+
+## Session Info
+
+```{r session_info,echo=FALSE}
+sessionInfo()
+```
+
+## References

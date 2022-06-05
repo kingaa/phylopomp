@@ -119,6 +119,19 @@ SEXP run (SEXP State, SEXP Tout) {
   return out;
 }
 
+template<class TYPE>
+SEXP batch (SEXP State) {
+  SEXP out;
+  TYPE X = State;
+  GetRNGstate();
+  X.valid();
+  X.batch();
+  PutRNGstate();
+  PROTECT(out = serial(X));
+  UNPROTECT(1);
+  return out;
+}
+
 //! number of lineages through time
 template <class TYPE>
 SEXP lineage_count (const TYPE& G) {
@@ -136,7 +149,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
            SEXP Yaml, SEXP Structure, SEXP Lineages,
            SEXP Tree, SEXP Compact) {
   TYPE A = State;
-
+  
   // prune and/or obscure if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
@@ -147,32 +160,32 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
     for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].obscure();
   }
   size_t nout = 0;
-
+  
   bool get_t0 = *LOGICAL(AS_LOGICAL(T0));
   if (get_t0) nout++;
   
   bool get_time = *LOGICAL(AS_LOGICAL(Time));
   if (get_time) nout++;
-
+  
   bool get_desc = *LOGICAL(AS_LOGICAL(Descript));
   if (get_desc) nout++;
-
+  
   bool get_yaml = *LOGICAL(AS_LOGICAL(Yaml));
   if (get_yaml) nout++;
-
+  
   bool get_struc = *LOGICAL(AS_LOGICAL(Structure));
   if (get_struc) nout++;
-
+  
   bool get_lin = *LOGICAL(AS_LOGICAL(Lineages));
   if (get_lin) nout++;
-
+  
   bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
   if (get_tree) nout++;
   bool do_compact = *LOGICAL(AS_LOGICAL(Compact));
   
   bool get_retimes = *LOGICAL(AS_LOGICAL(Retimes));
   if (get_retimes) nout++;
-
+  
   // pack up return values in a list
   int k = 0;
   SEXP out, outnames;
@@ -203,45 +216,51 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
     k = set_list_elem(out,outnames,re_times(A),"retimes",k);
   }
   SET_NAMES(out,outnames);
-
+  
   UNPROTECT(2);
   return out;
 }
 
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
-    return make<TYPE>(Params,IVPs,T0);                                  \
-  }                                                                     \
-  
+return make<TYPE>(Params,IVPs,T0);                                        \
+}                                                                         \
+
 #define REVIVEFN(X,TYPE) SEXP revive ## X (SEXP State, SEXP Params) {   \
-    return revive<TYPE>(State,Params);                                  \
-  }                                                                     \
+return revive<TYPE>(State,Params);                                      \
+}                                                                       \
 
 #define RUNFN(X,TYPE) SEXP run ## X (SEXP State, SEXP Times) {  \
-    return run<TYPE>(State,Times);                              \
-  }                                                             \
+return run<TYPE>(State,Times);                                  \
+}                                                               \
+
+#define BATCHFN(X,TYPE) SEXP batch ## X (SEXP State) {        \
+return batch<TYPE>(State);                                    \
+}                                                             \
 
 #define INFOFN(X,TYPE) SEXP info ## X (                                 \
-                                       SEXP State, SEXP Prune, SEXP Obscure, \
-                                       SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes, \
-                                       SEXP Yaml, SEXP Structure, SEXP Lineages, \
-                                       SEXP Tree, SEXP Compact) {       \
-    return info<TYPE>(State, Prune, Obscure,                            \
-                      T0, Time, Descript, Retimes,                      \
-                      Yaml,Structure, Lineages,                         \
-                      Tree, Compact);                                   \
-  }                                                                     \
+SEXP State, SEXP Prune, SEXP Obscure,                                   \
+SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes,                        \
+SEXP Yaml, SEXP Structure, SEXP Lineages,                               \
+SEXP Tree, SEXP Compact) {                                              \
+  return info<TYPE>(State, Prune, Obscure,                              \
+                    T0, Time, Descript, Retimes,                        \
+                    Yaml,Structure, Lineages,                           \
+                    Tree, Compact);                                     \
+}                                                                       \
 
 #define GENERICS(X,TYPE)                        \
-  extern "C" {                                  \
+extern "C" {                                    \
                                                 \
-    MAKEFN(X,TYPE)                              \
+  MAKEFN(X,TYPE)                                \
                                                 \
-    REVIVEFN(X,TYPE)                            \
+  REVIVEFN(X,TYPE)                              \
                                                 \
-    RUNFN(X,TYPE)                               \
+  RUNFN(X,TYPE)                                 \
                                                 \
-    INFOFN(X,TYPE)                              \
+  BATCHFN(X,TYPE)                               \
                                                 \
-  }                                             \
-  
+  INFOFN(X,TYPE)                                \
+                                                \
+}                                               \
+
 #endif

@@ -36,7 +36,10 @@ Note that, one cannot change initial conditions or \code{t0} when continuing a s
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

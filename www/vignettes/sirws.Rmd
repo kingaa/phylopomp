@@ -1,0 +1,198 @@
+---
+title: "SIRwS Model: Numerical tests"
+author: "Aaron A. King"
+output:
+  html_document:
+    code_folding: hide
+    df_print: paged
+    highlight: tango
+    number_sections: no
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+params:
+  prefix: "sirws"
+---
+
+```{r knitr-opts,child="knitr_setup.Rmd"}
+```
+
+```{r pkgs,echo=FALSE,results="hide",message=FALSE,cache=FALSE}
+library(phylopomp)
+library(tidyverse)
+set.seed(407643109L)
+```
+
+## Verifying the attachment distribution
+
+We investigate the distributions of the cumulative hazards of the conditional attachment process.
+These should be perfectly distributed according to the standard exponential distribution.
+
+```{r cluster,include=FALSE,cache=FALSE}
+#if (file.exists("CLUSTER.R")) {
+#  source("CLUSTER.R")
+#} else {
+  library(doParallel)
+  ## registerDoParallel()
+#}
+```
+
+```{r hazards,echo=TRUE,cache=TRUE}
+library(doRNG)
+registerDoRNG(438529913)
+
+expand_grid(
+  beta=1,
+  gamma=c(0.2,0.5,1,2,5),
+  psi=c(0.2,1,5),
+  N=c(10,100,1000),
+  I0=c(1,10,100),
+  rep=1:10
+) %>%
+  group_by(rep) %>%
+  mutate(
+    case=seq_len(n()),
+    S0=N-I0
+  ) %>%
+  ungroup() %>%
+  filter(S0>=0) %>%
+  arrange(rep,case) -> pars
+
+foreach (par=iter(pars,"row"),.inorder=FALSE) %dopar%
+  {
+    library(phylopomp)
+    library(tidyverse)
+    par %$%
+      playSIRwS(
+        beta=beta,gamma=gamma,psi=psi,
+        S0=S0,I0=I0,t0=0,times=100,
+        tree=FALSE
+      ) %>%
+      getInfo(tree=FALSE) -> x
+    bind_cols(par,x$cumhaz)
+  } %>%
+  bind_rows() %>%
+  filter(!is.na(Lambda)) %>%
+  mutate(p=exp(-Lambda)) %>%
+  arrange(case,rep,time) %>%
+  group_by(case,rep) %>%
+  mutate(sampleno=row_number()) %>%
+  ungroup() -> dat
+```
+
+We use Kolmogorov-Smirnov to test the hypothesis that the cumulative hazards are distributed as expected.
+
+```{r ks_tests,echo=TRUE,fig.width=8,fig.height=8,purl=FALSE}
+library(broom)
+
+stopifnot(
+  `ties in KS test`=dat %>%
+    count(p) %>%
+    filter(n>1) %>%
+    nrow()==0
+)
+
+dat %>%
+  group_by(sampleno) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(sampleno,n,p.value) %>%
+  filter(n>100) -> snp
+snp %>%
+  ggplot(aes(x=p.value))+
+  stat_ecdf()
+snp %>%
+  ggplot(aes(x=sampleno,y=p.value))+
+  geom_point()
+
+dat %>%
+  group_by(R0=beta/gamma) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(R0,n,p.value)
+
+dat %>%
+  group_by(nsamp=psi/gamma) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(nsamp,n,p.value)
+
+dat %>%
+  mutate(nsamp=factor(psi/gamma)) %>%
+  ggplot(aes(x=p,group=nsamp,color=nsamp))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  coord_equal()+
+  labs(
+    color=expression(psi/gamma),
+    x=expression(italic(p)),
+    y=expression(italic(F(p)))
+  )+
+  expand_limits(x=c(0,1),y=c(0,1))
+
+dat %>%
+  group_by(N) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(N,n,p.value)
+
+dat %>%
+  ggplot(aes(x=p,group=factor(N),color=factor(N)))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  coord_equal()+
+  labs(
+    color=expression(N),
+    x=expression(italic(p)),
+    y=expression(italic(F(p)))
+  )+
+  expand_limits(x=c(0,1),y=c(0,1))
+
+dat %>%
+  group_by(f=I0/(I0+S0)) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(f,n,p.value)
+
+dat %>%
+  mutate(f=factor(I0/N)) %>%
+  ggplot(aes(x=p,group=f,color=f))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  coord_equal()+
+  labs(
+    color=expression(over(I[0],N)),
+    x=expression(italic(p)),
+    y=expression(italic(F(p)))
+  )+
+  expand_limits(x=c(0,1),y=c(0,1))
+
+dat %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(n,p.value)
+
+dat %>%
+  group_by(case) %>%
+  summarize(n=n(),tidy(ks.test(x=p,y=punif))) %>%
+  select(case,n,p.value) -> pvals
+
+pvals %>%
+  summarize(n=n(),tidy(ks.test(x=p.value,y=punif))) %>%
+  select(n,p.value) -> ppval
+
+dat %>%
+  ggplot(aes(x=p))+
+  geom_abline(slope=1)+
+  stat_ecdf()+
+  annotate("rug",x=pvals$p.value)+
+  annotate("text",x=0.2,y=0.8,
+           label=sprintf("P==%3.2f",ppval$p.value),parse=TRUE)+
+  coord_equal()+
+  labs(x=expression(italic(p)),y=expression(italic(F(p))))+
+  expand_limits(x=c(0,1),y=c(0,1))
+```
+
+## Session Info
+
+```{r session_info,echo=FALSE}
+sessionInfo()
+```
+
+## References

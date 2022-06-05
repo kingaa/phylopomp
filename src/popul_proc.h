@@ -132,6 +132,8 @@ public:
   virtual void rinit (void) = 0;
   //! makes a jump
   virtual void jump (int e) = 0;
+  //! set an ending pose
+  virtual void batch (void) = 0;
   //! machine/human readable info
   std::string yaml (std::string tab) const;
 

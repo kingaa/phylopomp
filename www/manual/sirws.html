@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: SIR with sampling simulator.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for sirws {phylopomp}"><tr><td>sirws {phylopomp}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>SIR with sampling simulator.</h2>
+
+<h3>Description</h3>
+
+<p>Run the simulator.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+playSIRwS(
+  data = NULL,
+  ...,
+  beta,
+  gamma,
+  psi,
+  S0,
+  I0,
+  t0 = 0,
+  times,
+  tree = FALSE,
+  ill = FALSE
+)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>data</code></td>
+<td>
+<p>optional data frame; output from <code>playSIRwS</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments; ignored.</p>
+</td></tr>
+<tr valign="top"><td><code>beta</code></td>
+<td>
+<p>transmission rate</p>
+</td></tr>
+<tr valign="top"><td><code>gamma</code></td>
+<td>
+<p>recovery rate</p>
+</td></tr>
+<tr valign="top"><td><code>psi</code></td>
+<td>
+<p>sampling rate</p>
+</td></tr>
+<tr valign="top"><td><code>S0</code></td>
+<td>
+<p>initial size of susceptible population</p>
+</td></tr>
+<tr valign="top"><td><code>I0</code></td>
+<td>
+<p>initial size of infected population</p>
+</td></tr>
+<tr valign="top"><td><code>t0</code></td>
+<td>
+<p>initial time</p>
+</td></tr>
+<tr valign="top"><td><code>times</code></td>
+<td>
+<p>times at which output is requested.</p>
+</td></tr>
+<tr valign="top"><td><code>tree</code></td>
+<td>
+<p>logical; represent the genealogical tree in Newick format?</p>
+</td></tr>
+<tr valign="top"><td><code>ill</code></td>
+<td>
+<p>logical; return an illustration?</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>A <code>tibble</code> with <code>state</code> attribute.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Other Genealogy processes: 
+<code><a href="lbdp.html">lbdp</a></code>,
+<code><a href="moran.html">moran</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+playSIRwS(beta=2,gamma=1,psi=2,S0=1000,I0=5,times=0:5,t0=0,tree=TRUE) -&gt; x
+playSIRwS(x,times=6:10,psi=1,tree=TRUE) -&gt; x
+plot(x)
+
+playSIRwS(beta=3,gamma=1,psi=2,S0=10,I0=5,times=0:5,t0=-1,tree=TRUE) -&gt; x
+plot(x,points=TRUE)
+
+y &lt;- getInfo(x)
+plot(y,points=TRUE)
+
+library(ggplot2)
+y$lineages %&gt;%
+  ggplot(aes(x=time,y=lineages))+
+  geom_step()
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>phylopomp</em> version 0.0.8.2 <a href="00Index.html">Index</a>]</div>
+</body></html>

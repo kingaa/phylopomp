@@ -12,6 +12,7 @@
 #include <string>
 #include <cstring>
 #include <list>
+#include <cstdlib>
 #include "internal.h"
 #include "popul_proc.h"
 #include "genealogy.h"
@@ -153,6 +154,10 @@ public:
       }
     }
   };
+  //! t0
+  // slate_t timezero (void) const {
+  //   return popul_t::timezero();
+  // };
   //! current time
   slate_t time (void) const {
     return popul_t::time();
@@ -286,32 +291,42 @@ public:
       }
     }
     valid_invens(e);
-  }
-  // //! batch_sampling at the end of the time, with proportion p
-  // void batch_sample (double p = 0) {
-  //   std::string e = "batch sample";
-  //   size_t N = 0;
-  //   for (name_t i = 0; i < ndeme; i++) {
-  //     N += (inventory[0])[i].size();
-  //   }
-  //   size_t n = (int)(N*p);
-  //   if (n > 0) {
-  //     while (n > 0) {
-  //       
-  //       n -= ;
-  //     }
-  //     ball_t *a;
-  //     for (name_t s = 0; s < nseg; s++) {
-  //       a = inventory[s].get_ball_idx(ind,i);
-  //       geneal[s].sample(a,time());
-  //     }
-  //     valid_invens(e);
-  //   }
-  // };
+  };
+  //! batch_sampling at the end of the time, with fraction frac
+  void batch_sample (double frac = 0) {
+    size_t N = 0, deme_size[ndeme];
+    name_t i;
+    for (i = 0; i < ndeme; i++) {
+      deme_size[i] = (inventory[0])[i].size();
+      N += deme_size[i];
+    }
+    size_t n = (size_t)(N*frac);
+    if (n > 0) {
+      std::string e = "batch sample";
+      ball_t* a;
+      name_t* inds = (name_t*)malloc(sizeof(name_t)*n);
+      random_numbers(inds, N, n);
+      qsort(inds, n, sizeof(name_t), compare_int);
+      i = 0;
+      for (name_t d = 0; d < ndeme; d++) {
+        while (inds[i] < deme_size[d]) {
+          for (name_t s = 0; s < nseg; s++) {
+            a = inventory[s].get_ball_idx(inds[i],d);
+            geneal[s].sample(a,time());
+          }
+          i++;
+        }
+      }
+      valid_invens(e);
+      free(inds);
+    }
+  };
   //! initialize the state
   void rinit (void);
   //! makes a jump
   void jump (int e);
+  //! set an ending pose
+  void batch (void);
 };
 
 #endif

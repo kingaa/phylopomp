@@ -10,7 +10,7 @@ options(digits=3)
 runMoran(time=10) -> x
 x
 x |> yaml() -> y
-x |> lineages()
+x |> lineages() |> getElement(1)
 
 runMoran(n=100,time=100) |>
   plot()

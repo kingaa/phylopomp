@@ -7,9 +7,9 @@
 \alias{continueMoran}
 \title{The classical Moran model}
 \usage{
-runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
+runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1, frac = 0)
 
-continueMoran(object, time, mu = NA, psi = NA)
+continueMoran(object, time, mu = NA, psi = NA, frac = NA)
 }
 \arguments{
 \item{time}{final time}
@@ -21,6 +21,8 @@ continueMoran(object, time, mu = NA, psi = NA)
 \item{mu}{event rate}
 
 \item{psi}{sampling rate.}
+
+\item{frac}{fraction of batch sampling}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
@@ -35,7 +37,10 @@ population size remains constant.
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{seir}},
 \code{\link{si2r}},
 \code{\link{siir}},

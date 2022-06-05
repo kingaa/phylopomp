@@ -12,6 +12,7 @@
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
 ##' @param delta immunity waning rate
+##' @param frac fraction of batch sampling
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
@@ -27,10 +28,10 @@ NULL
 ##' @export
 runSIR <- function (
   time,  t0 = 0, 
-  Beta = 2, gamma = 1, psi = 1, delta = 0,
+  Beta = 2, gamma = 1, psi = 1, delta = 0, frac=0,
   S0 = 100, I0 = 2, R0 = 0
 ) {
-  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,frac=frac)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ivps,t0)
   x <- .Call(P_runSIR,x,time)
@@ -41,9 +42,9 @@ runSIR <- function (
 ##' @inheritParams simulate
 ##' @export
 continueSIR <- function (
-  object, time, Beta = NA, gamma = NA, psi = NA, delta = NA
+  object, time, Beta = NA, gamma = NA, psi = NA, delta = NA, frac = NA
 ) {
-  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,frac=frac)
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time)
 }

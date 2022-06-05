@@ -39,29 +39,33 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune  = TRUE, obscure = TRUE,
-  t0 = FALSE, time = FALSE,
-  description = FALSE, retimes = FALSE,
-  structure = FALSE, yaml = FALSE,
-  lineages = FALSE,
-  tree = FALSE, compact = TRUE)
+    object, prune  = TRUE, obscure = TRUE,
+    t0 = FALSE, time = FALSE,
+    description = FALSE, retimes = FALSE,
+    structure = FALSE, yaml = FALSE,
+    lineages = FALSE,
+    tree = FALSE, compact = TRUE)
 {
   x <- switch(
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                     description,retimes,yaml,structure,lineages,tree,compact),
     modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                      description,retimes,yaml,structure,lineages,tree,compact),
     modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                      description,retimes,yaml,structure,lineages,tree,compact),
     modelMoran = .Call(P_infoMoran,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                       description,retimes,yaml,structure,lineages,tree,compact),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                      description,retimes,yaml,structure,lineages,tree,compact),
     modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                      description,retimes,yaml,structure,lineages,tree,compact),
     modelSIRwr = .Call(P_infoSIRwr,object,prune,obscure,t0,time,
-      description,retimes,yaml,structure,lineages,tree,compact),
+                       description,retimes,yaml,structure,lineages,tree,compact),
+    modelMoranwr = .Call(P_infoMoranwr,object,prune,obscure,t0,time,
+                       description,retimes,yaml,structure,lineages,tree,compact),
+    modelLBDPwr = .Call(P_infoLBDPwr,object,prune,obscure,t0,time,
+                       description,retimes,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )

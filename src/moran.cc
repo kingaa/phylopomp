@@ -13,6 +13,7 @@ typedef struct {
 typedef struct {
   double mu;
   double psi;
+  double frac;
   int n;
 } moran_parameters_t;
 
@@ -25,6 +26,7 @@ std::string moran_proc_t::yaml (std::string tab) const {
   std::string p = tab + "parameter:\n"
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
+    + YAML_PARAM(frac)
     + YAML_PARAM(n);
   std::string s = tab + "state:\n"
     + YAML_STATE(m)
@@ -37,6 +39,7 @@ void moran_proc_t::update_params (double *p, int n) {
   int m = 0;
   PARAM_SET(mu);
   PARAM_SET(psi);
+  PARAM_SET(frac);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -76,6 +79,11 @@ void moran_genealogy_t::jump (int event) {
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
+}
+
+template<>
+void moran_genealogy_t::batch (void) {
+  batch_sample(params.frac);
 }
 
 GENERICS(Moran,moran_genealogy_t)

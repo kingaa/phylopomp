@@ -1,6 +1,6 @@
 
-R version 4.2.0 (2022-04-22) -- "Vigorous Calisthenics"
-Copyright (C) 2022 The R Foundation for Statistical Computing
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -57,7 +57,7 @@ Type 'q()' to quit R.
 > 
 > pal <- c("#00274c","#ffcb05","#006597")
 > 
-> simulate("SIIR",time=5,S0=50,psi2=1,sigma12=1,I1_0=3,I2_0=3) -> x
+> simulate("SIIR",time=5,S0=50,sigma12=1,I1_0=3,I2_0=3) -> x
 > 
 > plot_grid(
 +   plot_grid(

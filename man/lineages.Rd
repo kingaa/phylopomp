@@ -48,7 +48,8 @@ plot_grid(
   x |> lineages() |> plot.gplin(),
   x |> plot(obscure=FALSE,palette=pal),
   x |> lineages(obscure=FALSE) |>
-    plot.gplin(palette=pal,legend.position=c(0.8,0.9)),
+    getElement(1) |>
+    plot(palette=pal,legend.position=c(0.8,0.9)),
   align="v",axis="b",
   ncol=2,byrow=FALSE
 )

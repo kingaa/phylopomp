@@ -15,12 +15,21 @@ runSIR(
   gamma = 1,
   psi = 1,
   delta = 0,
+  frac = 0,
   S0 = 100,
   I0 = 2,
   R0 = 0
 )
 
-continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
+continueSIR(
+  object,
+  time,
+  Beta = NA,
+  gamma = NA,
+  psi = NA,
+  delta = NA,
+  frac = NA
+)
 
 sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 }
@@ -36,6 +45,8 @@ sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 \item{psi}{sampling rate.}
 
 \item{delta}{immunity waning rate}
+
+\item{frac}{fraction of batch sampling}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -74,7 +85,10 @@ simulate("SIR",delta=1,time=20,I0=4) |> lineages() |> plot.gplin()
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

@@ -9,9 +9,9 @@
 \alias{lbdp_pomp}
 \title{Linear birth-death-sampling model}
 \usage{
-runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
+runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, frac = 0, n0 = 5)
 
-continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
+continueLBDP(object, time, lambda = NA, mu = NA, psi = NA, frac = NA)
 
 lbdp_exact(data, lambda, mu, psi, n0 = 1)
 
@@ -36,6 +36,8 @@ lbdp_pomp(
 \item{mu}{per capita recovery rate.}
 
 \item{psi}{per capita sampling rate.}
+
+\item{frac}{fraction of batch sampling}
 
 \item{n0}{initial population size}
 
@@ -85,6 +87,9 @@ simulate("LBDP",time=4) |>
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

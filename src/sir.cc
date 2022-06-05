@@ -17,6 +17,7 @@ typedef struct {
   double gamma;
   double psi;
   double delta;
+  double frac;
   int S0;
   int I0;
   int R0;
@@ -33,6 +34,7 @@ std::string sir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
     + YAML_PARAM(delta)
+    + YAML_PARAM(frac)
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
@@ -51,6 +53,7 @@ void sir_proc_t::update_params (double *p, int n) {
   PARAM_SET(gamma);
   PARAM_SET(psi);
   PARAM_SET(delta);
+  PARAM_SET(frac);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -103,6 +106,11 @@ void sir_genealogy_t::jump (int event) {
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
+}
+
+template<>
+void sir_genealogy_t::batch (void) {
+  batch_sample(params.frac);
 }
 
 GENERICS(SIR,sir_genealogy_t)

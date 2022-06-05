@@ -22,6 +22,7 @@ typedef struct {
   double psi2;
   double sigma12;
   double sigma21;
+  double frac;
   int S0;
   int I0;
   int R0;
@@ -42,6 +43,7 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(psi2)
     + YAML_PARAM(sigma12)
     + YAML_PARAM(sigma21)
+    + YAML_PARAM(frac)
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
@@ -65,6 +67,7 @@ void si2r_proc_t::update_params (double *p, int n) {
   PARAM_SET(psi2);
   PARAM_SET(sigma12);
   PARAM_SET(sigma21);
+  PARAM_SET(frac);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -145,6 +148,11 @@ void si2r_genealogy_t::jump (int event) {
     err("in %s: c'est impossible! (%ld)",__func__,event);
     break;
   }
+}
+
+template<>
+void si2r_genealogy_t::batch (void) {
+  batch_sample(params.frac);
 }
 
 GENERICS(SI2R,si2r_genealogy_t)

@@ -14,6 +14,7 @@ runSIRwr(
   gamma = 1,
   psi = 1,
   delta = 0,
+  frac = 0,
   rhoS = 0,
   rhoM = 0.1,
   rhoL = 0,
@@ -32,6 +33,7 @@ continueSIRwr(
   gamma = NA,
   psi = NA,
   delta = NA,
+  frac = NA,
   rhoS = NA,
   rhoM = NA,
   rhoL = NA,
@@ -52,6 +54,8 @@ continueSIRwr(
 \item{psi}{sampling rate.}
 
 \item{delta}{immunity waning rate}
+
+\item{frac}{fraction of batch sampling}
 
 \item{rhoS}{reassortment rate of S segment}
 
@@ -81,31 +85,33 @@ An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIRwr}.
 A single, unstructured population of hosts.
 }
 \examples{
-set.seed(28494712L)
-simulate("SIRwr",
-         Beta=2,gamma=1,psi=2,
+simulate("SIRwr",Beta=2,gamma=1,psi=2,frac=0,
          rhoS=.5, rhoM=.1, rhoL=.3,
          rhoSM=0, rhoSL=.2, rhoML = 0,
-         S0=100,I0=10,R0=0,time=3,t0=0) |>
-  plot()
+         S0=100,I0=10,time=5) |>
+  plot(prune=TRUE, compact=TRUE, points=TRUE)
 
 set.seed(28494712L)
-runSIRwr(Beta=3,gamma=1,psi=2,
+runSIRwr(Beta=3,gamma=1,psi=2,frac=0,
          rhoS=0,rhoM=.5,rhoL=0,
          rhoSM=0, rhoSL=0, rhoML = 0,
-         S0=20,I0=5,R0=0,time=1,t0=0) |>
-  plot(points=TRUE, retimes=TRUE)
+         S0=20,I0=5,R0=0,time=5,t0=-1) |>
+  plot(prune=TRUE, compact=TRUE, points=TRUE, t0=-1)
 
-
-# plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
-#   ncol=1,rel_heights=c(4,1))
-#
-# simulate("SIRwr",delta=1,time=20,I0=4) |> plot()
-# simulate("SIRwr",delta=1,time=20,I0=4) |> lineages() |> plot()
+set.seed(284914712L)
+runSIRwr(Beta=3,gamma=1,psi=0,frac=.8,
+         rhoS=0,rhoM=.5,rhoL=0,
+         rhoSM=0, rhoSL=0, rhoML = 0,
+         S0=100,I0=10,R0=0,time=1,t0=0) |>
+  batch() |>
+  plot()
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

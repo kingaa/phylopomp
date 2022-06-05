@@ -18,6 +18,7 @@ runSIIR(
   sigma12 = 0,
   sigma21 = 0,
   delta = 0,
+  frac = 0,
   S0 = 500,
   I1_0 = 10,
   I2_0 = 10,
@@ -34,7 +35,8 @@ continueSIIR(
   psi2 = NA,
   sigma12 = NA,
   sigma21 = NA,
-  delta = NA
+  delta = NA,
+  frac = NA
 )
 }
 \arguments{
@@ -51,6 +53,8 @@ continueSIIR(
 \item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
 
 \item{delta}{rate of loss of immunity}
+
+\item{frac}{fraction of batch sampling}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -83,10 +87,18 @@ simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
   S0=300,I1_0=20,I2_0=2,time=5) |>
   lineages() |>
   plot.gplin()
+
+simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=0,frac=.5,
+         S0=300,I1_0=20,I2_0=2,time=5) |>
+  batch() |>
+  plot()
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

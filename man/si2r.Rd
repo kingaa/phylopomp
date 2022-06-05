@@ -18,6 +18,7 @@ runSI2R(
   psi2 = 0,
   sigma12 = 1,
   sigma21 = 3,
+  frac = 0,
   S0 = 500,
   I0 = 10,
   R0 = 0
@@ -33,7 +34,8 @@ continueSI2R(
   psi1 = NA,
   psi2 = NA,
   sigma12 = NA,
-  sigma21 = NA
+  sigma21 = NA,
+  frac = NA
 )
 }
 \arguments{
@@ -52,6 +54,8 @@ continueSI2R(
 \item{psi1, psi2}{sampling rates for demes 1 and 2, respectively}
 
 \item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
+
+\item{frac}{fraction of batch sampling}
 
 \item{S0}{initial size of susceptible population}
 
@@ -106,7 +110,10 @@ plot_grid(
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{siir}},

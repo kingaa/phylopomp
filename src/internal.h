@@ -6,6 +6,9 @@
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 #ifndef STANDALONE
 
@@ -54,6 +57,34 @@ inline bool anyof (name_t* arr, size_t len, name_t elem) {
     if (elem == arr[k]) return true;
   }
   return false;
+}
+
+// sample random numbers; Fisher-Yates algorithm
+inline void swap_elem (name_t *a, name_t *b) {
+  name_t temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+inline void random_numbers (name_t* out, size_t len, size_t n) {
+  if (n > len)  err("in '%s': exceeding size!",__func__);
+  name_t i, arr[len];
+  for (i = 0; i < len; i++) arr[i] = i;
+  srand(time(NULL));
+  for (i = len - 1; i > 0; i--)  {
+    // Pick a random index from 0 to i
+    name_t j = rand() % (i+1);
+    // Swap arr[i] with the element at random index
+    swap_elem(&arr[i], &arr[j]);
+  }
+  for (i = 0; i < n; i++) {
+    out[i] = arr[i];
+  }
+}
+
+// compare integers
+inline int compare_int (const void* a, const void* b) {
+  return (*(int*)a - *(int*)b);
 }
 
 // helper function for filling a return list

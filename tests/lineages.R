@@ -10,8 +10,9 @@ options(digits=3)
 simulate("SI2R",time=1) -> x
 
 bind_rows(
-  A=x |> lineages(),
-  B=x |> lineages(obscure=FALSE) |>
+  A=x |> lineages() |> getElement(1),
+  B=x |> lineages(obscure=FALSE) |> 
+    getElement(1) |>
     mutate(lineages=deme1+deme2) |>
     select(time,lineages),
   .id="method"
@@ -21,10 +22,11 @@ bind_rows(
 
 plot_grid(
   plot(x),
-  x |> lineages() |> plot(),
+  x |> lineages() |> plot.gplin(),
   x |> plot(obscure=FALSE,palette=c("#00274c","#ffcb05")),
   x |>
     lineages(obscure=FALSE) |>
+    getElement(1) |>
     mutate(total=deme1+deme2) |>
     gather(var,val,-time) |>
     ggplot(aes(x=time,y=val,color=var,group=var))+
@@ -38,12 +40,13 @@ plot_grid(
 
 pal <- c("#00274c","#ffcb05","#006597")
 
-simulate("SIIR",time=5,S0=50,psi2=1,sigma12=1,I1_0=3,I2_0=3) -> x
+simulate("SIIR",time=5,S0=50,sigma12=1,I1_0=3,I2_0=3) -> x
 
 plot_grid(
   plot_grid(
     x|>plot(prune=F,obscure=F,points=T,palette=pal),
     x|>lineages(prune=F,obscure=F)|>
+      getElement(1) |>
       mutate(lineages=deme1+deme2)|>
       gather(var,val,-time)|>
       ggplot(aes(x=time,y=val,color=var,group=var))+

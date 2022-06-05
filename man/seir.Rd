@@ -15,6 +15,7 @@ runSEIR(
   gamma = 1,
   psi = 1,
   delta = 0,
+  frac = 0,
   S0 = 500,
   E0 = 10,
   I0 = 10,
@@ -28,7 +29,8 @@ continueSEIR(
   sigma = NA,
   gamma = NA,
   psi = NA,
-  delta = NA
+  delta = NA,
+  frac = NA
 )
 }
 \arguments{
@@ -45,6 +47,8 @@ continueSEIR(
 \item{psi}{sampling rate.}
 
 \item{delta}{rate of loss of immunity}
+
+\item{frac}{fraction of batch sampling}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -80,7 +84,10 @@ simulate("SEIR",delta=1,time=20,I0=4) |> lineages() |> plot.gplin()
 }
 \seealso{
 More example genealogy processes: 
+\code{\link{batch}()},
+\code{\link{lbdpwr}},
 \code{\link{lbdp}},
+\code{\link{moranwr}},
 \code{\link{moran}},
 \code{\link{si2r}},
 \code{\link{siir}},
