@@ -5,7 +5,7 @@ CP = cp
 TOUCH = touch
 INSTALL = install
 
-default: index.html lbdp_compar.html
+default: index.html lbdp_compar.html moran.html
 
 %.tex: %.Rnw
 	$(RSCRIPT) -e "library(knitr); knit(\"$*.Rnw\")"

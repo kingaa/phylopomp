@@ -1,0 +1,154 @@
+---
+title: Simulations of the Moran genealogy process
+author: A.A. King
+output: rmarkdown::html_vignette
+bibliography: phylopomp.bib
+csl: jss.csl
+vignette: >
+  %\VignetteIndexEntry{Verification of LBDP computations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+	
+```{r knitr_setup,include=FALSE,purl=FALSE,cache=FALSE}
+library(knitr)
+opts_chunk$set(
+             progress=TRUE,
+             prompt=FALSE,tidy=FALSE,highlight=TRUE,
+             strip.white=TRUE,
+             message=FALSE,
+             warning=FALSE,
+             error=TRUE,
+             echo=TRUE,
+             cache=TRUE,
+             cache.extra=rand_seed,
+             results='markup',
+             fig.show='asis',
+             fig.path=paste0("tmp/","moran","/"),
+             cache.path=paste0("tmp/","moran","/"),
+             size='small',
+             fig.align='center',
+             fig.dim=c(6,6),
+             dpi=100,
+             dev='png',
+             dev.args=list(bg='transparent')
+           )
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+```
+ 
+```{r packages,include=FALSE,cache=FALSE}
+library(tidyverse)
+library(pomp)
+library(phylopomp)
+library(cowplot)
+library(gifski)
+stopifnot(getRversion() >= "4.1")
+stopifnot(packageVersion("pomp")>="4.2")
+stopifnot(packageVersion("phylopomp")>="0.1")
+theme_set(theme_bw(base_family="serif"))
+options(dplyr.summarise.inform=FALSE)
+set.seed(1159254136)
+```
+ 
+## One simulation of the MGP
+
+The Moran genealogy process is described in @King2020.
+
+```{r mgp1,results="hide",cache=FALSE,include=FALSE}
+times <- seq(from=0,to=30,by=0.1)
+
+png_files <- sprintf(
+  file.path(tempdir(),"frame%05d.png"),
+  seq_along(times)
+)
+gif_file <- "moran1.gif"
+
+## pb <- utils::txtProgressBar(0,length(times),0,style=3)
+x <- simulate("Moran",time=0,psi=0,n=20)
+for (k in seq_len(length(times))) {
+  x <- simulate(x,time=times[k])
+  ggsave(
+    filename=png_files[k],
+    plot=plot(
+      x, t0=0, time=max(times),
+      points=TRUE, prune=FALSE, obscure=FALSE,
+      palette=c("#ffcb05","#dddddd"),
+      axis.line=element_line(color="white"),
+      axis.ticks=element_line(color="white"),
+      axis.text=element_blank(),
+      plot.background=element_rect(fill=NA,color=NA),
+      panel.background=element_rect(fill=NA,color=NA)
+    ),
+    device="png",dpi=100,
+    height=4,width=6,units="in"
+  )
+  ##  setTxtProgressBar(pb,k)
+}
+
+gifski(png_files,gif_file,delay=0.02,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg1,include=FALSE,cache=FALSE,eval=!file.exists("moran1.mp4") | file.mtime("moran1.gif")>file.mtime("moran1.mp4")}
+ffmpeg -y -r 50 -i moran1.gif moran1.webm
+ffmpeg -y -r 50 -i moran1.gif moran1.mp4
+```
+
+<video width="600" controls>
+<source src="moran1.mp4" type="video/mp4"/>
+<source src="moran1.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+## One simulation of the sampled MGP
+
+```{r mgp2,results="hide",cache=FALSE,include=FALSE}
+times <- seq(from=0,to=30,by=0.1)
+
+png_files <- sprintf(
+  file.path(tempdir(),"frame%05d.png"),
+  seq_along(times)
+)
+gif_file <- "moran2.gif"
+
+## pb <- utils::txtProgressBar(0,length(times),0,style=3)
+x <- simulate("Moran",time=0,psi=0.3,n=20)
+for (k in seq_len(length(times))) {
+  x <- simulate(x,time=times[k])
+  ggsave(
+    filename=png_files[k],
+    plot=plot(
+      x, t0=0, time=max(times),
+      points=TRUE, prune=FALSE, obscure=FALSE,
+      palette=c("#ffcb05","#dddddd"),
+      axis.line=element_line(color="white"),
+      axis.ticks=element_line(color="white"),
+      axis.text=element_blank(),
+      plot.background=element_rect(fill=NA,color=NA),
+      panel.background=element_rect(fill=NA,color=NA)
+    ),
+    device="png",dpi=100,
+    height=4,width=6,units="in"
+  )
+  ##  setTxtProgressBar(pb,k)
+}
+
+gifski(png_files,gif_file,delay=0.02,loop=TRUE)
+unlink(png_files)
+```
+
+```{bash ffmpeg2,include=FALSE,cache=FALSE,eval=!file.exists("moran2.mp4") | file.mtime("moran2.gif")>file.mtime("moran2.mp4")}
+ffmpeg -y -r 50 -i moran2.gif moran2.webm
+ffmpeg -y -r 50 -i moran2.gif moran2.mp4
+```
+
+<video width="600" controls>
+<source src="moran2.mp4" type="video/mp4"/>
+<source src="moran2.webm" type="video/webm"/>
+Your browser does not support the video element.
+</video>
+
+## References

@@ -7,6 +7,8 @@
 
 ### an *R* package for POMP inference on genealogies
 
+["Markov Genealogy Processes" (*Theoretical Population Biology* **143**:77--91)](https://doi.org/10.1016/j.tpb.2021.11.003)
+
 Manual: https://kingaa.github.io/manuals/phylopomp/
 
 Related packages:
