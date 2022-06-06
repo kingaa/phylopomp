@@ -95,6 +95,7 @@ dt {
 ### Checking the theoretical formulae for several models.
 
 - [Linear birth-death-sampling process](./lbdp_compar.html)
+- [Moran genealogy process](./moran.html)
 
 - <a href="#" onclick="goBack()">Back to the **phylopomp** package index</a>
 
