@@ -5,7 +5,7 @@
 \alias{LBDPwr}
 \alias{runLBDPwr}
 \alias{continueLBDPwr}
-\title{Linear birth-death-sampling model with reassortment}
+\title{Linear birth-death-sampling model}
 \usage{
 runLBDPwr(
   time,
@@ -16,8 +16,7 @@ runLBDPwr(
   rhoA = 0,
   rhoB = 0,
   frac = 0,
-  n0 = 5,
-  cont = TRUE
+  n0 = 5
 )
 
 continueLBDPwr(
@@ -28,8 +27,7 @@ continueLBDPwr(
   psi = NA,
   rhoA = NA,
   rhoB = NA,
-  frac = NA,
-  cont = TRUE
+  frac = NA
 )
 }
 \arguments{
@@ -51,8 +49,6 @@ continueLBDPwr(
 
 \item{n0}{initial population size}
 
-\item{cont}{logical; continue to infect after being sampled?}
-
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
@@ -61,7 +57,7 @@ An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDPwr}.
 }
 \description{
 The genealogy process induced by a simple linear birth-death process
-with two segments reassorted
+with constant-rate sampling.
 }
 \examples{
 simulate("LBDPwr",time=4) |> plot(points=TRUE)

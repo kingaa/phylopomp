@@ -113,7 +113,7 @@ void sirwr_genealogy_t::rinit (void) {
 
 template<>
 void sirwr_genealogy_t::jump (int event) {
-  name_t* seg;
+  name_t seg[2];
   switch (event) {
   case 0:
     state.S -= 1; state.I += 1; birth();
@@ -128,43 +128,31 @@ void sirwr_genealogy_t::jump (int event) {
     state.R -= 1; state.S += 1;
     break;
   case 4:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 0UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   case 5:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 1UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   case 6:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 2UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   case 7:
-    seg = (name_t*)malloc(2*sizeof(name_t));
     seg[0] = 0UL;
     seg[1] = 1UL;
     reassort(0,0,seg,2);
-    free(seg);
     break;
   case 8:
-    seg = (name_t*)malloc(2*sizeof(name_t));
     seg[0] = 0UL;
     seg[1] = 2UL;
     reassort(0,0,seg,2);
-    free(seg);
     break;
   case 9:
-    seg = (name_t*)malloc(2*sizeof(name_t));
     seg[0] = 1UL;
     seg[1] = 2UL;
     reassort(0,0,seg,2);
-    free(seg);
     break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);

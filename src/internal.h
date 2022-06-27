@@ -68,7 +68,8 @@ inline void swap_elem (name_t *a, name_t *b) {
 
 inline void random_numbers (name_t* out, size_t len, size_t n) {
   if (n > len)  err("in '%s': exceeding size!",__func__);
-  name_t i, arr[len];
+  name_t i;
+  name_t* arr = R_Calloc(len,name_t);
   for (i = 0; i < len; i++) arr[i] = i;
   srand(time(NULL));
   for (i = len - 1; i > 0; i--)  {
@@ -80,6 +81,7 @@ inline void random_numbers (name_t* out, size_t len, size_t n) {
   for (i = 0; i < n; i++) {
     out[i] = arr[i];
   }
+  R_Free(arr);
 }
 
 // compare integers

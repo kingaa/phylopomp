@@ -77,7 +77,7 @@ void moranwr_genealogy_t::rinit (void) {
 
 template<>
 void moranwr_genealogy_t::jump (int event) {
-  name_t* seg;
+  name_t seg[1];
   switch (event) {
   case 0:
     state.m += 1; birth(); death();
@@ -86,16 +86,12 @@ void moranwr_genealogy_t::jump (int event) {
     state.g += 1; sample();
     break;
   case 2:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 0UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   case 3:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 1UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);

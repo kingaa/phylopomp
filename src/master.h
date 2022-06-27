@@ -50,13 +50,14 @@ public:
     for (name_t s = 0; s < A.nseg; s++) o = (A.geneal[s] >> o);
     size_t rsize = A.retimes.size();
     memcpy(o,&rsize,sizeof(size_t)); o += sizeof(size_t);
-    slate_t rts[rsize];
+    slate_t* rts = new slate_t[rsize];
     name_t i = 0;
     for (retime_it it = A.retimes.begin(); it != A.retimes.end(); it++) {
       rts[i] = *it;
       i++;
     }
-    memcpy(o,rts,sizeof(rts)); o += sizeof(rts);
+    memcpy(o,rts,rsize*sizeof(slate_t)); o += rsize*sizeof(slate_t);
+    delete[] rts;
     return o;
   }
   //! binary deserialization
@@ -69,11 +70,12 @@ public:
     }
     size_t rsize;
     memcpy(&rsize,o,sizeof(size_t)); o += sizeof(size_t);
-    slate_t rts[rsize];
-    memcpy(rts,o,sizeof(rts)); o += sizeof(rts);
+    slate_t* rts = new slate_t[rsize];
+    memcpy(rts,o,rsize*sizeof(slate_t)); o += rsize*sizeof(slate_t);
     for (size_t i = 0; i < rsize; i++) {
       A.retimes.push_back(rts[i]);
     }
+    delete[] rts;
     return o;
   }
 
@@ -281,7 +283,10 @@ public:
     ball_t *a, *b;
     inda = random_integer((inventory[0])[i].size());
     indb = random_integer((inventory[0])[j].size());
-    while ((i==j) && (inda==indb))  indb = random_integer((inventory[0])[j].size());
+    while ((i==j) && (inda==indb)) {
+      R_CheckUserInterrupt();
+      indb = random_integer((inventory[0])[j].size());
+    }
 
     for (name_t k = 0; k < nseg; k++) {
       exist = anyof(seg, size, k);
@@ -309,7 +314,7 @@ public:
       std::string e = "batch sample";
       valid_invens(e);
       ball_t *a;
-      name_t* inds = (name_t*)malloc(sizeof(name_t)*n);
+      name_t* inds = R_Calloc(n,name_t);
       random_numbers(inds, N, n);
       qsort(inds, n, sizeof(name_t), compare_int);
       i = 0;
@@ -323,7 +328,7 @@ public:
         }
       }
       valid_invens(e);
-      free(inds);
+      R_Free(inds);
     }
   };
   //! initialize the state

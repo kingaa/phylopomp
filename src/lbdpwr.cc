@@ -79,7 +79,8 @@ void lbdpwr_genealogy_t::rinit (void) {
 
 template<>
 void lbdpwr_genealogy_t::jump (int event) {
-  name_t* seg;
+  name_t seg[1];
+  R_CheckUserInterrupt();
   switch (event) {
   case 0:
     state.n += 1; birth();
@@ -91,16 +92,12 @@ void lbdpwr_genealogy_t::jump (int event) {
     sample();
     break;
   case 3:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 0UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   case 4:
-    seg = (name_t*)malloc(1*sizeof(name_t));
     seg[0] = 1UL;
     reassort(0,0,seg,1);
-    free(seg);
     break;
   default:
     err("in %s: c'est impossible! (%ld)",__func__,event);
