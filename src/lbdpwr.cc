@@ -65,9 +65,13 @@ double lbdpwr_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.lambda * state.n);
   RATE_CALC(params.mu * state.n);
   RATE_CALC(params.psi * state.n);
-  RATE_CALC(params.rhoA * state.n);
-  RATE_CALC(params.rhoB * state.n);
-  if (m != n) err("wrong number of events!");
+  if (state.n > 1)  {
+    RATE_CALC(params.rhoA * state.n);
+    RATE_CALC(params.rhoB * state.n);
+    if (m != n) err("wrong number of events!");
+  } else {
+    if (m != n - 2) err("wrong number of events!");
+  }
   return total;
 }
 
@@ -80,7 +84,6 @@ void lbdpwr_genealogy_t::rinit (void) {
 template<>
 void lbdpwr_genealogy_t::jump (int event) {
   name_t seg[1];
-  R_CheckUserInterrupt();
   switch (event) {
   case 0:
     state.n += 1; birth();

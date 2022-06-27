@@ -35,8 +35,8 @@ simulate.default <- function (object, ...) {
       "- Moran: Moran process\n",
       "- LBDP: linear birth-death-sampling process\n",
       "- SIRwr: segmented SIR model\n",
-      "- lbdpwr: segmented linear birth-death-sampling process\n",
-      "- moranwr: segmented Moran model\n"
+      "- Moranwr: segmented Moran model\n",
+      "- LBDPwr: segmented linear birth-death-sampling process\n"
     )
   else
     stop(

@@ -30,10 +30,10 @@ NULL
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE, compact = TRUE, retimes = FALSE
+  prune = TRUE, obscure = TRUE, hide = FALSE, compact = TRUE, retimes = FALSE
 ) {
   out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
-    prune=prune,obscure=obscure,compact=compact,retimes=retimes)
+    prune=prune,obscure=obscure,hide=hide,compact=compact,retimes=retimes)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
   
@@ -41,8 +41,8 @@ plot.gpsim <- function (
     plotlist=lapply(out$tree, function(tr) {
       treeplot(tr,time=time,t0=t0,...) -> p
       if (retimes)  p <- p + geom_vline(xintercept=out$retimes, linetype="dashed", alpha=.3)
-      p
-      }),ncol=1)
+      p}),
+    ncol=1,align="v")
 }
 
 ##' @rdname plot
@@ -72,20 +72,24 @@ treeplot <- function (
   read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
     arrange(x) |>
-    separate(label,into=c("nodecol","deme","label")) |>
+    separate(label,into=c("nodecol","deme","label"), sep="_") |>
     mutate(
       deme=if_else(deme=="NA",NA_character_,deme),
       label=if_else(label=="NA",NA_character_,label),
       time = x,
-      newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
-      nodecolor=factor(
-        case_when(
-          ((x==0.0) & (!is.na(deme)))~"m",
-          ((x>0.0) & (newbs>0))~"g",
-          ((x>0.0) & (newbs<1) & (!isTip))~"b",
-          ((x>0.0) & (newbs<1) & (isTip))~"r",
-          TRUE~"i"
-        ))
+      # newbs=(table(parent)[as.character(node)]-1) |> as.numeric() |> replace_na(0),  # regarding "node", no, of new branches
+      # nodecol=factor(
+      #   case_when(
+      #     # ((x==0.0) & (!is.na(deme)))~"m",
+      #     # ((x>0.0) & (newbs>0))~"g",
+      #     # ((x>0.0) & (newbs<1) & (!isTip) & (!grepl("#H", nodecol)))~"b",
+      #     # ((abs(x-max(x))>1.5e-6) & (newbs<1) & (isTip))~"r",
+      #     # ((abs(x-max(x))<=1.5e-6) & (newbs<1) & (isTip))~"o",
+      #     # TRUE~"i",
+      #     (grepl("#Ha1", nodecol))~"a1",
+      #     (grepl("#Ha2", nodecol))~"a2"
+      #   )),
+      nodecol=if_else(grepl("#Ha1",nodecol),"a1",if_else(grepl("#Ha2",nodecol),"a2",nodecol))
     ) -> dat
   
   ndeme <- max(1L,length(unique(dat$deme))-1L)
@@ -109,7 +113,7 @@ treeplot <- function (
   
   ## number of nodes and tips of each color
   expand_grid(
-    nodecol=c("o","b","r","g","p","m"),
+    nodecol=c("o","b","r","g","p","a1","a2","m"),
     isTip=c(TRUE,FALSE)
   ) |>
     left_join(
@@ -135,7 +139,7 @@ treeplot <- function (
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(t0,time))+
-    theme_tree2()+
+    theme_tree2() +
     theme(...) -> pl
   
   if (points) {
@@ -161,6 +165,18 @@ treeplot <- function (
       pl+geom_nodepoint(
         shape=21,fill=ball_colors["p"],color=ball_colors["p"],
         aes(alpha=nodecol=="p")
+      )->pl
+    }
+    if (ncolors["a1_node",] > 0) {
+      pl+geom_nodepoint(
+        shape=21,fill=ball_colors["a1"],color=ball_colors["a1"],
+        aes(alpha=nodecol=="a1")
+      )->pl
+    }
+    if (ncolors["a2_node",] > 0) {
+      pl+geom_nodepoint(
+        shape=21,fill=ball_colors["a2"],color=ball_colors["a2"],
+        aes(alpha=nodecol=="a2")
       )->pl
     }
     if (ncolors["r_tip",] > 0) {
@@ -193,10 +209,14 @@ ball_colors <- c(
   m="saddlebrown",
   o="black",
   p="purple",
+  a1="orange3",
+  a2="orange1",
   i=alpha("white",0)
 )
 
+
+
 ##' @importFrom utils globalVariables
 globalVariables(
-  c(".id","k","label","nodecol","deme","vis","x","y","rowname","parent","node","newbs")
+  c(".id","k","label","nodecol","nodecol","deme","vis","x","y","rowname","parent","node","newbs")
 )

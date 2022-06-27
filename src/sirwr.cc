@@ -92,13 +92,17 @@ double sirwr_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.gamma * state.I);
   RATE_CALC(params.psi * state.I);
   RATE_CALC(params.delta * state.R);
-  RATE_CALC(params.rhoS * state.I);
-  RATE_CALC(params.rhoM * state.I);
-  RATE_CALC(params.rhoL * state.I);
-  RATE_CALC(params.rhoSM * state.I);
-  RATE_CALC(params.rhoSL * state.I);
-  RATE_CALC(params.rhoML * state.I);
-  if (m != n) err("wrong number of jump events!");
+  if (state.I > 1)  {
+    RATE_CALC(params.rhoS * state.I);
+    RATE_CALC(params.rhoM * state.I);
+    RATE_CALC(params.rhoL * state.I);
+    RATE_CALC(params.rhoSM * state.I);
+    RATE_CALC(params.rhoSL * state.I);
+    RATE_CALC(params.rhoML * state.I);
+    if (m != n) err("wrong number of jump events!");
+  } else {
+    if (m != n - 6) err("wrong number of jump events!");
+  }
   return total;
 }
 

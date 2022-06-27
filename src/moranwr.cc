@@ -63,9 +63,13 @@ double moranwr_proc_t::event_rates (double *rate, int n) const {
   double total = 0;
   RATE_CALC(params.mu * params.n);
   RATE_CALC(params.psi * params.n);
-  RATE_CALC(params.rhoA * params.n);
-  RATE_CALC(params.rhoB * params.n);
-  if (m != n) err("wrong number of events!");
+  if (params.n > 1) {
+    RATE_CALC(params.rhoA * params.n);
+    RATE_CALC(params.rhoB * params.n);
+    if (m != n) err("wrong number of events!");
+  } else {
+    if (m != n - 2) err("wrong number of events!");
+  }
   return total;
 }
 

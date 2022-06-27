@@ -13,6 +13,7 @@
   t0,
   prune = TRUE,
   obscure = TRUE,
+  hide = FALSE,
   compact = TRUE,
   retimes = FALSE
 )
@@ -39,6 +40,8 @@ treeplot(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{hide}{logical; hide reassortment events?}
 
 \item{compact}{logical; return the tree in compact representation?}
 

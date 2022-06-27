@@ -283,10 +283,7 @@ public:
     ball_t *a, *b;
     inda = random_integer((inventory[0])[i].size());
     indb = random_integer((inventory[0])[j].size());
-    while ((i==j) && (inda==indb)) {
-      R_CheckUserInterrupt();
-      indb = random_integer((inventory[0])[j].size());
-    }
+    while ((i==j) && (inda==indb))  indb = random_integer((inventory[0])[j].size());
 
     for (name_t k = 0; k < nseg; k++) {
       exist = anyof(seg, size, k);
@@ -314,7 +311,7 @@ public:
       std::string e = "batch sample";
       valid_invens(e);
       ball_t *a;
-      name_t* inds = R_Calloc(n,name_t);
+      name_t* inds = (name_t*)R_Calloc(n,name_t);
       random_numbers(inds, N, n);
       qsort(inds, n, sizeof(name_t), compare_int);
       i = 0;

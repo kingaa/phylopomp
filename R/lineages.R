@@ -21,7 +21,9 @@
 lineages <- function (object, prune = TRUE, obscure = TRUE) {
   getInfo(object,lineages=TRUE,prune=prune,obscure=obscure) |>
     getElement("lineages") -> x
-  lapply(x, function(l) {structure(l,obscured=obscure,class=c("gplin",class(l)))})
+  lapply(x, function(l) {structure(l,obscured=obscure,class=c("gplin",class(l)))}) -> y
+  class(y) <- "gplin"
+  y
 }
 
 ##' @rdname lineages
@@ -39,7 +41,6 @@ plot.gplin <- function (
 ) {
   plot_grid(plotlist=lapply(x, function(l) {
     obsc <- attr(l,"obscured")
-    
     if (!obsc) {
       l |>
         pivot_longer(

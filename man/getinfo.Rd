@@ -8,6 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
+  hide = FALSE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -25,6 +26,8 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{hide}{logical; hide reassortment events?}
 
 \item{t0}{logical; return the zero-time?}
 

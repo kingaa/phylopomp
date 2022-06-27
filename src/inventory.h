@@ -26,7 +26,7 @@ public:
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-	insert(*j);		// 'insert' checks color
+  	    insert(*j);		// 'insert' checks color
       }
     }
   };
@@ -35,7 +35,7 @@ public:
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-	insert(*j); // 'insert' checks color
+  	    insert(*j); // 'insert' checks color
       }
     }
     return *this;
@@ -121,18 +121,18 @@ public:
       name_t d2 = random_integer(n);
       bool toggle = false;
       if (d1 >= d2) {
-	toggle = true;
-	d1++;
-	n = d1; d1 = d2; d2 = n;
+	      toggle = true;
+	      d1++;
+	      n = d1; d1 = d2; d2 = n;
       }
       ball_it k = _inven[i].begin();
       while (d1 > 0) {
-	d1--; d2--; k++;
+	      d1--; d2--; k++;
       }
       if (toggle) ballJ = *k;
       else ballI = *k;
       while (d2 > 0) {
-	d2--; k++;
+	      d2--; k++;
       }
       if (toggle) ballI = *k;
       else ballJ = *k;

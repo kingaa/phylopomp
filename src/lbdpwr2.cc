@@ -65,9 +65,13 @@ double lbdpwr2_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.lambda * state.n);
   RATE_CALC(params.mu * state.n);
   RATE_CALC(params.psi * state.n);
-  RATE_CALC(params.rhoA * state.n);
-  RATE_CALC(params.rhoB * state.n);
-  if (m != n) err("wrong number of events!");
+  if (state.n > 1)  {
+    RATE_CALC(params.rhoA * state.n);
+    RATE_CALC(params.rhoB * state.n);
+    if (m != n) err("wrong number of events!");
+  } else {
+    if (m != n-2) err("wrong number of events!");
+  }
   return total;
 }
 

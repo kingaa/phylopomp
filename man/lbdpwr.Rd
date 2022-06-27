@@ -5,7 +5,7 @@
 \alias{LBDPwr}
 \alias{runLBDPwr}
 \alias{continueLBDPwr}
-\title{Linear birth-death-sampling model}
+\title{Linear birth-death-sampling model with reassortment}
 \usage{
 runLBDPwr(
   time,
@@ -16,7 +16,8 @@ runLBDPwr(
   rhoA = 0,
   rhoB = 0,
   frac = 0,
-  n0 = 5
+  n0 = 5,
+  cont = TRUE
 )
 
 continueLBDPwr(
@@ -27,7 +28,8 @@ continueLBDPwr(
   psi = NA,
   rhoA = NA,
   rhoB = NA,
-  frac = NA
+  frac = NA,
+  cont = TRUE
 )
 }
 \arguments{
@@ -49,6 +51,8 @@ continueLBDPwr(
 
 \item{n0}{initial population size}
 
+\item{cont}{logical; continue to infect after being sampled?}
+
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
@@ -57,12 +61,11 @@ An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDPwr}.
 }
 \description{
 The genealogy process induced by a simple linear birth-death process
-with constant-rate sampling.
+with two segments reassorted
 }
 \examples{
 simulate("LBDPwr",time=4) |> plot(points=TRUE)
 
-set.seed(298759241L)
 simulate("LBDPwr",lambda=2,mu=1,psi=3,rhoA=.5,rhoB=0,n0=1,time=1) |>
   simulate(time=10,lambda=1) |>
   plot(points=TRUE)
@@ -72,24 +75,20 @@ simulate("LBDPwr",rhoA=.5,time=4) |>
   plot()
 
 # a pure birth process
-set.seed(12592834L)
 simulate("LBDPwr",lambda=1,mu=0,psi=3,rhoA=1,rhoB=0,n0=1,time=4) |>
   plot(points=TRUE)
 
 # a pure death process
 ## the `coalesent event` is exactly the reassortment
-set.seed(10347293L)
 simulate("LBDPwr",lambda=0,mu=1,psi=3,rhoA=1,rhoB=0,n0=1e2,time=4) |>
   plot(points=TRUE)
 
-set.seed(28475019L)
 simulate("LBDPwr",lambda=2,mu=1,psi=0,rhoA=1,rhoB=0,frac=.2,n0=10,time=2) |>
   batch() |>
   plot(points=TRUE)
 
 simulate("LBDPwr",time=2,cont=FALSE) |> plot(points=TRUE)
 
-set.seed(298759241L)
 simulate("LBDPwr",lambda=2,mu=1,psi=.5,rhoA=.5,rhoB=0,n0=1,time=1,cont=FALSE) |>
   simulate(time=10,lambda=1) |>
   plot(points=TRUE)
@@ -99,17 +98,14 @@ simulate("LBDPwr",time=4,cont=FALSE) |>
   plot()
 
 # a pure birth process
-set.seed(12592834L)
 simulate("LBDPwr",lambda=1,mu=0,psi=3,rhoA=1,rhoB=0,n0=1,time=4,cont=FALSE) |>
   plot(points=TRUE)
 
 # a pure death process
 ## the `coalesent event` is exactly the reassortment
-set.seed(10347293L)
 simulate("LBDPwr",lambda=0,mu=1,psi=3,rhoA=1,rhoB=0,n0=1e2,time=4,cont=FALSE) |>
   plot(points=TRUE)
 
-set.seed(28475019L)
 simulate("LBDPwr",lambda=2,mu=1,psi=0,rhoA=1,rhoB=0,frac=.2,n0=10,time=2) |>
   batch() |>
   plot(points=TRUE)
