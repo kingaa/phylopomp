@@ -142,22 +142,26 @@ SEXP lineage_count (const TYPE& G) {
   return out;
 }
 
-//! prune and/or obscure if requested
+//! prune and/or obscure and/or hide if requested
 template <class TYPE>
-SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
+SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
            SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes, 
            SEXP Yaml, SEXP Structure, SEXP Lineages,
            SEXP Tree, SEXP Compact) {
   TYPE A = State;
   
-  // prune and/or obscure if requested
+  // prune and/or obscure and/or hide if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
+  bool do_hide = *LOGICAL(AS_LOGICAL(Hide));
   if (do_prune) {
     for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].prune();
   }
   if (do_obscure) {
     for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].obscure();
+  }
+  if (do_hide) {
+    for (name_t s = 0; s < A.nseg; s++)   A.geneal[s].hide();
   }
   size_t nout = 0;
   
@@ -238,11 +242,11 @@ return batch<TYPE>(State);                                    \
 }                                                             \
 
 #define INFOFN(X,TYPE) SEXP info ## X (                                 \
-SEXP State, SEXP Prune, SEXP Obscure,                                   \
+SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,                        \
 SEXP T0, SEXP Time, SEXP Descript, SEXP Retimes,                        \
 SEXP Yaml, SEXP Structure, SEXP Lineages,                               \
 SEXP Tree, SEXP Compact) {                                              \
-  return info<TYPE>(State, Prune, Obscure,                              \
+  return info<TYPE>(State, Prune, Obscure, Hide,                        \
                     T0, Time, Descript, Retimes,                        \
                     Yaml,Structure, Lineages,                           \
                     Tree, Compact);                                     \

@@ -20,7 +20,7 @@
 //! Encodes the master process.
 
 //! This consists of a population process and a genealogy process.
-template <class POPN, size_t NDEME = 1, size_t NSEG = 1>
+template <class POPN, size_t NDEME = 1, size_t NSEG = 1, bool CONT = false>
 class master_t : public POPN {
 
 public:
@@ -29,6 +29,7 @@ public:
   typedef typename std::list<slate_t>::const_iterator retime_it;
   const static size_t ndeme = NDEME;
   const static size_t nseg = NSEG;
+  const static bool cont = CONT;
 
 public:
   // DATA MEMBERS
@@ -243,11 +244,13 @@ public:
   //! sample in deme i
   void sample (name_t i = 0) {
     std::string e = "sample";
-    int ind = random_integer((inventory[0])[i].size());
+    size_t n = (inventory[0])[i].size();
+    int ind = random_integer(int(n));
     ball_t *a;
     for (name_t s = 0; s < nseg; s++) {
-      a = inventory[s].get_ball_idx(ind,i);
-      geneal[s].sample(a,time());
+      a = inventory[s].get_ball_idx(name_t(ind),i);
+      if (cont) inventory[s].erase(a);
+      geneal[s].sample(a,time(),cont);
     }
     valid_invens(e);
   };
@@ -282,12 +285,13 @@ public:
 
     for (name_t k = 0; k < nseg; k++) {
       exist = anyof(seg, size, k);
+      a = inventory[k].get_ball_idx(inda,i);
       if (exist) {
-        a = inventory[k].get_ball_idx(inda,i);
         b = inventory[k].get_ball_idx(indb,i);
         geneal[k].reassort(a,b,time());
       } else {
         geneal[k].update_uniq();
+        geneal[k].reassort_notice(a,time());
       }
     }
     valid_invens(e);
@@ -303,7 +307,8 @@ public:
     size_t n = (size_t)(N*frac);
     if (n > 0) {
       std::string e = "batch sample";
-      ball_t* a;
+      valid_invens(e);
+      ball_t *a;
       name_t* inds = (name_t*)malloc(sizeof(name_t)*n);
       random_numbers(inds, N, n);
       qsort(inds, n, sizeof(name_t), compare_int);

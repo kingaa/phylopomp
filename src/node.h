@@ -219,6 +219,12 @@ public:
       case purple:
         o3 = ")p_";
         break;
+      case darkorange:
+        o3 = ")#Ha1_";
+        break;
+      case lightorange:
+        o3 = ")#Ha2_";
+        break;
       case red:
         o1 = ""; o2 = ""; o3 = "r_";
         rednode = true;

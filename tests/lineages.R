@@ -22,7 +22,7 @@ bind_rows(
 
 plot_grid(
   plot(x),
-  x |> lineages() |> plot.gplin(),
+  x |> lineages() |> plot(),
   x |> plot(obscure=FALSE,palette=c("#00274c","#ffcb05")),
   x |>
     lineages(obscure=FALSE) |>

@@ -88,7 +88,8 @@ public:
   };
   //! retrieve ball with index in deme `i`
   ball_t* get_ball_idx (name_t idx = 0, name_t i = 0) const {
-    name_t n = _inven[i].size();
+    size_t n = _inven[i].size();
+    // warn("in '%s': inventory %ld size: %ld",__func__,i, n);
     if (n < 1)
       err("in '%s': cannot draw from empty inventory %ld",__func__,i); // # nocov
     if (n < idx)
@@ -115,24 +116,23 @@ public:
       ballJ = random_ball(j);
     } else {
       name_t n = _inven[i].size();
-      if (n < 2)
-	err("in '%s': cannot draw from inventory %ld",__func__,i); // # nocov
+      if (n < 2)  err("in '%s': cannot draw from inventory %ld",__func__,i); // # nocov
       name_t d1 = random_integer(n-1);
       name_t d2 = random_integer(n);
       bool toggle = false;
       if (d1 >= d2) {
-	toggle = true;
-	d1++;
-	n = d1; d1 = d2; d2 = n;
+	      toggle = true;
+	      d1++;
+	      n = d1; d1 = d2; d2 = n;
       }
       ball_it k = _inven[i].begin();
       while (d1 > 0) {
-	d1--; d2--; k++;
+	      d1--; d2--; k++;
       }
       if (toggle) ballJ = *k;
       else ballI = *k;
       while (d2 > 0) {
-	d2--; k++;
+	      d2--; k++;
       }
       if (toggle) ballI = *k;
       else ballJ = *k;
@@ -151,8 +151,7 @@ public:
   //! if it is not black, nothing is done.
   void erase (ball_t *b) {
     if (b->is(black)) {
-      if (_inven[b->deme()].empty())
-	err("in '%s': empty deme %ld.",__func__,b->deme()); // # nocov
+      if (_inven[b->deme()].empty())  err("in '%s': empty deme %ld.",__func__,b->deme()); // # nocov
       _inven[b->deme()].erase(b);
     }
   };

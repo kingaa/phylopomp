@@ -8,6 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
+  hide = FALSE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -25,6 +26,8 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{hide}{logical; hide reassortment events?}
 
 \item{t0}{logical; return the zero-time?}
 
@@ -73,7 +76,7 @@ runSIIR(Beta1=10,Beta2=8,
 simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
   S0=300,I1_0=20,I2_0=2,time=5) |>
   lineages() |>
-  plot.gplin()
+  plot()
 
 simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=0,frac=.5,
          S0=300,I1_0=20,I2_0=2,time=5) |>

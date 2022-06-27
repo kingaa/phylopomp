@@ -25,6 +25,6 @@ plot_grid(
   align="hv",axis="bl"
 )
 x |> yaml() -> y
-x |> lineages(prune=FALSE,obscure=FALSE) |> plot.gplin()
+x |> lineages(prune=FALSE,obscure=FALSE) |> plot()
 
 dev.off()

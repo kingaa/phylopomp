@@ -89,7 +89,7 @@ public:
           b->owner() = p;
           ball_name->insert({b->uniq,b});
         } else {
-          err("in '%s': cannot find ball %ld",__func__,b->uniq); // #nocov
+          err("in '%s': cannot find ball %ld (pocket.h)",__func__,b->uniq); // #nocov
         }
       }
     }

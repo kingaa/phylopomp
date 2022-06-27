@@ -62,9 +62,9 @@ public:
       node_names.insert({p->uniq,p});
     }
     for (node_it i = G.begin(); i != G.end(); i++) {
-      (*i)->repair_owners(node_names,&ball_names);
+      (*i)->repair_owners(node_names,&ball_names);   // in pocket.h
     }
-    G.repair_owners(ball_names);
+    G.repair_owners(ball_names);                     // in nodeseq.h
     return o;
   };
 
@@ -80,7 +80,7 @@ private:
         ball_t *b = n->second;
         p->green_ball() = b;
       } else {
-        err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
+        err("in '%s': cannot find node %ld (nodeseq.h)",__func__,p->uniq); // #nocov
       }
       
     }

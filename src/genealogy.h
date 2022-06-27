@@ -40,6 +40,9 @@ private:
   //! Has the genealogy been obscured?
   //! This is set to false by default; 'obscure()' sets to true.
   bool _obscured;
+  //! Has the genealogy been hided from the reassortment evenst?
+  //! This is set to false by default; 'hide()' sets to true.
+  bool _hided;
   
 private:
 
@@ -54,18 +57,19 @@ private:
     _unique = 0;
     _t0 = _time = R_NaReal;
     _obscured = false;
+    _hided = false;
   };
 
 public:
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
-    return 2*sizeof(name_t) +
+    return 3*sizeof(name_t) +
       2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
-    name_t A[2]; A[0] = G._unique; A[1] = name_t(G._obscured);
+    name_t A[3]; A[0] = G._unique; A[1] = name_t(G._obscured); A[2] = name_t(G._hided);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
@@ -74,11 +78,11 @@ public:
   //! binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
     G.clean();
-    name_t A[2];
+    name_t A[3];
     slate_t B[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G._obscured = bool(A[1]);
+    G._unique = A[0]; G._obscured = bool(A[1]); G._hided = bool(A[2]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
@@ -91,6 +95,7 @@ public:
     clean();
     _time = _t0 = slate_t(t0);
     _obscured = false;
+    _hided = false;
   };
   //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -117,6 +122,7 @@ public:
     _t0 = G._t0;
     _time = G._time;
     _obscured = G._obscured;
+    _hided = G._hided;
   };
   //! move assignment operator
   genealogy_t& operator= (genealogy_t&& G) {
@@ -126,6 +132,7 @@ public:
     _t0 = G._t0;
     _time = G._time;
     _obscured = G._obscured;
+    _hided = G._hided;
     return *this;
   };
   //! destructor
@@ -290,7 +297,17 @@ private:
     p->deme = a->deme();
     push_back(p);
   };
-
+  
+  // //! insert a node q after node p;
+  // void insert_after (node_t *p, node_t *q) {
+  //   for (node_it i = begin(); i != end(); i++) {
+  //     if ((*i)->slate > p->slate) {
+  //       insert(i,q);
+  //       break;
+  //     }
+  //   }
+  // };
+  
   //! drop the node holding black ball a.
   void drop (ball_t *a) {
     if (!a->is(black))
@@ -305,7 +322,7 @@ private:
       case blue:                // change black ball for red ball
         a->color = red;
         break;
-      case purple:      // swap black ball for green ball, delete node
+      case purple: case darkorange: case lightorange: // swap black ball for green ball, delete node
         a->deme() = p->deme;
         swap(a,p->green_ball());
         destroy_node(p);
@@ -337,6 +354,8 @@ private:
 public:
   //! birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
+    if ((!a->is(black)))
+      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
     time() = t;
     node_t *p = make_node(black,d);
     ball_t *b = p->last_ball();
@@ -352,6 +371,8 @@ public:
   };
   //! death
   void death (ball_t *a, slate_t t) {
+    if ((!a->is(black)))
+      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
     time() = t;
     drop(a);
   };
@@ -365,11 +386,14 @@ public:
     return b;
   };
   //! insert a sample node
-  void sample (ball_t* a, slate_t t) {
+  void sample (ball_t* a, slate_t t, bool cont = false) {
+    if ((!a->is(black)))
+      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
     time() = t;
     node_t *p = make_node(blue,a->deme());
     p->slate = time();
     add(p,a);
+    if (cont) a->color = red;
   };
   //! movement into deme d
   ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
@@ -386,56 +410,72 @@ public:
       err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
     if ((!b->is(black)))
       err("in '%s': inconceivable! (1st color: %s)",__func__,colores[b->color]); // #nocov
+    time() = t;
     node_t *p = a->holder();
     //! only consider binary tree
     if (p->size() > 2) {
-      err("non-binary tree!");
+      err("Non-binary tree!");
     } else {
       ball_t *c = p->other(a);
       swap(c,p->green_ball());
-      if (c->is(blue)) {
-        node_t *q = make_node(red,p->deme);
-        q->slate = p->slate;
+      node_t *q;
+      switch(c->color) {
+      case blue:
+        q = make_node(red,p->deme);
         swap(c,q->green_ball());
+        q->slate = p->slate;
+        // insert_after(p,q);
         push_back(q);
-      }
-      if (c->is(purple)) {
-        node_t *q = c->holder();
-        ball_t *d = q->other(c);
-        if (d->deme() == q->deme) {
-          swap(d,q->green_ball());
-          destroy_node(q);
-        }
-        update_uniq();
-      }
-      if (c->is(green)) {
+        break;
+      case green:
         if (p->deme != c->owner()->deme) {
-          node_t *q = make_node(purple, p->deme);
-          q->slate = p->slate;
+          q = make_node(purple, p->deme);
           swap(c,q->green_ball());
+          q->slate = p->slate;
+          // insert_after(p,q);
           push_back(q);
         } else {
           update_uniq();
         }
-      }
-      if (c->is(black)) {
+        break;
+      case black:
         if (p->deme != c->deme()) {
-          // printf("deme: the same, ");
-          node_t *q = make_node(purple, p->deme);
-          q->slate = p->slate;
+          q = make_node(purple, p->deme);
           swap(c,q->green_ball());
+          q->slate = p->slate;
+          // insert_after(p,q);
           push_back(q);
         } else {
           update_uniq();
         }
-      }
-      if (c->is(red) || c->is(grey))
+        break;
+      case purple: case darkorange: case lightorange:
+        c->color = black;
+        drop(c);
+        update_uniq();
+        break;
+      case red: case grey:
         err("in '%s': inconceivable error.",__func__); // #nocov
+        break;
+      }
       remove(p);
       add(p,b);
       p->slate = time();
+      node_t *x = make_node(darkorange, a->deme());   // x: x + orange
+      add(x,a);
+      x->slate = p->slate;
     }
-  }
+  };
+  //! indicate a reassortment event at that time
+  //! in those un-reassorted segment trees
+  void reassort_notice (ball_t *a, slate_t t) {
+    if ((!a->is(black)))
+      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
+    time() = t;
+    node_t *x = make_node(lightorange,a->deme());
+    x->slate = time();
+    add(x,a);
+  };
   //! set up for extraction of black balls
   //! (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {
@@ -482,6 +522,36 @@ public:
 
   bool obscured (void) const {
     return _obscured;
+  };
+  
+  //! drop all orange balls
+  genealogy_t& hide (void) {
+    pocket_t *lightoranges = colored(lightorange);
+    while (!lightoranges->empty()) {
+      ball_t *a = *(lightoranges->begin());
+      node_t *p = a->holder();
+      ball_t *b = p->other(a);
+      swap(b,p->green_ball());
+      destroy_node(p);
+      lightoranges->erase(a);
+    }
+    delete lightoranges;
+    pocket_t *darkoranges = colored(darkorange);
+    while (!darkoranges->empty()) {
+      ball_t *a = *(darkoranges->begin());
+      node_t *p = a->holder();
+      ball_t *b = p->other(a);
+      swap(b,p->green_ball());
+      destroy_node(p);
+      darkoranges->erase(a);
+    }
+    delete darkoranges;
+    _hided = true;
+    return *this;
+  };
+  
+  bool hide (void) const {
+    return _hided;
   };
   
   //! truncate the genealogy by removing nodes
