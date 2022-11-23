@@ -1,6 +1,8 @@
 # Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    branches: [master]
 
 name: binary-build
 
@@ -23,15 +25,15 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.1.0
 
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@v2.3.1
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-r-dependencies@v2.3.1
         with:
           extra-packages: rcmdcheck 
           
@@ -44,7 +46,7 @@ jobs:
           mkdir -p ${{ github.workspace }}/artifacts
           cp ../phylopomp_* ${{ github.workspace }}/artifacts
           
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3.1.1
         with:
           name: binary-${{ matrix.config.os }}-${{ matrix.config.r }}
           path: ${{ github.workspace }}/artifacts
