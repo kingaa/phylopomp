@@ -23,6 +23,7 @@ Makefile
 rules.mk
 yaml/
 lib
+libs
 library
 check
 www
