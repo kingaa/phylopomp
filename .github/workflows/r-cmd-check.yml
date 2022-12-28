@@ -22,10 +22,7 @@ jobs:
         config:
           - {os: ubuntu-22.04,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
-          - {os: ubuntu-20.04,   r: '4.1.0'}
-          - {os: macOS-11,       r: 'release'}
-          - {os: macOS-12,       r: 'release'}
+          - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
 
     env:
@@ -65,7 +62,15 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2.3.1
         with:
-          extra-packages: any::rcmdcheck any::tidyr any::ggplot2 any::dplyr any::knitr any::subplex any::nloptr
+          extra-packages: |
+            any::rcmdcheck
+            any::tidyr
+            any::ggplot2
+            any::dplyr
+            any::knitr
+            any::subplex
+            any::nloptr
+            YuLab-SMU/ggtree
           
       - uses: r-lib/actions/check-r-package@v2
 

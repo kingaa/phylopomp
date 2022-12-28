@@ -25,7 +25,16 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2.3.1
         with:
-          extra-packages: covr
+          extra-packages: |
+            any::covr
+            any::rcmdcheck
+            any::tidyr
+            any::ggplot2
+            any::dplyr
+            any::knitr
+            any::subplex
+            any::nloptr
+            YuLab-SMU/ggtree
 
       - name: Test coverage
         run: covr::codecov()

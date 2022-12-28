@@ -1,8 +1,5 @@
-include rules.mk
-
 REVDEPS=
-TOKEN=
+INCLUDES=
+HEADERS=
 
-includes:
-
-headers:
+include rules.mk
