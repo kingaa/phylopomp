@@ -1,5 +1,4 @@
-REXE = R --vanilla
-RCMD = $(REXE) CMD
+REXE = R
 
 SAVED = $(wildcard *.Rout.save *.Rout)
 

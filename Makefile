@@ -1,4 +1,4 @@
-REVDEPS=
+REPODIR = ../www
 INCLUDES=
 HEADERS=
 

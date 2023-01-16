@@ -17,13 +17,12 @@
 *.so
 *.gcda
 *.gcno
-tests/*.pdf
-scripts
+*.pdf
+/scripts
 lib
 library
 check
 tmp
-*.pdf
 covr.html
 covr.rds
 .DS_Store

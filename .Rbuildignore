@@ -1,3 +1,5 @@
+revdep
+tools
 examples
 tests/Makefile
 tests/(.+?)\.png$
@@ -6,8 +8,6 @@ tests/(.+?)\.Rout$
 inst/doc/Makefile
 inst/doc/(.+?).md
 inst/doc/(.+?).Rmd
-inst/doc/(.+?)\.Rout$
-inst/doc/CLUSTER(.*)
 man/roxygen
 Doxyfile
 LICENSE\.md$

@@ -6,7 +6,8 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-    branches: [master]
+    branches:
+      - '*'
     
 name: test-coverage
 
@@ -27,7 +28,6 @@ jobs:
         with:
           extra-packages: |
             any::covr
-            any::rcmdcheck
             any::tidyr
             any::ggplot2
             any::dplyr

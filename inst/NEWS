@@ -1,21 +1,6 @@
 _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._0._9:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1._0:
 
-        • Exact likelihood for linear birth-death-sampling process.
-
-        • Fixed error in plotting.
-
-        • Changed code scheme in data-frame representation returned by
-          ‘newick2df’.
-
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._0._8:
-
-        • No more brown balls.
-
-        • Plotting of GP state using diagrams.
-
-        • Compact representation in Newick format.
-
-        • New representation of samples.
+        • Updated for use with ‘pomp’ version 4.6.
 
