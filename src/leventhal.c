@@ -52,7 +52,7 @@ void leventhal_stepfn (double *__x, const double *__p, const int *__stateindex, 
 
 # define lik  (__lik[0])
 
-void leventhal_dmeas (double *__lik, const double *__y, const double *__x, const double *__p, int give_log, const int *__obsindex, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t)
+void leventhal_dmeas (double *__lik, const double *__y, double *__x, const double *__p, int give_log, const int *__obsindex, const int *__stateindex, const int *__parindex, const int *__covindex, const double *__covars, double t)
 {
   lik = (give_log) ? ll : exp(ll);
 }
