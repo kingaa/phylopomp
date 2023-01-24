@@ -1,7 +1,7 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.2.0.1
+Version: 0.3.0.0
 Date: 2023-01-24
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
@@ -31,8 +31,9 @@ Collate:
     'plot.R'
     'pomp.R'
     'print.R'
+    'sir.R'
+    'seir.R'
     'si2r.R'
     'siir.R'
-    'sir.R'
     'simulate.R'
     'yaml.R'

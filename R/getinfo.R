@@ -47,6 +47,8 @@ getInfo <- function (
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
+    modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
+      description,yaml,structure,lineages,tree,compact),
     modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree,compact),
     modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,

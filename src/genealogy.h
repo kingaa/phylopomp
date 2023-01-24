@@ -291,7 +291,7 @@ public:
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(a->deme());
-    ball_t *b = new ball_t (p,unique(),black,d);
+    ball_t *b = new ball_t (p,p->uniq,black,d);
     p->insert(b);
     p->slate = time();
     add(p,a);
@@ -312,7 +312,7 @@ public:
   ball_t* graft (slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(d);
-    ball_t *b = new ball_t (p,unique(),black,d);
+    ball_t *b = new ball_t (p,p->uniq,black,d);
     p->insert(b);
     p->slate = timezero();
     push_front(p);
@@ -322,7 +322,7 @@ public:
   void sample (ball_t* a, slate_t t) {
     time() = t;
     node_t *p = make_node(a->deme());
-    ball_t *b = new ball_t (p,unique(),blue,a->deme());
+    ball_t *b = new ball_t (p,p->uniq,blue,a->deme());
     p->insert(b);
     p->slate = time();
     add(p,a);

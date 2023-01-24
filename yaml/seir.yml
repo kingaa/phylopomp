@@ -1,0 +1,92 @@
+name: SEIR
+description: Classical susceptible-exposed-infected-recovered model
+details: |-
+  The population is structured by infection progression.
+ndeme: 2
+parameter:
+  Beta:
+    name: Beta
+    description: transmission rate
+    type: double
+    default: 4
+  sigma:
+    name: sigma
+    description: progression rate
+    type: double
+    default: 1
+  gamma:
+    name: gamma
+    description: recovery rate
+    type: double
+    default: 1
+  psi:
+    name: psi
+    description: per capita sampling rate
+    default: 1
+    type: double
+  delta:
+    name: delta
+    description: rate of waning of immunity
+    default: 0
+    type: double
+ivp:
+  S0:
+    name: S0
+    description: initial size of susceptible population
+    default: 100
+    type: int
+  E_0:
+    name: E0
+    description: initial size of exposed population
+    default: 5
+    type: int
+  I_0:
+    name: I0
+    description: initial size of infected population
+    default: 5
+    type: int
+  R0:
+    name: R0
+    description: initial size of immune population
+    default: 0
+    type: int
+state:
+  S:
+    name: S
+    type: int
+  E:
+    name: E
+    type: int
+  I:
+    name: I
+    type: int
+  R:
+    name: R
+    type: int
+  'N':
+    name: 'N'
+    type: double
+rinit: |-
+    state.S = params.S0;
+    state.E = params.E0;
+    state.I = params.I0;
+    state.R = params.R0;
+    state.N = double(params.S0+params.E0+params.I0+params.R0);
+    graft(0,params.E0);
+    graft(1,params.I0);
+events:
+  infect:
+    rate: params.Beta * state.S * state.I / state.N
+    jump: state.S -= 1; state.E += 1; birth(1,0);
+  progress:
+    jump: state.E -= 1; state.I += 1; migrate(0,1);
+    rate: params.sigma * state.E
+  recov:
+    jump: state.I -= 1; state.R += 1; death(1);
+    rate: params.gamma * state.I
+  sample:
+    rate: params.psi * state.I
+    jump: sample(1);
+  waning:
+    jump: state.R -= 1; state.S += 1;
+    rate: params.delta * state.R
