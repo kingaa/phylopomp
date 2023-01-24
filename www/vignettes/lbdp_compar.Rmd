@@ -43,8 +43,8 @@ library(pomp)
 library(phylopomp)
 library(cowplot)
 stopifnot(getRversion() >= "4.1")
-stopifnot(packageVersion("pomp")>="3.2")
-stopifnot(packageVersion("phylopomp")>="0.0.999.7")
+stopifnot(packageVersion("pomp")>="4.6")
+stopifnot(packageVersion("phylopomp")>="0.1")
 theme_set(theme_bw(base_family="serif"))
 options(dplyr.summarise.inform=FALSE)
 set.seed(1159254136)
@@ -54,7 +54,11 @@ The following codes simulate a realization of the genealogy process induced by a
 
 
 ```{r lbdp1}
-runLBDP(lambda=1.5,mu=0.8,psi=1,time=5,n0=5) -> x
+true.params <- data.frame(lambda=1.5,mu=0.8,psi=1,n0=5)
+with(
+  true.params,
+  runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=5)
+) -> x
 x |> lineages() -> lbdp_dat
 ```
 
@@ -68,16 +72,16 @@ plot_grid(
 )
 ```
 
-The following designs a slice through parameter space in the $\lambda$ direction.
+The following designs a slice through parameter space in the $\psi$ direction.
 In addition, three different levels of computational effort are applied (as measured by the number of particles, `Np`).
 
 
 ```{r lbdp2}
 expand_grid(
   rep=1:4,
-  lambda=seq(0.7,2.5,by=0.1),
+  lambda=1.5,
   mu=0.8,
-  psi=1,
+  psi=seq(0.5,1.5,by=0.05),
   time=5,
   n0=5,
   Np=c(1000,10000,100000)
@@ -87,26 +91,30 @@ expand_grid(
 Next, we perform a sequential Monte Carlo (particle filter) computation at each point in the above design.
 
 ```{r lbdp3,eval=FALSE}
-library(doParallel)
+library(doFuture)
 library(doRNG)
-registerDoParallel()
+library(iterators)
+plan(multisession)
+registerDoFuture()
 registerDoRNG(728604304)
 foreach (
   p=iter(params,"row"),
   .inorder=FALSE,
-  .packages=c("magrittr","phylopomp","pomp"),
+  .packages=c("phylopomp","pomp"),
   .combine=bind_rows
 ) %dopar% {
-  p %$% {
+  with(
+    p,
     lbdp_dat |>
       lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
-  } -> ll1
-  p %$% {
+  ) -> ll1
+  with(
+    p,
     lbdp_dat |>
       lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
       pfilter(Np=Np) |>
       logLik()
-  } -> ll2
+  ) -> ll2
   bind_cols(p,exact=ll1,pf=ll2)
 }-> params
 ```
@@ -141,12 +149,12 @@ params |>
     ymin=logLik-2*logLik_se
   ) |>
   filter(logLik>max(logLik)-16) |>
-  ggplot(aes(x=lambda,group=name,color=name,
+  ggplot(aes(x=psi,group=name,color=name,
     y=y,ymin=ymin,ymax=ymax))+
   geom_errorbar(
     position="dodge"
   )+
-  geom_vline(xintercept=1.5,linetype=2)+
+  geom_vline(xintercept=true.params$psi,linetype=2)+
   scale_color_manual(
     labels=c(
       exact="exact",
@@ -164,7 +172,7 @@ params |>
   labs(
     color=character(0),
     y="log likelihood",
-    x=expression(lambda)
+    x=expression(psi)
   )+
   theme(
     legend.position=c(0.5,0.22),

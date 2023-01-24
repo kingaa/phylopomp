@@ -69,7 +69,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
 
   ## Here, we reverse the direction of time.
   ## Suppose we maintain surveillance at rate psi > 0 from time 0 onward
-  ## (i.e., psi = 0 tor t < 0, psi = const > 0 for t > 0).
+  ## (i.e., psi = 0 for t < 0, psi = const > 0 for t > 0).
   ## Suppose we have a linear birth-death-sampling process, n(t), with
   ## constant rates; assume that n(t_or) = 1.
   ## 
@@ -87,14 +87,16 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## where t1, t2 are consecutive node times, satisfies
   ## dg/dt = -(lambda+mu+psi) g + 2 lambda p0 g, where p0 is as above.
   ## Making the change of variables g = q(t) h, where
-  ##    Q(t) = exp(d t) / (1 + z0 exp(d t))^2
-  ## Gives dh/dt = 0.
+  ##    Q(t) = exp(d t) / (1 + z0 exp(d t))^2,
+  ## gives dh/dt = 0.
   ## It follows that g(t2)/g(t1) = Q(t2)/Q(t1).
-  ## One can combine these formulae into one for the likelihood of the full genealogy
-  ## rooted at time t_or. To do so, let x0 = t_or and xi = the time of the i-th
-  ## branch point of the genealogy.  Let yj = the time of the jth live sample
-  ## (a live sample is one that is ancestral to no other sample).  Let L(G) be the
-  ## likelihood of the given genealogy.  Then
+  ## One can combine these formulae into one for the likelihood of
+  ## the full genealogy rooted at time t_or. To do so, let
+  ## x0 = t_or and xi = the time of the i-th branch point of the genealogy.
+  ## Let yj = the time of the jth live sample
+  ## (a live sample is one that is ancestral to no other sample).
+  ## Let L(G) be the likelihood of the given genealogy.
+  ## Then
   ##    log L(G) = (m-1) log(lambda) + (k+m) log(psi)
   ##                  + sum(log(Q(xi),i=0,...,m-1)
   ##                  + sum(log(p0(yj)/Q(yj)),j=1,...,m).
