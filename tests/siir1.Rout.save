@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -25,7 +27,7 @@ Type 'q()' to quit R.
 > options(digits=3)
 > 
 > runSIIR(time=10,psi1=1,psi2=1,S0=100)
-<gpsim for model ‘SIIR’>
+<gpsim for model 'SIIR'>
 > 
 > runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=2,time=2) |>
 +   plot(points=TRUE)

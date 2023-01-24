@@ -1,4 +1,5 @@
 png(filename="lbdp2-%02d.png",res=100)
+
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)

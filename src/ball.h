@@ -10,9 +10,9 @@
 //! BALL COLORS
 
 //! NB: The correctness of the algorithms depends on green being the first color.
-typedef enum {green, black, blue, red, grey, purple} color_t;
-static const char* colores[] = {"green", "black", "blue", "red", "grey", "purple"};
-static const char* colorsymb[] = {"g", "o", "b", "r", "z", "p"};
+typedef enum {green, black, blue} color_t;
+static const char* colores[] = {"green", "black", "blue"};
+static const char* colorsymb[] = {"g", "o", "b"};
 
 class node_t;
 

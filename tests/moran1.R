@@ -1,4 +1,5 @@
 png(filename="moran1-%02d.png",res=100)
+
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)

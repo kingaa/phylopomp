@@ -233,23 +233,21 @@ public:
 
 private:
 
-  node_t* make_node (color_t col, name_t d = 0) {
+  node_t* make_node (name_t d = 0) {
     check_genealogy_size(0);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
     ball_t *g = new ball_t(p,u,green,d);
-    ball_t *b = new ball_t(p,u,col,d);
     p->green_ball() = g;
     p->insert(g);
-    p->insert(b);
     return p;
   };
 
   void destroy_node (node_t *p) {
     if (!p->holds_own())
       err("cannot destroy a node that does not hold its own green ball."); // # nocov
-    if (p->size() != 2)
-      err("cannot destroy a node with more than 2 balls."); // # nocov
+    if (p->size() > 1)
+      err("cannot destroy a node with more than 1 ball."); // # nocov
     remove(p);
     delete p;
   };
@@ -277,41 +275,16 @@ private:
     if (!a->is(black))
       err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
     node_t *p = a->holder();
-    if (p->size() > 2) {   // pocket is large: we simply drop the ball
+    if (p->size() > 1) {
       p->erase(a);
       delete a;
-    } else {  // pocket contains two: action depends on the other ball
-      ball_t *b = p->other(a);
-      switch (b->color) {
-      case blue:                // change black ball for red ball
-        a->color = red;
-        break;
-      case purple:      // swap black ball for green ball, delete node
-        a->deme() = p->deme;
-        swap(a,p->green_ball());
+      if (p->size()==1 && p->holds_own()) {
         destroy_node(p);
-        drop(a);                // recursively pursue dropping ball a
-        break;
-      case black: 
-        if (b->deme() == p->deme) { // swap other for green, delete node
-          swap(b,p->green_ball());
-          destroy_node(p);
-        } else {              // deme changes here, insert purple ball
-          a->color = purple;
-        }
-        break;
-      case green:
-        if (b->owner()->deme == p->deme) { // swap other for green, delete node
-          swap(b,p->green_ball());
-          destroy_node(p);
-        } else {
-          a->color=purple;
-        }
-        break;
-      case red: case grey:                             // #nocov
-        err("in '%s': inconceivable error.",__func__); // #nocov
-        break;
       }
+    } else {
+      swap(a,p->green_ball());
+      destroy_node(p);
+      drop(a);
     }
   };
 
@@ -319,8 +292,9 @@ public:
   //! birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
-    node_t *p = make_node(black,d);
-    ball_t *b = p->last_ball();
+    node_t *p = make_node(a->deme());
+    ball_t *b = new ball_t (p,unique(),black,d);
+    p->insert(b);
     p->slate = time();
     add(p,a);
     return b;           
@@ -339,8 +313,9 @@ public:
   //! graft a new lineage into deme d
   ball_t* graft (slate_t t, name_t d = 0) {
     time() = t;
-    node_t *p = make_node(black,d);
-    ball_t *b = p->last_ball();
+    node_t *p = make_node(d);
+    ball_t *b = new ball_t (p,unique(),black,d);
+    p->insert(b);
     p->slate = timezero();
     push_front(p);
     return b;
@@ -348,14 +323,16 @@ public:
   //! insert a sample node
   void sample (ball_t* a, slate_t t) {
     time() = t;
-    node_t *p = make_node(blue,a->deme());
+    node_t *p = make_node(a->deme());
+    ball_t *b = new ball_t (p,unique(),blue,a->deme());
+    p->insert(b);
     p->slate = time();
     add(p,a);
   };
   //! movement into deme d
   ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
-    node_t *p = make_node(purple,a->deme());
+    node_t *p = make_node(a->deme());
     p->slate = time();
     add(p,a);
     a->deme() = d;
@@ -380,19 +357,8 @@ public:
     return *this;
   };
 
-  //! drop all purple balls
-  //! and erase all deme information
+  //! erase all deme information
   genealogy_t& obscure (void) {
-    pocket_t *purples = colored(purple);
-    while (!purples->empty()) {
-      ball_t *a = *(purples->begin());
-      node_t *p = a->holder();
-      ball_t *b = p->other(a);
-      swap(b,p->green_ball());
-      destroy_node(p);
-      purples->erase(a);
-    }
-    delete purples;
     pocket_t *blacks = colored(black);
     while (!blacks->empty()) {
       ball_t *a = *(blacks->begin());
@@ -422,9 +388,9 @@ public:
           ball_t *b = n->last_ball(); // must be black!
           if (!b->is(black)) err("in '%s': inconceivable!",__func__); // #nocov
           drop(b);
-        } else if (n->holds(red)) {
-          ball_t *b = n->last_ball(); // must be red!
-          if (!b->is(red)) err("in '%s': inconceivable!",__func__); // #nocov
+        } else if (n->holds(blue)) {
+          ball_t *b = n->last_ball(); // must be blue!
+          if (!b->is(blue)) err("in '%s': inconceivable!",__func__); // #nocov
           b->color = black;
           swap(b,n->green_ball());
           destroy_node(n);

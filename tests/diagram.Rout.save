@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -17,9 +19,9 @@ Type 'q()' to quit R.
 
 > library(phylopomp)
 
-Attaching package: ‘phylopomp’
+Attaching package: 'phylopomp'
 
-The following object is masked from ‘package:stats’:
+The following object is masked from 'package:stats':
 
     simulate
 
@@ -58,25 +60,33 @@ null device
 +   cat()
 time = 0.300000
 t0 = 0.000000
-node(9,0) {green(9), green(26)}, t = 0.000000
-node(5,0) {green(5), green(29)}, t = 0.000000
-node(4,0) {green(4), green(66)}, t = 0.000000
-node(3,0) {green(3), green(72)}, t = 0.000000
-node(1,0) {green(1), green(36)}, t = 0.000000
-node(26,0) {green(43), green(80)}, t = 0.037168
-node(29,0) {red(5), blue(29)}, t = 0.051490
-node(36,0) {green(38), green(53)}, t = 0.086187
-node(38,0) {green(76), green(94)}, t = 0.087731
-node(43,0) {blue(43), green(48)}, t = 0.113407
-node(48,0) {blue(48), red(105)}, t = 0.124190
-node(53,0) {red(1), blue(53)}, t = 0.150717
-node(66,0) {red(4), blue(66)}, t = 0.208375
-node(72,0) {red(3), blue(72)}, t = 0.223580
-node(76,0) {green(89), green(97)}, t = 0.236878
-node(80,0) {red(37), blue(80)}, t = 0.240219
-node(89,0) {red(76), blue(89)}, t = 0.269054
-node(94,0) {red(44), blue(94)}, t = 0.272067
-node(97,0) {red(51), blue(97)}, t = 0.277748
+node(18,0) {green(18), green(40)}, t = 0.000000
+node(10,0) {green(10), green(58)}, t = 0.000000
+node(8,0) {green(8), green(132)}, t = 0.000000
+node(6,0) {green(6), green(44)}, t = 0.000000
+node(2,0) {green(2), green(72)}, t = 0.000000
+node(40,0) {green(50)}, t = 0.001515
+node(44,0) {green(138)}, t = 0.005354
+node(50,0) {green(52)}, t = 0.030388
+node(52,0) {green(74), green(86)}, t = 0.037168
+node(58,0) {blue(59)}, t = 0.051490
+node(72,0) {green(76), green(80)}, t = 0.086187
+node(74,0) {green(160)}, t = 0.086758
+node(76,0) {green(88), green(102)}, t = 0.087731
+node(80,0) {green(106)}, t = 0.089094
+node(86,0) {blue(87), green(96)}, t = 0.113407
+node(88,0) {green(188)}, t = 0.113577
+node(96,0) {blue(97)}, t = 0.124190
+node(102,0) {green(152)}, t = 0.146496
+node(106,0) {blue(107)}, t = 0.150717
+node(132,0) {blue(133)}, t = 0.208375
+node(138,0) {green(144)}, t = 0.216198
+node(144,0) {blue(145)}, t = 0.223580
+node(152,0) {green(178), green(194)}, t = 0.236878
+node(160,0) {blue(161)}, t = 0.240219
+node(178,0) {blue(179)}, t = 0.269054
+node(188,0) {blue(189)}, t = 0.272067
+node(194,0) {blue(195)}, t = 0.277748
 > 
 > simulate("SIR",time=0.5) |>
 +   getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
@@ -99,14 +109,14 @@ genealogy:
   t0: 0.000000
   time: 0.500000
   nodes:
-  - name: 1
+  - name: 2
     deme: 0
     time: 0.000000
     pocket:
     - color: green
-      name: 1
+      name: 2
     - color: black
-      name: 1
+      name: 3
       deme: 0
   - name: 0
     deme: 0
@@ -115,15 +125,13 @@ genealogy:
     - color: green
       name: 0
     - color: green
-      name: 2
-  - name: 2
+      name: 4
+  - name: 4
     deme: 0
     time: 0.093933
     pocket:
-    - color: red
-      name: 0
     - color: blue
-      name: 2
+      name: 5
 > 
 > simulate("LBDP",time=0.5) |>
 +   getInfo(yaml=TRUE) |>
@@ -140,14 +148,14 @@ genealogy:
   t0: 0.000000
   time: 0.500000
   nodes:
-  - name: 1
+  - name: 2
     deme: 0
     time: 0.000000
     pocket:
     - color: green
-      name: 1
+      name: 2
     - color: green
-      name: 7
+      name: 10
   - name: 0
     deme: 0
     time: 0.000000
@@ -156,54 +164,70 @@ genealogy:
       name: 0
     - color: green
       name: 12
-  - name: 7
+  - name: 10
+    deme: 0
+    time: 0.047751
+    pocket:
+    - color: green
+      name: 14
+  - name: 12
+    deme: 0
+    time: 0.073742
+    pocket:
+    - color: green
+      name: 20
+  - name: 14
     deme: 0
     time: 0.155599
     pocket:
     - color: green
-      name: 8
+      name: 16
     - color: green
-      name: 9
-  - name: 8
+      name: 18
+  - name: 16
     deme: 0
     time: 0.220709
     pocket:
-    - color: red
-      name: 5
     - color: blue
-      name: 8
-  - name: 9
+      name: 17
+  - name: 18
     deme: 0
     time: 0.222858
     pocket:
-    - color: red
-      name: 7
     - color: blue
-      name: 9
-  - name: 12
+      name: 19
+  - name: 20
+    deme: 0
+    time: 0.226280
+    pocket:
+    - color: green
+      name: 24
+  - name: 24
     deme: 0
     time: 0.321713
     pocket:
     - color: green
-      name: 14
+      name: 26
     - color: green
-      name: 15
-  - name: 14
+      name: 30
+  - name: 26
+    deme: 0
+    time: 0.387162
+    pocket:
+    - color: green
+      name: 28
+  - name: 28
     deme: 0
     time: 0.394555
     pocket:
-    - color: red
-      name: 13
     - color: blue
-      name: 14
-  - name: 15
+      name: 29
+  - name: 30
     deme: 0
     time: 0.430074
     pocket:
-    - color: red
-      name: 12
     - color: blue
-      name: 15
+      name: 31
 > 
 > try(
 +   simulate("SIR",time=1) |>

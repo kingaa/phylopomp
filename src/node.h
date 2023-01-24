@@ -182,11 +182,8 @@ public:
       case black:
         o += b->newick(tnow-slate);
         break;
-      case purple: case red: case blue:
+      case blue:
         o += b->newick(0);
-        break;
-      default:                                      // # nocov
-        err("in '%s': c'est impossible!",__func__); // # nocov
         break;
       }
       if (n > 1) o += ",";
@@ -198,11 +195,18 @@ public:
   };
   //! compact Newick format
   std::string compact_newick (const slate_t& tnow, const slate_t& tpar) const {
-    std::string o1 = "(";
-    std::string o2 = "";
-    std::string o3 = (holds_own()) ? ")m_" : ")g_";
-    bool rednode = holds(red);
+    std::string o1 = "", o2 = "", o3 = "";
     int n = nchildren(true);
+    if (n > 0) {
+      o1 = "("; o3 = ")";
+    }
+    if (holds(blue)) {
+      o3 += "b_";
+    } else if (holds_own()) {
+      o3 += "m_";
+    } else {
+      o3 += "g_";
+    }
     for (ball_it i = begin(); i != end(); i++, n--) {
       ball_t *b = *i;
       node_t *p = 0;
@@ -211,26 +215,16 @@ public:
         p = b->child();
         if (p != this) {
           o2 += p->compact_newick(tnow,slate);
+          if (n > 1) o2 += ",";
         }
         break;
       case black:
         o2 += b->newick(tnow-slate);
-        break;
-      case purple:
-        o3 = ")p_";
-        break;
-      case red:
-        o1 = ""; o2 = ""; o3 = "r_";
-        rednode = true;
+        if (n > 1) o2 += ",";
         break;
       case blue:
-        if (!rednode) o3 = ")b_";
-        break;
-      default:                                         // # nocov
-        err("in '%s': c'est impossible!",__func__);    // # nocov
         break;
       }
-      if (n > 1) o2 += ",";
     }
     return o1 + o2 + o3
       + std::to_string(deme)

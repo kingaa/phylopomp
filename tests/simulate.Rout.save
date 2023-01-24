@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -17,9 +19,9 @@ Type 'q()' to quit R.
 
 > library(phylopomp)
 
-Attaching package: ‘phylopomp’
+Attaching package: 'phylopomp'
 
-The following object is masked from ‘package:stats’:
+The following object is masked from 'package:stats':
 
     simulate
 
@@ -32,6 +34,6 @@ Available phylopomp models:
 - LBDP: linear birth-death-sampling process
 
 > try(simulate(22))
-Error : in ‘phylopomp::simulate’: ‘object’ must be specified as either the name of a model or the result of a previous simulation.
-Do ‘simulate()’ to view available models.
+Error : in 'phylopomp::simulate': 'object' must be specified as either the name of a model or the result of a previous simulation.
+Do 'simulate()' to view available models.
 > 
