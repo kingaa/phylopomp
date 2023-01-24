@@ -244,10 +244,8 @@ private:
   };
 
   void destroy_node (node_t *p) {
-    if (!p->holds_own())
-      err("cannot destroy a node that does not hold its own green ball."); // # nocov
-    if (p->size() > 1)
-      err("cannot destroy a node with more than 1 ball."); // # nocov
+    if (!p->holds_own() || p->size() > 1)
+      err("cannot destroy node holding anything other than its own green ball."); // # nocov
     remove(p);
     delete p;
   };
@@ -278,13 +276,13 @@ private:
     if (p->size() > 1) {
       p->erase(a);
       delete a;
-      if (p->size()==1 && p->holds_own()) {
+      if (p->size()==1 && p->holds_own()) { // remove isolated root
         destroy_node(p);
       }
     } else {
       swap(a,p->green_ball());
       destroy_node(p);
-      drop(a);
+      drop(a);			// recurse
     }
   };
 
@@ -384,19 +382,20 @@ public:
     if (!empty()) {
       node_t *n = back();
       while (!empty() && n->slate > tnew) {
-        if (n->holds(black)) {
-          ball_t *b = n->last_ball(); // must be black!
-          if (!b->is(black)) err("in '%s': inconceivable!",__func__); // #nocov
-          drop(b);
-        } else if (n->holds(blue)) {
-          ball_t *b = n->last_ball(); // must be blue!
-          if (!b->is(blue)) err("in '%s': inconceivable!",__func__); // #nocov
+	ball_t *b = n->last_ball();
+	switch (b->color) {
+	case black:
+	  drop(b);
+	  break;
+	case blue:
           b->color = black;
           swap(b,n->green_ball());
           destroy_node(n);
-        } else {
-          err("in '%s': inconceivable error.",__func__); // #nocov
-        }
+	  break;
+	case green:
+          err("in '%s': inconceivable!",__func__); // #nocov
+	  break;
+	}
         n = back();
       }
       time() = tnew;
