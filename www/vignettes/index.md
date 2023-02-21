@@ -96,6 +96,7 @@ dt {
 
 - [Linear birth-death-sampling process](./lbdp_compar.html)
 - [Moran genealogy process](./moran.html)
+- [SEIR genealogy process](./seir.html)
 
 - <a href="#" onclick="goBack()">Back to the previous page</a>
 

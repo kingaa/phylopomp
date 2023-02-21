@@ -1,11 +1,11 @@
 ---
-title: Simulations of the Moran genealogy process
+title: Simulations of an SEIR genealogy process
 author: A.A. King
 output: rmarkdown::html_vignette
 bibliography: phylopomp.bib
 csl: jss.csl
 vignette: >
-  %\VignetteIndexEntry{Moran genealogy simulations}
+  %\VignetteIndexEntry{SEIR genealogies}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,8 +24,8 @@ opts_chunk$set(
              cache.extra=rand_seed,
              results='markup',
              fig.show='asis',
-             fig.path=paste0("tmp/","moran","/"),
-             cache.path=paste0("tmp/","moran","/"),
+             fig.path=paste0("tmp/","seir","/"),
+             cache.path=paste0("tmp/","seir","/"),
              size='small',
              fig.align='center',
              fig.dim=c(6,6),
@@ -39,35 +39,39 @@ options(
 )
 ```
  
-```{r packages,include=FALSE,cache=FALSE}
+```{r packages}
+#| cache: false
+#| include: false
 library(tidyverse)
 library(pomp)
 library(phylopomp)
 library(cowplot)
 library(gifski)
-stopifnot(getRversion() >= "4.1")
-stopifnot(packageVersion("pomp")>="4.2")
-stopifnot(packageVersion("phylopomp")>="0.1")
+stopifnot(getRversion() >= "4.2")
+stopifnot(packageVersion("pomp")>="4.6")
+stopifnot(packageVersion("phylopomp")>="0.3")
 theme_set(theme_bw(base_family="serif"))
 options(dplyr.summarise.inform=FALSE)
 set.seed(1159254136)
 ```
  
-## One simulation of the MGP
+## One simulation of an SEIR genealogy process
 
-The Moran genealogy process is described in @King2020.
+```{r seir1}
+#| results: hide
+#| cache: false
+#| include: false
 
-```{r mgp1,results="hide",cache=FALSE,include=FALSE}
-times <- seq(from=0,to=30,by=0.1)
+times <- seq(from=0,to=11,by=0.03)
 
 png_files <- sprintf(
   file.path(tempdir(),"frame%05d.png"),
   seq_along(times)
 )
-gif_file <- "moran1.gif"
+gif_file <- "seir1.gif"
 
 ## pb <- utils::txtProgressBar(0,length(times),0,style=3)
-x <- simulate("Moran",time=0,psi=0,n=20)
+x <- simulate("SEIR",time=0,psi=0)
 for (k in seq_len(length(times))) {
   x <- simulate(x,time=times[k])
   ggsave(
@@ -92,30 +96,30 @@ gifski(png_files,gif_file,delay=0.02,loop=TRUE)
 unlink(png_files)
 ```
 
-```{bash ffmpeg1,include=FALSE,cache=FALSE,eval=!file.exists("moran1.mp4") | file.mtime("moran1.gif")>file.mtime("moran1.mp4")}
-ffmpeg -y -r 50 -i moran1.gif moran1.webm
-ffmpeg -y -r 50 -i moran1.gif moran1.mp4
+```{bash ffmpeg1,include=FALSE,cache=FALSE,eval=!file.exists("seir1.mp4") | file.mtime("seir1.gif")>file.mtime("seir1.mp4")}
+ffmpeg -y -r 50 -i seir1.gif seir1.webm
+ffmpeg -y -r 50 -i seir1.gif seir1.mp4
 ```
 
 <video width="600" controls>
-<source src="moran1.mp4" type="video/mp4"/>
-<source src="moran1.webm" type="video/webm"/>
+<source src="seir1.mp4" type="video/mp4"/>
+<source src="seir1.webm" type="video/webm"/>
 Your browser does not support the video element.
 </video>
 
-## One simulation of the sampled MGP
+## One simulation of a uniformly sampled SEIR process
 
-```{r mgp2,results="hide",cache=FALSE,include=FALSE}
-times <- seq(from=0,to=30,by=0.1)
+```{r seir2,results="hide",cache=FALSE,include=FALSE}
+times <- seq(from=0,to=11,by=0.03)
 
 png_files <- sprintf(
   file.path(tempdir(),"frame%05d.png"),
   seq_along(times)
 )
-gif_file <- "moran2.gif"
+gif_file <- "seir2.gif"
 
 ## pb <- utils::txtProgressBar(0,length(times),0,style=3)
-x <- simulate("Moran",time=0,psi=0.3,n=20)
+x <- simulate("SEIR",time=0,psi=0.3)
 for (k in seq_len(length(times))) {
   x <- simulate(x,time=times[k])
   ggsave(
@@ -140,14 +144,14 @@ gifski(png_files,gif_file,delay=0.02,loop=TRUE)
 unlink(png_files)
 ```
 
-```{bash ffmpeg2,include=FALSE,cache=FALSE,eval=!file.exists("moran2.mp4") | file.mtime("moran2.gif")>file.mtime("moran2.mp4")}
-ffmpeg -y -r 50 -i moran2.gif moran2.webm
-ffmpeg -y -r 50 -i moran2.gif moran2.mp4
+```{bash ffmpeg2,include=FALSE,cache=FALSE,eval=!file.exists("seir2.mp4") | file.mtime("seir2.gif")>file.mtime("seir2.mp4")}
+ffmpeg -y -r 50 -i seir2.gif seir2.webm
+ffmpeg -y -r 50 -i seir2.gif seir2.mp4
 ```
 
 <video width="600" controls>
-<source src="moran2.mp4" type="video/mp4"/>
-<source src="moran2.webm" type="video/webm"/>
+<source src="seir2.mp4" type="video/mp4"/>
+<source src="seir2.webm" type="video/webm"/>
 Your browser does not support the video element.
 </video>
 
