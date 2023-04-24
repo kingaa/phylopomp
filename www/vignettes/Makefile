@@ -1,9 +1,7 @@
-REXE = R --vanilla
-RSCRIPT = Rscript --vanilla
+REXE = $(shell which R) -s
+RSCRIPT = $(shell which Rscript) --vanilla
 RM = rm -f
 CP = cp
-TOUCH = touch
-INSTALL = install
 
 default: index.html lbdp_compar.html moran.html seir.html
 
@@ -14,26 +12,19 @@ default: index.html lbdp_compar.html moran.html seir.html
 	$(RSCRIPT) -e "library(knitr); purl(\"$*.Rnw\")"
 
 %.pdf: %.tex
-	$(PDFLATEX) $*
-	-$(BIBTEX) $*
-	$(PDFLATEX) $*
-	$(PDFLATEX) $*
+	$(PDFLATEX) $*; $(BIBTEX) $*; $(PDFLATEX) $*; $(PDFLATEX) $*
 
 %.bbl: %.tex
-	-$(PDFLATEX) $*
-	$(BIBTEX) $*
+	$(PDFLATEX) $*; $(BIBTEX) $*
 
 %.idx: %.tex
-	-$(PDFLATEX) $*
+	$(PDFLATEX) $*
 
 %.ind: %.idx
 	$(MAKEIDX) $*
 
 %.html: %.Rmd
 	$(RSCRIPT) -e "rmarkdown::render(\"$*.Rmd\",output_format=\"html_document\")"
-
-%.html: %.md
-	$(RSCRIPT) -e "rmarkdown::render(\"$*.md\",output_format=\"html_document\")"
 
 %.R: %.Rmd
 	$(RSCRIPT) -e "knitr::purl(\"$*.Rmd\",output=\"$*.R\",documentation=2)"

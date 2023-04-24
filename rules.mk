@@ -1,4 +1,4 @@
-REXE = R -s
+REXE = $(shell which R) -s
 RCMD = $(REXE) CMD
 MANUALDIR = $(REPODIR)/manuals/$(PKG)
 
@@ -125,7 +125,6 @@ htmlhelp: install manual
 
 www: install
 	$(MAKE)	-C www
-	rsync --delete -a www/vignettes/ $(MANUALDIR)/vignettes
 
 session debug rsession: .session
 
@@ -138,6 +137,7 @@ publish: dist manual htmlhelp www
 	$(REXE) -e 'drat::insertPackage("$(PKGVERS).tar.gz",repodir="$(REPODIR)",action="prune")'
 	-$(REXE) -e 'drat::insertPackage("$(PKGVERS).tgz",repodir="$(REPODIR)",action="prune")'
 	-$(REXE) -e 'drat::insertPackage("$(PKGVERS).zip",repodir="$(REPODIR)",action="prune")'
+	$(MAKE) -C www publish
 
 rhub:
 	$(REXE) -e 'library(rhub); check_for_cran(); check_on_windows(); check(platform="macos-highsierra-release-cran");'
@@ -165,7 +165,7 @@ $(PKG).pdf: $(SOURCE)
 tests: .tests
 
 .tests: .install .testsource
-	$(MAKE) -C tests
+	$(MAKE) -j10 -C tests
 	$(TOUCH) $@
 
 install: .install
