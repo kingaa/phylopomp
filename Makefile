@@ -1,4 +1,4 @@
-REPODIR = ../www
+REPODIR = repo
 INCLUDES=
 HEADERS=
 
