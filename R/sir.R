@@ -60,25 +60,26 @@ continueSIR <- function (
 ##' @export
 sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
 {
-  ic <- as.integer(S0=S0,I0=I0,R0=R0)
+  ic <- as.integer(c(S0=S0,I0=I0,R0=R0))
   if (any(ic < 0))
     stop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.",.call=FALSE)
-  data[,"time"] |>
-    pomp(
-      times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,ic,N=sum(ic)),
-      covar=covariate_table(
-        data,
-        times="time",
-        order="constant"
-      ),
-      rinit="sirs_rinit",
-      rprocess=onestep("sirs_gill"),
-      dmeasure="sirs_dmeas",
-      accumvars=c("ll"),
-      statenames=c("S","I","R","ll"),
-      paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
-      PACKAGE="phylopomp"
-    )
+  names(ic) <- c("S0","I0","R0")
+  pomp(
+    data=data.frame(time=data$time),
+    times="time",t0=t0,
+    params=c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,ic,N=sum(ic)),
+    covar=covariate_table(
+      data,
+      times="time",
+      order="constant"
+    ),
+    rinit="sirs_rinit",
+    rprocess=onestep("sirs_gill"),
+    dmeasure="sirs_dmeas",
+    accumvars=c("ll"),
+    statenames=c("S","I","R","ll"),
+    paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
+    PACKAGE="phylopomp"
+  )
 }

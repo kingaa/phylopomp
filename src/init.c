@@ -1,4 +1,5 @@
 #include "init.h"
+#include "decls.h"
 
 // edit this file to register new model routines with R
 // for each model, there must be

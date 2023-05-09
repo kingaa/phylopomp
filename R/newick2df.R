@@ -26,7 +26,7 @@
 ##'     1 indicates a coalescence;
 ##'     0 indicates a dead sample;
 ##'    -1 indicates a live sample;
-##'     2 indicates the root.
+##'     2 indicates a root.
 ##'   }
 ##' }
 ##' 

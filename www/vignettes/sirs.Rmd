@@ -1,0 +1,168 @@
+---
+title: Likelihood slice for the SIRS model
+author: A.A. King
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SIRS computations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitr_setup}
+#| cache: false
+#| purl: false
+#| include: false
+library(knitr)
+opts_chunk$set(
+             progress=TRUE,
+             prompt=FALSE,
+             tidy=FALSE,
+             highlight=TRUE,
+             strip.white=TRUE,
+             message=FALSE,
+             warning=FALSE,
+             error=TRUE,
+             echo=TRUE,
+             cache=TRUE,
+             cache.extra=rand_seed,
+             results='markup',
+             fig.show='asis',
+             fig.path="tmp/sirs/",
+             cache.path="tmp/sirs/",
+             size='small',
+             fig.align='center',
+             fig.dim=c(6,6),
+             dpi=100,
+             dev='png',
+             dev.args=list(bg='transparent')
+           )
+options(
+  keep.source=TRUE,
+  encoding="UTF-8"
+)
+```
+
+```{r packages}
+#| include: false
+#| cache: false
+library(tidyverse)
+library(cowplot)
+library(pomp)
+library(phylopomp)
+stopifnot(getRversion() >= "4.2")
+stopifnot(packageVersion("pomp")>="5.1")
+stopifnot(packageVersion("phylopomp")>="0.4")
+theme_set(theme_bw(base_family="serif"))
+options(
+  dplyr.summarise.inform=FALSE,
+  pomp_archive_dir="results/sirs"
+)
+set.seed(1159254136)
+```
+
+The following codes simulate a realization of the genealogy process induced by the SIRS model.
+
+
+```{r simulate}
+bake(
+  file="sirs1.rds",
+  seed=328168304L,
+  runSIR(
+    t0=0,time=40,
+    Beta=4,gamma=2,psi=1,delta=1,
+    S0=97,I0=3,R0=0
+  ) -> sim
+) -> sim
+```
+
+```{r process_data}
+sim |>
+  lineages() |>
+  mutate(
+    code=lineages-lag(lineages),
+    code=if_else(is.na(code),2,code)
+  ) |>
+  sir_pomp(
+    Beta=4,gamma=2,psi=1,delta=1,
+    S0=97,I0=3,R0=3,t0=0
+  ) -> sirs_pomp
+```
+
+```{r pfilter1}
+bake(
+  file="sirs2.rds",
+  dependson="sirs_dat",
+  {
+    library(doParallel)
+    library(doRNG)
+    library(iterators)
+    registerDoParallel()
+    registerDoRNG(728604304)
+    expand_grid(
+      Beta=4,gamma=2,psi=1,
+      delta=seq(0.5,2,by=0.05),
+      S0=97,I0=3,R0=0,
+      t0=0,
+      rep=1:16,
+      Np=5000,
+      ) |>
+      mutate(
+        N=S0+I0+R0
+      ) -> params
+    foreach (
+      p=iter(params,"row"),
+      .inorder=FALSE,
+      .packages=c("phylopomp","pomp"),
+      .combine=bind_rows
+    ) %dopar% {
+      sirs_pomp |>
+        pfilter(Np=p$Np,params=p) |>
+        logLik() |>
+        bind_cols(p,logLik=_)
+    } -> params
+  }
+) -> params
+```
+
+The above computation took `r signif(attr(params,"system.time")[3]/60,3)`&nbsp;min.
+
+```{r sirs1_plot}
+#| out.width: 100%
+#| fig.height: 2.8
+#| fig.width: 8
+sim |> plot() -> pl1
+
+params |>
+  group_by(Beta,gamma,psi,delta,S0,I0,R0,Np) |>
+  reframe(
+    name=c("logLik","logLik_se","logLik_ess"),
+    value=logmeanexp(logLik,se=TRUE,ess=TRUE)
+  ) |>
+  ungroup() |>
+  pivot_wider() |>
+  mutate(
+    y=logLik,
+    ymax=logLik+2*logLik_se,
+    ymin=logLik-2*logLik_se
+  ) |>
+  filter(round(Beta,2)==4) |>
+  filter(logLik>max(logLik)-16) |>
+  ggplot(aes(x=delta,group=Np,y=y))+
+  geom_errorbar(aes(ymin=ymin,ymax=ymax),position="dodge")+
+  labs(
+    color=character(0),
+    y="log likelihood",
+    x=expression(delta)
+  )+
+  theme(
+    legend.position=c(0.5,0.27)
+  ) -> pl2
+
+plot_grid(
+  A=pl1,
+  B=pl2,
+  labels="AUTO",
+  ncol=1,
+  rel_heights=c(1,1)
+)
+```

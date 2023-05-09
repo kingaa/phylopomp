@@ -3,7 +3,7 @@ RSCRIPT = $(shell which Rscript) --vanilla
 RM = rm -f
 CP = cp
 
-default: index.html lbdp_compar.html moran.html seir.html
+default: index.html lbdp_compar.html moran.html seir.html sirs.html
 
 %.tex: %.Rnw
 	$(RSCRIPT) -e "library(knitr); knit(\"$*.Rnw\")"
