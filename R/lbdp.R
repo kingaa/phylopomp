@@ -168,44 +168,31 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
 ##'
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact
-##' @param method integration method
-##' @param delta.t Euler step-size when \code{method="euler"} is chosen
 ##'
 ##' @export
 
-lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0,
-  method = c("gillespie", "euler"), delta.t = NULL)
+lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
 {
   data <- as.data.frame(data)
   ndat <- nrow(data)
   code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
   code[ndat] <- -2L
   data$code <- code
-  method <- match.arg(method)
-  delta.t <- as.double(delta.t)
-  if (method == "euler" && (length(delta.t)<1 || !is.finite(delta.t)))
-    stop(sQuote("delta.t")," must be specified when method = ",
-      dQuote("euler"),".",.call=FALSE)
   data["time"] |>
     pomp(
       times="time",t0=t0,
       params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
       rinit="lbdp_rinit",
       dmeasure="lbdp_dmeas",
-      paramnames=c("lambda","mu","n0","psi"),
+      rprocess=onestep("lbdp_gill"),
       accumvars=c("ll"),
       statenames=c("n","ll"),
-      PACKAGE="phylopomp",
+      paramnames=c("lambda","mu","psi","n0"),
       covar=covariate_table(
         data,
         times="time",
         order="constant"
       ),
-      rprocess=
-        if (method=="gillespie") {
-          onestep("lbdp_gill")
-        } else {
-          euler("lbdp_euler",delta.t=delta.t)
-        }
+      PACKAGE="phylopomp"
     )
 }

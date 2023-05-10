@@ -81,7 +81,9 @@ sim |>
   mutate(
     code=lineages-lag(lineages),
     code=if_else(is.na(code),2,code)
-  ) |>
+  ) -> sirs_dat
+
+sirs_dat |>
   sir_pomp(
     Beta=4,gamma=2,psi=1,delta=1,
     S0=97,I0=3,R0=3,t0=0
@@ -91,7 +93,7 @@ sim |>
 ```{r pfilter1}
 bake(
   file="sirs2.rds",
-  dependson="sirs_dat",
+  dependson=sirs_dat,
   {
     library(doParallel)
     library(doRNG)
@@ -112,7 +114,6 @@ bake(
     foreach (
       p=iter(params,"row"),
       .inorder=FALSE,
-      .packages=c("phylopomp","pomp"),
       .combine=bind_rows
     ) %dopar% {
       sirs_pomp |>

@@ -7,8 +7,6 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
-  Natural language support but running in an English locale
-
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -45,7 +43,7 @@ Type 'q()' to quit R.
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
     est      se 
-12.4350  0.0978 
+12.6241  0.0698 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -58,7 +56,7 @@ Type 'q()' to quit R.
 > x |> lineages() -> dat
 > 
 > dat |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
-[1] 39.5
+[1] 8.47
 > 
 > replicate(
 +   n=10,
@@ -68,8 +66,8 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-    est      se 
-39.4812  0.0336 
+   est     se 
+8.4840 0.0111 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -82,7 +80,7 @@ Type 'q()' to quit R.
 > x |> lineages() -> dat
 > 
 > dat |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] 15.9
+[1] 41.7
 > 
 > replicate(
 +   n=10,
@@ -92,8 +90,8 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-   est     se 
-15.896  0.029 
+    est      se 
+41.6776  0.0152 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],

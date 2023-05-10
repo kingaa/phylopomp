@@ -15,16 +15,7 @@ continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
 
 lbdp_exact(data, lambda, mu, psi, n0 = 1)
 
-lbdp_pomp(
-  data,
-  lambda,
-  mu,
-  psi,
-  n0 = 1,
-  t0 = 0,
-  method = c("gillespie", "euler"),
-  delta.t = NULL
-)
+lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 }
 \arguments{
 \item{time}{final time}
@@ -43,10 +34,6 @@ lbdp_pomp(
 \emph{or} a previously computed \sQuote{gpsim} object}
 
 \item{data}{data frame containing the genealogy event times and event codes.}
-
-\item{method}{integration method}
-
-\item{delta.t}{Euler step-size when \code{method="euler"} is chosen}
 }
 \value{
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.

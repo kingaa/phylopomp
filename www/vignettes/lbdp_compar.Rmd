@@ -8,11 +8,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r knitr_setup,include=FALSE,purl=FALSE,cache=FALSE}
+```{r knitr_setup}
+#| cache: false
+#| purl: false
+#| include: false
 library(knitr)
 opts_chunk$set(
              progress=TRUE,
-             prompt=FALSE,tidy=FALSE,highlight=TRUE,
+             prompt=FALSE,
+             tidy=FALSE,
+             highlight=TRUE,
              strip.white=TRUE,
              message=FALSE,
              warning=FALSE,
@@ -37,16 +42,21 @@ options(
 )
 ```
 
-```{r packages,include=FALSE,cache=FALSE}
+```{r packages}
+#| cache: false
+#| include: false
 library(tidyverse)
 library(pomp)
 library(phylopomp)
 library(cowplot)
-stopifnot(getRversion() >= "4.1")
-stopifnot(packageVersion("pomp")>="4.6")
-stopifnot(packageVersion("phylopomp")>="0.1")
+stopifnot(getRversion() >= "4.2")
+stopifnot(packageVersion("pomp")>="5.1")
+stopifnot(packageVersion("phylopomp")>="0.4")
 theme_set(theme_bw(base_family="serif"))
-options(dplyr.summarise.inform=FALSE)
+options(
+  dplyr.summarise.inform=FALSE,
+  pomp_archive_dir="results/lbdp_compar"
+)
 set.seed(1159254136)
 ```
 
@@ -62,7 +72,8 @@ with(
 x |> lineages() -> lbdp_dat
 ```
 
-```{r lbdp1_plot,echo=FALSE}
+```{r lbdp1_plot}
+#| echo: false
 plot_grid(
   x |> plot(points=TRUE),
   lbdp_dat |> plot(),
@@ -75,13 +86,12 @@ plot_grid(
 The following designs a slice through parameter space in the $\psi$ direction.
 In addition, three different levels of computational effort are applied (as measured by the number of particles, `Np`).
 
-
 ```{r lbdp2}
 expand_grid(
   rep=1:4,
   lambda=1.5,
   mu=0.8,
-  psi=seq(0.5,1.5,by=0.05),
+  psi=seq(0.5,3,by=0.1),
   time=5,
   n0=5,
   Np=c(1000,10000,100000)
@@ -90,17 +100,17 @@ expand_grid(
 
 Next, we perform a sequential Monte Carlo (particle filter) computation at each point in the above design.
 
-```{r lbdp3,eval=FALSE}
-library(doFuture)
+```{r lbdp3}
+#| eval: false
+#| purl: false
+library(doParallel)
 library(doRNG)
 library(iterators)
-plan(multisession)
-registerDoFuture()
+registerDoParallel()
 registerDoRNG(728604304)
 foreach (
   p=iter(params,"row"),
   .inorder=FALSE,
-  .packages=c("phylopomp","pomp"),
   .combine=bind_rows
 ) %dopar% {
   with(
@@ -118,17 +128,19 @@ foreach (
   bind_cols(p,exact=ll1,pf=ll2)
 }-> params
 ```
-```{r lbdp3_eval,include=FALSE}
+```{r lbdp3_eval}
+#| include: false
 bake(
   file="lbdp_compar.rds",
-  dependson=c("x","params"),
+  dependson=c(lbdp_dat,params),
   {
     <<lbdp3>>
   }
 ) -> params
 ```
 
-```{r lbdp3_plot,echo=FALSE}
+```{r lbdp3_plot}
+#| echo: false
 params |>
   pivot_longer(c(exact,pf)) |>
   unite(name,name,Np) |>
@@ -137,7 +149,7 @@ params |>
     name=gsub("pf_","",name)
   ) |>
   group_by(lambda,mu,psi,time,n0,name) |>
-  summarize(
+  reframe(
     type=c("logLik","logLik_se"),
     value=logmeanexp(value,se=TRUE)
   ) |>
