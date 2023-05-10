@@ -36,13 +36,12 @@ simulate.default <- function (object, ...) {
       "- LBDP: linear birth-death-sampling process\n"
     )
   else
-    stop(
-      "in ",sQuote("phylopomp::simulate"),": ",
+    pStop(
+      "phylopomp::simulate",
       sQuote("object")," must be specified as either ",
       "the name of a model or the result of a previous simulation.\n",
-      "Do ",sQuote("simulate()")," to view available models.",
-      call.=FALSE
-    )  
+      "Do ",sQuote("simulate()")," to view available models."
+      )  
 }
 
 ##' @rdname simulate
@@ -58,9 +57,8 @@ simulate.character <- function (object, time, ...) {
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
     Moran = runMoran(time=time,...),
-    stop("unrecognized model: ",sQuote(object),".\n",
-      "Do ",sQuote("simulate()")," to view available models.",
-      call.=FALSE)
+    pStop_("unrecognized model: ",sQuote(object),".\n",
+      "Do ",sQuote("simulate()")," to view available models.")
   ) |>
     structure(model=object,class="gpsim")
 }
@@ -83,8 +81,8 @@ simulate.gpsim <- function (object, time, ...) {
     modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
-    model = stop("no model attribute detected.",call.=FALSE),
-    stop("unrecognized model ",sQuote(model),".",call.=FALSE)
+    model = pStop_("no model attribute detected."),
+    pStop_("unrecognized model ",sQuote(model),".")
   ) |>
     structure(model=model,class="gpsim")
 }

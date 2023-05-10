@@ -25,9 +25,6 @@ x |> lineages() |> plot()
 
 x |>
   lineages() |>
-  mutate(
-    code=lineages-lag(lineages)
-  ) |>
   sir_pomp(
     Beta=3,gamma=1,psi=2,delta=1,
     S0=100,I0=5,R0=0
@@ -36,5 +33,15 @@ x |>
 
 pf |> logLik()
 pf |> plot()
+
+try(runSIR(S0=-10,time=1))
+try(
+  x |>
+    lineages() |>
+    sir_pomp(
+      Beta=3,gamma=1,psi=2,delta=1,
+      S0=-100,I0=5,R0=0
+    )
+)
 
 dev.off()

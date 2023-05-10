@@ -2,9 +2,27 @@ _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._4._0:
 
-        • Refactor the SIRS model ‘pomp’ object.
+        • Refactored the SIRS model ‘pomp’ object.
 
-        • Fix various bugs associated with te SIRS ‘pomp’ object.
+        • The ‘obscure’ operation now drops single-child internal nodes
+          in addition to erasing all deme information.
+
+        • Corrected certain inconsistencies in the way the
+          lineage-count table was reported and used in pomp objects.
+          The ‘lbdp_pomp’ and ‘sir_pomp’ functions assume a particular
+          form of the lineage count table, such that every entry
+          corresponds to either a root, a branch point, or a sample
+          (but NB, the last entry is treated differently).  This
+          assumption was violated beginning with version 0.2.0.0 in
+          that the lineage count table returned by ‘lineages()’
+          contained an entry for internal nodes.  Now, when
+          ‘obscure=TRUE’ (the default), the behavior is as it was
+          before, consistent with the assumptions of ‘lbdp_pomp’ and
+          ‘sir_pomp’
+
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._2._0:
+
+        • Streamlined of the GP definition.
 
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1._0:
 

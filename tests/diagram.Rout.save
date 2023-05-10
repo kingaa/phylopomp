@@ -60,27 +60,19 @@ null device
 +   cat()
 time = 0.300000
 t0 = 0.000000
-node(9,0) {green(9), green(20)}, t = 0.000000
+node(9,0) {green(9), green(26)}, t = 0.000000
 node(5,0) {green(5), green(29)}, t = 0.000000
 node(4,0) {green(4), green(66)}, t = 0.000000
-node(3,0) {green(3), green(22)}, t = 0.000000
+node(3,0) {green(3), green(72)}, t = 0.000000
 node(1,0) {green(1), green(36)}, t = 0.000000
-node(20,0) {green(25)}, t = 0.001515
-node(22,0) {green(69)}, t = 0.005354
-node(25,0) {green(26)}, t = 0.030388
-node(26,0) {green(37), green(43)}, t = 0.037168
+node(26,0) {green(43), green(80)}, t = 0.037168
 node(29,0) {blue(29)}, t = 0.051490
-node(36,0) {green(38), green(40)}, t = 0.086187
-node(37,0) {green(80)}, t = 0.086758
-node(38,0) {green(44), green(51)}, t = 0.087731
-node(40,0) {green(53)}, t = 0.089094
+node(36,0) {green(38), green(53)}, t = 0.086187
+node(38,0) {green(76), green(94)}, t = 0.087731
 node(43,0) {blue(43), green(48)}, t = 0.113407
-node(44,0) {green(94)}, t = 0.113577
 node(48,0) {blue(48)}, t = 0.124190
-node(51,0) {green(76)}, t = 0.146496
 node(53,0) {blue(53)}, t = 0.150717
 node(66,0) {blue(66)}, t = 0.208375
-node(69,0) {green(72)}, t = 0.216198
 node(72,0) {blue(72)}, t = 0.223580
 node(76,0) {green(89), green(97)}, t = 0.236878
 node(80,0) {blue(80)}, t = 0.240219
@@ -155,7 +147,7 @@ genealogy:
     - color: green
       name: 1
     - color: green
-      name: 5
+      name: 7
   - name: 0
     deme: 0
     time: 0.000000
@@ -163,19 +155,7 @@ genealogy:
     - color: green
       name: 0
     - color: green
-      name: 6
-  - name: 5
-    deme: 0
-    time: 0.047751
-    pocket:
-    - color: green
-      name: 7
-  - name: 6
-    deme: 0
-    time: 0.073742
-    pocket:
-    - color: green
-      name: 10
+      name: 12
   - name: 7
     deme: 0
     time: 0.155599
@@ -196,26 +176,14 @@ genealogy:
     pocket:
     - color: blue
       name: 9
-  - name: 10
-    deme: 0
-    time: 0.226280
-    pocket:
-    - color: green
-      name: 12
   - name: 12
     deme: 0
     time: 0.321713
     pocket:
     - color: green
-      name: 13
+      name: 14
     - color: green
       name: 15
-  - name: 13
-    deme: 0
-    time: 0.387162
-    pocket:
-    - color: green
-      name: 14
   - name: 14
     deme: 0
     time: 0.394555

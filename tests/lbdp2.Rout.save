@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -43,7 +45,7 @@ Type 'q()' to quit R.
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
     est      se 
-12.6241  0.0698 
+12.6353  0.0366 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -56,7 +58,7 @@ Type 'q()' to quit R.
 > x |> lineages() -> dat
 > 
 > dat |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
-[1] 8.47
+[1] -29
 > 
 > replicate(
 +   n=10,
@@ -66,8 +68,8 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-   est     se 
-8.4840 0.0111 
+      est        se 
+-29.03667   0.00897 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -80,7 +82,7 @@ Type 'q()' to quit R.
 > x |> lineages() -> dat
 > 
 > dat |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] 41.7
+[1] -23.9
 > 
 > replicate(
 +   n=10,
@@ -90,13 +92,18 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-    est      se 
-41.6776  0.0152 
+     est       se 
+-23.9112   0.0154 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
 +   llex<llpf[1]+2*llpf[2]
 + )
+> 
+> try(
++   dat |> lbdp_pomp(n0=-10)
++ )
+Error : in 'lbdp_pomp': 'n0' must be a nonnegative integer.
 > 
 > dev.off()
 null device 

@@ -12,6 +12,8 @@
 #include "node.h"
 
 typedef typename std::list<node_t*>::const_iterator node_it;
+typedef typename std::list<node_t*>::iterator node_nit;
+typedef typename std::list<node_t*>::const_reverse_iterator node_rev_it;
 
 //! A sequence of nodes.
 class nodeseq_t : public std::list<node_t*> {
@@ -161,7 +163,77 @@ public:
     return o;
   };
 
+  //! swap balls a and b, wherever they lie
+  void swap (ball_t *a, ball_t *b) {
+    node_t *p = a->holder();
+    node_t *q = b->holder();
+    if (p != q) {
+      p->erase(a); q->insert(a); a->holder() = q;
+      q->erase(b); p->insert(b); b->holder() = p;
+    }
+  };
+
+  //! add node p; take as parent the node holding ball a.
+  //! the deme of p is changed to match that of a
+  void add (node_t *p, ball_t *a) {
+    swap(a,p->green_ball());
+    p->deme = a->deme();
+    push_back(p);
+  };
+
+  //! drop the black ball 'a' and the node if either
+  //! (1) the node becomes thereby a dead root, or
+  //! (2) the node's pocket becomes thereby empty.
+  void drop (ball_t *a) {
+    if (!a->is(black))
+      err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
+    node_t *p = a->holder();
+    if (p->size() > 1) {
+      p->erase(a);
+      delete a;
+      if (p->dead_root()) {	// remove isolated root
+        destroy_node(p);
+      }
+    } else {
+      swap(a,p->green_ball());
+      destroy_node(p);
+      drop(a);                  // recurse
+    }
+  };
+
+  //! remove a dead root node
+  void destroy_node (node_t *p) {
+    if (!p->dead_root())
+      err("in '%s': invalid call.",__func__); // #nocov
+    remove(p);
+    delete p;
+  };
+
+  //! remove a dead root node
+  void destroy_node (node_nit i) {
+    if (!(*i)->dead_root())
+      err("in '%s': invalid call.",__func__); // #nocov
+    erase(i);
+    delete *i;
+  };
+
+  //! pass through the sequence, dropping superfluous nodes
+  //! i.e., those holding just one ball that is green.
+  void comb (void) {
+    for (node_rev_it i = crbegin(); i != crend(); i++) {
+      if ((*i)->size() == 1 && (*i)->holds(green)) {
+        swap((*i)->last_ball(),(*i)->green_ball());
+      }
+    }
+    node_nit j = begin();
+    while (j != end()) {
+      if ((*j)->dead_root()) {
+	destroy_node(*(j++));
+      } else {
+	j++;
+      }
+    }
+  };
 };
 
 #endif
-

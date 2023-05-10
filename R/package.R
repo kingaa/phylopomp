@@ -14,3 +14,30 @@
 NULL
 
 foreach::registerDoSEQ()
+
+pStop <- function (fn, ...) {
+  fn <- as.character(fn)
+  stop("in ",sQuote(fn[1L]),": ",...,call.=FALSE)
+}
+
+pStop_ <- function (...) {
+  stop(...,call.=FALSE)
+}
+
+pWarn <- function (fn, ...) {
+  fn <- as.character(fn)
+  warning("in ",sQuote(fn[1L]),": ",...,call.=FALSE)
+}
+
+pWarn_ <- function (...) {
+  warning(...,call.=FALSE)
+}
+
+pMess <- function (fn, ...) {
+  fn <- as.character(fn)
+  message("NOTE: in ",sQuote(fn[1L]),": ",...)
+}
+
+pMess_ <- function (...) {
+  message("NOTE: ",...)
+}

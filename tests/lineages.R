@@ -1,4 +1,5 @@
 png(filename="lineages-%02d.png",res=100,width=6,height=4,units="in")
+
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
@@ -42,10 +43,10 @@ simulate("SIIR",time=5,S0=50,psi2=1,sigma12=1,I1_0=3,I2_0=3) -> x
 
 plot_grid(
   plot_grid(
-    x|>plot(prune=F,obscure=F,points=T,palette=pal),
-    x|>lineages(prune=F,obscure=F)|>
-      mutate(lineages=deme1+deme2)|>
-      gather(var,val,-time)|>
+    x |> plot(prune=F,obscure=F,points=T,palette=pal),
+    x |> lineages(prune=F,obscure=F) |>
+      mutate(lineages=deme1+deme2) |>
+      gather(var,val,-time) |>
       ggplot(aes(x=time,y=val,color=var,group=var))+
       scale_color_discrete(type=pal)+
       geom_step()+
@@ -53,9 +54,11 @@ plot_grid(
       guides(color="none"),
     ncol=1,align='v',axis='b'
   ),
-  x|>diagram(prune=F,obscure=F),
+  x |> diagram(prune=F,obscure=F),
   ncol=1,
   rel_heights=c(2,0.3)
 )
+
+try(x |> lineages(obscure=FALSE) |> plot(palette=pal[1]))
 
 dev.off()

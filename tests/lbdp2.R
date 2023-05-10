@@ -72,4 +72,8 @@ stopifnot(
   llex<llpf[1]+2*llpf[2]
 )
 
+try(
+  dat |> lbdp_pomp(n0=-10)
+)
+
 dev.off()

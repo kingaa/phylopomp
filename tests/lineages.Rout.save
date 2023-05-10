@@ -18,6 +18,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > png(filename="lineages-%02d.png",res=100,width=6,height=4,units="in")
+> 
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
@@ -61,10 +62,10 @@ Type 'q()' to quit R.
 > 
 > plot_grid(
 +   plot_grid(
-+     x|>plot(prune=F,obscure=F,points=T,palette=pal),
-+     x|>lineages(prune=F,obscure=F)|>
-+       mutate(lineages=deme1+deme2)|>
-+       gather(var,val,-time)|>
++     x |> plot(prune=F,obscure=F,points=T,palette=pal),
++     x |> lineages(prune=F,obscure=F) |>
++       mutate(lineages=deme1+deme2) |>
++       gather(var,val,-time) |>
 +       ggplot(aes(x=time,y=val,color=var,group=var))+
 +       scale_color_discrete(type=pal)+
 +       geom_step()+
@@ -72,10 +73,13 @@ Type 'q()' to quit R.
 +       guides(color="none"),
 +     ncol=1,align='v',axis='b'
 +   ),
-+   x|>diagram(prune=F,obscure=F),
++   x |> diagram(prune=F,obscure=F),
 +   ncol=1,
 +   rel_heights=c(2,0.3)
 + )
+> 
+> try(x |> lineages(obscure=FALSE) |> plot(palette=pal[1]))
+Error : in 'plot.gplin': 'palette' must have length at least 2 if specified as a vector.
 > 
 > dev.off()
 null device 

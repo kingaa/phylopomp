@@ -243,49 +243,6 @@ private:
     return p;
   };
 
-  void destroy_node (node_t *p) {
-    if (!p->holds_own() || p->size() > 1)
-      err("cannot destroy node holding anything other than its own green ball."); // # nocov
-    remove(p);
-    delete p;
-  };
-  
-  //! swap balls a and b, wherever they lie
-  void swap (ball_t *a, ball_t *b) {
-    node_t *p = a->holder();
-    node_t *q = b->holder();
-    if (p != q) {
-      p->erase(a); q->insert(a); a->holder() = q;
-      q->erase(b); p->insert(b); b->holder() = p;
-    }
-  };
-
-  //! add node p; take as parent the node holding ball a.
-  //! the deme of p is changed to match that of a
-  void add (node_t *p, ball_t *a) {
-    swap(a,p->green_ball());
-    p->deme = a->deme();
-    push_back(p);
-  };
-
-  //! drop the node holding black ball a.
-  void drop (ball_t *a) {
-    if (!a->is(black))
-      err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
-    node_t *p = a->holder();
-    if (p->size() > 1) {
-      p->erase(a);
-      delete a;
-      if (p->size()==1 && p->holds_own()) { // remove isolated root
-        destroy_node(p);
-      }
-    } else {
-      swap(a,p->green_ball());
-      destroy_node(p);
-      drop(a);			// recurse
-    }
-  };
-
 public:
   //! birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
@@ -357,6 +314,7 @@ public:
 
   //! erase all deme information
   genealogy_t& obscure (void) {
+    // erase deme information from black balls.
     pocket_t *blacks = colored(black);
     while (!blacks->empty()) {
       ball_t *a = *(blacks->begin());
@@ -364,8 +322,12 @@ public:
       blacks->erase(a);
     }
     delete blacks;
-    for (node_it i = begin(); i != end(); i++)
+    // erase deme information from nodes.
+    for (node_it i = begin(); i != end(); i++) {
       (*i)->deme = 0;
+    }
+    // drop superfluous nodes (holding just one ball).
+    comb();
     _obscured = true;
     return *this;
   };

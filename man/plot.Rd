@@ -6,7 +6,16 @@
 \alias{treeplot}
 \title{Fancy tree plotter}
 \usage{
-\method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, obscure = TRUE, compact = TRUE)
+\method{plot}{gpsim}(
+  x,
+  ...,
+  time,
+  t0,
+  prune = TRUE,
+  obscure = TRUE,
+  compact = TRUE,
+  palette = scales::hue_pal(l = 30, h = c(220, 580))
+)
 
 treeplot(
   tree,
@@ -33,16 +42,16 @@ treeplot(
 
 \item{compact}{logical; return the tree in compact representation?}
 
+\item{palette}{color palette for branches.
+This can be furnished either as a function or a vector of colors.
+If this is a function, it should take a single integer argument, the number of colors required.
+If it is a vector, ....}
+
 \item{tree}{character; tree representation in Newick format.}
 
 \item{ladderize}{Ladderize?}
 
 \item{points}{Show nodes and tips?}
-
-\item{palette}{color palette for branches.
-This can be furnished either as a function or a vector of colors.
-If this is a function, it should take a single integer argument, the number of colors required.
-If it is a vector, ....}
 }
 \value{
 A printable \code{ggplot} object.

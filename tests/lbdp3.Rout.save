@@ -1,0 +1,104 @@
+
+R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="lbdp3-%02d.png",res=100)
+> 
+> suppressPackageStartupMessages({
++   library(tidyverse)
++   library(cowplot)
++   library(pomp)
++   library(phylopomp)
++ })
+> theme_set(theme_bw())
+> set.seed(442131820)
+> options(digits=3)
+> 
+> freeze(
++   runLBDP(time=1,lambda=4,mu=1,psi=2,n0=2),
++   seed=162343023
++ ) -> x
+> 
+> plot_grid(
++   x |> plot(points=TRUE,obscure=FALSE),
++   x |> diagram(prune=TRUE,obscure=FALSE),
++   x |> lineages() |> plot(),
++   ncol=1,
++   align="v",axis="tblr",
++   rel_heights=c(2,1,2)
++ )
+> 
+> plot_grid(
++   x |> plot(points=TRUE,obscure=TRUE),
++   x |> diagram(prune=TRUE,obscure=TRUE),
++   x |> lineages() |> plot(),
++   ncol=1,
++   align="v",axis="tblr",
++   rel_heights=c(2,1,2)
++ )
+> 
+> x |>
++   lineages() |>
++   mutate(
++     sample=lineages<=lag(lineages),
++     sample=if_else(row_number()<n(),sample,NA),
++     sample=coalesce(sample,FALSE)
++   ) -> dat
+> 
+> stopifnot(
++   sum(dat$sample)==14
++ )
+> 
+> plot_grid(
++   x |> plot(points=TRUE,obscure=TRUE),
++   x |> diagram(prune=TRUE,obscure=TRUE),
++   dat |>
++     ggplot(aes(x=time,y=lineages))+
++     geom_step()+
++     geom_point(aes(alpha=sample),color="blue",show.legend=FALSE),
++   ncol=1,
++   align="v",axis="tblr",
++   rel_heights=c(2,1,2)
++ )
+Warning message:
+Using alpha for a discrete variable is not advised. 
+> 
+> dat |>
++   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
+> llex
+[1] 5.23
+> 
+>   dat |>
++   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
++   pfilter(Np=1000) |>
++   logLik() |>
++   replicate(n=10) |>
++   logmeanexp(se=TRUE) -> llpf
+> llpf
+   est     se 
+5.2370 0.0295 
+> 
+> stopifnot(
++   llex>llpf[1]-2*llpf[2],
++   llex<llpf[1]+2*llpf[2]
++ )
+> 
+> dev.off()
+null device 
+          1 
+> 

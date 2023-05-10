@@ -1,4 +1,4 @@
-## **phylopomp**
+## **phylopomp**, an *R* package for POMP inference on genealogies
 
 [![Project Status: WIP - Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
@@ -9,24 +9,25 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 [![binary-build](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml)
 [![test-coverage](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml)
 [![codecov](https://codecov.io/gh/kingaa/phylopomp/branch/master/graph/badge.svg)](https://codecov.io/gh/kingaa/phylopomp)
+[![manual](https://img.shields.io/badge/manual-HTML-informational)](https://kingaa.github.io/phylopomp/manual/)
+[![pdf-manual](https://img.shields.io/badge/manual-PDF-informational)](https://kingaa.github.io/phylopomp/manual/pdf/)
 
-### an *R* package for POMP inference on genealogies
+### Publications
 
 [“Markov Genealogy Processes” (*Theoretical Population Biology*
 **143**:77–91)](https://doi.org/10.1016/j.tpb.2021.11.003)  
 [![](https://img.shields.io/badge/doi-10.1016/j.tpb.2021.11.003-yellow.svg)](https://doi.org/10.1016/j.tpb.2021.11.003)
 
-Manual: <https://kingaa.github.io/manuals/phylopomp/>
-
-Related packages:
+### Related packages:
 
   - [**pomp**](https://kingaa.github.io/pomp/)
+  - [**circumstance**](https://kingaa.github.io/circumstance/)
 
-### new model checklist
+### Checklist for adding a new model
 
-- create and edit `src/<model>.cc`
-- edit `src/init.c`
-- edit `R/getinfo.R`
-- create and edit `R/<model>.R`
-- add examples to `examples/<model.R>`
-- add tests to `tests/`
+- [x] create and edit `src/<model>.cc`
+- [x] edit `src/init.c`
+- [x] edit `R/getinfo.R`
+- [x] create and edit `R/<model>.R`
+- [x] add examples to `examples/<model.R>`
+- [x] add tests to `tests/`

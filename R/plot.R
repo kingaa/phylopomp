@@ -29,13 +29,20 @@ NULL
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE, compact = TRUE
+  prune = TRUE, obscure = TRUE, compact = TRUE,
+  palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
   out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
     prune=prune,obscure=obscure,compact=compact)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
-  treeplot(tree=out$tree,time=time,t0=t0,...)
+  treeplot(
+    tree=out$tree,
+    time=time,
+    t0=t0,
+    palette=palette,
+    ...
+  )
 }
 
 ##' @rdname plot
@@ -56,7 +63,7 @@ treeplot <- function (
 ) {
 
   if (missing(tree) || is.null(tree))
-    stop(sQuote("tree")," must be specified.",call.=FALSE)
+    pStop("treeplot",sQuote("tree")," must be specified.")
   t0 <- as.numeric(t0)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
@@ -74,9 +81,9 @@ treeplot <- function (
     palette <- palette(ndeme)
   } else {
     if (length(palette) < ndeme)
-      stop("in ",sQuote("treeplot"),": ",sQuote("palette"),
+      pStop("treeplot",sQuote("palette"),
         " must have length at least ",ndeme,
-        " if specified as a vector.",call.=FALSE)
+        " if specified as a vector.")
   }
 
   time <- as.numeric(c(time,max(dat$x)))[1L]

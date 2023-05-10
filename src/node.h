@@ -92,6 +92,9 @@ public:
   bool is_root (void) const {
     return holds_own();
   };
+  bool dead_root (void) const {
+    return holds_own() && size()==1;
+  };
   //! number of descendants
   int nchildren (bool compact = false) const {
     int n = 0;

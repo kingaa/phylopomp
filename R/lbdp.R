@@ -28,6 +28,9 @@ runLBDP <- function (
   lambda = 2, mu = 1, psi = 1,
   n0 = 5
 ) {
+  n0 <- round(n0)
+  if (n0 < 0)
+    pStop("runLBDP",sQuote("n0")," must be a nonnegative integer.")
   params <- c(lambda=lambda,mu=mu,psi=psi)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
@@ -108,7 +111,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
   code[ndat] <- -2L
   n0 <- as.integer(n0)
-  if (n0 < 1) stop(sQuote("n0")," must be a positive integer.",call.=FALSE)
+  if (n0 < 1) pStop("lbdp_exact",sQuote("n0")," must be a positive integer.")
   tf <- data$time[ndat]
   x0 <- tf-data$time[1L]      ## root time
   x <- tf-data$time[code==1]  ## coalescence times
@@ -117,7 +120,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   k <- sum(code==0)           ## number of dead samples
   m <- sum(code==-1)          ## number of live samples
   if (m - n != length(x))
-    stop("internal inconsistency in ",sQuote("data"),".",call.=FALSE)
+    pStop("lbdp_exact","internal inconsistency in ",sQuote("data"),".")
   ##  print(c(x0=x0,tf=tf,m=m,n=n,k=k,n0=n0))
 
   ## A simple fractional linear transformation (1-z)/(1+z),
@@ -173,6 +176,9 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
 
 lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
 {
+  n0 <- round(n0)
+  if (n0 < 0)
+    pStop("lbdp_pomp",sQuote("n0")," must be a nonnegative integer.")
   data <- as.data.frame(data)
   ndat <- nrow(data)
   code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
@@ -188,6 +194,7 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
       accumvars=c("ll"),
       statenames=c("n","ll"),
       paramnames=c("lambda","mu","psi","n0"),
+      covarnames=c("lineages","code"),
       covar=covariate_table(
         data,
         times="time",

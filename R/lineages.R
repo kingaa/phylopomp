@@ -60,9 +60,9 @@ plot.gplin <- function (
     palette <- structure(palette(ndeme),names=demes)
   } else {
     if (length(palette) < ndeme)
-      stop("in ",sQuote("plot.gplin"),": ",sQuote("palette"),
+      pStop("plot.gplin",sQuote("palette"),
         " must have length at least ",ndeme,
-        " if specified as a vector.",call.=FALSE)
+        " if specified as a vector.")
   }
 
   x |>
