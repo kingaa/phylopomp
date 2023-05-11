@@ -6,18 +6,14 @@
 ##' @name lbdp
 ##' @aliases LBDP
 ##' @include getinfo.R
-##' 
 ##' @family Genealogy processes
-##'
 ##' @param lambda per capita birth rate
 ##' @param mu per capita recovery rate.
 ##' @param psi per capita sampling rate.
 ##' @param n0 initial population size
 ##' @param time final time
 ##' @param t0 initial time
-##' 
 ##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
-##'
 ##' @example examples/lbdp.R
 NULL
 
@@ -49,23 +45,15 @@ continueLBDP <- function (
   .Call(P_runLBDP,x,time)
 }
 
-##' @name lbdp_exact
 ##' @rdname lbdp
 ##' @details
 ##' \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 ##' The derivation is also given in comments in the code.
-##'
-##' The \code{data} argument should in the format returned by \code{\link{newick2df}}.
-##'
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
-##'
-##' @param data data frame containing the genealogy event times and event codes.
-##' 
+##' @param data data frame containing the genealogy event times.
 ##' @references
-##'
 ##' \Stadler2010
-##' 
 ##' @export
 lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Theorem 3.5 in Stadler (2010) with rho=0
@@ -106,7 +94,6 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Here, m = number of live samples, k = number of dead samples.
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
-
   ndat <- nrow(data)
   code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
   code[ndat] <- -2L
@@ -119,9 +106,9 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   n <- data$lineages[1L]      ## number of roots
   k <- sum(code==0)           ## number of dead samples
   m <- sum(code==-1)          ## number of live samples
+
   if (m - n != length(x))
     pStop("lbdp_exact","internal inconsistency in ",sQuote("data"),".")
-  ##  print(c(x0=x0,tf=tf,m=m,n=n,k=k,n0=n0))
 
   ## A simple fractional linear transformation (1-z)/(1+z),
   ## defined on the whole of the Riemann sphere.
@@ -136,7 +123,6 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
       )
     )
   }
-
   d <- sqrt((lambda-mu-psi)^2+4*lambda*psi) ## guaranteed to be real
   a <- (lambda+mu+psi)/2/lambda
   b <- d/2/lambda
@@ -162,18 +148,12 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
     sum(log(p0(y)/Q(y)))
 }
 
-##' @name lbdp_pomp
 ##' @rdname lbdp
 ##' @details
 ##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
-##'
-##' It is assumed that \code{data} is in the format returned by \code{\link{newick2df}}.
-##'
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact
-##'
 ##' @export
-
 lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
 {
   n0 <- round(n0)

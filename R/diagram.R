@@ -74,6 +74,7 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##' (https://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/).
 ##' 
 ##' @rdname internals
+##' @name genealogy diagram internals
 ##' @keywords internal
 ##' @param object list; genealogy structure
 ##' @param n length of longest genealogy
