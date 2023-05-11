@@ -9,8 +9,8 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 [![binary-build](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml)
 [![test-coverage](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml)
 [![codecov](https://codecov.io/gh/kingaa/phylopomp/branch/master/graph/badge.svg)](https://codecov.io/gh/kingaa/phylopomp)
-[![manual](https://img.shields.io/badge/manual-HTML-informational)](https://kingaa.github.io/phylopomp/manual/)
-[![pdf-manual](https://img.shields.io/badge/manual-PDF-informational)](https://kingaa.github.io/phylopomp/manual/pdf/)
+[![manual](https://img.shields.io/badge/manual-HTML-informational)](https://kingaa.github.io/manuals/phylopomp/)
+[![pdf-manual](https://img.shields.io/badge/manual-PDF-informational)](https://kingaa.github.io/manuals/phylopomp/pdf/)
 
 ### Publications
 
