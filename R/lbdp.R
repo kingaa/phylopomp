@@ -47,7 +47,7 @@ continueLBDP <- function (
 
 ##' @rdname lbdp
 ##' @details
-##' \code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
+##' \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 ##' The derivation is also given in comments in the code.
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
@@ -161,7 +161,7 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
     pStop("lbdp_pomp",sQuote("n0")," must be a nonnegative integer.")
   data <- as.data.frame(data)
   ndat <- nrow(data)
-  code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
+  code <- as.integer(c(2,diff(data$lineages)))
   code[ndat] <- -2L
   data$code <- code
   data["time"] |>

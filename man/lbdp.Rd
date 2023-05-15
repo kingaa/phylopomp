@@ -46,7 +46,7 @@ The genealogy process induced by a simple linear birth-death process
 with constant-rate sampling.
 }
 \details{
-\code{lbdp_exact} gives the exact likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
+\code{lbdp_exact} gives the exact log likelihood of a linear birth-death process, conditioned on \eqn{n_0 = 0}{n0=0} (Stadler, 2010, Thm 3.5).
 The derivation is also given in comments in the code.
 
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.

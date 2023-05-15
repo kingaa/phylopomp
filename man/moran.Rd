@@ -5,11 +5,14 @@
 \alias{Moran}
 \alias{runMoran}
 \alias{continueMoran}
+\alias{moran_exact}
 \title{The classical Moran model}
 \usage{
 runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
 
 continueMoran(object, time, mu = NA, psi = NA)
+
+moran_exact(data, n = 100, mu = 1, psi = 1)
 }
 \arguments{
 \item{time}{final time}
@@ -24,14 +27,21 @@ continueMoran(object, time, mu = NA, psi = NA)
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
+
+\item{data}{data frame containing the genealogy event times.}
 }
 \value{
 An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
+
+\code{moran_exact} returns the log likelihood of the genealogy.
 }
 \description{
 The Markov genealogy process induced by the classical Moran process,
 in which birth/death events occur at a constant rate and the
 population size remains constant.
+}
+\details{
+\code{moran_exact} gives the exact log likelihood of a genealogy under the uniformly-sampled Moran process.
 }
 \seealso{
 More example genealogy processes: 

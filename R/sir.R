@@ -70,7 +70,7 @@ sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
   names(ic) <- c("S0","I0","R0")
   data <- as.data.frame(data)
   ndat <- nrow(data)
-  code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
+  code <- as.integer(c(2,diff(data$lineages)))
   code[ndat] <- -2L
   data$code <- code
   data["time"] |>
