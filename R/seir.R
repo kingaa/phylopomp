@@ -32,8 +32,8 @@ runSEIR <- function (
   params <- c(Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta)
   ivps <- c(S0=S0,E0=E0,I0=I0,R0=R0)
   x <- .Call(P_makeSEIR,params,ivps,t0)
-  x <- .Call(P_runSEIR,x,time)
-  structure(x,model="SEIR",class="gpsim")
+  .Call(P_runSEIR,x,time) |>
+    structure(model="SEIR",class="gpsim")
 }
 
 ##' @rdname seir
@@ -47,5 +47,6 @@ continueSEIR <- function (
     Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta
   )
   x <- .Call(P_reviveSEIR,object,params)
-  .Call(P_runSEIR,x,time)
+  .Call(P_runSEIR,x,time) |>
+    structure(model="SEIR",class="gpsim")
 }

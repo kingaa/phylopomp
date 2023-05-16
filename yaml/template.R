@@ -113,8 +113,8 @@ run{%name%} <- function (
   params <- c({%paramvec%})
   ivps <- c({%ivpvec%})
   x <- .Call(P_make{%name%},params,ivps,t0)
-  x <- .Call(P_run{%name%},x,time)
-  structure(x,model="{%name%}",class="gpsim")
+  .Call(P_run{%name%},x,time) |>
+    structure(model="{%name%}",class="gpsim")
 }
 
 ##' @rdname {%rdname%}
@@ -127,7 +127,8 @@ continue{%name%} <- function (
     {%paramvec%}
   )
   x <- .Call(P_revive{%name%},object,params)
-  .Call(P_run{%name%},x,time)
+  .Call(P_run{%name%},x,time) |>
+    structure(model="{%name%}",class="gpsim")
 }]"
 
 make_model <- function (file) {

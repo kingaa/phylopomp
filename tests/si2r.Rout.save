@@ -18,6 +18,7 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 Type 'q()' to quit R.
 
 > png(filename="si2r1-%02d.png",res=100)
+> 
 > suppressPackageStartupMessages({
 +   library(phylopomp)
 +   library(tidyverse)
@@ -30,6 +31,7 @@ Type 'q()' to quit R.
 <gpsim for model 'SI2R'>
 > 
 > runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2) |>
++   simulate(time=5) |>
 +   plot(obscure=FALSE,points=TRUE)
 > 
 > simulate("SI2R",time=2) -> x

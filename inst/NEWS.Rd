@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.5.0}{
+  \itemize{
+    \item Function \code{moran_exact} computes the exact likelihood under the Moran model.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.4.0}{
   \itemize{
     \item Refactored the SIRS model \sQuote{pomp} object.

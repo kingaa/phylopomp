@@ -1,4 +1,5 @@
 png(filename="si2r1-%02d.png",res=100)
+
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
@@ -10,6 +11,7 @@ options(digits=3)
 runSI2R(time=10)
 
 runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2) |>
+  simulate(time=5) |>
   plot(obscure=FALSE,points=TRUE)
 
 simulate("SI2R",time=2) -> x

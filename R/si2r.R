@@ -55,8 +55,8 @@ runSI2R <- function (
   )
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSI2R,params,ivps,t0)
-  x <- .Call(P_runSI2R,x,time)
-  structure(x,model="SI2R",class="gpsim")
+  .Call(P_runSI2R,x,time) |>
+    structure(model="SI2R",class="gpsim")
 }
 
 ##' @rdname si2r
@@ -74,5 +74,6 @@ continueSI2R <- function (
     sigma12=sigma12,sigma21=sigma21
   )
   x <- .Call(P_reviveSI2R,object,params)
-  .Call(P_runSI2R,x,time)
+  .Call(P_runSI2R,x,time) |>
+    structure(model="SI2R",class="gpsim")
 }
