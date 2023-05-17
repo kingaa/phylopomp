@@ -18,7 +18,7 @@
 ##' @param I2_0 initial size of deme-2 infected population
 ##' @param R0 initial size of immune population
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
+##' @return \code{runSIIR} and \code{continueSIIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
 ##' 
 NULL
 
@@ -31,8 +31,8 @@ runSIIR <- function (
   params <- c(Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21,delta=delta)
   ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
   x <- .Call(P_makeSIIR,params,ivps,t0)
-  x <- .Call(P_runSIIR,x,time)
-  structure(x,model="SIIR",class="gpsim")
+  .Call(P_runSIIR,x,time) |>
+    structure(model="SIIR",class="gpsim")
 }
 
 ##' @rdname siir
@@ -45,5 +45,6 @@ continueSIIR <- function (
     Beta1=Beta1,Beta2=Beta2,gamma=gamma,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21,delta=delta
   )
   x <- .Call(P_reviveSIIR,object,params)
-  .Call(P_runSIIR,x,time)
+  .Call(P_runSIIR,x,time) |>
+    structure(model="SIIR",class="gpsim")
 }

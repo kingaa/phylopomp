@@ -63,7 +63,7 @@ continueSI2R(
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
+\code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 }
 \description{
 Deme 2 consists of "superspreaders" who engender clusters

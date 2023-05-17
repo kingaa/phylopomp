@@ -6,9 +6,7 @@
 ##' @name si2r
 ##' @aliases SI2R
 ##' @include getinfo.R
-##' 
 ##' @family Genealogy processes
-##' 
 ##' @inheritParams sir
 ##' @param Beta transmission rate
 ##' @param mu mean superspreading-event cluster size
@@ -19,7 +17,7 @@
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of I1 population (I2 = 0 at t = 0)
 ##' @param R0 initial size of recovered population
-##'
+##' @example examples/si2r.R
 ##' @details
 ##' Superspreaders (deme 2) behave differently than ordinary infections:
 ##' transmission events occur at the same rate (\code{Beta}), but at each event,
@@ -31,11 +29,7 @@
 ##' If susceptibles are limiting,
 ##' i.e., if the number of susceptibles is not greater than \eqn{N},
 ##' then all remaining susceptibles are infected.
-##' 
-##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
-##'
-##' @example examples/si2r.R
+##' @return \code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 ##'
 NULL
 

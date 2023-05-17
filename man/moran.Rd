@@ -31,7 +31,7 @@ moran_exact(data, n = 100, mu = 1, psi = 1)
 \item{data}{data frame containing the genealogy event times.}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
+\code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 
 \code{moran_exact} returns the log likelihood of the genealogy.
 }

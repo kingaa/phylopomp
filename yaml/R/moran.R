@@ -9,7 +9,7 @@
 ##' @param psi per capita sampling rate
 ##' @param n population size
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
+##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 ##' 
 NULL
 
@@ -22,8 +22,8 @@ runMoran <- function (
   params <- c(mu=mu,psi=psi)
   ivps <- c(n=n)
   x <- .Call(P_makeMoran,params,ivps,t0)
-  x <- .Call(P_runMoran,x,time)
-  structure(x,model="Moran",class="gpsim")
+  .Call(P_runMoran,x,time) |>
+    structure(model="Moran",class="gpsim")
 }
 
 ##' @rdname moran
@@ -36,5 +36,6 @@ continueMoran <- function (
     mu=mu,psi=psi
   )
   x <- .Call(P_reviveMoran,object,params)
-  .Call(P_runMoran,x,time)
+  .Call(P_runMoran,x,time) |>
+    structure(model="Moran",class="gpsim")
 }

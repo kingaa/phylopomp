@@ -16,8 +16,7 @@
 ##' @param I0 initial size of infected population
 ##' @param R0 initial size of immune population
 ##' @inheritParams runSIR
-##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
+##' @return \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
 ##' 
 ##' @example examples/seir.R
 ##' 

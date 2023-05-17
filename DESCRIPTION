@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.5.0.0
-Date: 2023-05-15
+Version: 0.5.1.1
+Date: 2023-05-17
 Authors@R: c(person(given=c("Aaron","A."),family="King",
 		role=c("aut","cre"),email="kingaa@umich.edu"),
 	  person(given=c("Qianying"),family="Lin",role=c("aut"))
@@ -20,7 +20,6 @@ Roxygen: list(roclets = c("collate", "namespace", "rd"))
 RoxygenNote: 7.2.3
 Collate: 
     'package.R'
-    'aaa.R'
     'getinfo.R'
     'diagram.R'
     'foreach.R'
@@ -28,7 +27,6 @@ Collate:
     'lineages.R'
     'moran.R'
     'newick2df.R'
-    'plot.R'
     'pomp.R'
     'print.R'
     'sir.R'
@@ -36,4 +34,5 @@ Collate:
     'si2r.R'
     'siir.R'
     'simulate.R'
+    'treeplot.R'
     'yaml.R'

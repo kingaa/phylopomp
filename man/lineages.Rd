@@ -18,7 +18,7 @@ lineages(object, prune = TRUE, obscure = TRUE)
 
 \item{x}{object of class \sQuote{gpsim}}
 
-\item{...}{passed to \code{\link{treeplot}}}
+\item{...}{passed to \code{\link[ggplot2]{theme}}.}
 
 \item{palette}{color palette for branches.
 This can be furnished either as a function or a vector of colors.

@@ -13,7 +13,7 @@
 ##' @param n population size
 ##' @param time final time
 ##' @param t0 initial time
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
+##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 ##' 
 NULL
 
@@ -61,10 +61,10 @@ moran_exact <- function (data, n = 100, mu = 1, psi = 1) {
   if (any(ell>n) || any(ell[tips]>=n)) {
     -Inf
   } else {
-    -mfact*sum(choose(ell,2)*intervals)+
-      ncoal*log(mfact)+
-        (nanc+length(tips))*log(psi)+
-        sum(log(n-ell[tips]))-
-        psi*n*diff(range(data$time))
+    -mfact*sum(choose(ell,2)*intervals)-
+        psi*n*diff(range(data$time))+
+          ncoal*log(mfact)+
+          (nanc+length(tips))*log(psi)+
+          sum(log(n-ell[tips]))
   }
 }

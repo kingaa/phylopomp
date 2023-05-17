@@ -10,7 +10,7 @@
 ##' @param psi per capita sampling rate
 ##' @param n0 initial population size
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
+##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 ##' 
 NULL
 
@@ -23,8 +23,8 @@ runLBDP <- function (
   params <- c(lambda=lambda,mu=mu,psi=psi)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
-  x <- .Call(P_runLBDP,x,time)
-  structure(x,model="LBDP",class="gpsim")
+  .Call(P_runLBDP,x,time) |>
+    structure(model="LBDP",class="gpsim")
 }
 
 ##' @rdname lbdp
@@ -37,5 +37,6 @@ continueLBDP <- function (
     lambda=lambda,mu=mu,psi=psi
   )
   x <- .Call(P_reviveLBDP,object,params)
-  .Call(P_runLBDP,x,time)
+  .Call(P_runLBDP,x,time) |>
+    structure(model="LBDP",class="gpsim")
 }

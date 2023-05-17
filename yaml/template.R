@@ -100,7 +100,7 @@ r_template <- r"[##' {%description%}
 ##' @aliases {%name%}
 {%param_descript%}
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{{%name%}}.
+##' @return \code{run{%name%}} and \code{continue{%name%}} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{{%name%}}.
 ##' 
 NULL
 

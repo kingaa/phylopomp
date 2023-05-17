@@ -58,7 +58,7 @@ continueSEIR(
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
+\code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
 }
 \description{
 The population is structured by infection progression.

@@ -36,7 +36,7 @@ lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 \item{data}{data frame containing the genealogy event times.}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
+\code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 
 \code{lbdp_exact} returns the log likelihood of the genealogy.
 Note that the time since the most recent sample is informative.

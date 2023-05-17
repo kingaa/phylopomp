@@ -13,7 +13,7 @@
 ##' @param I0 initial size of infected population
 ##' @param R0 initial size of immune population
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+##' @return \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 ##' 
 NULL
 
@@ -26,8 +26,8 @@ runSIR <- function (
   params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ivps,t0)
-  x <- .Call(P_runSIR,x,time)
-  structure(x,model="SIR",class="gpsim")
+  .Call(P_runSIR,x,time) |>
+    structure(model="SIR",class="gpsim")
 }
 
 ##' @rdname sir
@@ -40,5 +40,6 @@ continueSIR <- function (
     Beta=Beta,gamma=gamma,psi=psi,delta=delta
   )
   x <- .Call(P_reviveSIR,object,params)
-  .Call(P_runSIR,x,time)
+  .Call(P_runSIR,x,time) |>
+    structure(model="SIR",class="gpsim")
 }

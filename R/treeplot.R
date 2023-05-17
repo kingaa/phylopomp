@@ -2,35 +2,29 @@
 ##'
 ##' Plots a genealogical tree.
 ##'
-##' @name plot
+##' @name treeplot
 ##' @include getinfo.R diagram.R
-##'
 ##' @param tree character; tree representation in Newick format.
 ##' @param t0 numeric; time of the root.
 ##' @param time numeric; time of the genealogy.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
-##' @param palette color palette for branches.
-##' This can be furnished either as a function or a vector of colors.
-##' If this is a function, it should take a single integer argument, the number of colors required.
-##' If it is a vector, ....
-##' @param ... passed to \code{\link[ggplot2]{theme}}.
+##' @param ... \code{plot} passes extra arguments to \code{\link{treeplot}}.
+##' \code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##'
 ##' @example examples/movie.R
 ##'
 NULL
 
+##' @rdname treeplot
 ##' @inheritParams getInfo
 ##' @param x object of class \sQuote{gpsim}
-##' @param ... passed to \code{\link{treeplot}}
 ##' @method plot gpsim
-##' @rdname plot
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE, compact = TRUE,
-  palette = scales::hue_pal(l=30,h=c(220,580))
+  prune = TRUE, obscure = TRUE, compact = TRUE
 ) {
   out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
     prune=prune,obscure=obscure,compact=compact)
@@ -40,21 +34,23 @@ plot.gpsim <- function (
     tree=out$tree,
     time=time,
     t0=t0,
-    palette=palette,
     ...
   )
 }
 
-##' @rdname plot
+##' @rdname treeplot
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify
 ##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
-##' @importFrom scales hue_pal
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
 ##' @importFrom dplyr mutate left_join count coalesce
 ##' @importFrom tibble column_to_rownames
 ##' @importFrom tidyr separate unite expand_grid
-##' @importFrom scales alpha
+##' @importFrom scales alpha hue_pal
+##' @param palette color palette for branches.
+##' This can be furnished either as a function or a vector of colors.
+##' If this is a function, it should take a single integer argument, the number of colors required.
+##' If it is a vector, ....
 ##' @export
 treeplot <- function (
   tree, time = NULL, t0 = 0,
@@ -127,6 +123,12 @@ treeplot <- function (
     theme(...) -> pl
 
   if (points) {
+    if (ncolors["m_node",] > 0) {
+      pl+geom_nodepoint(
+           shape=21,fill=ball_colors["m"],color=ball_colors["m"],
+           aes(alpha=nodecol=="m")
+         ) -> pl
+    }
     if (ncolors["g_node",] > 0) {
       pl+geom_nodepoint(
            shape=21,fill=ball_colors["g"],color=ball_colors["g"],
@@ -137,24 +139,6 @@ treeplot <- function (
       pl+geom_nodepoint(
            shape=21,fill=ball_colors["b"],color=ball_colors["b"],
            aes(alpha=nodecol=="b")
-         ) -> pl
-    }
-    if (ncolors["m_node",] > 0) {
-      pl+geom_nodepoint(
-           shape=21,fill=ball_colors["m"],color=ball_colors["m"],
-           aes(alpha=nodecol=="m")
-         )->pl
-    }
-    if (ncolors["p_node",] > 0) {
-      pl+geom_nodepoint(
-           shape=21,fill=ball_colors["p"],color=ball_colors["p"],
-           aes(alpha=nodecol=="p")
-         )->pl
-    }
-    if (ncolors["r_tip",] > 0) {
-      pl+geom_tippoint(
-           shape=21,fill=ball_colors["r"],color=ball_colors["r"],
-           aes(alpha=nodecol=="r")
          ) -> pl
     }
     if (ncolors["b_tip",] > 0) {
@@ -177,14 +161,12 @@ treeplot <- function (
 ball_colors <- c(
   g="darkgreen",
   b="royalblue2",
-  r="red2",
   m="saddlebrown",
   o="black",
-  p="purple",
   i=alpha("white",0)
 )
 
 ##' @importFrom utils globalVariables
 globalVariables(
-  c(".id","k","label","nodecol","deme","vis","x","y","rowname")
+  c("time","deme","label","x","y","nodecol","isTip","n","rowname","vis")
 )

@@ -17,7 +17,7 @@
 ##' @param I0 initial size of deme-1 infected population
 ##' @param R0 initial size of immune population
 ##'
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
+##' @return \code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 ##' 
 NULL
 
@@ -30,8 +30,8 @@ runSI2R <- function (
   params <- c(Beta=Beta,mu=mu,gamma=gamma,delta=delta,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSI2R,params,ivps,t0)
-  x <- .Call(P_runSI2R,x,time)
-  structure(x,model="SI2R",class="gpsim")
+  .Call(P_runSI2R,x,time) |>
+    structure(model="SI2R",class="gpsim")
 }
 
 ##' @rdname si2r
@@ -44,5 +44,6 @@ continueSI2R <- function (
     Beta=Beta,mu=mu,gamma=gamma,delta=delta,psi1=psi1,psi2=psi2,sigma12=sigma12,sigma21=sigma21
   )
   x <- .Call(P_reviveSI2R,object,params)
-  .Call(P_runSI2R,x,time)
+  .Call(P_runSI2R,x,time) |>
+    structure(model="SI2R",class="gpsim")
 }

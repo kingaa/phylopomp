@@ -27,6 +27,7 @@ lineages <- function (object, prune = TRUE, obscure = TRUE) {
 ##' @rdname lineages
 ##' @method plot gplin
 ##' @inheritParams treeplot
+##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @importFrom ggplot2 ggplot guides geom_step labs guide_legend
 ##' @importFrom ggplot2 scale_color_manual theme_classic
 ##' @importFrom scales hue_pal

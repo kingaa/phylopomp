@@ -1,19 +1,21 @@
-#' Phylodynamics for POMP models
-#' 
-#' Super cool.
-#' 
-#' @name phylopomp-package
-#' @docType package
-#' @author Aaron A. King, Qianying Lin
-#' 
-#' @import ggplot2
-#' @importFrom foreach registerDoSEQ
-#' 
-#' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"
-#' 
+##' Phylodynamics for POMP models
+##' 
+##' Simulation and inference of Markov genealogy processes.
+##' 
+##' @name phylopomp
+##' @aliases phylopomp-package
+##' @docType package
+##' @author Aaron A. King, Qianying Lin
+##' @import ggplot2
+##' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"
+##'
 NULL
 
-foreach::registerDoSEQ()
+##' @include package.R
+##' @importFrom foreach registerDoSEQ
+.onAttach <- function (...) {
+  foreach::registerDoSEQ()
+}
 
 pStop <- function (fn, ...) {
   fn <- as.character(fn)

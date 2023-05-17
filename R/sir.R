@@ -5,9 +5,7 @@
 ##' @name sir
 ##' @aliases SIR
 ##' @include getinfo.R
-##' 
 ##' @family Genealogy processes
-##'
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
@@ -17,8 +15,7 @@
 ##' @param R0 initial size of recovered population.
 ##' @param time final time
 ##' @param t0 initial time
-##' 
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+##' @return \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 ##'
 ##' @example examples/sir.R
 NULL
@@ -55,7 +52,7 @@ continueSIR <- function (
 ##' @name sir_pomp
 ##' @rdname sir
 ##'
-##' @param data data frame containing the genealogy in the format returned by \code{\link{newick2df}}.
+##' @param data data frame containing the lineage count function
 ##' @details
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##'

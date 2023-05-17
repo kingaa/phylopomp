@@ -64,7 +64,7 @@ continueSIIR(
 \emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
+\code{runSIIR} and \code{continueSIIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
 }
 \description{
 Two distinct pathogen strains compete for susceptibles.

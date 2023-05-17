@@ -46,10 +46,10 @@ sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 
-\item{data}{data frame containing the genealogy in the format returned by \code{\link{newick2df}}.}
+\item{data}{data frame containing the lineage count function}
 }
 \value{
-An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+\code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 }
 \description{
 A single, unstructured population of hosts.

@@ -13,7 +13,7 @@
 ##' @param n0 initial population size
 ##' @param time final time
 ##' @param t0 initial time
-##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
+##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 ##' @example examples/lbdp.R
 NULL
 
