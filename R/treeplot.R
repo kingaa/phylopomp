@@ -64,7 +64,17 @@ treeplot <- function (
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
-  read.tree(text=as.character(tree)) |>
+  tree |>
+    as.character() |>
+    gsub(";$",")i_NA_NA:0.0",x=_) |>
+    gsub(";",")i_NA_NA:0.0,(",x=_) -> tree
+
+  paste0(
+    "(i_NA_NA:0.0,i_NA_NA:0.0,(",
+    tree,
+    ")i_NA_NA:0.0;"
+  ) |>
+  read.tree(text=_) |>
     fortify(ladderize=ladderize) |>
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(

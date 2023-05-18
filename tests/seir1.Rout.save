@@ -20,8 +20,8 @@ Type 'q()' to quit R.
 > png(filename="seir1-%02d.png",res=100)
 > 
 > suppressPackageStartupMessages({
-+   library(phylopomp)
 +   library(tidyverse)
++   library(phylopomp)
 + })
 > theme_set(theme_bw())
 > set.seed(847110120)
@@ -41,6 +41,9 @@ Type 'q()' to quit R.
 > simulate("SEIR",delta=1,time=20,I0=4) -> x
 > x |> yaml() -> y
 > x |> lineages(obscure=FALSE) |> plot()
+> 
+> simulate("SEIR",delta=1,time=2,I0=3) |>
++   diagram(obscure=FALSE,prune=TRUE)
 > 
 > dev.off()
 null device 

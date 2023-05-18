@@ -153,13 +153,12 @@ public:
   //! put genealogy at time `t` into Newick format.
   std::string newick (slate_t t) const {
     slate_t te = dawn();
-    std::string o = "(i_NA_NA:0.0,i_NA_NA:0.0";
+    std::string o = "";
     for (node_it i = begin(); i != end(); i++) {
       if ((*i)->is_root()) {
-        o += ",(" + (*i)->newick(t,te) + ")i_NA_NA:0.0";
+        o += (*i)->newick(t,te) + ";";
       }
     }
-    o += ")i_NA_NA;";
     return o;
   };
 

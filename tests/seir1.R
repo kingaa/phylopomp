@@ -1,8 +1,8 @@
 png(filename="seir1-%02d.png",res=100)
 
 suppressPackageStartupMessages({
-  library(phylopomp)
   library(tidyverse)
+  library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(847110120)
@@ -21,5 +21,8 @@ runSEIR(Beta=3,sigma=2,gamma=1,psi=2,S0=100,I0=5,time=1) |>
 simulate("SEIR",delta=1,time=20,I0=4) -> x
 x |> yaml() -> y
 x |> lineages(obscure=FALSE) |> plot()
+
+simulate("SEIR",delta=1,time=2,I0=3) |>
+  diagram(obscure=FALSE,prune=TRUE)
 
 dev.off()
