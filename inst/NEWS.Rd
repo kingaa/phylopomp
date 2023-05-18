@@ -1,5 +1,18 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.6.0}{
+  \itemize{
+    \item The option to generate \dQuote{non-compact} Newick-format tree representations has been removed:
+    all Newick representations are now in the \dQuote{compact} format.
+    In this format, each node has a color indicated by a letter immediately following its closing parenthesis:
+    this is \sQuote{b} if the node holds a blue ball (i.e., it represents a sample) and \sQuote{g} otherwise.
+    Information about the node's deme and its name are provided as well.
+    \item Previously, the Newick formatter employed \dQuote{invisible} nodes to assist in the formatting of plots.
+    As of this release, they no longer contain such nodes:
+    the generated Newick strings now accurately represent the forest of trees corresponding to the genealogy process.
+    The proper formatting for plots is accomplished within the plotting routines themselves.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.5.0}{
   \itemize{
     \item Function \code{moran_exact} computes the exact likelihood under the Moran model.
