@@ -96,20 +96,16 @@ public:
     return holds_own() && size()==1;
   };
   //! number of descendants
-  int nchildren (bool compact = false) const {
+  int nchildren (void) const {
     int n = 0;
-    if (compact) {
-      for (ball_it i = begin(); i != end(); i++) {
-        switch ((*i)->color) {
-        case green: case black:
-          n++;
-          break;
-        default:
-          break;
-        }
+    for (ball_it i = begin(); i != end(); i++) {
+      switch ((*i)->color) {
+      case green: case black:
+	n++;
+	break;
+      default:
+	break;
       }
-    } else {
-      n = size();
     }
     if (holds_own()) n--;
     return n;
@@ -170,36 +166,8 @@ public:
   };
   //! Newick format
   std::string newick (const slate_t& tnow, const slate_t& tpar) const {
-    std::string o = "(";
-    int n = nchildren(false);
-    for (ball_it i = begin(); i != end(); i++, n--) {
-      ball_t *b = *i;
-      node_t *p = 0;
-      switch (b->color) {
-      case green:
-        p = b->child();
-        if (p != this) {
-          o += p->newick(tnow,slate);
-        }
-        break;
-      case black:
-        o += b->newick(tnow-slate);
-        break;
-      case blue:
-        o += b->newick(0);
-        break;
-      }
-      if (n > 1) o += ",";
-    }
-    o += ")g_" + std::to_string(deme)
-      + "_" + std::to_string(uniq)
-      + ":" + std::to_string(slate - tpar);
-    return o;
-  };
-  //! compact Newick format
-  std::string compact_newick (const slate_t& tnow, const slate_t& tpar) const {
     std::string o1 = "", o2 = "", o3 = "";
-    int n = nchildren(true);
+    int n = nchildren();
     if (n > 0) {
       o1 = "("; o3 = ")";
     }
@@ -217,7 +185,7 @@ public:
       case green:
         p = b->child();
         if (p != this) {
-          o2 += p->compact_newick(tnow,slate);
+          o2 += p->newick(tnow,slate);
           if (n > 1) o2 += ",";
         }
         break;

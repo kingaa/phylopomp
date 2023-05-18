@@ -151,12 +151,12 @@ public:
     return Nodes;
   };
   //! put genealogy at time `t` into Newick format.
-  std::string newick (slate_t t, bool compact = true) const {
+  std::string newick (slate_t t) const {
     slate_t te = dawn();
     std::string o = "(i_NA_NA:0.0,i_NA_NA:0.0";
     for (node_it i = begin(); i != end(); i++) {
       if ((*i)->is_root()) {
-        o += ",(" + ((compact) ? (*i)->compact_newick(t,te) : (*i)->newick(t,te)) + ")i_NA_NA:0.0";
+        o += ",(" + (*i)->newick(t,te) + ")i_NA_NA:0.0";
       }
     }
     o += ")i_NA_NA;";

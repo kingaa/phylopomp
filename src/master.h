@@ -114,8 +114,8 @@ public:
     return s;
   };
   //! tree in Newick format
-  std::string newick (bool compact = true) const {
-    return geneal.newick(compact);
+  std::string newick (void) const {
+    return geneal.newick();
   };
   //! lineage count table
   SEXP lineage_count (void) const {

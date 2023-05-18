@@ -211,8 +211,8 @@ public:
 public:
 
   //! put genealogy at current time into Newick format.
-  std::string newick (bool compact = true) const {
-    return nodeseq_t::newick(time(),compact);
+  std::string newick (void) const {
+    return nodeseq_t::newick(time());
   };
 
 public:

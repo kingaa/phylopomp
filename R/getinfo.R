@@ -10,7 +10,6 @@
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param tree logical; return the tree?
-##' @param compact logical; return the tree in compact representation?
 ##' @param description logical; return the description?
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
@@ -40,23 +39,22 @@ getInfo <- function (
   object, prune  = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
-  lineages = FALSE,
-  tree = FALSE, compact = TRUE)
+  lineages = FALSE, tree = FALSE)
 {
   x <- switch(
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     modelMoran = .Call(P_infoMoran,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree,compact),
+      description,yaml,structure,lineages,tree),
     model = pStop("getInfo","no model specified"),
     pStop("getInfo","unrecognized model ",sQuote(attr(object,"model")))
   )

@@ -55,10 +55,10 @@ SEXP structure (const TYPE& G) {
 
 //! tree in newick format
 template <class TYPE>
-SEXP newick (const TYPE& X, bool compact = true) {
+SEXP newick (const TYPE& X) {
   SEXP out;
   PROTECT(out = NEW_CHARACTER(1));
-  SET_STRING_ELT(out,0,mkChar(X.newick(compact).c_str()));
+  SET_STRING_ELT(out,0,mkChar(X.newick().c_str()));
   UNPROTECT(1);
   return out;
 }
@@ -122,7 +122,7 @@ template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
            SEXP T0, SEXP Time, SEXP Descript,
            SEXP Yaml, SEXP Structure, SEXP Lineages,
-           SEXP Tree, SEXP Compact) {
+           SEXP Tree) {
   TYPE A = State;
 
   // prune and/or obscure if requested
@@ -153,7 +153,6 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 
   bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
   if (get_tree) nout++;
-  bool do_compact = *LOGICAL(AS_LOGICAL(Compact));
 
   // pack up return values in a list
   int k = 0;
@@ -179,7 +178,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
     k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
   }
   if (get_tree) {
-    k = set_list_elem(out,outnames,newick(A,do_compact),"tree",k);
+    k = set_list_elem(out,outnames,newick(A),"tree",k);
   }
   SET_NAMES(out,outnames);
 
@@ -203,11 +202,11 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
                                        SEXP State, SEXP Prune, SEXP Obscure, \
                                        SEXP T0, SEXP Time, SEXP Descript, \
                                        SEXP Yaml, SEXP Structure, SEXP Lineages, \
-                                       SEXP Tree, SEXP Compact) {       \
+                                       SEXP Tree) {                     \
     return info<TYPE>(State, Prune, Obscure,                            \
                       T0, Time, Descript,                               \
                       Yaml,Structure, Lineages,                         \
-                      Tree, Compact);                                   \
+                      Tree);                                            \
   }                                                                     \
 
 #define GENERICS(X,TYPE)                        \

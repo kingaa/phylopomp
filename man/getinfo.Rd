@@ -14,8 +14,7 @@ getInfo(
   structure = FALSE,
   yaml = FALSE,
   lineages = FALSE,
-  tree = FALSE,
-  compact = TRUE
+  tree = FALSE
 )
 }
 \arguments{
@@ -38,8 +37,6 @@ getInfo(
 \item{lineages}{logical; return the lineage-count function?}
 
 \item{tree}{logical; return the tree?}
-
-\item{compact}{logical; return the tree in compact representation?}
 }
 \value{
 A list containing the requested elements, including any or all of:
