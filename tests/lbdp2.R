@@ -1,9 +1,9 @@
 png(filename="lbdp2-%02d.png",res=100)
 
 suppressPackageStartupMessages({
-  library(phylopomp)
   library(tidyverse)
   library(pomp)
+  library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(442131820)
@@ -14,16 +14,22 @@ runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) -> x
 x |> plot()
 x |> lineages() -> dat
 
-dat |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex; llex
+dat |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
+llex
 
-replicate(
-  n=10,
-  dat |>
-    lbdp_pomp(lambda=6,mu=1,psi=1) |>
-    pfilter(Np=10000) |>
-    logLik()
-) |>
-  logmeanexp(se=TRUE) -> llpf; llpf
+dat |>
+  lbdp_pomp(lambda=6,mu=1,psi=1) |>
+  pfilter(Np=10000) |>
+  replicate(n=10) |>
+  concat() -> pfs
+
+pfs |>
+  plot(type="h")
+
+pfs |>
+  logLik() |>
+  logmeanexp(se=TRUE) -> llpf
+llpf
 
 stopifnot(
   llex>llpf[1]-2*llpf[2],

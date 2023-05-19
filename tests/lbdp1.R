@@ -1,8 +1,8 @@
 png(filename="lbdp1-%02d.png",res=100)
 
 suppressPackageStartupMessages({
-  library(phylopomp)
   library(tidyverse)
+  library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(847110120)

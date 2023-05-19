@@ -20,9 +20,9 @@ Type 'q()' to quit R.
 > png(filename="lbdp2-%02d.png",res=100)
 > 
 > suppressPackageStartupMessages({
-+   library(phylopomp)
 +   library(tidyverse)
 +   library(pomp)
++   library(phylopomp)
 + })
 > theme_set(theme_bw())
 > set.seed(442131820)
@@ -33,17 +33,23 @@ Type 'q()' to quit R.
 > x |> plot()
 > x |> lineages() -> dat
 > 
-> dat |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex; llex
+> dat |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
+> llex
 [1] 12.6
 > 
-> replicate(
-+   n=10,
-+   dat |>
-+     lbdp_pomp(lambda=6,mu=1,psi=1) |>
-+     pfilter(Np=10000) |>
-+     logLik()
-+ ) |>
-+   logmeanexp(se=TRUE) -> llpf; llpf
+> dat |>
++   lbdp_pomp(lambda=6,mu=1,psi=1) |>
++   pfilter(Np=10000) |>
++   replicate(n=10) |>
++   concat() -> pfs
+> 
+> pfs |>
++   plot(type="h")
+> 
+> pfs |>
++   logLik() |>
++   logmeanexp(se=TRUE) -> llpf
+> llpf
     est      se 
 12.6353  0.0366 
 > 
