@@ -233,6 +233,11 @@ public:
       }
     }
   };
+  //! merge two node sequences
+  nodeseq_t& operator+= (nodeseq_t& other) {
+    this->merge(other,node_compare);
+    return *this;
+  };
 };
 
 #endif

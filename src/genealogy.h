@@ -51,8 +51,17 @@ private:
   //! clean up
   void clean (void) {
     _unique = 0;
+    //    _t0 = R_PosInf;
+    //    _time = R_NegInf;
     _t0 = _time = R_NaReal;
     _obscured = false;
+  };
+
+public:
+
+  void set_unique (name_t u) {
+    if (u < _unique) warn("potential re-use of names!");
+    _unique = u;
   };
 
 public:
@@ -86,8 +95,9 @@ public:
   // CONSTRUCTORS
   //! basic constructor for genealogy class
   //!  t0 = initial time
-  genealogy_t (double t0 = 0) {
+  genealogy_t (double t0 = 0, name_t u = 0) {
     clean();
+    _unique = u;
     _time = _t0 = slate_t(t0);
     _obscured = false;
   };
@@ -231,7 +241,7 @@ public:
     return ok;
   };
 
-private:
+public:
 
   node_t* make_node (name_t d = 0) {
     check_genealogy_size(0);
@@ -331,11 +341,10 @@ public:
     _obscured = true;
     return *this;
   };
-
+  //! has the genealogy been obscured?
   bool obscured (void) const {
     return _obscured;
   };
-  
   //! truncate the genealogy by removing nodes
   //! with times later than tnew
   //! NB: this destroys the genealogy inasmuch
@@ -362,6 +371,159 @@ public:
       }
       time() = tnew;
     }
+  };
+  //! merge two genealogies:
+  //! 1. the node-sequences are merged;
+  //! 2. the root time retreats as necessary;
+  //! 3. the current time advances as necessary;
+  //! 4. the next unique-name counter advances as necessary.
+  genealogy_t& operator+= (genealogy_t& G) {
+    reinterpret_cast<nodeseq_t&>(*this) += reinterpret_cast<nodeseq_t&>(G);
+    _t0 = (_t0 > G._t0) ? G._t0 : _t0;
+    _time = (_time < G._time) ? G._time : _time;
+    _unique = (_unique < G._unique) ? G._unique : _unique; 
+    return *this;
+  };
+  
+private:
+  
+  //! Scan the Newick-format label string.
+  //! This has format %c_%d_%d:%f
+  void scan_label (std::string& s, color_t* col,
+		    name_t *deme, slate_t *time) {
+    char c = s[0];
+    switch (c) {
+    case 'o':
+      *col = black;
+      break;
+    case 'b':
+      *col = blue;
+      break;
+    case 'g': case 'm':
+      *col = green;
+      break;
+    default:
+      err("in '%s': invalid color %s",__func__,c);
+      break;
+    }
+    size_t k = 2, sz;
+    *deme = name_t(stoi(s.substr(k),&sz));
+    k += sz+1;
+    stoi(s.substr(k),&sz);	// ignore name
+    k += sz+1;			// separator
+    *time = slate_t(stod(s.substr(k)));
+  };
+  //! Scan the Newick string and put the ball
+  //! into the indicated pocket, as appropriate.
+  void scan_ball (std::string& s, slate_t t0, node_t *p) {
+    color_t col;
+    name_t deme;
+    slate_t t;
+    scan_label(s,&col,&deme,&t);
+    time() = t0 + t;
+    if (col != black) err("in '%s': bad Newick string (1)",__func__);
+    if (p == 0) err("in '%s': bad Newick string (2)",__func__);
+    ball_t *b = new ball_t(p,unique(),col,deme);
+    p->insert(b);
+  };
+  //! Scan the stream and create the indicated node.
+  node_t* scan_node (std::string& s, slate_t t0) {
+    color_t col;
+    name_t d;
+    slate_t t;
+    name_t u = unique();
+    scan_label(s,&col,&d,&t);
+    node_t *p = new node_t(u,t0+t,d);
+    ball_t *g = new ball_t(p,u,green,d);
+    p->green_ball() = g;
+    p->insert(g);
+    if (col==blue) {
+      ball_t *b = new ball_t(p,p->uniq,blue,d);
+      p->insert(b);
+    }
+    push_back(p);
+    return p;
+  };
+  //! Parse a single-root Newick tree.
+  //! This assumes the string starts with a '('.
+  std::string::const_iterator parse1 (std::string::const_iterator& i,
+				      const std::string::const_iterator& e,
+				      slate_t t0, node_t **root) {
+    size_t stack = 1;
+    std::string::const_iterator j, k;
+    i++; j = i;
+    while (j != e && stack > 0) {
+      switch (*j) {
+      case '(':
+	stack++;
+	break;
+      case ')':
+	stack--;
+	break;
+      default:
+	break;
+      }
+      j++;
+    }
+    if (stack > 0)
+      err("in '%s': premature end of Newick string.",__func__);
+    k = j;
+    while (k != e && *k != ';' && *k != ',') k++;
+    std::string a(i,j-1), b(j,k-1);
+    node_t *p = scan_node(b,t0);
+    parse(a,p->slate,p);
+    *root = p;
+    return k;
+  };
+
+public:
+  
+  //! Parse a Newick string and create the indicated genealogy.
+  genealogy_t& parse (std::string& s, slate_t t0, node_t *p = 0) {
+    std::string::const_iterator i = s.cbegin();
+    while (i != s.cend()) {
+      char c = *i;
+      switch (c) {
+      case '(':
+	{
+	  genealogy_t G(t0,unique());
+	  node_t *q = 0;
+	  i = G.parse1(i,s.cend(),t0,&q);
+	  *this += G;
+	  if (p != 0) {
+	    ball_t *g = q->green_ball();
+	    q->erase(g); p->insert(g); g->holder() = p;
+	  }
+	}
+	break;
+      case 'b':
+	{
+	  std::string::const_iterator j = i;
+	  while (j != s.cend() && *j != ';' && *j != ',') j++;
+	  std::string a(i,j);
+	  node_t *q = scan_node(a,t0);
+	  if (p != 0) {
+	    ball_t *g = q->green_ball();
+	    q->erase(g); p->insert(g); g->holder() = p;
+	  }
+	  i = j;
+	}
+	break;
+      case 'o':
+	{
+	  std::string::const_iterator j = i;
+	  while (j != s.cend() && *j != ';' && *j != ',') j++;
+	  std::string a(i,j);
+	  scan_ball(a,t0,p);
+	  i = j;
+	}
+	break;
+      default:
+	i++;
+	break;
+      }
+    }
+    return *this;
   };
 };
 

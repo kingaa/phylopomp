@@ -202,7 +202,17 @@ public:
       + "_" + std::to_string(uniq)
       + ":" + std::to_string(slate - tpar);
   };
-
+  //! order relation
+  friend bool compare (const node_t*p, const node_t* q) {
+    return (p->slate < q->slate) ||
+      ((p->slate == q->slate) && (p->uniq < q->uniq));
+  };
 };
+
+//! Ordering for nodes.
+//! Within a node sequence, nodes should be ordered in time.
+static inline bool node_compare (const node_t* p, const node_t* q) {
+  return compare(p,q);
+}
 
 #endif
