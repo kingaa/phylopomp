@@ -119,7 +119,7 @@ void sirs_dmeas
 (
  double *__lik,
  const double *__y,
- double *__x,
+ const double *__x,
  const double *__p,
  int give_log,
  const int *__obsindex,

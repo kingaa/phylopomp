@@ -25,5 +25,6 @@ static const R_CallMethodDef callMethods[] = {
 void R_init_phylopomp (DllInfo *info) {
   // Register routines
   R_registerRoutines(info,NULL,callMethods,NULL,NULL);
-  R_useDynamicSymbols(info,TRUE);
+  R_useDynamicSymbols(info,FALSE);
+  R_forceSymbols(info,TRUE);
 }
