@@ -26,7 +26,7 @@ runLBDP <- function (
 ) {
   n0 <- round(n0)
   if (n0 < 0)
-    pStop("runLBDP",sQuote("n0")," must be a nonnegative integer.")
+    pStop(sQuote("n0")," must be a nonnegative integer.")
   params <- c(lambda=lambda,mu=mu,psi=psi)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
@@ -99,7 +99,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
   code[ndat] <- -2L
   n0 <- as.integer(n0)
-  if (n0 < 1) pStop("lbdp_exact",sQuote("n0")," must be a positive integer.")
+  if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
   tf <- data$time[ndat]
   x0 <- tf-data$time[1L]      ## root time
   x <- tf-data$time[code==1]  ## coalescence times
@@ -109,7 +109,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   m <- sum(code==-1)          ## number of live samples
 
   if (m - n != length(x))
-    pStop("lbdp_exact","internal inconsistency in ",sQuote("data"),".")
+    pStop("internal inconsistency in ",sQuote("data"),".")
 
   ## A simple fractional linear transformation (1-z)/(1+z),
   ## defined on the whole of the Riemann sphere.
@@ -159,7 +159,7 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
 {
   n0 <- round(n0)
   if (n0 < 0)
-    pStop("lbdp_pomp",sQuote("n0")," must be a nonnegative integer.")
+    pStop(sQuote("n0")," must be a nonnegative integer.")
   data <- as.data.frame(data)
   ndat <- nrow(data)
   code <- as.integer(c(2,diff(data$lineages)))

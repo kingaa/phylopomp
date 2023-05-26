@@ -37,7 +37,6 @@ simulate.default <- function (object, ...) {
     )
   else
     pStop(
-      "phylopomp::simulate",
       sQuote("object")," must be specified as either ",
       "the name of a model or the result of a previous simulation.\n",
       "Do ",sQuote("simulate()")," to view available models."
@@ -57,8 +56,9 @@ simulate.character <- function (object, time, ...) {
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
     Moran = runMoran(time=time,...),
-    pStop_("unrecognized model: ",sQuote(object),".\n",
-      "Do ",sQuote("simulate()")," to view available models.")
+    pStop("unrecognized model: ",sQuote(object),".\n",
+      "Do ",sQuote("simulate()")," to view available models.",
+      which=NULL)
   ) |>
     structure(model=object,class="gpsim")
 }
@@ -81,8 +81,8 @@ simulate.gpsim <- function (object, time, ...) {
     modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
-    model = pStop_("no model attribute detected."),
-    pStop_("unrecognized model ",sQuote(model),".")
+    model = pStop("no model attribute detected.",which=NULL),
+    pStop("unrecognized model ",sQuote(model),".",which=NULL)
   ) |>
     structure(model=model,class="gpsim")
 }

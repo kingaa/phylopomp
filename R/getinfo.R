@@ -55,8 +55,8 @@ getInfo <- function (
       description,yaml,structure,lineages,tree),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
       description,yaml,structure,lineages,tree),
-    model = pStop("getInfo","no model specified"),
-    pStop("getInfo","unrecognized model ",sQuote(attr(object,"model")))
+    model = pStop("no model specified"),
+    pStop("unrecognized model ",sQuote(attr(object,"model")))
   )
   if (!is.null(x$tree)) x$tree <- gsub("nan","NA",x$tree)
   if (!is.null(x$lineages)) {

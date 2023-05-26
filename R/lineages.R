@@ -59,8 +59,7 @@ plot.gplin <- function (
     palette <- structure(palette(ndeme),names=demes)
   } else {
     if (length(palette) < ndeme)
-      pStop("plot.gplin",sQuote("palette"),
-        " must have length at least ",ndeme,
+      pStop(sQuote("palette")," must have length at least ",ndeme,
         " if specified as a vector.")
   }
 

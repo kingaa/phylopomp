@@ -59,7 +59,7 @@ treeplot <- function (
 ) {
 
   if (missing(tree) || is.null(tree))
-    pStop("treeplot",sQuote("tree")," must be specified.")
+    pStop(sQuote("tree")," must be specified.")
   t0 <- as.numeric(t0)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
@@ -87,7 +87,7 @@ treeplot <- function (
     palette <- palette(ndeme)
   } else {
     if (length(palette) < ndeme)
-      pStop("treeplot",sQuote("palette"),
+      pStop(sQuote("palette"),
         " must have length at least ",ndeme,
         " if specified as a vector.")
   }

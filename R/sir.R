@@ -30,7 +30,7 @@ runSIR <- function (
   params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   if (any(ivps < 0))
-    pStop("runSIR",paste(sQuote(names(ivps)),collapse=","),
+    pStop(paste(sQuote(names(ivps)),collapse=","),
       " must be nonnegative integers.")
   x <- .Call(P_makeSIR,params,ivps,t0)
   .Call(P_runSIR,x,time) |>
@@ -63,7 +63,7 @@ sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
 {
   ic <- as.integer(c(S0=S0,I0=I0,R0=R0))
   if (any(ic < 0))
-    pStop("sir_pomp",paste(sQuote(names(ic)),collapse=","),
+    pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
   names(ic) <- c("S0","I0","R0")
   data <- as.data.frame(data)
