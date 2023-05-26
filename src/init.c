@@ -1,7 +1,7 @@
 #include "init.h"
 #include "decls.h"
 
-SEXP parser (SEXP S);
+SEXP parse_newick (SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 // edit this file to register new model routines with R
 // for each model, there must be
@@ -21,7 +21,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(Moran),
   METHODS(SI2R),
   METHODS(SEIR),
-  {"parser", (DL_FUNC) &parser, 1},
+  {"parse_newick", (DL_FUNC) &parse_newick, 10},
   {NULL, NULL, 0}
 };
 

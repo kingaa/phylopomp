@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.6.1}{
+  \itemize{
+    \item A new function \code{parse_newick} allows one to parse a Newick string into the formats used in \pkg{phylopomp}.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.6.0}{
   \itemize{
     \item The option to generate \dQuote{non-compact} Newick-format tree representations has been removed:

@@ -49,8 +49,6 @@ private:
   //! clean up
   void clean (void) {
     _unique = 0;
-    //    _t0 = R_PosInf;
-    //    _time = R_NegInf;
     _t0 = _time = R_NaReal;
   };
 
@@ -94,9 +92,9 @@ public:
   //!  t0 = initial time
   genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1) {
     clean();
+    ndeme = nd;
     _unique = u;
     _time = _t0 = slate_t(t0);
-    ndeme = nd;
   };
   //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -382,8 +380,8 @@ private:
   
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
-  void scan_label (std::string& s, color_t* col,
-		    name_t *deme, slate_t *time) {
+  void scan_label (const std::string& s, color_t* col,
+		    name_t *deme, slate_t *time) const {
     char c = s[0];
     switch (c) {
     case 'o':
@@ -401,39 +399,40 @@ private:
     }
     size_t k = 2, sz;
     *deme = name_t(stoi(s.substr(k),&sz));
-    k += sz+1;
+    k += sz+1;			// +1 is for separator
     stoi(s.substr(k),&sz);	// ignore name
-    k += sz+1;			// separator
+    k += sz+1;
     *time = slate_t(stod(s.substr(k)));
   };
   //! Scan the Newick string and put the ball
   //! into the indicated pocket, as appropriate.
-  void scan_ball (std::string& s, slate_t t0, node_t *p) {
+  void scan_ball (const std::string& s, const slate_t t0, node_t *p) {
     color_t col;
     name_t deme;
     slate_t t;
     scan_label(s,&col,&deme,&t);
-    time() = t0 + t;
+    t += t0;
+    _time = (_time < t) ? t : _time;
+    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
     if (col != black) err("in '%s': bad Newick string (1)",__func__);
     if (p == 0) err("in '%s': bad Newick string (2)",__func__);
-    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
     ball_t *b = new ball_t(p,unique(),col,deme);
     p->insert(b);
   };
-  //! Scan the stream and create the indicated node.
-  node_t* scan_node (std::string& s, slate_t t0, slate_t tnow) {
+  //! Scan the Newick string and create the indicated node.
+  node_t* scan_node (const std::string& s, const slate_t t0) {
     color_t col;
     name_t deme;
     slate_t t;
     name_t u = unique();
     scan_label(s,&col,&deme,&t);
+    t += t0;
     ndeme = (ndeme <= deme) ? deme+1 : ndeme;
-    node_t *p = new node_t(u,t0+t,deme);
+    _time = (_time < t) ? t : _time;
+    node_t *p = new node_t(u,t,deme);
     ball_t *g = new ball_t(p,u,green,deme);
     p->green_ball() = g;
     p->insert(g);
-    _time = (_time < p->slate) ? p->slate : _time;
-    _time = (_time < tnow) ? tnow : _time;
     if (col==blue) {
       ball_t *b = new ball_t(p,p->uniq,blue,deme);
       p->insert(b);
@@ -445,7 +444,7 @@ private:
   //! This assumes the string starts with a '('.
   std::string::const_iterator parse1 (std::string::const_iterator& i,
 				      const std::string::const_iterator& e,
-				      slate_t t0, slate_t tnow, node_t **root) {
+				      const slate_t t0, node_t **root) {
     size_t stack = 1;
     std::string::const_iterator j, k;
     i++; j = i;
@@ -467,8 +466,8 @@ private:
     k = j;
     while (k != e && *k != ';' && *k != ',') k++;
     std::string a(i,j-1), b(j,k-1);
-    node_t *p = scan_node(b,t0,tnow);
-    parse(a,p->slate,tnow,p);
+    node_t *p = scan_node(b,t0);
+    parse(a,p->slate,p);
     *root = p;
     return k;
   };
@@ -476,7 +475,7 @@ private:
 public:
   
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (std::string& s, slate_t t0, slate_t t, node_t *p = 0) {
+  genealogy_t& parse (std::string& s, slate_t t0, node_t *p = 0) {
     std::string::const_iterator i = s.cbegin();
     while (i != s.cend()) {
       char c = *i;
@@ -485,7 +484,7 @@ public:
 	{
 	  genealogy_t G(t0,unique());
 	  node_t *q = 0;
-	  i = G.parse1(i,s.cend(),t0,t,&q);
+	  i = G.parse1(i,s.cend(),t0,&q);
 	  *this += G;
 	  if (p != 0) {
 	    ball_t *g = q->green_ball();
@@ -498,7 +497,7 @@ public:
 	  std::string::const_iterator j = i;
 	  while (j != s.cend() && *j != ';' && *j != ',') j++;
 	  std::string a(i,j);
-	  node_t *q = scan_node(a,t0,t);
+	  node_t *q = scan_node(a,t0);
 	  if (p != 0) {
 	    ball_t *g = q->green_ball();
 	    q->erase(g); p->insert(g); g->holder() = p;
