@@ -2,20 +2,13 @@
 ##'
 ##' Convert a genealogical tree in Newick format to a data frame suitable for use with \pkg{pomp}.
 ##'
-##' @name newick2df
 ##' @rdname newick2df
-##' 
-##' @include package.R
-##'
+##' @include parse.R
 ##' @param tree tree data in Newick format.
 ##' @param time time of the genealogy.
-##' @param root_time time of the root.
-##'
+##' @param t0 time of the root.
 ##' @details
 ##' If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
-##'
-##' Invisible nodes (labeled 'X_' for any X) are dropped.
-##'
 ##' @return A data frame suitable for use as \code{pomp} input, containing three columns:
 ##' \describe{
 ##'   \item{time}{numeric; time of the genealogy event.}
@@ -29,57 +22,23 @@
 ##'     2 indicates a root.
 ##'   }
 ##' }
-##' 
-##' @example examples/newick2df.R
-##'
-##' @importFrom ape read.tree
-##' @importFrom ggplot2 fortify
-##' @importFrom dplyr mutate arrange select filter summarize n bind_rows group_by ungroup
-##' @importFrom tidyr separate
 ##' @importFrom tibble tibble
-##'
+##' @importFrom dplyr bind_rows
+##' @example examples/newick2df.R
 ##' @export
-##' 
-newick2df <- function (tree, time = NA, root_time = 0) {
+newick2df <- function (tree, time = NA, t0 = 0) {
   if (missing(tree) || is.null(tree) || !is.character(tree))
-    stop(sQuote("tree")," must be furnished as a string in Newick format.",call.=FALSE)
+    pStop(sQuote("tree")," must be furnished as a string in Newick format.")
   time <- as.numeric(time)
-  root_time <- as.numeric(root_time)
-  read.tree(text=tree) |>
-    fortify(ladderize=TRUE) |>
-    separate(label,into=c("type","deme","label")) |>
-    filter(label!="") |>
-    select(label,time=x,isTip) |>
-    arrange(time) |>
-    mutate(
-      ##      ng=sum(!isTip)-cumsum(!isTip), # no. of branch-points to right
-      ##      nt=sum(isTip)-cumsum(isTip),   # no. of tips to right
-      ##      ell=nt-ng                      # no. of lineages
-      lineages = sum(isTip) - cumsum(isTip) - sum(!isTip) + cumsum(!isTip)
-    ) |>
-    group_by(time) |>
-    summarize(
-      lineages=lineages[n()],
-      code=1-sum(isTip) # 1 = branch, 0 = dead sample, -1 = live sample
-    ) |>
-    ungroup() |>
-    mutate(
-      time=time+root_time,
-      code=c(2,code[-1]) # root gets code 2
-    ) -> dat
-
-  time <- as.numeric(time)
-  if (length(time)>0 && !is.na(time)) {
-    if (time <= max(dat$time))
-      stop(sQuote("time")," should be later than the latest leaf.",call.=FALSE)
+  t0 <- as.numeric(t0)
+  tree |>
+    parse_newick(t0=as.numeric(t0),lineages=TRUE,time=TRUE) -> x
+  dat <- x$lineages
+  if (length(time)>0 && !is.na(time) && time > x$time) {
     dat |>
       bind_rows(
-        tibble(time=time,lineages=0,code=9) # note that 'code' matches none of the above
+        tibble(time=time)
       ) -> dat
   }
-  
   dat
 }
-
-##' @importFrom utils globalVariables
-globalVariables(c("lineages","isTip","time","code","type"))
