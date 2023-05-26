@@ -18,7 +18,6 @@ static const size_t MEMORY_MAX = (1<<28); // 256MB
 
 //! A genealogy consists of a sequence of nodes
 //! and the current time.
-template <size_t ndeme = 1>
 class genealogy_t : public nodeseq_t {
 
 private:
@@ -29,15 +28,14 @@ private:
   // - the current time
   // - a sequence of nodes
   
+  //! The number of demes.
+  size_t ndeme;
   //! The next unique name.
   name_t _unique;               
   //! The initial time.
   slate_t _t0;
   //! The current time.
   slate_t _time;
-  //! Has the genealogy been obscured?
-  //! This is set to false by default; 'obscure()' sets to true.
-  bool _obscured;
   
 private:
 
@@ -54,7 +52,6 @@ private:
     //    _t0 = R_PosInf;
     //    _time = R_NegInf;
     _t0 = _time = R_NaReal;
-    _obscured = false;
   };
 
 public:
@@ -73,7 +70,7 @@ public:
   };
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
-    name_t A[2]; A[0] = G._unique; A[1] = name_t(G._obscured);
+    name_t A[2]; A[0] = G._unique; A[1] = name_t(G.ndeme);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
@@ -86,7 +83,7 @@ public:
     slate_t B[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G._obscured = bool(A[1]);
+    G._unique = A[0]; G.ndeme = size_t(A[1]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
@@ -95,11 +92,11 @@ public:
   // CONSTRUCTORS
   //! basic constructor for genealogy class
   //!  t0 = initial time
-  genealogy_t (double t0 = 0, name_t u = 0) {
+  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1) {
     clean();
     _unique = u;
     _time = _t0 = slate_t(t0);
-    _obscured = false;
+    ndeme = nd;
   };
   //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -145,25 +142,24 @@ public:
 
   void lineage_count (double *t, int *ell) const {
     slate_t tcur = *t = timezero();
-    size_t nd = (obscured()) ? 1 : ndeme;
-    for (size_t j = 0; j < nd; j++) ell[j] = 0;
+    for (size_t j = 0; j < ndeme; j++) ell[j] = 0;
     for (node_it i = begin(); i != end(); i++) {
       if (tcur < (*i)->slate) {
-        t++; ell += nd;
+        t++; ell += ndeme;
         *t = tcur = (*i)->slate;
-        for (size_t j = 0; j < nd; j++) ell[j] = (ell-nd)[j];
+        for (size_t j = 0; j < ndeme; j++) ell[j] = (ell-ndeme)[j];
       }
       (*i)->lineage_incr(ell);
     }
-    t++; ell += nd;
+    t++; ell += ndeme;
     *t = time();
-    for (size_t j = 0; j < nd; j++) ell[j] = 0;
+    for (size_t j = 0; j < ndeme; j++) ell[j] = 0;
   };
 
   SEXP lineage_count (void) const {
     SEXP t, ell, out, outn;
     int nt = ntime(timezero())+1;
-    int nl = (obscured()) ? nt : ndeme*nt;
+    int nl = ndeme*nt;
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(ell = NEW_INTEGER(nl));
     PROTECT(out = NEW_LIST(2));
@@ -338,12 +334,8 @@ public:
     }
     // drop superfluous nodes (holding just one ball).
     comb();
-    _obscured = true;
+    ndeme = 1;
     return *this;
-  };
-  //! has the genealogy been obscured?
-  bool obscured (void) const {
-    return _obscured;
   };
   //! truncate the genealogy by removing nodes
   //! with times later than tnew
@@ -382,6 +374,7 @@ public:
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
     _unique = (_unique < G._unique) ? G._unique : _unique; 
+    ndeme = (ndeme < G.ndeme) ? G.ndeme : ndeme;
     return *this;
   };
   
@@ -423,22 +416,26 @@ private:
     time() = t0 + t;
     if (col != black) err("in '%s': bad Newick string (1)",__func__);
     if (p == 0) err("in '%s': bad Newick string (2)",__func__);
+    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
     ball_t *b = new ball_t(p,unique(),col,deme);
     p->insert(b);
   };
   //! Scan the stream and create the indicated node.
-  node_t* scan_node (std::string& s, slate_t t0) {
+  node_t* scan_node (std::string& s, slate_t t0, slate_t tnow) {
     color_t col;
-    name_t d;
+    name_t deme;
     slate_t t;
     name_t u = unique();
-    scan_label(s,&col,&d,&t);
-    node_t *p = new node_t(u,t0+t,d);
-    ball_t *g = new ball_t(p,u,green,d);
+    scan_label(s,&col,&deme,&t);
+    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
+    node_t *p = new node_t(u,t0+t,deme);
+    ball_t *g = new ball_t(p,u,green,deme);
     p->green_ball() = g;
     p->insert(g);
+    _time = (_time < p->slate) ? p->slate : _time;
+    _time = (_time < tnow) ? tnow : _time;
     if (col==blue) {
-      ball_t *b = new ball_t(p,p->uniq,blue,d);
+      ball_t *b = new ball_t(p,p->uniq,blue,deme);
       p->insert(b);
     }
     push_back(p);
@@ -448,7 +445,7 @@ private:
   //! This assumes the string starts with a '('.
   std::string::const_iterator parse1 (std::string::const_iterator& i,
 				      const std::string::const_iterator& e,
-				      slate_t t0, node_t **root) {
+				      slate_t t0, slate_t tnow, node_t **root) {
     size_t stack = 1;
     std::string::const_iterator j, k;
     i++; j = i;
@@ -470,8 +467,8 @@ private:
     k = j;
     while (k != e && *k != ';' && *k != ',') k++;
     std::string a(i,j-1), b(j,k-1);
-    node_t *p = scan_node(b,t0);
-    parse(a,p->slate,p);
+    node_t *p = scan_node(b,t0,tnow);
+    parse(a,p->slate,tnow,p);
     *root = p;
     return k;
   };
@@ -479,7 +476,7 @@ private:
 public:
   
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (std::string& s, slate_t t0, node_t *p = 0) {
+  genealogy_t& parse (std::string& s, slate_t t0, slate_t t, node_t *p = 0) {
     std::string::const_iterator i = s.cbegin();
     while (i != s.cend()) {
       char c = *i;
@@ -488,7 +485,7 @@ public:
 	{
 	  genealogy_t G(t0,unique());
 	  node_t *q = 0;
-	  i = G.parse1(i,s.cend(),t0,&q);
+	  i = G.parse1(i,s.cend(),t0,t,&q);
 	  *this += G;
 	  if (p != 0) {
 	    ball_t *g = q->green_ball();
@@ -501,7 +498,7 @@ public:
 	  std::string::const_iterator j = i;
 	  while (j != s.cend() && *j != ';' && *j != ',') j++;
 	  std::string a(i,j);
-	  node_t *q = scan_node(a,t0);
+	  node_t *q = scan_node(a,t0,t);
 	  if (p != 0) {
 	    ball_t *g = q->green_ball();
 	    q->erase(g); p->insert(g); g->holder() = p;

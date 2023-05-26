@@ -1,8 +1,8 @@
 png(filename="lineages-%02d.png",res=100,width=6,height=4,units="in")
 
 suppressPackageStartupMessages({
-  library(phylopomp)
   library(tidyverse)
+  library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(481604604)

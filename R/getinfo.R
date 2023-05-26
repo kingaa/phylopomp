@@ -36,7 +36,7 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune  = TRUE, obscure = TRUE,
+  object, prune = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   lineages = FALSE, tree = FALSE)
@@ -75,7 +75,12 @@ getInfo <- function (
         array(dim=c(m,n),dimnames=list(nm,NULL)) |>
         t() |>
         as_tibble()
-    ) -> x$lineages
+    ) -> lin
+    lin |>
+      structure(
+        obscured=obscure,
+        class=c("gplin",class(lin))
+      ) -> x$lineages
   }
   x
 }

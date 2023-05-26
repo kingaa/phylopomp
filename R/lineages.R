@@ -4,7 +4,6 @@
 ##'
 ##' @name lineages
 ##' @include getinfo.R
-##'
 ##' @inheritParams getInfo
 ##' @return A \code{\link[tibble]{tibble}} containing the lineage count function.
 ##' If the genealogy has been obscured (the default), the number in the \code{lineages}
@@ -20,8 +19,7 @@
 ##' @export
 lineages <- function (object, prune = TRUE, obscure = TRUE) {
   getInfo(object,lineages=TRUE,prune=prune,obscure=obscure) |>
-    getElement("lineages") -> x
-  structure(x,obscured=obscure,class=c("gplin",class(x)))
+    getElement("lineages")
 }
 
 ##' @rdname lineages
