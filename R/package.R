@@ -17,32 +17,47 @@ NULL
   foreach::registerDoSEQ()
 }
 
-pStop <- function (..., which = -1L) {
-  which <- as.integer(which)
-  if (length(which)>0L) {
-    fn <- sys.call(which[1L])
-    stop("in ",sQuote(fn[[1L]]),": ",...,call.=FALSE)
-  } else {
+pStop <- function (..., who = -1L) {
+  if (is.integer(who)) {
+    who <- sys.call(who)[[1]]
+  }
+  who <- as.character(who)
+  if (length(who) > 0L)
+    stop("in ",sQuote(who[1L]),": ",...,call.=FALSE)
+  else
     stop(...,call.=FALSE)
-  }
 }
 
-pWarn <- function (..., which = -1L) {
-  which <- as.integer(which)
-  if (length(which)>0L) {
-    fn <- sys.call(which[1L])
-    warning("in ",sQuote(fn[[1L]]),": ",...,call.=FALSE)
-  } else {
+pStop_ <- function (...) {
+  pStop(...,who=NULL)
+}
+
+pWarn <- function (..., who = -1L) {
+  if (is.integer(who)) {
+    who <- sys.call(who)[[1]]
+  }
+  who <- as.character(who)
+  if (length(who) > 0L)
+    warning("in ",sQuote(who[1L]),": ",...,call.=FALSE)
+  else
     warning(...,call.=FALSE)
-  }
 }
 
-pMess <- function (..., which = -1L) {
-  which <- as.integer(which)
-  if (length(which)>0L) {
-    fn <- sys.call(which[1L])
-    message("NOTE: in ",sQuote(fn[[1L]]),": ",...)
-  } else {
-    message("NOTE: ",...)
+pWarn_ <- function (...) {
+  pWarn(...,who=NULL)
+}
+
+pMess <- function (..., who = -1L) {
+  if (is.integer(who)) {
+    who <- sys.call(who)[[1]] #nocov
   }
+  who <- as.character(who)
+  if (length(who) > 0L)
+    message("NOTE: in ",sQuote(who[1L]),": ",...)
+  else
+    message("NOTE: ",...)
+}
+
+pMess_ <- function (...) {
+  pMess(...,who=NULL)
 }

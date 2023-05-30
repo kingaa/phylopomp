@@ -56,9 +56,8 @@ simulate.character <- function (object, time, ...) {
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
     Moran = runMoran(time=time,...),
-    pStop("unrecognized model: ",sQuote(object),".\n",
-      "Do ",sQuote("simulate()")," to view available models.",
-      which=NULL)
+    pStop_("unrecognized model: ",sQuote(object),".\n",
+      "Do ",sQuote("simulate()")," to view available models.")
   ) |>
     structure(model=object,class="gpsim")
 }
@@ -81,8 +80,8 @@ simulate.gpsim <- function (object, time, ...) {
     modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
-    model = pStop("no model attribute detected.",which=NULL),
-    pStop("unrecognized model ",sQuote(model),".",which=NULL)
+    model = pStop_("no model attribute detected."),
+    pStop_("unrecognized model ",sQuote(model),".")
   ) |>
     structure(model=model,class="gpsim")
 }
