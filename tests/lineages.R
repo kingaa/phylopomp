@@ -13,28 +13,34 @@ simulate("SI2R",time=1) -> x
 bind_rows(
   A=x |> lineages(),
   B=x |> lineages(obscure=FALSE) |>
-    mutate(lineages=deme1+deme2) |>
-    select(time,lineages),
-  .id="method"
+    group_by(time) |>
+    summarize(
+      lineages=sum(lineages),
+      saturation=sum(saturation)
+    ) |>
+    ungroup(),
+    .id="method"
 ) |>
   ggplot(aes(x=time,y=lineages,color=method,group=method))+
   geom_step()
 
+pal <- c("#00274c","#ffcb05")
+
 plot_grid(
-  plot(x),
-  x |> lineages() |> plot(),
-  x |> plot(obscure=FALSE,palette=c("#00274c","#ffcb05")),
-  x |>
-    lineages(obscure=FALSE) |>
-    mutate(total=deme1+deme2) |>
-    gather(var,val,-time) |>
-    ggplot(aes(x=time,y=val,color=var,group=var))+
-    geom_step()+
-    guides(color="none")+
-    scale_color_manual(values=c("#00274c","#ffcb05","#006597"))+
-    theme_classic(),
-  align="v",axis="b",
-  ncol=2,byrow=FALSE
+  plot_grid(
+    x |> plot(),
+    x |> plot(obscure=FALSE,palette=pal),
+    nrow=1,align="h",axis="l"
+  ),
+  plot_grid(
+    x |> lineages() |> plot()+
+      expand_limits(y=65),
+    x |> lineages(obscure=FALSE) |>
+      plot(palette=pal,legend.position="none")+
+      expand_limits(y=65),
+    nrow=1,align="hv",axis="tblr"
+  ),
+  nrow=2
 )
 
 pal <- c("#00274c","#ffcb05","#006597")
@@ -45,9 +51,11 @@ plot_grid(
   plot_grid(
     x |> plot(prune=F,obscure=F,points=T,palette=pal),
     x |> lineages(prune=F,obscure=F) |>
-      mutate(lineages=deme1+deme2) |>
-      gather(var,val,-time) |>
-      ggplot(aes(x=time,y=val,color=var,group=var))+
+      select(-saturation) |>
+      pivot_wider(names_from=deme,values_from=lineages,names_prefix="deme") |>
+      mutate(total=deme1+deme2) |>
+      pivot_longer(-time) |>
+      ggplot(aes(x=time,y=value,color=name,group=name))+
       scale_color_discrete(type=pal)+
       geom_step()+
       theme_classic()+

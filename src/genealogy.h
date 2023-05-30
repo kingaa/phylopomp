@@ -137,36 +137,51 @@ public:
   };
 
 public:
-
-  void lineage_count (double *t, int *ell) const {
+  
+  //! lineage count and saturation
+  void lineage_count (double *t, int *deme, int *ell, int *sat) const {
     slate_t tcur = *t = timezero();
-    for (size_t j = 0; j < ndeme; j++) ell[j] = 0;
+    for (size_t j = 0; j < ndeme; j++) {
+      sat[j] = ell[j] = 0;
+      deme[j] = j+1;
+    }
     for (node_it i = begin(); i != end(); i++) {
       if (tcur < (*i)->slate) {
-        t++; ell += ndeme;
+        t++; ell += ndeme; sat += ndeme; deme += ndeme;
         *t = tcur = (*i)->slate;
-        for (size_t j = 0; j < ndeme; j++) ell[j] = (ell-ndeme)[j];
+        for (size_t j = 0; j < ndeme; j++) {
+	  ell[j] = (ell-ndeme)[j];
+	  sat[j] = 0;
+	  deme[j] = j+1;
+	}
       }
-      (*i)->lineage_incr(ell);
+      (*i)->lineage_incr(ell,sat);
     }
-    t++; ell += ndeme;
+    t++; ell += ndeme; sat += ndeme; deme += ndeme;
     *t = time();
-    for (size_t j = 0; j < ndeme; j++) ell[j] = 0;
+    for (size_t j = 0; j < ndeme; j++) {
+      sat[j] = ell[j] = 0;
+      deme[j] = j+1;
+    }
   };
-
+  //! lineage count and saturation
   SEXP lineage_count (void) const {
-    SEXP t, ell, out, outn;
+    SEXP t, deme, ell, sat, out, outn;
     int nt = ntime(timezero())+1;
     int nl = ndeme*nt;
     PROTECT(t = NEW_NUMERIC(nt));
+    PROTECT(deme = NEW_INTEGER(nl));
     PROTECT(ell = NEW_INTEGER(nl));
-    PROTECT(out = NEW_LIST(2));
-    PROTECT(outn = NEW_CHARACTER(2));
+    PROTECT(sat = NEW_INTEGER(nl));
+    PROTECT(out = NEW_LIST(4));
+    PROTECT(outn = NEW_CHARACTER(4));
     set_list_elem(out,outn,t,"time",0);
-    set_list_elem(out,outn,ell,"count",1);
+    set_list_elem(out,outn,deme,"deme",1);
+    set_list_elem(out,outn,ell,"lineages",2);
+    set_list_elem(out,outn,sat,"saturation",3);
     SET_NAMES(out,outn);
-    lineage_count(REAL(t),INTEGER(ell));
-    UNPROTECT(4);
+    lineage_count(REAL(t),INTEGER(deme),INTEGER(ell),INTEGER(sat));
+    UNPROTECT(6);
     return out;
   };
 

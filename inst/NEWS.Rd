@@ -1,7 +1,9 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
-\section{Changes in \pkg{phylopomp} version 0.6.1}{
+\section{Changes in \pkg{phylopomp} version 0.7.0}{
   \itemize{
+    \item The \code{lineages} function now returns the saturation as well as the lineage-count.
+    \item The \code{newick2df} function has been rewritten.
     \item A new function \code{parse_newick} allows one to parse a Newick string into the formats used in \pkg{phylopomp}.
   }
 }

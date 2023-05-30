@@ -7,8 +7,7 @@
 ##' @param t0 numeric; the root time.
 ##' @inheritParams getInfo
 ##' @include getinfo.R
-##' @importFrom dplyr bind_cols
-##' @importFrom tibble as_tibble
+##' @importFrom tibble tibble
 ##' @return
 ##' A list containing the requested elements, including any or all of:
 ##' \describe{
@@ -31,29 +30,7 @@ parse_newick <- function (
     x,t0,prune,obscure,time,
     description,yaml,structure,lineages,tree
   )
-
-  if (!is.null(x$lineages)) {
-    n <- length(x$lineages$time)
-    m <- length(x$lineages$count)/n
-    if (m > 1L) {
-      dig <- ceiling(log10(m))
-      nm <- sprintf(paste0("deme%0",dig,"d"),seq_len(m))
-    } else {
-      nm <- "lineages"
-    }
-    bind_cols(
-      time=x$lineages$time,
-      x$lineages$count |>
-        as.integer() |>
-        array(dim=c(m,n),dimnames=list(nm,NULL)) |>
-        t() |>
-        as_tibble()
-    ) -> lin
-    lin |>
-      structure(
-        obscured=obscure,
-        class=c("gplin",class(lin))
-      ) -> x$lineages
-  }
+  if (!is.null(x$lineages))
+    x$lineages |> reshape_lineages() -> x$lineages
   x
 }

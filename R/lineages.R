@@ -36,46 +36,26 @@ plot.gplin <- function (
   x, ...,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-
-  obsc <- attr(x,"obscured")
-  
-  if (!obsc) {
-    x |>
-      pivot_longer(
-        -time,
-        names_to="deme",
-        values_to="lineages"
-      ) |>
-      mutate(
-        deme=gsub("deme","",deme)
-      ) -> x
-  } else {
-    x$deme <- "1"
-  }
-
   demes <- sort(unique(x$deme))
-  ndeme <- max(1L,length(demes))
+  ndeme <- length(demes)
   if (is.function(palette)) {
-    palette <- structure(palette(ndeme),names=demes)
+    palette <- structure(palette(ndeme),names=as.character(demes))
   } else {
     if (length(palette) < ndeme)
       pStop(sQuote("palette")," must have length at least ",ndeme,
         " if specified as a vector.")
   }
-
   x |>
-    ggplot(aes(x=time,y=lineages,color=deme,group=deme))+
+    ggplot(aes(x=time,y=lineages,color=factor(deme),group=factor(deme)))+
     geom_step()+
     scale_color_manual(values=palette)+
     guides(color="none")+
     theme_classic()+
     theme(...) -> pl
-  
-  if (!obsc) {
+  if (ndeme>1L) {
     pl+
-      guides(color=guide_legend()) -> pl
+      guides(color=guide_legend(title="deme")) -> pl
   }
-
   pl
 }
 

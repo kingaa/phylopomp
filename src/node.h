@@ -111,15 +111,18 @@ public:
     return n;
   };
   //! increment to lineage count
-  void lineage_incr (int *incr) const {
+  void lineage_incr (int *incr, int *sat) const {
     incr[deme]--;
+    if (holds_own()) sat[deme] -= 2;
     for (ball_it i = begin(); i != end(); i++) {
       switch ((*i)->color) {
       case green:
         incr[(*i)->child()->deme]++;
+	sat[(*i)->child()->deme]++;
         break;
       case black:
         incr[(*i)->deme()]++;
+	sat[(*i)->deme()]++;
         break;
       default:
         break;
