@@ -1,16 +1,20 @@
 _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._7._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._7:
 
-        • The ‘lineages’ function now returns the saturation as well as
-          the lineage-count.
+        • The SIRS model is included as a synonym for SIR.  Both allow
+          waning of immunity.
+
+        • The ‘lineages’ function now returns the saturation and a code
+          for the event-type as well as the lineage-count.  The
+          returned data frame is now in a long format.
 
         • The ‘newick2df’ function has been rewritten.
 
         • A new function ‘parse_newick’ allows one to parse a Newick
           string into the formats used in ‘phylopomp’.
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._6._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._6:
 
         • The option to generate “non-compact” Newick-format tree
           representations has been removed: all Newick representations
@@ -29,12 +33,12 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
           formatting for plots is accomplished within the plotting
           routines themselves.
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._5._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._5:
 
         • Function ‘moran_exact’ computes the exact likelihood under
           the Moran model.
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._4._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._4:
 
         • Refactored the SIRS model ‘pomp’ object.
 
@@ -54,11 +58,11 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
           before, consistent with the assumptions of ‘lbdp_pomp’ and
           ‘sir_pomp’
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._2._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._2:
 
         • Streamlined of the GP definition.
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1._0:
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1:
 
         • Updated for use with ‘pomp’ version 4.6.
 

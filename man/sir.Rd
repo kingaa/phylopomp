@@ -3,9 +3,13 @@
 \name{sir}
 \alias{sir}
 \alias{SIR}
+\alias{SIRS}
 \alias{runSIR}
+\alias{runSIRS}
 \alias{continueSIR}
 \alias{sir_pomp}
+\alias{continueSIRS}
+\alias{sirs_pomp}
 \title{Classical susceptible-infected-recovered model}
 \usage{
 runSIR(
@@ -20,9 +24,37 @@ runSIR(
   R0 = 0
 )
 
+runSIRS(
+  time,
+  t0 = 0,
+  Beta = 2,
+  gamma = 1,
+  psi = 1,
+  delta = 0,
+  S0 = 100,
+  I0 = 2,
+  R0 = 0
+)
+
 continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
 
 sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
+
+runSIRS(
+  time,
+  t0 = 0,
+  Beta = 2,
+  gamma = 1,
+  psi = 1,
+  delta = 0,
+  S0 = 100,
+  I0 = 2,
+  R0 = 0
+)
+
+continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
+
+sirs_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 }
 \arguments{
 \item{time}{final time}

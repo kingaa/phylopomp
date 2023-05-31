@@ -3,7 +3,7 @@
 ##' A single, unstructured population of hosts.
 ##'
 ##' @name sir
-##' @aliases SIR
+##' @aliases SIR SIRS
 ##' @include getinfo.R
 ##' @family Genealogy processes
 ##' @param Beta transmission rate.
@@ -38,6 +38,10 @@ runSIR <- function (
 }
 
 ##' @rdname sir
+##' @export
+runSIRS <- runSIR
+
+##' @rdname sir
 ##' @inheritParams simulate
 ##' @export
 continueSIR <- function (
@@ -67,9 +71,13 @@ sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
       " must be nonnegative integers.")
   names(ic) <- c("S0","I0","R0")
   data <- as.data.frame(data)
-  ndat <- nrow(data)
   code <- as.integer(c(2,diff(data$lineages)))
-  code[ndat] <- -2L
+  code[data$event_type==0] <- 2L
+  code[data$event_type==3] <- -2L
+  stopifnot(
+    !any(data$event_type==2 & code!=1),
+    !any(data$event_type==1 & code!=0 & code!=-1)
+  )
   data$code <- code
   data["time"] |>
     pomp(
@@ -90,3 +98,15 @@ sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
       PACKAGE="phylopomp"
     )
 }
+
+##' @rdname sir
+##' @export
+runSIRS <- runSIR
+
+##' @rdname sir
+##' @export
+continueSIRS <- continueSIR
+
+##' @rdname sir
+##' @export
+sirs_pomp <- sir_pomp

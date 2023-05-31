@@ -28,7 +28,8 @@ simulate.default <- function (object, ...) {
   if (missing(object) || is.null(object))
     message(
       "Available phylopomp models:\n",
-      "- SIR: standard susceptible-infected-recovered model\n",
+      "- SIR: standard susceptible-infected-recovered model\n    with optional waning of immunity\n",
+      "- SIRS: synonymous with SIR\n",
       "- SEIR: standard susceptible-exposed-infected-recovered model\n",
       "- SIIR: two-strain SIR model\n",
       "- SI2R: superspreading model\n",
@@ -51,6 +52,7 @@ simulate.character <- function (object, time, ...) {
   switch(
     object,
     SIR = runSIR(time=time,...),
+    SIRS = runSIR(time=time,...),
     SEIR = runSEIR(time=time,...),
     SIIR = runSIIR(time=time,...),
     SI2R = runSI2R(time=time,...),

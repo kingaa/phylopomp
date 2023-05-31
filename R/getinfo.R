@@ -3,7 +3,6 @@
 ##' Retrieve information from genealogy process simulation
 ##'
 ##' @name getInfo
-##' 
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
 ##' @param obscure logical; obscure the demes?
@@ -14,10 +13,8 @@
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
 ##' @param lineages logical; return the lineage-count function?
-##'
 ##' @include package.R
-##' @importFrom tibble tibble
-##'
+##' @importFrom tibble as_tibble
 ##' @return
 ##' A list containing the requested elements, including any or all of:
 ##' \describe{
@@ -31,7 +28,6 @@
 ##' }
 ##' 
 ##' @example examples/siir.R
-##'
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
@@ -64,13 +60,8 @@ getInfo <- function (
 }
 
 reshape_lineages <- function (x) {
-  ndeme <- length(unique(x$deme))
-  tibble(
-    time=rep(x$time,each=ndeme),
-    deme=x$deme,
-    lineages=x$lineages,
-    saturation=x$saturation
-  ) -> lin
+  x$time <- rep(x$time,each=length(unique(x$deme)))
+  x |> as_tibble() -> lin
   lin |>
     structure(
       class=c("gplin",class(lin))

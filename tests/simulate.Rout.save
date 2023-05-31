@@ -28,6 +28,8 @@ The following object is masked from 'package:stats':
 > simulate()
 Available phylopomp models:
 - SIR: standard susceptible-infected-recovered model
+    with optional waning of immunity
+- SIRS: synonymous with SIR
 - SEIR: standard susceptible-exposed-infected-recovered model
 - SIIR: two-strain SIR model
 - SI2R: superspreading model

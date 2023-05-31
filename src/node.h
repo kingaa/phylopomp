@@ -101,32 +101,45 @@ public:
     for (ball_it i = begin(); i != end(); i++) {
       switch ((*i)->color) {
       case green: case black:
-	n++;
-	break;
+        n++;
+        break;
       default:
-	break;
+        break;
       }
     }
     if (holds_own()) n--;
     return n;
   };
-  //! increment to lineage count
-  void lineage_incr (int *incr, int *sat) const {
+  //! lineage count, saturation, and event-type
+  //! types are:
+  //! -  0 = non-event
+  //! - -1 = root
+  //! -  1 = sample
+  //! -  2 = non-sample node
+  void lineage_incr (int *incr, int *sat, int *etype) const {
     incr[deme]--;
-    if (holds_own()) sat[deme] -= 2;
-    for (ball_it i = begin(); i != end(); i++) {
-      switch ((*i)->color) {
+    for (ball_it i = cbegin(); i != cend(); i++) {
+      ball_t *b = *i;
+      switch (b->color) {
       case green:
-        incr[(*i)->child()->deme]++;
-	sat[(*i)->child()->deme]++;
+        incr[b->child()->deme]++;
+        sat[b->child()->deme]++;
         break;
       case black:
-        incr[(*i)->deme()]++;
-	sat[(*i)->deme()]++;
+        incr[b->deme()]++;
+        sat[b->deme()]++;
         break;
       default:
         break;
       }
+    }
+    if (holds_own()) {
+      sat[deme]--;
+      etype[deme] = -1;
+    } else if (holds(blue)) {
+      etype[deme] = 1;
+    } else {
+      etype[deme] = 2;
     }
   };
   //! human-readable info

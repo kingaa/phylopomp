@@ -33,22 +33,20 @@ plot_grid(
   rel_heights=c(2,1,2)
 )
 
-x |>
-  lineages() |>
-  mutate(
-    sample=lineages<=lag(lineages),
-    sample=if_else(row_number()<n(),sample,NA),
-    sample=coalesce(sample,FALSE)
-  ) -> dat
+x |> lineages() -> dat
 
 stopifnot(
-  sum(dat$sample)==14
+  sum(dat$event_type==-1)==1,
+  sum(dat$event_type==1)==14,
+  sum(dat$event_type==2)==7,
+  sum(dat$event_type==3)==1
 )
 
 plot_grid(
   x |> plot(points=TRUE,obscure=TRUE),
   x |> diagram(prune=TRUE,obscure=TRUE),
   dat |>
+    mutate(sample=event_type==1) |>
     ggplot(aes(x=time,y=lineages))+
     geom_step()+
     geom_point(aes(alpha=sample),color="blue",show.legend=FALSE),
@@ -61,7 +59,7 @@ dat |>
   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
 llex
 
-  dat |>
+dat |>
   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
   pfilter(Np=1000) |>
   logLik() |>

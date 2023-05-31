@@ -138,50 +138,66 @@ public:
 
 public:
   
-  //! lineage count and saturation
-  void lineage_count (double *t, int *deme, int *ell, int *sat) const {
+  //! lineage count, saturation, and event-type.
+  //! types are:
+  //! -  0 = non-event
+  //! - -1 = root
+  //! -  1 = sample
+  //! -  2 = non-sample node
+  //! -  3 = end of interval
+  void lineage_count (double *t, int *deme,
+                      int *ell, int *sat, int *etype) const {
     slate_t tcur = *t = timezero();
     for (size_t j = 0; j < ndeme; j++) {
-      sat[j] = ell[j] = 0;
       deme[j] = j+1;
+      sat[j] = ell[j] = 0;
+      etype[j] = 0;
     }
     for (node_it i = begin(); i != end(); i++) {
-      if (tcur < (*i)->slate) {
-        t++; ell += ndeme; sat += ndeme; deme += ndeme;
-        *t = tcur = (*i)->slate;
+      node_t *p = *i;
+      if (tcur < p->slate) {
+        t++;
+        ell += ndeme; sat += ndeme; deme += ndeme; etype += ndeme;
+        *t = tcur = p->slate;
         for (size_t j = 0; j < ndeme; j++) {
-	  ell[j] = (ell-ndeme)[j];
-	  sat[j] = 0;
-	  deme[j] = j+1;
-	}
+          deme[j] = j+1;
+          ell[j] = (ell-ndeme)[j];
+          sat[j] = 0;
+          etype[j] = 0;
+        }
       }
-      (*i)->lineage_incr(ell,sat);
+      p->lineage_incr(ell,sat,etype);
     }
-    t++; ell += ndeme; sat += ndeme; deme += ndeme;
+    t++;
+    ell += ndeme; sat += ndeme; deme += ndeme; etype += ndeme;
     *t = time();
     for (size_t j = 0; j < ndeme; j++) {
       sat[j] = ell[j] = 0;
       deme[j] = j+1;
+      etype[j] = 3;
     }
   };
   //! lineage count and saturation
   SEXP lineage_count (void) const {
-    SEXP t, deme, ell, sat, out, outn;
+    SEXP t, deme, ell, sat, etype, out, outn;
     int nt = ntime(timezero())+1;
     int nl = ndeme*nt;
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(deme = NEW_INTEGER(nl));
     PROTECT(ell = NEW_INTEGER(nl));
     PROTECT(sat = NEW_INTEGER(nl));
-    PROTECT(out = NEW_LIST(4));
-    PROTECT(outn = NEW_CHARACTER(4));
+    PROTECT(etype = NEW_INTEGER(nl));
+    PROTECT(out = NEW_LIST(5));
+    PROTECT(outn = NEW_CHARACTER(5));
     set_list_elem(out,outn,t,"time",0);
     set_list_elem(out,outn,deme,"deme",1);
     set_list_elem(out,outn,ell,"lineages",2);
     set_list_elem(out,outn,sat,"saturation",3);
+    set_list_elem(out,outn,etype,"event_type",4);
     SET_NAMES(out,outn);
-    lineage_count(REAL(t),INTEGER(deme),INTEGER(ell),INTEGER(sat));
-    UNPROTECT(6);
+    lineage_count(REAL(t),INTEGER(deme),INTEGER(ell),
+                  INTEGER(sat),INTEGER(etype));
+    UNPROTECT(7);
     return out;
   };
 
@@ -358,20 +374,20 @@ public:
     if (!empty()) {
       node_t *n = back();
       while (!empty() && n->slate > tnew) {
-	ball_t *b = n->last_ball();
-	switch (b->color) {
-	case black:
-	  drop(b);
-	  break;
-	case blue:
+        ball_t *b = n->last_ball();
+        switch (b->color) {
+        case black:
+          drop(b);
+          break;
+        case blue:
           b->color = black;
           swap(b,n->green_ball());
           destroy_node(n);
-	  break;
-	case green:
+          break;
+        case green:
           err("in '%s': inconceivable!",__func__); // #nocov
-	  break;
-	}
+          break;
+        }
         n = back();
       }
       time() = tnew;
@@ -396,7 +412,7 @@ private:
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
   void scan_label (const std::string& s, color_t* col,
-		    name_t *deme, slate_t *time) const {
+                   name_t *deme, slate_t *time) const {
     char c = s[0];
     switch (c) {
     case 'o':
@@ -414,8 +430,8 @@ private:
     }
     size_t k = 2, sz;
     *deme = name_t(stoi(s.substr(k),&sz));
-    k += sz+1;			// +1 is for separator
-    stoi(s.substr(k),&sz);	// ignore name
+    k += sz+1;                  // +1 is for separator
+    stoi(s.substr(k),&sz);      // ignore name
     k += sz+1;
     *time = slate_t(stod(s.substr(k)));
   };
@@ -458,21 +474,21 @@ private:
   //! Parse a single-root Newick tree.
   //! This assumes the string starts with a '('.
   std::string::const_iterator parse1 (std::string::const_iterator& i,
-				      const std::string::const_iterator& e,
-				      const slate_t t0, node_t **root) {
+                                      const std::string::const_iterator& e,
+                                      const slate_t t0, node_t **root) {
     size_t stack = 1;
     std::string::const_iterator j, k;
     i++; j = i;
     while (j != e && stack > 0) {
       switch (*j) {
       case '(':
-	stack++;
-	break;
+        stack++;
+        break;
       case ')':
-	stack--;
-	break;
+        stack--;
+        break;
       default:
-	break;
+        break;
       }
       j++;
     }
@@ -496,42 +512,42 @@ public:
       char c = *i;
       switch (c) {
       case '(':
-	{
-	  genealogy_t G(t0,unique());
-	  node_t *q = 0;
-	  i = G.parse1(i,s.cend(),t0,&q);
-	  *this += G;
-	  if (p != 0) {
-	    ball_t *g = q->green_ball();
-	    q->erase(g); p->insert(g); g->holder() = p;
-	  }
-	}
-	break;
+        {
+          genealogy_t G(t0,unique());
+          node_t *q = 0;
+          i = G.parse1(i,s.cend(),t0,&q);
+          *this += G;
+          if (p != 0) {
+            ball_t *g = q->green_ball();
+            q->erase(g); p->insert(g); g->holder() = p;
+          }
+        }
+        break;
       case 'b':
-	{
-	  std::string::const_iterator j = i;
-	  while (j != s.cend() && *j != ';' && *j != ',') j++;
-	  std::string a(i,j);
-	  node_t *q = scan_node(a,t0);
-	  if (p != 0) {
-	    ball_t *g = q->green_ball();
-	    q->erase(g); p->insert(g); g->holder() = p;
-	  }
-	  i = j;
-	}
-	break;
+        {
+          std::string::const_iterator j = i;
+          while (j != s.cend() && *j != ';' && *j != ',') j++;
+          std::string a(i,j);
+          node_t *q = scan_node(a,t0);
+          if (p != 0) {
+            ball_t *g = q->green_ball();
+            q->erase(g); p->insert(g); g->holder() = p;
+          }
+          i = j;
+        }
+        break;
       case 'o':
-	{
-	  std::string::const_iterator j = i;
-	  while (j != s.cend() && *j != ';' && *j != ',') j++;
-	  std::string a(i,j);
-	  scan_ball(a,t0,p);
-	  i = j;
-	}
-	break;
+        {
+          std::string::const_iterator j = i;
+          while (j != s.cend() && *j != ';' && *j != ',') j++;
+          std::string a(i,j);
+          scan_ball(a,t0,p);
+          i = j;
+        }
+        break;
       default:
-	i++;
-	break;
+        i++;
+        break;
       }
     }
     return *this;

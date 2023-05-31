@@ -24,7 +24,7 @@ bind_rows(
   ggplot(aes(x=time,y=lineages,color=method,group=method))+
   geom_step()
 
-pal <- c("#00274c","#ffcb05")
+pal <- c("#00274c","#ffcb05","#006597")
 
 plot_grid(
   plot_grid(
@@ -33,17 +33,21 @@ plot_grid(
     nrow=1,align="h",axis="l"
   ),
   plot_grid(
-    x |> lineages() |> plot()+
-      expand_limits(y=65),
+    x |> lineages() |> plot(),
     x |> lineages(obscure=FALSE) |>
-      plot(palette=pal,legend.position="none")+
-      expand_limits(y=65),
+      select(time,deme,lineages) |>
+      pivot_wider(names_from=deme,values_from=lineages,names_prefix="deme") |>
+      mutate(total=deme1+deme2) |>
+      pivot_longer(-time) |>
+      ggplot(aes(x=time,y=value,color=name))+
+      geom_step()+
+      scale_color_manual(values=pal)+
+      guides(color="none")+
+      theme_classic(),
     nrow=1,align="hv",axis="tblr"
   ),
   nrow=2
 )
-
-pal <- c("#00274c","#ffcb05","#006597")
 
 simulate("SIIR",time=5,S0=50,psi2=1,sigma12=1,I1_0=3,I2_0=3) -> x
 
@@ -51,7 +55,7 @@ plot_grid(
   plot_grid(
     x |> plot(prune=F,obscure=F,points=T,palette=pal),
     x |> lineages(prune=F,obscure=F) |>
-      select(-saturation) |>
+      select(time,deme,lineages) |>
       pivot_wider(names_from=deme,values_from=lineages,names_prefix="deme") |>
       mutate(total=deme1+deme2) |>
       pivot_longer(-time) |>

@@ -1,13 +1,16 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
-\section{Changes in \pkg{phylopomp} version 0.7.0}{
+\section{Changes in \pkg{phylopomp} version 0.7}{
   \itemize{
-    \item The \code{lineages} function now returns the saturation as well as the lineage-count.
+    \item The SIRS model is included as a synonym for SIR.
+    Both allow waning of immunity.
+    \item The \code{lineages} function now returns the saturation and a code for the event-type as well as the lineage-count.
+    The returned data frame is now in a long format.
     \item The \code{newick2df} function has been rewritten.
     \item A new function \code{parse_newick} allows one to parse a Newick string into the formats used in \pkg{phylopomp}.
   }
 }
-\section{Changes in \pkg{phylopomp} version 0.6.0}{
+\section{Changes in \pkg{phylopomp} version 0.6}{
   \itemize{
     \item The option to generate \dQuote{non-compact} Newick-format tree representations has been removed:
     all Newick representations are now in the \dQuote{compact} format.
@@ -20,12 +23,12 @@
     The proper formatting for plots is accomplished within the plotting routines themselves.
   }
 }
-\section{Changes in \pkg{phylopomp} version 0.5.0}{
+\section{Changes in \pkg{phylopomp} version 0.5}{
   \itemize{
     \item Function \code{moran_exact} computes the exact likelihood under the Moran model.
   }
 }
-\section{Changes in \pkg{phylopomp} version 0.4.0}{
+\section{Changes in \pkg{phylopomp} version 0.4}{
   \itemize{
     \item Refactored the SIRS model \sQuote{pomp} object.
     \item The \code{obscure} operation now drops single-child internal nodes in addition to erasing all deme information.
@@ -35,12 +38,12 @@
     Now, when \code{obscure=TRUE} (the default), the behavior is as it was before, consistent with the assumptions of \code{lbdp_pomp} and \code{sir_pomp} 
   }
 }
-\section{Changes in \pkg{phylopomp} version 0.2.0}{
+\section{Changes in \pkg{phylopomp} version 0.2}{
   \itemize{
     \item Streamlined of the GP definition.
   }
 }
-\section{Changes in \pkg{phylopomp} version 0.1.0}{
+\section{Changes in \pkg{phylopomp} version 0.1}{
   \itemize{
     \item Updated for use with \pkg{pomp} version 4.6.
   }

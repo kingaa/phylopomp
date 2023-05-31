@@ -95,12 +95,17 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Here, m = number of live samples, k = number of dead samples.
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
-  ndat <- nrow(data)
-  code <- as.integer(c(2,data$lineages[-1L]-data$lineages[-ndat]))
-  code[ndat] <- -2L
+  data <- as.data.frame(data)
+  code <- as.integer(c(2,diff(data$lineages)))
+  code[data$event_type==0] <- 2L
+  code[data$event_type==3] <- -2L
+  stopifnot(
+    !any(data$event_type==2 & code!=1),
+    !any(data$event_type==1 & code!=0 & code!=-1)
+  )
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
-  tf <- data$time[ndat]
+  tf <- data$time[nrow(data)]
   x0 <- tf-data$time[1L]      ## root time
   x <- tf-data$time[code==1]  ## coalescence times
   y <- tf-data$time[code==-1] ## live samples
@@ -161,9 +166,13 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")
   data <- as.data.frame(data)
-  ndat <- nrow(data)
   code <- as.integer(c(2,diff(data$lineages)))
-  code[ndat] <- -2L
+  code[data$event_type==0] <- 2L
+  code[data$event_type==3] <- -2L
+  stopifnot(
+    !any(data$event_type==2 & code!=1),
+    !any(data$event_type==1 & code!=0 & code!=-1)
+  )
   data$code <- code
   data["time"] |>
     pomp(
