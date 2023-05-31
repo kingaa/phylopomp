@@ -194,20 +194,21 @@ public:
     } else {
       o3 += "g_";
     }
-    for (ball_it i = begin(); i != end(); i++, n--) {
+    n = 0;
+    for (ball_it i = begin(); i != end(); i++) {
       ball_t *b = *i;
       node_t *p = 0;
       switch (b->color) {
       case green:
         p = b->child();
         if (p != this) {
+	  if (n++ > 0) o2 += ",";
           o2 += p->newick(tnow,slate);
-          if (n > 1) o2 += ",";
         }
         break;
       case black:
+	if (n++ > 0) o2 += ",";
         o2 += b->newick(tnow-slate);
-        if (n > 1) o2 += ",";
         break;
       case blue:
         break;

@@ -7,6 +7,7 @@
 #include <string>
 #include <cstring>
 #include <utility>
+#include <stdexcept>
 
 #include "internal.h"
 #include "nodeseq.h"
@@ -411,10 +412,12 @@ private:
   
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
-  void scan_label (const std::string& s, color_t* col,
-                   name_t *deme, slate_t *time) const {
-    char c = s[0];
-    switch (c) {
+  size_t scan_label (const std::string& s, color_t* col,
+		     name_t *deme, slate_t *time) const {
+    size_t n = s.size();
+    if (n < 5) 
+      err("in '%s': invalid Newick format: empty or invalid label.",__func__);
+    switch (s[0]) {
     case 'o':
       *col = black;
       break;
@@ -425,23 +428,51 @@ private:
       *col = green;
       break;
     default:
-      err("in '%s': invalid color %s",__func__,c);
+      err("in '%s': invalid Newick format: invalid label.",__func__);
       break;
     }
-    size_t k = 2, sz;
-    *deme = name_t(stoi(s.substr(k),&sz));
-    k += sz+1;                  // +1 is for separator
-    stoi(s.substr(k),&sz);      // ignore name
-    k += sz+1;
-    *time = slate_t(stod(s.substr(k)));
+    size_t i = 1;
+    size_t sz;
+    while (i < n && s[i] == '_') i++;
+    if (i == n)
+      err("in '%s': invalid Newick format: no deme specified.",__func__);
+    if (s[i] == '(' || s[i] == ')' || s[i] == ',' || s[i] == ';')
+      err("in '%s': invalid Newick format: invalid deme.",__func__);
+    try {
+      *deme = name_t(stoi(s.substr(i),&sz));
+      i += sz;
+    }
+    catch (const std::invalid_argument& e) {
+      err("in '%s': invalid Newick format: invalid deme.",__func__);
+    }
+    catch (const std::out_of_range& e) {
+      err("in '%s': invalid Newick format: deme out of range.",__func__);
+    }
+    // skip to branch length
+    while (i < n && s[i] != ':' &&
+	   s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
+    if (i == n || s[i] != ':')
+      err("in '%s': invalid Newick format: invalid branch length.",__func__);
+    i++;
+    try {
+      *time = slate_t(stod(s.substr(i),&sz));
+    }
+    catch (const std::invalid_argument& e) {
+      err("in '%s': invalid Newick format: invalid branch length.",__func__);
+    }
+    catch (const std::out_of_range& e) {
+      err("in '%s': invalid Newick format: branch length out of range.",__func__);
+    }
+    i += sz;
+    return i;
   };
   //! Scan the Newick string and put the ball
   //! into the indicated pocket, as appropriate.
-  void scan_ball (const std::string& s, const slate_t t0, node_t *p) {
+  size_t scan_ball (const std::string& s, const slate_t t0, node_t *p) {
     color_t col;
     name_t deme;
     slate_t t;
-    scan_label(s,&col,&deme,&t);
+    size_t i = scan_label(s,&col,&deme,&t);
     t += t0;
     _time = (_time < t) ? t : _time;
     ndeme = (ndeme <= deme) ? deme+1 : ndeme;
@@ -449,14 +480,16 @@ private:
     if (p == 0) err("in '%s': bad Newick string (2)",__func__);
     ball_t *b = new ball_t(p,unique(),col,deme);
     p->insert(b);
+    return i;
   };
   //! Scan the Newick string and create the indicated node.
-  node_t* scan_node (const std::string& s, const slate_t t0) {
+  size_t scan_node (const std::string& s, const slate_t t0, node_t **q) {
+    size_t i;
     color_t col;
     name_t deme;
     slate_t t;
     name_t u = unique();
-    scan_label(s,&col,&deme,&t);
+    i = scan_label(s,&col,&deme,&t);
     t += t0;
     ndeme = (ndeme <= deme) ? deme+1 : ndeme;
     _time = (_time < t) ? t : _time;
@@ -469,18 +502,18 @@ private:
       p->insert(b);
     }
     push_back(p);
-    return p;
+    *q = p;
+    return i;
   };
   //! Parse a single-root Newick tree.
   //! This assumes the string starts with a '('.
-  std::string::const_iterator parse1 (std::string::const_iterator& i,
-                                      const std::string::const_iterator& e,
-                                      const slate_t t0, node_t **root) {
+  size_t scan_tree (const std::string& s,
+		    const slate_t t0, node_t **root) {
+    size_t n = s.size();
+    size_t i = 1, j = 1, k;
     size_t stack = 1;
-    std::string::const_iterator j, k;
-    i++; j = i;
-    while (j != e && stack > 0) {
-      switch (*j) {
+    while (j < n && stack > 0) {
+      switch (s[j]) {
       case '(':
         stack++;
         break;
@@ -493,12 +526,11 @@ private:
       j++;
     }
     if (stack > 0)
-      err("in '%s': premature end of Newick string.",__func__);
+      err("in '%s': premature end of Newick string (1).",__func__);
+    node_t *p = 0;
     k = j;
-    while (k != e && *k != ';' && *k != ',') k++;
-    std::string a(i,j-1), b(j,k-1);
-    node_t *p = scan_node(b,t0);
-    parse(a,p->slate,p);
+    k += scan_node(s.substr(j),t0,&p);
+    parse(s.substr(i,j-i-1),p->slate,p);
     *root = p;
     return k;
   };
@@ -506,16 +538,16 @@ private:
 public:
   
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (std::string& s, slate_t t0, node_t *p = 0) {
-    std::string::const_iterator i = s.cbegin();
-    while (i != s.cend()) {
-      char c = *i;
-      switch (c) {
+  genealogy_t& parse (const std::string& s, slate_t t0, node_t *p = 0) {
+    size_t i = 0;
+    size_t n = s.size();
+    while (i < n) {
+      switch (s[i]) {
       case '(':
         {
           genealogy_t G(t0,unique());
           node_t *q = 0;
-          i = G.parse1(i,s.cend(),t0,&q);
+          i += G.scan_tree(s.substr(i),t0,&q);
           *this += G;
           if (p != 0) {
             ball_t *g = q->green_ball();
@@ -525,28 +557,25 @@ public:
         break;
       case 'b':
         {
-          std::string::const_iterator j = i;
-          while (j != s.cend() && *j != ';' && *j != ',') j++;
-          std::string a(i,j);
-          node_t *q = scan_node(a,t0);
+	  node_t *q = 0;
+          i += scan_node(s.substr(i),t0,&q);
           if (p != 0) {
             ball_t *g = q->green_ball();
             q->erase(g); p->insert(g); g->holder() = p;
           }
-          i = j;
         }
         break;
       case 'o':
-        {
-          std::string::const_iterator j = i;
-          while (j != s.cend() && *j != ';' && *j != ',') j++;
-          std::string a(i,j);
-          scan_ball(a,t0,p);
-          i = j;
-        }
+	i += scan_ball(s.substr(i),t0,p);
         break;
-      default:
+      case ',': case ';': case ' ': case '\n': case '\t':
         i++;
+        break;
+      case ')':
+        err("in '%s': invalid Newick string: unbalanced parentheses.",__func__);
+	break;
+      default:
+        err("in '%s': invalid Newick string.",__func__);
         break;
       }
     }

@@ -92,4 +92,128 @@ stopifnot(
   )
 )
 
+try(
+  r"{(((p_9_0:1.0000,b_3_5:0.999,o_1_8:0.5555)g_0_88:0.5;}" |>
+     parse_newick()
+)
+
+try(
+  r"{((o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,time=TRUE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,o_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000)()));}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+try(
+  r"{(o_9_1:1.000000,m_1_3:1.000000)m_0_0:0.000000;}" |>
+  parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_1:1.000000,b_0_0:3,,)m_0_0:0.000000;}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+try(
+  r"{(,o_9_1:1.000000,)g_1_3:1.000000,h)m_0_0:0.000000))));}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000))y));}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{((((o_9_1:1.000000)g_1_3:1.000000)m_0_0:0.000000)g_3:22)()))));}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+r"{(o_9_1:1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+try(
+  r"{(o_a9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_0_0(:0.500000,b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_)0_0:0.500000,b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,(b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,b_2_45:17}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,  b_2_45:17}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,
+       b_2____45:17}" |>
+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3))m_0_0:0.000000,b_____2:17;}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
+try(
+  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17))));}" |>
+     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+)
+
 dev.off()
