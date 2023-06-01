@@ -452,7 +452,7 @@ private:
     while (i < n && s[i] != ':' &&
 	   s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
     if (i == n || s[i] != ':')
-      err("in '%s': invalid Newick format: invalid branch length.",__func__);
+      err("in '%s': invalid Newick format: missing or invalid branch length.",__func__);
     i++;
     try {
       *time = slate_t(stod(s.substr(i),&sz));
@@ -526,7 +526,7 @@ private:
       j++;
     }
     if (stack > 0)
-      err("in '%s': premature end of Newick string (1).",__func__);
+      err("in '%s': premature end of Newick string.",__func__);
     node_t *p = 0;
     k = j;
     k += scan_node(s.substr(j),t0,&p);

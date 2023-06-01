@@ -71,7 +71,8 @@ plot_grid(
   x |> lineages(prune=TRUE,obscure=FALSE) |> plot(legend.position="none"),
   x |> getInfo(tree=TRUE,prune=TRUE,obscure=FALSE) |>
     getElement("tree") |>
-    parse_newick(prune=TRUE,obscure=FALSE,lineages=TRUE) |>
+    parse_newick(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
+      time=TRUE,yaml=TRUE,structure=TRUE) |>
     getElement("lineages") |>  
     plot(legend.position="none")+
     expand_limits(x=5),

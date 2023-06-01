@@ -1,5 +1,5 @@
 library(phylopomp)
-set.seed(147469846)
+set.seed(147429846)
 
 png(filename="diagram-01.png",res=100,
   width=874,height=198,units="px")
@@ -22,8 +22,13 @@ freeze(
 ) |> diagram(prune=FALSE)
 dev.off()
 
-simulate("SIIR",time=0.3) |>
+simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,delta=1) |>
   getInfo(description=TRUE) |>
+  getElement("description") |>
+  cat()
+
+simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
+  getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
   getElement("description") |>
   cat()
 
