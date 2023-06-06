@@ -138,7 +138,7 @@ void siir_genealogy_t::jump (int event) {
   case 8:
     state.S += 1; state.R -= 1;
     break;
-  default:
+  default:						  // #nocov
     err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
     break;						  // #nocov
   }

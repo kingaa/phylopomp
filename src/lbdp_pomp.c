@@ -74,7 +74,7 @@ void lbdp_gill
     case 1:			// death
       n -= 1;
       break;
-    default:
+    default:					 // #nocov
       error("impossible error in 'lbdp_pomp'!"); // #nocov
       break;					 // #nocov
     }

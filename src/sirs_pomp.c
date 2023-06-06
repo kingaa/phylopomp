@@ -100,7 +100,7 @@ void sirs_gill
       cutoff[0] = (1-cfact)*Beta*S*I/N;
       cutoff[2] = Delta*R;
       break;
-    default:
+    default:					 // #nocov
       error("impossible error in 'sirs_pomp'!"); // #nocov
       break;					 // #nocov
     }
