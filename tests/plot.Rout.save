@@ -1,0 +1,43 @@
+
+R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="plot-%02d.png",res=100)
+> 
+> library(phylopomp)
+
+Attaching package: 'phylopomp'
+
+The following object is masked from 'package:stats':
+
+    simulate
+
+> set.seed(137429846)
+> 
+> try(treeplot())
+Error : in 'treeplot': 'tree' must be specified.
+> 
+> simulate("SIR",time=10) |>
++   getInfo(tree=TRUE,prune=FALSE) |>
++   getElement("tree") |>
++   treeplot(time=0,t0=NA)
+> 
+> dev.off()
+null device 
+          1 
+> 

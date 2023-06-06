@@ -63,6 +63,9 @@ Type 'q()' to quit R.
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
 [1] -4.74
 > 
+> try(newick2df())
+Error : in 'newick2df': 'tree' must be furnished as a string in Newick format.
+> 
 > dev.off()
 null device 
           1 

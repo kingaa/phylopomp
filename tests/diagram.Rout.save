@@ -266,6 +266,3 @@ genealogy:
 + )
 Error : cannot simulate backward! (current t=1, requested t=0.1)
 > 
-> try(treeplot())
-Error : in 'treeplot': 'tree' must be specified.
-> 

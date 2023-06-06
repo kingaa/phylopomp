@@ -46,5 +46,3 @@ try(
   simulate("SIR",time=1) |>
     simulate(time=0.1)
 )
-
-try(treeplot())

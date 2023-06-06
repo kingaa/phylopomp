@@ -22,4 +22,6 @@ runSIR(time=5) |>
   newick2df() |>
   lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
 
+try(newick2df())
+
 dev.off()
