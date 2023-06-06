@@ -55,13 +55,11 @@ continueSIR <- function (
 
 ##' @name sir_pomp
 ##' @rdname sir
-##'
+##' @include lbdp.R
 ##' @param data data frame containing the lineage count function
 ##' @details
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
-##'
 ##' @importFrom pomp pomp onestep covariate_table
-##'
 ##' @export
 sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
 {
@@ -70,15 +68,7 @@ sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
     pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
   names(ic) <- c("S0","I0","R0")
-  data <- as.data.frame(data)
-  code <- as.integer(c(2,diff(data$lineages)))
-  code[data$event_type==0] <- 2L
-  code[data$event_type==3] <- -2L
-  stopifnot(
-    !any(data$event_type==2 & code!=1),
-    !any(data$event_type==1 & code!=0 & code!=-1)
-  )
-  data$code <- code
+  data <- encode_data(data)
   data["time"] |>
     pomp(
       times="time",t0=t0,

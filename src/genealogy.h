@@ -367,32 +367,40 @@ public:
     ndeme = 1;
     return *this;
   };
-  //! truncate the genealogy by removing nodes
+  //! curtail the genealogy by removing nodes
   //! with times later than tnew
-  //! NB: this destroys the genealogy inasmuch
-  //! as the state is no longer correct.
-  void truncate (slate_t tnew) {
+  void curtail (slate_t tnew) {
     if (!empty()) {
-      node_t *n = back();
-      while (!empty() && n->slate > tnew) {
-        ball_t *b = n->last_ball();
+      node_t *p = back();
+      while (!empty() && p->slate > tnew) {
+        ball_t *b;
+        while (p->size() > 1) {
+          b = p->last_ball();
+          switch (b->color) {
+          case blue: case black:
+            p->erase(b); delete b;
+            break;
+          case green:                                // #nocov
+            err("in '%s': inconceivable!",__func__); // #nocov
+            break;                                   // #nocov
+          }
+        }
+        b = p->last_ball();
         switch (b->color) {
-        case black:
-          drop(b);
-          break;
         case blue:
           b->color = black;
-          swap(b,n->green_ball());
-          destroy_node(n);
-          break;
+        case black:
+          b->deme() = p->deme;
+          swap(b,p->green_ball());
         case green:
-          err("in '%s': inconceivable!",__func__); // #nocov
+          destroy_node(p);
           break;
         }
-        n = back();
+        if (!empty()) p = back();
       }
-      time() = tnew;
     }
+    if (tnew < time()) _time = tnew;
+    if (tnew < timezero()) _t0 = tnew;
   };
   //! merge two genealogies:
   //! 1. the node-sequences are merged;
@@ -413,7 +421,7 @@ private:
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
   size_t scan_label (const std::string& s, color_t* col,
-		     name_t *deme, slate_t *time) const {
+                     name_t *deme, slate_t *time) const {
     size_t n = s.size();
     if (n < 5) 
       err("in '%s': invalid Newick format: empty or invalid label.",__func__);
@@ -450,7 +458,7 @@ private:
     }
     // skip to branch length
     while (i < n && s[i] != ':' &&
-	   s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
+           s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
     if (i == n || s[i] != ':')
       err("in '%s': invalid Newick format: missing or invalid branch length.",__func__);
     i++;
@@ -508,7 +516,7 @@ private:
   //! Parse a single-root Newick tree.
   //! This assumes the string starts with a '('.
   size_t scan_tree (const std::string& s,
-		    const slate_t t0, node_t **root) {
+                    const slate_t t0, node_t **root) {
     size_t n = s.size();
     size_t i = 1, j = 1, k;
     size_t stack = 1;
@@ -557,7 +565,7 @@ public:
         break;
       case 'b':
         {
-	  node_t *q = 0;
+          node_t *q = 0;
           i += scan_node(s.substr(i),t0,&q);
           if (p != 0) {
             ball_t *g = q->green_ball();
@@ -566,14 +574,14 @@ public:
         }
         break;
       case 'o':
-	i += scan_ball(s.substr(i),t0,p);
+        i += scan_ball(s.substr(i),t0,p);
         break;
       case ',': case ';': case ' ': case '\n': case '\t':
         i++;
         break;
       case ')':
         err("in '%s': invalid Newick string: unbalanced parentheses.",__func__);
-	break;
+        break;
       default:
         err("in '%s': invalid Newick string.",__func__);
         break;

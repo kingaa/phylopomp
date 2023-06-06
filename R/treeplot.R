@@ -26,8 +26,12 @@ plot.gpsim <- function (
   x, ..., time, t0,
   prune = TRUE, obscure = TRUE
 ) {
-  out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
-    prune=prune,obscure=obscure)
+  x |>
+    getInfo(
+      tree=TRUE,t0=TRUE,time=TRUE,
+      prune=prune,
+      obscure=obscure
+    ) -> out
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
   treeplot(
@@ -64,8 +68,9 @@ treeplot <- function (
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
+  tree |> as.character() -> tree
+  if (nchar(tree)==0L) tree <- "i_NA_NA:0.0;"
   tree |>
-    as.character() |>
     gsub(";$",")i_NA_NA:0.0",x=_) |>
     gsub(";",")i_NA_NA:0.0,(",x=_) -> tree
 
@@ -93,14 +98,14 @@ treeplot <- function (
   }
 
   time <- as.numeric(c(time,max(dat$x)))[1L]
-  
+
   if (is.na(t0)) { # root time is to be determined from the current time
     dat |> mutate(x=x-max(x)+time) -> dat
   } else {
     dat |> mutate(x=x-min(x)+t0) -> dat
   }
   dat |> mutate(vis=nodecol != "i") -> dat
-  
+
   ## number of nodes and tips of each color
   expand_grid(
     nodecol=c("o","b","r","g","p","m"),

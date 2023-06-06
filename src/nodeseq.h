@@ -190,7 +190,7 @@ public:
     if (p->size() > 1) {
       p->erase(a);
       delete a;
-      if (p->dead_root()) {	// remove isolated root
+      if (p->dead_root()) {     // remove isolated root
         destroy_node(p);
       }
     } else {
@@ -227,9 +227,9 @@ public:
     node_nit j = begin();
     while (j != end()) {
       if ((*j)->dead_root()) {
-	destroy_node(*(j++));
+        destroy_node(*(j++));
       } else {
-	j++;
+        j++;
       }
     }
   };

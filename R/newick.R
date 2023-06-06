@@ -4,12 +4,10 @@
 ##'
 ##' @name newick
 ##' @include getinfo.R
-##'
 ##' @inheritParams getInfo
 ##' @return A string in Newick format.
 ##' @examples
 ##' simulate("SIIR",time=1) |> newick()
-##' 
 ##' @rdname newick
 ##' @export
 newick <- function (object, prune = TRUE, obscure = TRUE) {

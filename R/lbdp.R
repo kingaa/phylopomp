@@ -52,7 +52,7 @@ continueLBDP <- function (
 ##' The derivation is also given in comments in the code.
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
-##' @param data data frame containing the genealogy event times.
+##' @param data data frame containing the genealogy event times and the lineage-count function.
 ##' @references
 ##' \Stadler2010
 ##' @export
@@ -95,23 +95,16 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Here, m = number of live samples, k = number of dead samples.
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
-  data <- as.data.frame(data)
-  code <- as.integer(c(2,diff(data$lineages)))
-  code[data$event_type==0] <- 2L
-  code[data$event_type==3] <- -2L
-  stopifnot(
-    !any(data$event_type==2 & code!=1),
-    !any(data$event_type==1 & code!=0 & code!=-1)
-  )
+  data <- encode_data(data)
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
   tf <- data$time[nrow(data)]
-  x0 <- tf-data$time[1L]      ## root time
-  x <- tf-data$time[code==1]  ## coalescence times
-  y <- tf-data$time[code==-1] ## live samples
-  n <- data$lineages[1L]      ## number of roots
-  k <- sum(code==0)           ## number of dead samples
-  m <- sum(code==-1)          ## number of live samples
+  x0 <- tf-data$time[1L]           ## root time
+  x <- tf-data$time[data$code==1]  ## coalescence times
+  y <- tf-data$time[data$code==-1] ## live samples
+  n <- data$lineages[1L]           ## number of roots
+  k <- sum(data$code==0)           ## number of dead samples
+  m <- sum(data$code==-1)          ## number of live samples
 
   if (m - n != length(x))
     pStop("internal inconsistency in ",sQuote("data"),".")
@@ -165,15 +158,7 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
   n0 <- round(n0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")
-  data <- as.data.frame(data)
-  code <- as.integer(c(2,diff(data$lineages)))
-  code[data$event_type==0] <- 2L
-  code[data$event_type==3] <- -2L
-  stopifnot(
-    !any(data$event_type==2 & code!=1),
-    !any(data$event_type==1 & code!=0 & code!=-1)
-  )
-  data$code <- code
+  data <- encode_data(data)
   data["time"] |>
     pomp(
       times="time",t0=t0,
@@ -192,4 +177,16 @@ lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
       ),
       PACKAGE="phylopomp"
     )
+}
+
+encode_data <- function (data) {
+  data <- as.data.frame(data)
+  data$code <- as.integer(c(2,diff(data$lineages)))
+  data$code[data$event_type==0] <- 2L
+  data$code[data$event_type==3] <- -2L
+  stopifnot(
+    `misformatted data (1)`=all(data$event_type!=2 | data$code==1),
+    `misformatted data (2)`=all(data$event_type!=1 | data$code==0 | data$code==-1)
+  )
+  data
 }

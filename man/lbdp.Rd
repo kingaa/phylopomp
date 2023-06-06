@@ -33,7 +33,7 @@ lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 
-\item{data}{data frame containing the genealogy event times.}
+\item{data}{data frame containing the genealogy event times and the lineage-count function.}
 }
 \value{
 \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.

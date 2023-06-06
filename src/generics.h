@@ -116,7 +116,6 @@ SEXP lineage_count (const TYPE& G) {
 }
 
 //! extract requested information
-
 //! prune and/or obscure if requested
 template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
@@ -186,6 +185,14 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   return out;
 }
 
+//! curtail the given genealogy
+template <class TYPE>
+SEXP curtail (SEXP State, SEXP Time) {
+  TYPE A = State;
+  A.curtail(*REAL(AS_NUMERIC(Time)));
+  return serial(A);
+}
+
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
     return make<TYPE>(Params,IVPs,T0);                                  \
   }                                                                     \
@@ -197,6 +204,10 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 #define RUNFN(X,TYPE) SEXP run ## X (SEXP State, SEXP Times) {  \
     return run<TYPE>(State,Times);                              \
   }                                                             \
+
+#define CURTAILFN(X,TYPE) SEXP curtail ## X (SEXP State, SEXP Time) { \
+    return curtail<TYPE>(State,Time);				      \
+  }								      \
 
 #define INFOFN(X,TYPE) SEXP info ## X (                                 \
                                        SEXP State, SEXP Prune, SEXP Obscure, \
@@ -218,6 +229,8 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
                                                 \
     RUNFN(X,TYPE)                               \
                                                 \
+    CURTAILFN(X,TYPE)				\
+    						\
     INFOFN(X,TYPE)                              \
                                                 \
   }                                             \

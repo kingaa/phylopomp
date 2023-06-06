@@ -21,5 +21,4 @@ Extract a Newick-format description of a genealogy.
 }
 \examples{
 simulate("SIIR",time=1) |> newick()
-
 }
