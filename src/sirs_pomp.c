@@ -101,8 +101,8 @@ void sirs_gill
       cutoff[2] = Delta*R;
       break;
     default:
-      error("impossible error in 'sirs_pomp'!");
-      break;
+      error("impossible error in 'sirs_pomp'!"); // #nocov
+      break;					 // #nocov
     }
     event_rate = cutoff[0] + cutoff[1] + cutoff[2];
     t += tstep;

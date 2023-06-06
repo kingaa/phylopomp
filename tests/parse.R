@@ -217,4 +217,6 @@ try(
      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
 )
 
+try(r"{((o_9:20,b_9:20)g_9:10,b_9:10)m______}" |> parse_newick())
+
 dev.off()

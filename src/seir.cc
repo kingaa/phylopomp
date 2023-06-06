@@ -114,8 +114,8 @@ void seir_genealogy_t::jump (int event) {
     state.R -= 1; state.S += 1;
     break;
   default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-    break;
+    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+    break;						  // #nocov
   }
 }
 

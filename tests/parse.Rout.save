@@ -287,6 +287,9 @@ Error : in 'scan_label': invalid Newick format: invalid label.
 + )
 Error : in 'parse': invalid Newick string: unbalanced parentheses.
 > 
+> try(r"{((o_9:20,b_9:20)g_9:10,b_9:10)m______}" |> parse_newick())
+Error : in 'scan_label': invalid Newick format: no deme specified.
+> 
 > dev.off()
 null device 
           1 

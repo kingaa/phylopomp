@@ -17,7 +17,7 @@ extern "C" {
 
     // parse the Newick representation into a genealogy:
     std::string x = (const char *) CHAR(STRING_ELT(X,0));
-    genealogy_t G;
+    genealogy_t G(*REAL(T0));
 
     G.parse(x,*REAL(T0));
 

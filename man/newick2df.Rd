@@ -4,12 +4,10 @@
 \alias{newick2df}
 \title{Convert a tree in Newick format to data frame}
 \usage{
-newick2df(tree, time = NA, t0 = 0)
+newick2df(tree, t0 = 0)
 }
 \arguments{
 \item{tree}{tree data in Newick format.}
-
-\item{time}{time of the genealogy.}
 
 \item{t0}{time of the root.}
 }
@@ -31,12 +29,9 @@ A data frame suitable for use as \code{pomp} input, containing three columns:
 \description{
 Convert a genealogical tree in Newick format to a data frame suitable for use with \pkg{pomp}.
 }
-\details{
-If \code{time} is furnished, it is assumed that the absence of samples between the latest leaf and \code{time} is informative.
-}
 \examples{
 runSIR(Beta=2,gamma=1,psi=2,S0=100,I0=2,R0=0,time=10,t0=0) |>
   getInfo(tree=TRUE) |>
   getElement("tree") |>
-  newick2df(time=5)
+  newick2df()
 }

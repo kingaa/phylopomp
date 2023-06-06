@@ -72,4 +72,15 @@ stopifnot(
   llex<llpf[1]+2*llpf[2]
 )
 
+try(
+  dat |>
+    lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
+)
+
+try(
+  dat |>
+    mutate(event_type=if_else(event_type==1L,0L,event_type)) |>
+    lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
+)
+
 dev.off()

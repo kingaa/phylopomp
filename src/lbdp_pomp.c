@@ -75,8 +75,8 @@ void lbdp_gill
       n -= 1;
       break;
     default:
-      error("impossible error in 'lbdp_pomp'!");
-      break;
+      error("impossible error in 'lbdp_pomp'!"); // #nocov
+      break;					 // #nocov
     }
     cfact = (lineages > 1) ? lineages*(lineages-1)/n/(n+1) : 0;
     cfact = (cfact < 1) ? cfact : 1;
