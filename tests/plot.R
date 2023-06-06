@@ -6,8 +6,7 @@ set.seed(137429846)
 try(treeplot())
 
 simulate("SIR",time=10) |>
-  getInfo(tree=TRUE,prune=FALSE) |>
-  getElement("tree") |>
+  newick(prune=FALSE) |>
   treeplot(time=0,t0=NA)
 
 dev.off()

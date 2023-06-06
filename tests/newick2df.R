@@ -8,17 +8,14 @@ theme_set(theme_bw())
 set.seed(4963811)
 options(digits=3)
 
-runSI2R(time=5) |>
-  getInfo(tree=TRUE) |>
-  getElement("tree") -> tree
+runSI2R(time=5) |> newick() -> tree
 
 tree |> newick2df()
 
 tree |> newick2df(t0=10) |> slice(1,2,518,519)
 
 runSIR(time=5) |>
-  getInfo(tree=TRUE) |>
-  getElement("tree") |>
+  newick() |>
   newick2df() |>
   lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
 

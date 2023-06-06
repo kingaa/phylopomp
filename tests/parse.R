@@ -9,8 +9,7 @@ set.seed(4963811)
 options(digits=3)
 
 runSEIR(time=3,I0=3) |>
-  getInfo(tree=TRUE,prune=FALSE,obscure=FALSE) |>
-  getElement("tree") -> tree
+  newick(prune=FALSE,obscure=FALSE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
   tree |> parse_newick(prune=FALSE,obscure=FALSE,tree=TRUE) |>
@@ -20,8 +19,7 @@ plot_grid(
 )
 
 runSEIR(time=3,I0=3) |>
-  getInfo(tree=TRUE,prune=FALSE,obscure=TRUE) |>
-  getElement("tree") -> tree
+  newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
   tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
@@ -31,8 +29,7 @@ plot_grid(
 )
 
 runSEIR(time=30,I0=3) |>
-  getInfo(tree=TRUE,prune=FALSE,obscure=TRUE) |>
-  getElement("tree") -> tree
+  newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
   tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
@@ -42,8 +39,7 @@ plot_grid(
 )
 
 runSEIR(time=3,I0=3) |>
-  getInfo(tree=TRUE,prune=TRUE,obscure=FALSE) |>
-  getElement("tree") -> tree
+  newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
   tree |> parse_newick(prune=TRUE,obscure=FALSE,tree=TRUE) |>
@@ -54,8 +50,7 @@ plot_grid(
 
 runSEIR(time=5,I0=3) -> x
 x |>
-  getInfo(tree=TRUE,prune=TRUE,obscure=TRUE) |>
-  getElement("tree") -> tree
+  newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   x |> plot(points=TRUE,prune=TRUE,obscure=TRUE),
   tree |> parse_newick(prune=TRUE,obscure=TRUE,tree=TRUE) |>
@@ -69,8 +64,7 @@ runSEIR(time=5,I0=3) -> x
 plot_grid(
   x |> plot(prune=TRUE,obscure=FALSE,points=TRUE),
   x |> lineages(prune=TRUE,obscure=FALSE) |> plot(legend.position="none"),
-  x |> getInfo(tree=TRUE,prune=TRUE,obscure=FALSE) |>
-    getElement("tree") |>
+  x |> newick(prune=TRUE,obscure=FALSE) |>
     parse_newick(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
       time=TRUE,yaml=TRUE,structure=TRUE) |>
     getElement("lineages") |>  
@@ -84,8 +78,7 @@ stopifnot(
   all.equal(
     x |> lineages(prune=FALSE,obscure=FALSE) |>
       slice(1:20),
-    x |> getInfo(tree=TRUE,prune=FALSE,obscure=FALSE) |>
-      getElement("tree") |>
+    x |> newick(prune=FALSE,obscure=FALSE) |>
       parse_newick(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
       getElement("lineages") |>
       slice(1:20),

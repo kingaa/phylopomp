@@ -33,8 +33,7 @@ The following object is masked from 'package:stats':
 Error : in 'treeplot': 'tree' must be specified.
 > 
 > simulate("SIR",time=10) |>
-+   getInfo(tree=TRUE,prune=FALSE) |>
-+   getElement("tree") |>
++   newick(prune=FALSE) |>
 +   treeplot(time=0,t0=NA)
 > 
 > dev.off()

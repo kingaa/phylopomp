@@ -27,9 +27,7 @@ Type 'q()' to quit R.
 > set.seed(4963811)
 > options(digits=3)
 > 
-> runSI2R(time=5) |>
-+   getInfo(tree=TRUE) |>
-+   getElement("tree") -> tree
+> runSI2R(time=5) |> newick() -> tree
 > 
 > tree |> newick2df()
 # A tibble: 519 × 5
@@ -57,8 +55,7 @@ Type 'q()' to quit R.
 4  14.9     1        0          0          3
 > 
 > runSIR(time=5) |>
-+   getInfo(tree=TRUE) |>
-+   getElement("tree") |>
++   newick() |>
 +   newick2df() |>
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
 [1] -4.74
