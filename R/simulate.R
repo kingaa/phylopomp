@@ -77,6 +77,7 @@ simulate.gpsim <- function (object, time, ...) {
   switch(
     paste0("model",model),
     modelSIR = continueSIR(object,time=time,...),
+    modelSIRS = continueSIR(object,time=time,...),
     modelSEIR = continueSEIR(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelSI2R = continueSI2R(object,time=time,...),
