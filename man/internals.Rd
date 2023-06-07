@@ -16,9 +16,9 @@
 \alias{print.gpsim}
 \title{Diagramming internals}
 \usage{
-genealogyGrob(object, m = NULL, n = NULL, vp = NULL, ...)
+genealogyGrob(object, m = NULL, n = NULL, vp = NULL, palette, ...)
 
-nodeGrob(object, digits = 1, n = NULL, vp = NULL)
+nodeGrob(object, digits = 1, palette, n = NULL, vp = NULL)
 
 pocketGrob(object, n = NULL, vp = NULL)
 
@@ -49,6 +49,11 @@ By default, the nodes will be adjusted in width to fit the window.}
 \item{n}{length of longest genealogy}
 
 \item{vp}{viewport to draw plot in}
+
+\item{palette}{color palette for indicating demes.
+This can be furnished either as a function or a vector of colors.
+If this is a function, it should take a single integer argument, the number of colors required.
+If it is a vector, it should have at least as many elements as there are demes in the genealogy.}
 
 \item{...}{arguments to be passed to \code{\link[grid:textGrob]{textGrob}}.}
 

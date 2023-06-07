@@ -12,7 +12,8 @@ diagram(
   m = NULL,
   n = NULL,
   ...,
-  digits = 1
+  digits = 1,
+  palette = scales::hue_pal(l = 80, c = 20, h = c(220, 580))
 )
 
 \method{print}{gpdiag}(x, newpage = is.null(vp), vp = NULL, ...)
@@ -34,6 +35,11 @@ By default, the balls will be adjusted in size to fit the space available.}
 
 \item{digits}{non-negative integer;
 number of decimal digits to print in the node time}
+
+\item{palette}{color palette for indicating demes.
+This can be furnished either as a function or a vector of colors.
+If this is a function, it should take a single integer argument, the number of colors required.
+If it is a vector, it should have at least as many elements as there are demes in the genealogy.}
 
 \item{x}{ An \R object. }
 

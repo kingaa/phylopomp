@@ -11,14 +11,14 @@
   SEXP curtail ## X (SEXP State, SEXP Time);			\
   SEXP info ## X (SEXP State, SEXP Prune, SEXP Obscure,         \
                   SEXP T0, SEXP Time, SEXP Descript,            \
-                  SEXP Yaml, SEXP Structure, SEXP Lineages,     \
-                  SEXP Tree);                                   \
+                  SEXP Yaml, SEXP Structure, SEXP Ndeme,     \
+                  SEXP Lineages, SEXP Tree);			\
   
 #define METHODS(X)                              \
   {"make" #X, (DL_FUNC) &make ## X, 3},         \
   {"revive" #X, (DL_FUNC) &revive ## X, 2},     \
   {"run" #X, (DL_FUNC) &run ## X, 2},           \
   {"curtail" #X, (DL_FUNC) &curtail ## X, 2},	\
-  {"info" #X, (DL_FUNC) &info ## X, 10}         \
+  {"info" #X, (DL_FUNC) &info ## X, 11}         \
 
 #endif

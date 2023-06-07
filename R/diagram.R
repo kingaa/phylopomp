@@ -4,7 +4,6 @@
 ##'
 ##' @name diagram
 ##' @include getinfo.R
-##'
 ##' @inheritParams getInfo
 ##' @inheritParams grid::gTree
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
@@ -14,28 +13,50 @@
 ##' By default, the balls will be adjusted in size to fit the space available.
 ##' @param digits non-negative integer;
 ##' number of decimal digits to print in the node time
-##' 
 ##' @return A \pkg{grid} graphics object (\code{grob}), invisibly.
-##'
 ##' @example examples/diagram.R
-##'
 ##' @importFrom dplyr if_else
 ##' @importFrom grid gpar viewport
 ##'
 NULL
 
 ##' @rdname diagram
+##' @importFrom scales hue_pal
+##' @param palette color palette for indicating demes.
+##' This can be furnished either as a function or a vector of colors.
+##' If this is a function, it should take a single integer argument, the number of colors required.
+##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
 ##' @export
 diagram <- function (
   object,
   prune = TRUE, obscure = TRUE,
-  m = NULL, n = NULL, ..., digits = 1
+  m = NULL, n = NULL, ..., digits = 1,
+  palette = scales::hue_pal(l=80,c=20,h=c(220,580))
 ) {
   object |>
-    getInfo(structure=TRUE,prune=prune,obscure=obscure) |>
+    getInfo(
+      prune=prune,
+      obscure=obscure,
+      structure=TRUE,
+      ndeme=TRUE
+    ) -> info
+  ndeme <- info$ndeme
+  if (is.function(palette)) {
+    if (ndeme > 1L)
+      palette <- c("#FFFFFF",palette(ndeme-1L))
+    else
+      palette <- "#FFFFFF"
+  } else {
+    if (length(palette) < ndeme)
+      pStop(sQuote("palette"),
+        " must have length at least ",ndeme,
+        " if specified as a vector.")
+  }
+  info |>
     getElement("structure") |>
     genealogyGrob(
       m=m,n=n,digits=digits,
+      palette=palette,
       vp=viewport(height=0.95,width=0.95,gp=gpar(...))
     ) -> x
   class(x) <- c("gpdiag",class(x))
@@ -78,13 +99,15 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##' @keywords internal
 ##' @param object list; genealogy structure
 ##' @param n length of longest genealogy
-##' 
 ##' @importFrom grid viewport gList gTree
 ##' @inheritParams diagram
 ##' @inheritParams grid::grob
 ##' 
 ##' @export
-genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
+genealogyGrob <- function (
+  object, m = NULL, n = NULL, vp = NULL,
+  palette, ...
+) {
   if (is.null(m)) m <- length(object$nodes)
   if (is.null(n)) {
     object$nodes |>
@@ -102,6 +125,7 @@ genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
           nodeGrob(
             object$nodes[[k]],
             n=n, ...,
+            palette=palette,
             vp=viewport(
               x=(k-1/2)/m,
               width=0.95/m,
@@ -124,15 +148,19 @@ genealogyGrob <- function (object, m = NULL, n = NULL, vp = NULL, ...) {
 ##' @inheritParams diagram
 ##' @inheritParams grid::grob
 ##' @export
-nodeGrob <- function (object, digits = 1, n = NULL, vp = NULL) {
+nodeGrob <- function (
+  object, digits = 1, palette, n = NULL, vp = NULL
+) {
+  palcol <- palette[object$deme+1L]
   gTree(
     name=object$name,
     children=gList(
-      roundrectGrob(),
+      roundrectGrob(gp=gpar(fill=palcol)),
       linesGrob(x=c(0,1),y=25/32),
       resizingTextGrob(
         label=object$name,
-        vp=viewport(y=7/8,height=1/4)
+        vp=viewport(y=7/8,height=1/4),
+        gp=gpar(col="black")
       ),
       resizingTextGrob(
         label=if_else(

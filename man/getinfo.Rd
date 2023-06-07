@@ -13,6 +13,7 @@ getInfo(
   description = FALSE,
   structure = FALSE,
   yaml = FALSE,
+  ndeme = FALSE,
   lineages = FALSE,
   tree = FALSE
 )
@@ -34,6 +35,8 @@ getInfo(
 
 \item{yaml}{logical; return the structure in YAML format?}
 
+\item{ndeme}{logical; return the number of demes?}
+
 \item{lineages}{logical; return the lineage-count function?}
 
 \item{tree}{logical; return the tree?}
@@ -47,6 +50,7 @@ A list containing the requested elements, including any or all of:
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
+  \item{ndeme}{the number of demes (an integer)}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
 }
 }

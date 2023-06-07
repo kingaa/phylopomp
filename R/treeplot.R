@@ -12,7 +12,6 @@
 ##' @param ... \code{plot} passes extra arguments to \code{\link{treeplot}}.
 ##' \code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
-##'
 ##' @example examples/movie.R
 ##'
 NULL
@@ -54,7 +53,7 @@ plot.gpsim <- function (
 ##' @param palette color palette for branches.
 ##' This can be furnished either as a function or a vector of colors.
 ##' If this is a function, it should take a single integer argument, the number of colors required.
-##' If it is a vector, ....
+##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
 ##' @export
 treeplot <- function (
   tree, time = NULL, t0 = 0,

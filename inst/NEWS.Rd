@@ -2,6 +2,8 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.7}{
   \itemize{
+    \item In genealogy diagrams, the nodes are now colored according to deme.
+    This can be controlled through the use of the \code{diagram} function's \code{palette} argument (cf. \code{plot}).
     \item The new function `curtail` curtails a genealogy (i.e., casts away nodes beyond a given time).
     \item The new function `newick` extracts a Newick-format description of a genealogy.
     \item The SIRS model is included as a synonym for SIR.

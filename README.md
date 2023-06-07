@@ -20,8 +20,8 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 
 ### Related packages:
 
-  - [**pomp**](https://kingaa.github.io/pomp/)
-  - [**circumstance**](https://kingaa.github.io/circumstance/)
+  - [**pomp**](https://github.com/kingaa/pomp/)
+  - [**circumstance**](https://github.com/kingaa/circumstance/)
 
 ### Checklist for adding a new model
 

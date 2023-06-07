@@ -12,6 +12,7 @@
 ##' @param description logical; return the description?
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
+##' @param ndeme logical; return the number of demes?
 ##' @param lineages logical; return the lineage-count function?
 ##' @include package.R
 ##' @importFrom tibble as_tibble
@@ -24,6 +25,7 @@
 ##'   \item{description}{a human readable description of the state of the genealogy process}
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
+##'   \item{ndeme}{the number of demes (an integer)}
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
 ##' }
 ##' 
@@ -34,24 +36,24 @@ getInfo <- function (
   object, prune = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
-  lineages = FALSE, tree = FALSE)
+  ndeme = FALSE, lineages = FALSE, tree = FALSE)
 {
   x <- switch(
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_infoSIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelSIRS = .Call(P_infoSIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelSEIR = .Call(P_infoSEIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelSIIR = .Call(P_infoSIIR,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelLBDP = .Call(P_infoLBDP,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelMoran = .Call(P_infoMoran,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     modelSI2R = .Call(P_infoSI2R,object,prune,obscure,t0,time,
-      description,yaml,structure,lineages,tree),
+      description,yaml,structure,ndeme,lineages,tree),
     model = pStop("no model specified"),
     pStop("unrecognized model ",sQuote(attr(object,"model")))
   )

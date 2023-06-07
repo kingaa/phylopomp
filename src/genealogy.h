@@ -29,14 +29,17 @@ private:
   // - the current time
   // - a sequence of nodes
   
-  //! The number of demes.
-  size_t ndeme;
   //! The next unique name.
   name_t _unique;               
   //! The initial time.
   slate_t _t0;
   //! The current time.
   slate_t _time;
+
+public:
+  
+  //! The number of demes.
+  size_t _ndeme;
   
 private:
 
@@ -55,9 +58,14 @@ private:
 
 public:
 
-  void set_unique (name_t u) {
-    if (u < _unique) warn("potential re-use of names!");
-    _unique = u;
+  //! set the unique name counter
+  //  void set_unique (name_t u) {
+  //    if (u < _unique) warn("potential re-use of names!");
+  //    _unique = u;
+  //  };
+  //! number of demes
+  size_t ndeme (void) const {
+    return _ndeme;
   };
 
 public:
@@ -69,7 +77,7 @@ public:
   };
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
-    name_t A[2]; A[0] = G._unique; A[1] = name_t(G.ndeme);
+    name_t A[2]; A[0] = G._unique; A[1] = name_t(G._ndeme);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
@@ -82,7 +90,7 @@ public:
     slate_t B[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G.ndeme = size_t(A[1]);
+    G._unique = A[0]; G._ndeme = size_t(A[1]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
@@ -93,7 +101,7 @@ public:
   //!  t0 = initial time
   genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1) {
     clean();
-    ndeme = nd;
+    _ndeme = nd;
     _unique = u;
     _time = _t0 = slate_t(t0);
   };
@@ -149,7 +157,7 @@ public:
   void lineage_count (double *t, int *deme,
                       int *ell, int *sat, int *etype) const {
     slate_t tcur = *t = timezero();
-    for (size_t j = 0; j < ndeme; j++) {
+    for (size_t j = 0; j < _ndeme; j++) {
       deme[j] = j+1;
       sat[j] = ell[j] = 0;
       etype[j] = 0;
@@ -158,11 +166,11 @@ public:
       node_t *p = *i;
       if (tcur < p->slate) {
         t++;
-        ell += ndeme; sat += ndeme; deme += ndeme; etype += ndeme;
+        ell += _ndeme; sat += _ndeme; deme += _ndeme; etype += _ndeme;
         *t = tcur = p->slate;
-        for (size_t j = 0; j < ndeme; j++) {
+        for (size_t j = 0; j < _ndeme; j++) {
           deme[j] = j+1;
-          ell[j] = (ell-ndeme)[j];
+          ell[j] = (ell-_ndeme)[j];
           sat[j] = 0;
           etype[j] = 0;
         }
@@ -170,9 +178,9 @@ public:
       p->lineage_incr(ell,sat,etype);
     }
     t++;
-    ell += ndeme; sat += ndeme; deme += ndeme; etype += ndeme;
+    ell += _ndeme; sat += _ndeme; deme += _ndeme; etype += _ndeme;
     *t = time();
-    for (size_t j = 0; j < ndeme; j++) {
+    for (size_t j = 0; j < _ndeme; j++) {
       sat[j] = ell[j] = 0;
       deme[j] = j+1;
       etype[j] = 3;
@@ -182,7 +190,7 @@ public:
   SEXP lineage_count (void) const {
     SEXP t, deme, ell, sat, etype, out, outn;
     int nt = ntime(timezero())+1;
-    int nl = ndeme*nt;
+    int nl = _ndeme*nt;
     PROTECT(t = NEW_NUMERIC(nt));
     PROTECT(deme = NEW_INTEGER(nl));
     PROTECT(ell = NEW_INTEGER(nl));
@@ -260,9 +268,9 @@ public:
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
     bool ok = true;
     if (size() > maxq+grace) {
-      err("maximum genealogy size exceeded!");
+      err("maximum genealogy size exceeded!"); // #nocov
     } else if (size() > maxq) {
-      ok = false;
+      ok = false;		// #nocov
     }
     return ok;
   };
@@ -364,7 +372,7 @@ public:
     }
     // drop superfluous nodes (holding just one ball).
     comb();
-    ndeme = 1;
+    _ndeme = 1;
     return *this;
   };
   //! curtail the genealogy by removing nodes
@@ -412,7 +420,7 @@ public:
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
     _unique = (_unique < G._unique) ? G._unique : _unique; 
-    ndeme = (ndeme < G.ndeme) ? G.ndeme : ndeme;
+    _ndeme = (_ndeme < G._ndeme) ? G._ndeme : _ndeme;
     return *this;
   };
   
@@ -483,7 +491,7 @@ private:
     size_t i = scan_label(s,&col,&deme,&t);
     t += t0;
     _time = (_time < t) ? t : _time;
-    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
+    _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
     if (col != black) err("in '%s': bad Newick string (1)",__func__);
     if (p == 0) err("in '%s': bad Newick string (2)",__func__);
     ball_t *b = new ball_t(p,unique(),col,deme);
@@ -499,7 +507,7 @@ private:
     name_t u = unique();
     i = scan_label(s,&col,&deme,&t);
     t += t0;
-    ndeme = (ndeme <= deme) ? deme+1 : ndeme;
+    _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
     _time = (_time < t) ? t : _time;
     node_t *p = new node_t(u,t,deme);
     ball_t *g = new ball_t(p,u,green,deme);

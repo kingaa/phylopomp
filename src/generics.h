@@ -4,6 +4,13 @@
 #include "internal.h"
 
 template <class TYPE>
+SEXP ndeme (TYPE& X) {
+  SEXP o = NEW_INTEGER(1);
+  *INTEGER(o) = int(X.geneal.ndeme());
+  return o;
+}
+
+template <class TYPE>
 SEXP timezero (TYPE& X) {
   SEXP o = NEW_NUMERIC(1);
   *REAL(o) = X.timezero();
@@ -120,8 +127,8 @@ SEXP lineage_count (const TYPE& G) {
 template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
            SEXP T0, SEXP Time, SEXP Descript,
-           SEXP Yaml, SEXP Structure, SEXP Lineages,
-           SEXP Tree) {
+           SEXP Yaml, SEXP Structure, SEXP Ndeme,
+	   SEXP Lineages, SEXP Tree) {
   TYPE A = State;
 
   // prune and/or obscure if requested
@@ -146,6 +153,9 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 
   bool get_struc = *LOGICAL(AS_LOGICAL(Structure));
   if (get_struc) nout++;
+
+  bool get_ndeme = *LOGICAL(AS_LOGICAL(Ndeme));
+  if (get_ndeme) nout++;
 
   bool get_lin = *LOGICAL(AS_LOGICAL(Lineages));
   if (get_lin) nout++;
@@ -172,6 +182,9 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
   }
   if (get_struc) {
     k = set_list_elem(out,outnames,structure(A),"structure",k);
+  }
+  if (get_ndeme) {
+    k = set_list_elem(out,outnames,ndeme(A),"ndeme",k);
   }
   if (get_lin) {
     k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
@@ -209,15 +222,15 @@ SEXP curtail (SEXP State, SEXP Time) {
     return curtail<TYPE>(State,Time);				      \
   }								      \
 
-#define INFOFN(X,TYPE) SEXP info ## X (                                 \
-                                       SEXP State, SEXP Prune, SEXP Obscure, \
-                                       SEXP T0, SEXP Time, SEXP Descript, \
-                                       SEXP Yaml, SEXP Structure, SEXP Lineages, \
-                                       SEXP Tree) {                     \
+#define INFOFN(X,TYPE) SEXP info ## X (					\
+   SEXP State, SEXP Prune, SEXP Obscure,				\
+   SEXP T0, SEXP Time, SEXP Descript,					\
+   SEXP Yaml, SEXP Structure, SEXP Ndeme,				\
+   SEXP Lineages, SEXP Tree) {						\
     return info<TYPE>(State, Prune, Obscure,                            \
                       T0, Time, Descript,                               \
-                      Yaml,Structure, Lineages,                         \
-                      Tree);                                            \
+                      Yaml, Structure, Ndeme,				\
+		      Lineages,	Tree);					\
   }                                                                     \
 
 #define GENERICS(X,TYPE)                        \

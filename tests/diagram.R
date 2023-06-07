@@ -22,6 +22,14 @@ freeze(
 ) |> diagram(prune=FALSE)
 dev.off()
 
+png(filename="diagram-04.png",res=100,
+  width=1338,height=134,units="px")
+freeze(
+  simulate("SIIR",time=0.3,psi1=1,psi2=1,S0=100),
+  seed=459939038
+) |> diagram(prune=FALSE,obscure=FALSE)
+dev.off()
+
 simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,delta=1) |>
   getInfo(description=TRUE) |>
   getElement("description") |>
