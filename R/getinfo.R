@@ -64,7 +64,6 @@ getInfo <- function (
 }
 
 reshape_lineages <- function (x) {
-  x$time <- rep(x$time,each=length(unique(x$deme)))
   x |> as_tibble() -> lin
   lin |>
     structure(

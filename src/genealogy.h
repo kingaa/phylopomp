@@ -154,10 +154,11 @@ public:
   //! -  1 = sample
   //! -  2 = non-sample node
   //! -  3 = end of interval
-  void lineage_count (double *t, int *deme,
+  void lineage_count (double *tout, int *deme,
                       int *ell, int *sat, int *etype) const {
-    slate_t tcur = *t = timezero();
+    slate_t tcur = timezero();
     for (size_t j = 0; j < _ndeme; j++) {
+      tout[j] = tcur;
       deme[j] = j+1;
       sat[j] = ell[j] = 0;
       etype[j] = 0;
@@ -165,10 +166,11 @@ public:
     for (node_it i = begin(); i != end(); i++) {
       node_t *p = *i;
       if (tcur < p->slate) {
-        t++;
-        ell += _ndeme; sat += _ndeme; deme += _ndeme; etype += _ndeme;
-        *t = tcur = p->slate;
+	tout += _ndeme; ell += _ndeme; sat += _ndeme;
+	deme += _ndeme; etype += _ndeme;
+        tcur = p->slate;
         for (size_t j = 0; j < _ndeme; j++) {
+	  tout[j] = tcur;
           deme[j] = j+1;
           ell[j] = (ell-_ndeme)[j];
           sat[j] = 0;
@@ -177,10 +179,11 @@ public:
       }
       p->lineage_incr(ell,sat,etype);
     }
-    t++;
-    ell += _ndeme; sat += _ndeme; deme += _ndeme; etype += _ndeme;
-    *t = time();
+    tout += _ndeme; ell += _ndeme; sat += _ndeme;
+    deme += _ndeme; etype += _ndeme;
+    tcur = time();
     for (size_t j = 0; j < _ndeme; j++) {
+      tout[j] = tcur;
       sat[j] = ell[j] = 0;
       deme[j] = j+1;
       etype[j] = 3;
@@ -188,23 +191,23 @@ public:
   };
   //! lineage count and saturation
   SEXP lineage_count (void) const {
-    SEXP t, deme, ell, sat, etype, out, outn;
+    SEXP tout, deme, ell, sat, etype, out, outn;
     int nt = ntime(timezero())+1;
     int nl = _ndeme*nt;
-    PROTECT(t = NEW_NUMERIC(nt));
+    PROTECT(tout = NEW_NUMERIC(nl));
     PROTECT(deme = NEW_INTEGER(nl));
     PROTECT(ell = NEW_INTEGER(nl));
     PROTECT(sat = NEW_INTEGER(nl));
     PROTECT(etype = NEW_INTEGER(nl));
     PROTECT(out = NEW_LIST(5));
     PROTECT(outn = NEW_CHARACTER(5));
-    set_list_elem(out,outn,t,"time",0);
+    set_list_elem(out,outn,tout,"time",0);
     set_list_elem(out,outn,deme,"deme",1);
     set_list_elem(out,outn,ell,"lineages",2);
     set_list_elem(out,outn,sat,"saturation",3);
     set_list_elem(out,outn,etype,"event_type",4);
     SET_NAMES(out,outn);
-    lineage_count(REAL(t),INTEGER(deme),INTEGER(ell),
+    lineage_count(REAL(tout),INTEGER(deme),INTEGER(ell),
                   INTEGER(sat),INTEGER(etype));
     UNPROTECT(7);
     return out;
