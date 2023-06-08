@@ -91,9 +91,8 @@ treeplot <- function (
     palette <- palette(ndeme)
   } else {
     if (length(palette) < ndeme)
-      pStop(sQuote("palette"),
-        " must have length at least ",ndeme,
-        " if specified as a vector.")
+      pStop("if specified as a vector, ",sQuote("palette"),
+        " must have length at least ",ndeme,".")
   }
 
   time <- as.numeric(c(time,max(dat$x)))[1L]

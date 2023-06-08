@@ -48,9 +48,8 @@ diagram <- function (
       palette <- "#FFFFFF"
   } else {
     if (length(palette) < ndeme)
-      pStop(sQuote("palette"),
-        " must have length at least ",ndeme,
-        " if specified as a vector.")
+      pStop("if specified as a vector, ",sQuote("palette"),
+        " must have length at least ",ndeme,".")
   }
   info |>
     getElement("structure") |>
@@ -187,8 +186,7 @@ nodeGrob <- function (
 ##' @importFrom grid roundrectGrob linesGrob textGrob gpar grobTree
 ##' @inheritParams grid::grob
 ##' @export
-pocketGrob <- function (object, n = NULL, vp = NULL) {
-  if (is.null(n)) n <- length(object)
+pocketGrob <- function (object, n, vp = NULL) {
   y0 <- 1+1/2/n
   dy <- 1/n
   gTree(

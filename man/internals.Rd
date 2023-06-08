@@ -20,7 +20,7 @@ genealogyGrob(object, m = NULL, n = NULL, vp = NULL, palette, ...)
 
 nodeGrob(object, digits = 1, palette, n = NULL, vp = NULL)
 
-pocketGrob(object, n = NULL, vp = NULL)
+pocketGrob(object, n, vp = NULL)
 
 ballGrob(object, vp = NULL)
 

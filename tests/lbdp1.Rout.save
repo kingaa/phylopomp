@@ -50,7 +50,7 @@ Error : in 'runLBDP': 'n0' must be a nonnegative integer.
 > 
 > try(simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
 +   plot(points=TRUE,palette=NULL))
-Error : in 'treeplot': 'palette' must have length at least 1 if specified as a vector.
+Error : in 'treeplot': if specified as a vector, 'palette' must have length at least 1.
 > 
 > dev.off()
 null device 
