@@ -69,13 +69,13 @@ public:
   ball_t & operator= (ball_t&&) = delete;
   //! destructor
   ~ball_t (void) = default;
-  //! view deme
+  //! view deme (of a black ball).
   name_t deme (void) const {
     if (color != black)
       err("ask not the deme of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
-  //! change deme
+  //! change deme (of a black ball).
   name_t& deme (void) {
     if (color != black)
       err("meddle not in the deme of a %s ball!",colores[color]); // #nocov

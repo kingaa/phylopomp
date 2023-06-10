@@ -161,7 +161,6 @@ public:
     }
     return o;
   };
-
   //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
@@ -171,7 +170,6 @@ public:
       q->erase(b); p->insert(b); b->holder() = p;
     }
   };
-
   //! add node p; take as parent the node holding ball a.
   //! the deme of p is changed to match that of a
   void add (node_t *p, ball_t *a) {
@@ -179,7 +177,6 @@ public:
     p->deme = a->deme();
     push_back(p);
   };
-
   //! drop the black ball 'a' and the node if either
   //! (1) the node becomes thereby a dead root, or
   //! (2) the node's pocket becomes thereby empty.
@@ -199,7 +196,6 @@ public:
       drop(a);                  // recurse
     }
   };
-
   //! remove a dead root node
   void destroy_node (node_t *p) {
     if (!p->dead_root())
@@ -207,15 +203,6 @@ public:
     remove(p);
     delete p;
   };
-
-  //! remove a dead root node
-  void destroy_node (node_nit i) {
-    if (!(*i)->dead_root())
-      err("in '%s': invalid call.",__func__); // #nocov
-    erase(i);
-    delete *i;
-  };
-
   //! pass through the sequence, dropping superfluous nodes
   //! i.e., those holding just one ball that is green.
   void comb (void) {
@@ -233,7 +220,7 @@ public:
       }
     }
   };
-  //! merge two node sequences
+  //! merge two node sequences.
   nodeseq_t& operator+= (nodeseq_t& other) {
     this->merge(other,node_compare);
     return *this;

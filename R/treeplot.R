@@ -126,12 +126,11 @@ treeplot <- function (
   dat |>
     ggplot(aes(x=x,y=y))+
     geom_tree(aes(alpha=vis,color=deme))+
-    expand_limits(x=dat$x)+
     scale_x_continuous()+
     scale_color_manual(values=palette,na.value="#ffffff00")+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
-    expand_limits(x=c(t0,time))+
+    expand_limits(x=c(dat$x,t0,time))+
     theme_tree2()+
     theme(...) -> pl
 

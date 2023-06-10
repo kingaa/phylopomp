@@ -9,4 +9,6 @@ simulate("SIR",time=10) |>
   newick(prune=FALSE) |>
   treeplot(time=0,t0=NA)
 
+treeplot("")
+
 dev.off()

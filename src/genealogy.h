@@ -266,7 +266,7 @@ public:
 
   //! check the validity of the genealogy.
   void valid (void) const {};
-
+  //! check the size of the genealogy (to prevent memory exhaustion).
   bool check_genealogy_size (size_t grace = 0) const {
     static size_t maxq = MEMORY_MAX/(sizeof(node_t)+2*sizeof(ball_t));
     bool ok = true;
@@ -280,6 +280,8 @@ public:
 
 public:
 
+  //! create a node holding its own green ball.
+  //! insert into the genealogy.
   node_t* make_node (name_t d = 0) {
     check_genealogy_size(0);
     name_t u = unique();
@@ -291,6 +293,7 @@ public:
   };
 
 public:
+
   //! birth into deme d 
   ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
@@ -340,13 +343,11 @@ public:
     a->deme() = d;
     return a;
   };
-
   //! set up for extraction of black balls
   //! (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {
     return std::pair<node_it,node_it>(cbegin(),cend());
   };
-
   //! prune the tree (drop all black balls)
   genealogy_t& prune (void) {
     pocket_t *blacks = colored(black);
@@ -358,7 +359,6 @@ public:
     delete blacks;
     return *this;
   };
-
   //! erase all deme information
   genealogy_t& obscure (void) {
     // erase deme information from black balls.
@@ -417,7 +417,7 @@ public:
   //! 1. the node-sequences are merged;
   //! 2. the root time retreats as necessary;
   //! 3. the current time advances as necessary;
-  //! 4. the next unique-name counter advances as necessary.
+  //! 4. the unique-name stack advances as necessary.
   genealogy_t& operator+= (genealogy_t& G) {
     reinterpret_cast<nodeseq_t&>(*this) += reinterpret_cast<nodeseq_t&>(G);
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;

@@ -36,6 +36,8 @@ Error : in 'treeplot': 'tree' must be specified.
 +   newick(prune=FALSE) |>
 +   treeplot(time=0,t0=NA)
 > 
+> treeplot("")
+> 
 > dev.off()
 null device 
           1 
