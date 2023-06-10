@@ -13,6 +13,8 @@
 typedef enum {green, black, blue} color_t;
 static const char* colores[] = {"green", "black", "blue"};
 static const char* colorsymb[] = {"g", "o", "b"};
+static const name_t undeme = name_t(NA_INTEGER);
+static const name_t null_lineage = undeme;
 
 class node_t;
 
@@ -53,7 +55,7 @@ public:
   };
 public:
   //! basic constructor for ball class
-  ball_t (node_t *who = 0, name_t u = 0, color_t col = green, name_t d = 0) {
+  ball_t (node_t *who = 0, name_t u = 0, color_t col = green, name_t d = undeme) {
     _holder = _owner = who;
     uniq = u;
     color = col;
@@ -79,6 +81,18 @@ public:
   name_t& deme (void) {
     if (color != black)
       err("meddle not in the deme of a %s ball!",colores[color]); // #nocov
+    return _deme;
+  };
+  //! view lineage (of a green ball).
+  name_t lineage (void) const {
+    if (color != green)
+      err("ask not the lineage of a %s ball!",colores[color]); // #nocov
+    return _deme;
+  };
+  //! change lineage (of a green ball).
+  name_t& lineage (void) {
+    if (color != green)
+      err("meddle not with the lineage of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
   //! view owner

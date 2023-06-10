@@ -225,6 +225,50 @@ public:
     this->merge(other,node_compare);
     return *this;
   };
+
+private:
+  
+  //! trace back a single lineage.
+  //! this results in the deme slot for all green balls along
+  //! the lineage of 'b' begin replaced by the unique name of 'b'.
+  void trace_lineage (ball_t *b) {
+    ball_t *g = b->holder()->green_ball();
+    bool contin = true;
+    while (contin) {
+      if (g->lineage() == null_lineage) {
+        g->lineage() = b->uniq;
+        g = g->holder()->green_ball();
+      } else {
+        contin = false;
+      }
+    }
+  };
+
+public:
+  
+  //! trace back all sample lineages.
+  //! this results in the deme slots of all green balls being
+  //! replaced by the unique names of the lineages they trace.
+  void trace_lineages (void) {
+    // first, we de-deme the green balls:
+    // for (node_it i = begin(); i != end(); i++) {
+    //   node_t *p = *i;
+    //   for (ball_it j = p->begin(); j != p->end(); j++) {
+    //     if ((*j)->is(green)) {
+    //       (*j)->lineage() = null_lineage;
+    //     }
+    //   }
+    // }
+    // we trace each lineage in turn.
+    // because we move from early to late,
+    // the order is guaranteed to be valid.
+    for (node_it i = begin(); i != end(); i++) {
+      node_t *p = *i;
+      for (ball_it j = p->begin(); j != p->end(); j++) {
+        if ((*j)->is(blue)) trace_lineage(*j);
+      }
+    }
+  };
 };
 
 #endif

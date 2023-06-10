@@ -202,12 +202,12 @@ public:
       case green:
         p = b->child();
         if (p != this) {
-	  if (n++ > 0) o2 += ",";
+          if (n++ > 0) o2 += ",";
           o2 += p->newick(tnow,slate);
         }
         break;
       case black:
-	if (n++ > 0) o2 += ",";
+        if (n++ > 0) o2 += ",";
         o2 += b->newick(tnow-slate);
         break;
       case blue:

@@ -68,15 +68,15 @@ void lbdp_gill
       u -= cutoff[event];
     }
     switch (event) {
-    case 0:			// birth
+    case 0:                     // birth
       n += 1;
       break;
-    case 1:			// death
+    case 1:                     // death
       n -= 1;
       break;
-    default:					 // #nocov
+    default:                                     // #nocov
       error("impossible error in 'lbdp_pomp'!"); // #nocov
-      break;					 // #nocov
+      break;                                     // #nocov
     }
     cfact = (lineages > 1) ? lineages*(lineages-1)/n/(n+1) : 0;
     cfact = (cfact < 1) ? cfact : 1;

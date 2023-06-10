@@ -128,7 +128,7 @@ template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
            SEXP T0, SEXP Time, SEXP Descript,
            SEXP Yaml, SEXP Structure, SEXP Ndeme,
-	   SEXP Lineages, SEXP Tree) {
+           SEXP Lineages, SEXP Tree) {
   TYPE A = State;
 
   // prune and/or obscure if requested
@@ -218,19 +218,19 @@ SEXP curtail (SEXP State, SEXP Time) {
     return run<TYPE>(State,Times);                              \
   }                                                             \
 
-#define CURTAILFN(X,TYPE) SEXP curtail ## X (SEXP State, SEXP Time) { \
-    return curtail<TYPE>(State,Time);				      \
-  }								      \
+#define CURTAILFN(X,TYPE) SEXP curtail ## X (SEXP State, SEXP Time) {   \
+    return curtail<TYPE>(State,Time);                                   \
+  }                                                                     \
 
-#define INFOFN(X,TYPE) SEXP info ## X (					\
-   SEXP State, SEXP Prune, SEXP Obscure,				\
-   SEXP T0, SEXP Time, SEXP Descript,					\
-   SEXP Yaml, SEXP Structure, SEXP Ndeme,				\
-   SEXP Lineages, SEXP Tree) {						\
+#define INFOFN(X,TYPE) SEXP info ## X (                                 \
+                                       SEXP State, SEXP Prune, SEXP Obscure, \
+                                       SEXP T0, SEXP Time, SEXP Descript, \
+                                       SEXP Yaml, SEXP Structure, SEXP Ndeme, \
+                                       SEXP Lineages, SEXP Tree) {      \
     return info<TYPE>(State, Prune, Obscure,                            \
                       T0, Time, Descript,                               \
-                      Yaml, Structure, Ndeme,				\
-		      Lineages,	Tree);					\
+                      Yaml, Structure, Ndeme,                           \
+                      Lineages, Tree);                                  \
   }                                                                     \
 
 #define GENERICS(X,TYPE)                        \
@@ -242,8 +242,8 @@ SEXP curtail (SEXP State, SEXP Time) {
                                                 \
     RUNFN(X,TYPE)                               \
                                                 \
-    CURTAILFN(X,TYPE)				\
-    						\
+    CURTAILFN(X,TYPE)                           \
+                                                \
     INFOFN(X,TYPE)                              \
                                                 \
   }                                             \

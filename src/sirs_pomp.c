@@ -66,8 +66,8 @@ void sirs_gill
   cfact = (lineages > 1) ? lineages*(lineages-1)/I/(I+1) : 0;
   cfact = (cfact < 1) ? cfact : 1;
   cutoff[0] = (1-cfact)*Beta*S*I/N; // transmission
-  cutoff[1] = gamma*I;		    // recovery
-  cutoff[2] = Delta*R;		    // loss of immunity
+  cutoff[1] = gamma*I;              // recovery
+  cutoff[2] = Delta*R;              // loss of immunity
   event_rate = cutoff[0] + cutoff[1] + cutoff[2];
   tstep = exp_rand()/event_rate;
   while (t + tstep < tmax) {
@@ -100,9 +100,9 @@ void sirs_gill
       cutoff[0] = (1-cfact)*Beta*S*I/N;
       cutoff[2] = Delta*R;
       break;
-    default:					 // #nocov
+    default:                                     // #nocov
       error("impossible error in 'sirs_pomp'!"); // #nocov
-      break;					 // #nocov
+      break;                                     // #nocov
     }
     event_rate = cutoff[0] + cutoff[1] + cutoff[2];
     t += tstep;

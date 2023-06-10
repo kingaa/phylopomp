@@ -99,9 +99,9 @@ void sir_genealogy_t::jump (int event) {
   case 3:
     state.R -= 1; state.S += 1;
     break;
-  default:						  // #nocov
+  default:                                                // #nocov
     err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
-    break;						  // #nocov
+    break;                                                // #nocov
   }
 }
 

@@ -166,11 +166,11 @@ public:
     for (node_it i = begin(); i != end(); i++) {
       node_t *p = *i;
       if (tcur < p->slate) {
-	tout += _ndeme; ell += _ndeme; sat += _ndeme;
-	deme += _ndeme; etype += _ndeme;
+        tout += _ndeme; ell += _ndeme; sat += _ndeme;
+        deme += _ndeme; etype += _ndeme;
         tcur = p->slate;
         for (size_t j = 0; j < _ndeme; j++) {
-	  tout[j] = tcur;
+          tout[j] = tcur;
           deme[j] = j+1;
           ell[j] = (ell-_ndeme)[j];
           sat[j] = 0;
@@ -273,7 +273,7 @@ public:
     if (size() > maxq+grace) {
       err("maximum genealogy size exceeded!"); // #nocov
     } else if (size() > maxq) {
-      ok = false;		// #nocov
+      ok = false;               // #nocov
     }
     return ok;
   };
@@ -282,11 +282,11 @@ public:
 
   //! create a node holding its own green ball.
   //! insert into the genealogy.
-  node_t* make_node (name_t d = 0) {
+  node_t* make_node (name_t d) {
     check_genealogy_size(0);
     name_t u = unique();
     node_t *p = new node_t(u,_time,d);
-    ball_t *g = new ball_t(p,u,green,d);
+    ball_t *g = new ball_t(p,u,green);
     p->green_ball() = g;
     p->insert(g);
     return p;
@@ -295,7 +295,7 @@ public:
 public:
 
   //! birth into deme d 
-  ball_t* birth (ball_t* a, slate_t t, name_t d = 0) {
+  ball_t* birth (ball_t* a, slate_t t, name_t d) {
     time() = t;
     node_t *p = make_node(a->deme());
     ball_t *b = new ball_t (p,p->uniq,black,d);
@@ -305,7 +305,7 @@ public:
     return b;           
   };
   //! birth of second or subsequent sibling into deme d
-  ball_t* birth (node_t* p, name_t d = 0) {
+  ball_t* birth (node_t* p, name_t d) {
     ball_t *b = new ball_t(p,unique(),black,d);
     p->insert(b);
     return b;
@@ -316,7 +316,7 @@ public:
     drop(a);
   };
   //! graft a new lineage into deme d
-  ball_t* graft (slate_t t, name_t d = 0) {
+  ball_t* graft (slate_t t, name_t d) {
     time() = t;
     node_t *p = make_node(d);
     ball_t *b = new ball_t (p,p->uniq,black,d);
@@ -491,13 +491,14 @@ private:
     color_t col;
     name_t deme;
     slate_t t;
+    ball_t *b;
     size_t i = scan_label(s,&col,&deme,&t);
     t += t0;
     _time = (_time < t) ? t : _time;
     _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
     if (col != black) err("in '%s': bad Newick string (1)",__func__);
     if (p == 0) err("in '%s': bad Newick string (2)",__func__);
-    ball_t *b = new ball_t(p,unique(),col,deme);
+    b = new ball_t(p,unique(),col,deme);
     p->insert(b);
     return i;
   };
@@ -513,7 +514,7 @@ private:
     _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
     _time = (_time < t) ? t : _time;
     node_t *p = new node_t(u,t,deme);
-    ball_t *g = new ball_t(p,u,green,deme);
+    ball_t *g = new ball_t(p,u,green);
     p->green_ball() = g;
     p->insert(g);
     if (col==blue) {

@@ -72,9 +72,9 @@ void moran_genealogy_t::jump (int event) {
   case 1:
     state.g += 1; sample();
     break;
-  default:						  // #nocov
+  default:                                                // #nocov
     err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
-    break;						  // #nocov
+    break;                                                // #nocov
   }
 }
 

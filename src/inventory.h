@@ -7,45 +7,60 @@
 #include <utility>
 #include "internal.h"
 #include "ball.h"
+#include "pocket.h"
 #include "node.h"
 
 //! Representation for the inventory process.
 
 //! An inventory consists of an array of demes.
 //! Each deme is a set of black balls.
-template<size_t ndeme = 1>
+template <size_t NDEME = 1>
 class inventory_t {
+
 private:
-  pocket_t _inven[ndeme];	// pocket_t is defined in 'ball.h'
+
+  pocket_t _inven[NDEME];
+  const static size_t ndeme = NDEME;
+
 public:
+
+  // CONSTRUCTORS, DESTRUCTORS, ETC.
   //! basic constructor for inventory class
   inventory_t (void) = default;
+  //! constructor from serialized binary form
+  inventory_t (raw_t *o) {
+    o >> *this;
+  };
+  //! constructor from serialized binary form (in double disguise)
+  inventory_t (double_t *o) {
+    reinterpret_cast<const raw_t&>(o) >> *this;
+  };
   //! constructor from node sequence (via 'extant' operation).
   //! this constructs an inventory from a genealogy.
   inventory_t (std::pair<node_it,node_it>&& I) {
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-  	insert(*j);		// 'insert' checks color
+        insert(*j);             // 'insert' checks color
       }
     }
   };
-  //! copy an inventory
+  //! copy constructor
+  inventory_t (const inventory_t &) = default;
+  //! move constructor
+  inventory_t (inventory_t &&) = delete;
+  //! copy an inventory by iterating over a node sequence
   inventory_t& operator= (std::pair<node_it,node_it>&& I) {
     clean();
     for (node_it i = I.first; i != I.second; i++) {
       for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-  	insert(*j); // 'insert' checks color
+        insert(*j); // 'insert' checks color
       }
     }
     return *this;
   };
-  //! copy constructor
-  inventory_t (const inventory_t &) = default;
   //! copy assignment operator
   inventory_t & operator= (const inventory_t &) = default;
-  //! move constructor
-  inventory_t (inventory_t &&) = delete;
   //! move assignment operator
   inventory_t & operator= (inventory_t &&) = delete;
   //! destructor
@@ -60,6 +75,33 @@ public:
   void clear (void) {
     for (size_t i = 0; i < ndeme; i++)    
       _inven[i].clear();
+  };
+  // SERIALIZATION
+  //! size of serialized binary form
+  size_t bytesize (void) const {
+    size_t s = 0;
+    for (size_t i = 0; i < ndeme; i++) 
+      s += _inven[i].bytesize();
+    return s;
+  };
+  size_t doublesize (void) const {
+    size_t s = bytesize();
+    return s/sizeof(double) + 1;
+  };
+  //! binary serialization
+  friend raw_t* operator>> (const inventory_t& I, raw_t* o) {
+    for (size_t i = 0; i < ndeme; i++) {
+      o = (I._inven[i] >> o);
+    }
+    return o;
+  };
+  //! binary deserialization
+  friend raw_t* operator>> (raw_t* o, inventory_t& I) {
+    I.clean();
+    for (size_t i = 0; i < ndeme; i++) {
+      o = (o >> I._inven[i]);
+    }
+    return o;
   };
   //! Total number of balls in an inventory.
   //! i.e., the sum of the sizes of all demes
@@ -105,23 +147,23 @@ public:
     } else {
       name_t n = _inven[i].size();
       if (n < 2)
-	err("in '%s': cannot draw from inventory %ld",__func__,i); // # nocov
+        err("in '%s': cannot draw from inventory %ld",__func__,i); // # nocov
       name_t d1 = random_integer(n-1);
       name_t d2 = random_integer(n);
       bool toggle = false;
       if (d1 >= d2) {
-	toggle = true;
-	d1++;
-	n = d1; d1 = d2; d2 = n;
+        toggle = true;
+        d1++;
+        n = d1; d1 = d2; d2 = n;
       }
       ball_it k = _inven[i].begin();
       while (d1 > 0) {
-	d1--; d2--; k++;
+        d1--; d2--; k++;
       }
       if (toggle) ballJ = *k;
       else ballI = *k;
       while (d2 > 0) {
-	d2--; k++;
+        d2--; k++;
       }
       if (toggle) ballI = *k;
       else ballJ = *k;
@@ -141,7 +183,7 @@ public:
   void erase (ball_t *b) {
     if (b->is(black)) {
       if (_inven[b->deme()].empty())
-	err("in '%s': empty deme %ld.",__func__,b->deme()); // # nocov
+        err("in '%s': empty deme %ld.",__func__,b->deme()); // # nocov
       _inven[b->deme()].erase(b);
     }
   };
