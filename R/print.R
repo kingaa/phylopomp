@@ -4,5 +4,9 @@
 ##' @method print gpsim
 ##' @export
 print.gpsim <- function (x, ...) {
-  cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
+  if (is.null(attr(x,"model"))) {
+    cat("<phylopomp genealogy>\n",sep=" ")
+  } else {
+    cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
+  }
 }

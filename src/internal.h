@@ -26,22 +26,6 @@ typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
 typedef double slate_t;
 typedef size_t name_t;
 
-inline SEXP trueSEXP (void) {
-  SEXP x;
-  PROTECT(x = NEW_LOGICAL(1));
-  *LOGICAL(x) = 1;
-  UNPROTECT(1);
-  return x;
-}
-
-inline SEXP falseSEXP (void) {
-  SEXP x;
-  PROTECT(x = NEW_LOGICAL(1));
-  *LOGICAL(x) = 0;
-  UNPROTECT(1);
-  return x;
-}
-
 // interface with R's integer RNG
 inline int random_integer (int n) {
   return (int) floor(R_unif_index((double) n));

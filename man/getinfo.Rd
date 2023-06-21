@@ -53,15 +53,15 @@ getInfo(
 \value{
 A list containing the requested elements, including any or all of:
 \describe{
-  \item{t0}{the initial time}
-  \item{time}{the current time}
+  \item{t0}{the initial time (a numeric scalar)}
+  \item{time}{the final time (a numeric scalar)}
+  \item{ndeme}{the number of demes (an integer)}
+  \item{nsample}{the number of samples (an integer)}
   \item{newick}{the genealogical tree, in Newick format}
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
-  \item{ndeme}{the number of demes (an integer)}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
-  \item{nsample}{the number of samples (an integer)}
   \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
 }
 }
@@ -83,3 +83,4 @@ simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
   lineages() |>
   plot()
 }
+\keyword{internal}

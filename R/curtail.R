@@ -20,8 +20,7 @@ curtail <- function (object, time = NA, prune = TRUE, obscure = TRUE) {
     modelLBDP = .Call(P_curtailLBDP,object,time),
     modelMoran = .Call(P_curtailMoran,object,time),
     modelSI2R = .Call(P_curtailSI2R,object,time),
-    modelBare = .Call(P_curtailBare,object,time),
-    model = pStop("no model specified"),
+    model = .Call(P_curtailBare,object,time),
     pStop("unrecognized model ",sQuote(attr(object,"model")))
   ) |>
     structure(model=attr(object,"model"),class="gpsim")

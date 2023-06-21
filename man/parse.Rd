@@ -15,7 +15,7 @@ See Details for specifics.}
 \item{tf}{numeric; the current or final time.}
 }
 \value{
-An object of class \dQuote{gpsim} with attribute \dQuote{model} set to \dQuote{"Bare"}.
+An object of class \dQuote{gpsim}.
 }
 \description{
 Parses a Newick description and returns a binary version of the genealogy.

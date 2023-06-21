@@ -9,10 +9,10 @@
 ##' @param tf numeric; the current or final time.
 ##' @importFrom tibble tibble
 ##' @return
-##' An object of class \dQuote{gpsim} with attribute \dQuote{model} set to \dQuote{"Bare"}.
+##' An object of class \dQuote{gpsim}.
 ##' @rdname parse
 ##' @export
 parse_newick <- function (x, t0 = 0, tf = NA) {
   .Call(P_parse_newick,x,t0,tf) |>
-    structure(model="Bare",class="gpsim")
+    structure(class="gpsim")
 }

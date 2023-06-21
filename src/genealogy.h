@@ -112,6 +112,7 @@ public:
   };
   //! constructor from RAW SEXP (containing binary serialization)
   genealogy_t (SEXP o) {
+    if (LENGTH(o)==0) err("cannot deserialize a NULL.");
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);
@@ -133,9 +134,9 @@ public:
     return *this;
   };
   //! move constructor
-  genealogy_t (genealogy_t&&) = delete;
+  genealogy_t (genealogy_t&&) = default;
   //! move assignment operator
-  genealogy_t& operator= (genealogy_t&&) = delete;
+  genealogy_t& operator= (genealogy_t&&) = default;
   //! destructor
   ~genealogy_t (void) {
     clean();

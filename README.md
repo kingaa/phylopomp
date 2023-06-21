@@ -27,7 +27,7 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 
 - [x] create and edit `src/<model>.cc`
 - [x] edit `src/init.c`
-- [x] edit `R/getinfo.R`
+- [x] edit `R/geneal.R`
 - [x] create and edit `R/<model>.R`
 - [x] add examples to `examples/<model.R>`
 - [x] add tests to `tests/`

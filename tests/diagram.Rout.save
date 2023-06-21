@@ -163,112 +163,90 @@ node(76,0) {black(1,0), black(76,0)}, t = 0.297674
 +   getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
 +   getElement("yaml") |>
 +   cat()
-parameter:
-  Beta: 2.000000
-  gamma: 1.000000
-  psi: 1.000000
-  delta: 0.000000
-  S0: 100
-  I0: 2
-  R0: 0
-state:
-  S: 100
-  I: 1
-  R: 1
-  N: 102.000000
-genealogy:
-  t0: 0.000000
-  time: 0.500000
-  nodes:
-  - name: 0
+t0: 0.000000
+time: 0.500000
+nodes:
+- name: 0
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 0
+  - color: black
+    name: 0
     deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 0
-    - color: black
-      name: 0
-      deme: 0
 > 
 > simulate("LBDP",time=0.5) |>
 +   getInfo(yaml=TRUE) |>
 +   getElement("yaml") |>
 +   cat()
-parameter:
-  lambda: 2.000000
-  mu: 1.000000
-  psi: 1.000000
-  n0: 5
-state:
-  n: 11
-genealogy:
-  t0: 0.000000
-  time: 0.500000
-  nodes:
-  - name: 4
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 4
-    - color: green
-      name: 13
-  - name: 3
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 3
-    - color: green
-      name: 11
-  - name: 2
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 2
-    - color: green
-      name: 14
-  - name: 0
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 0
-    - color: green
-      name: 5
-  - name: 5
-    deme: 0
-    time: 0.021172
-    pocket:
-    - color: blue
-      name: 5
-  - name: 11
-    deme: 0
-    time: 0.148050
-    pocket:
-    - color: blue
-      name: 11
-  - name: 13
-    deme: 0
-    time: 0.326312
-    pocket:
-    - color: blue
-      name: 13
-    - color: green
-      name: 18
-  - name: 14
-    deme: 0
-    time: 0.331420
-    pocket:
-    - color: blue
-      name: 14
-  - name: 18
-    deme: 0
-    time: 0.478962
-    pocket:
-    - color: blue
-      name: 18
+t0: 0.000000
+time: 0.500000
+nodes:
+- name: 4
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 4
+  - color: green
+    name: 13
+- name: 3
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 3
+  - color: green
+    name: 11
+- name: 2
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 2
+  - color: green
+    name: 14
+- name: 0
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 0
+  - color: green
+    name: 5
+- name: 5
+  deme: 0
+  time: 0.021172
+  pocket:
+  - color: blue
+    name: 5
+- name: 11
+  deme: 0
+  time: 0.148050
+  pocket:
+  - color: blue
+    name: 11
+- name: 13
+  deme: 0
+  time: 0.326312
+  pocket:
+  - color: blue
+    name: 13
+  - color: green
+    name: 18
+- name: 14
+  deme: 0
+  time: 0.331420
+  pocket:
+  - color: blue
+    name: 14
+- name: 18
+  deme: 0
+  time: 0.478962
+  pocket:
+  - color: blue
+    name: 18
 > 
 > try(
 +   simulate("SIR",time=1) |>
