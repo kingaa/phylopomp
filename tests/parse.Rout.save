@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -31,8 +31,9 @@ Type 'q()' to quit R.
 +   newick(prune=FALSE,obscure=FALSE) -> tree
 > plot_grid(
 +   tree |> treeplot(points=TRUE),
-+   tree |> parse_newick(prune=FALSE,obscure=FALSE,tree=TRUE) |>
-+     getElement("tree") |>
++   tree |> parse_newick() |>
++     getInfo(prune=FALSE,obscure=FALSE,newick=TRUE) |>
++     getElement("newick") |>
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
@@ -41,8 +42,9 @@ Type 'q()' to quit R.
 +   newick(prune=FALSE,obscure=TRUE) -> tree
 > plot_grid(
 +   tree |> treeplot(points=TRUE),
-+   tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
-+     getElement("tree") |>
++   tree |> parse_newick() |>
++     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
++     getElement("newick") |>
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
@@ -51,8 +53,9 @@ Type 'q()' to quit R.
 +   newick(prune=FALSE,obscure=TRUE) -> tree
 > plot_grid(
 +   tree |> treeplot(points=TRUE),
-+   tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
-+     getElement("tree") |>
++   tree |> parse_newick() |>
++     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
++     getElement("newick") |>
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
@@ -61,8 +64,9 @@ Type 'q()' to quit R.
 +   newick(prune=TRUE,obscure=FALSE) -> tree
 > plot_grid(
 +   tree |> treeplot(points=TRUE),
-+   tree |> parse_newick(prune=TRUE,obscure=FALSE,tree=TRUE) |>
-+     getElement("tree") |>
++   tree |> parse_newick() |>
++     getInfo(prune=TRUE,obscure=FALSE,newick=TRUE) |>
++     getElement("newick") |>
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
@@ -72,8 +76,9 @@ Type 'q()' to quit R.
 +   newick(prune=TRUE,obscure=TRUE) -> tree
 > plot_grid(
 +   x |> plot(points=TRUE,prune=TRUE,obscure=TRUE),
-+   tree |> parse_newick(prune=TRUE,obscure=TRUE,tree=TRUE) |>
-+     getElement("tree") |>
++   tree |> parse_newick() |>
++     getInfo(prune=TRUE,obscure=TRUE,newick=TRUE) |>
++     getElement("newick") |>
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
@@ -84,7 +89,8 @@ Type 'q()' to quit R.
 +   x |> plot(prune=TRUE,obscure=FALSE,points=TRUE),
 +   x |> lineages(prune=TRUE,obscure=FALSE) |> plot(legend.position="none"),
 +   x |> newick(prune=TRUE,obscure=FALSE) |>
-+     parse_newick(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
++     parse_newick() |>
++     getInfo(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
 +       time=TRUE,yaml=TRUE,structure=TRUE) |>
 +     getElement("lineages") |>  
 +     plot(legend.position="none")+
@@ -98,7 +104,8 @@ Type 'q()' to quit R.
 +     x |> lineages(prune=FALSE,obscure=FALSE) |>
 +       slice(1:20),
 +     x |> newick(prune=FALSE,obscure=FALSE) |>
-+       parse_newick(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
++       parse_newick() |>
++       getInfo(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
 +       getElement("lineages") |>
 +       slice(1:20),
 +     tolerance=1e-4
@@ -113,170 +120,181 @@ Error : in 'scan_tree': premature end of Newick string.
 > 
 > try(
 +   r"{((o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,time=TRUE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: empty or invalid label.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'parse': invalid Newick string: unbalanced parentheses.
 > 
 > try(
 +   r"{(o_9_1:1.000000,o_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000)()));}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'parse': invalid Newick string: unbalanced parentheses.
 > 
 > r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:1.000000,b_1_2:1.000000)m_0_0:0.000000;"
 
 > 
 > try(
 +   r"{(o_9_1:1.000000,m_1_3:1.000000)m_0_0:0.000000;}" |>
-+   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++   parse_newick()
 + )
 Error : in 'parse': invalid Newick string.
 > 
 > try(
 +   r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid label.
 > 
 > r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "((o_9_2:1.000000)g_1_1:1.000000)m_0_0:0.000000;"
 
 > 
 > r"{(o_9_1:1.000000,b_0_0:3,,)m_0_0:0.000000;}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
 
 > 
 > try(
 +   r"{(,o_9_1:1.000000,)g_1_3:1.000000,h)m_0_0:0.000000))));}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'parse': invalid Newick string.
 > 
 > try(
 +   r"{(,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000))y));}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'parse': invalid Newick string: unbalanced parentheses.
 > 
 > try(
 +   r"{((((o_9_1:1.000000)g_1_3:1.000000)m_0_0:0.000000)g_3:22)()))));}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid label.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: missing or invalid branch length.
 > 
 > r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
 
 > 
 > r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
 
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid branch length.
 > 
 > r"{(o_9_1:1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > try(
 +   r"{(o_a9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid deme.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0(:0.500000,b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: missing or invalid branch length.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_)0_0:0.500000,b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid deme.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid branch length.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,(b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_tree': premature end of Newick string.
 > 
 > r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,b_2_45:17}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,  b_2_45:17}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,
 +        b_2____45:17}" |>
-+    parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
-$tree
++    parse_newick() |>
++    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+$newick
 [1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3))m_0_0:0.000000,b_____2:17;}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: invalid label.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17))));}" |>
-+      parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
++      parse_newick()
 + )
 Error : in 'parse': invalid Newick string: unbalanced parentheses.
 > 

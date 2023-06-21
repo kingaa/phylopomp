@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -27,7 +27,7 @@ Type 'q()' to quit R.
 > options(digits=3)
 > 
 > runSIIR(time=10,psi1=1,psi2=1,S0=100)
-<gpsim for model 'SIIR'>
+<gpsim for SIIR model>
 > 
 > runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=2,time=2) |>
 +   plot(points=TRUE)

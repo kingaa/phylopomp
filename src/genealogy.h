@@ -35,12 +35,11 @@ private:
   slate_t _t0;
   //! The current time.
   slate_t _time;
-
-public:
-  
   //! The number of demes.
   size_t _ndeme;
-  
+
+  const static name_t magic = 1123581321;
+
 private:
 
   //! get the next unique name
@@ -58,26 +57,26 @@ private:
 
 public:
 
-  //! set the unique name counter
-  //  void set_unique (name_t u) {
-  //    if (u < _unique) warn("potential re-use of names!");
-  //    _unique = u;
-  //  };
   //! number of demes
   size_t ndeme (void) const {
     return _ndeme;
   };
+  //! number of demes
+  size_t& ndeme (void) {
+    return _ndeme;
+  };
 
 public:
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
-    return 2*sizeof(name_t) +
+    return 3*sizeof(name_t) +
       2*sizeof(slate_t) + nodeseq_t::bytesize();
   };
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
-    name_t A[2]; A[0] = G._unique; A[1] = name_t(G._ndeme);
+    name_t A[3]; A[0] = magic; A[1] = G._unique; A[2] = name_t(G._ndeme);
     slate_t B[2]; B[0] = G._t0; B[1] = G._time;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
@@ -86,14 +85,16 @@ public:
   //! binary deserialization
   friend raw_t* operator>> (raw_t* o, genealogy_t& G) {
     G.clean();
-    name_t A[2];
+    name_t A[3];
     slate_t B[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    G._unique = A[0]; G._ndeme = size_t(A[1]);
+    if (A[0] != magic) err("corrupted genealogy serialization.");
+    G._unique = A[1]; G._ndeme = size_t(A[2]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
+
 
 public:
   // CONSTRUCTORS
@@ -109,17 +110,25 @@ public:
   genealogy_t (raw_t *o) {
     o >> *this;
   };
+  //! constructor from RAW SEXP (containing binary serialization)
+  genealogy_t (SEXP o) {
+    PROTECT(o = AS_RAW(o));
+    RAW(o) >> *this;
+    UNPROTECT(1);
+  };
   //! copy constructor
   genealogy_t (const genealogy_t& G) {
     raw_t *o = new raw_t[G.bytesize()];
-    G >> o >> *this;
+    G >> o;
+    o >> *this;
     delete[] o;
   };
   //! copy assignment operator
-  genealogy_t & operator= (const genealogy_t& G) {
+  genealogy_t& operator= (const genealogy_t& G) {
     clean();
     raw_t *o = new raw_t[G.bytesize()];
-    G >> o >> *this;
+    G >> o;
+    o >> *this;
     delete[] o;
     return *this;
   };
@@ -213,6 +222,15 @@ public:
     return out;
   };
 
+  //! number of samples
+  size_t nsample (void) const {
+    size_t n = 0;
+    for (node_it k = cbegin(); k != cend(); k++) {
+      if ((*k)->holds(blue)) n++;
+    }
+    return n;
+  };
+
 public:
   
   //! R list description
@@ -237,8 +255,8 @@ public:
 
   //! human-readable info
   std::string describe (void) const {
-    std::string o = "time = " + std::to_string(time()) + "\n"
-      + "t0 = " + std::to_string(timezero()) + "\n"
+    std::string o = "t0 = " + std::to_string(double(timezero()))
+      + "\ntime = " + std::to_string(double(time())) + "\n"
       + nodeseq_t::describe();
     return o;
   };
@@ -423,7 +441,7 @@ public:
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
     _unique = (_unique < G._unique) ? G._unique : _unique; 
-    _ndeme = (_ndeme < G._ndeme) ? G._ndeme : _ndeme;
+    _ndeme = (_ndeme < G.ndeme()) ? G.ndeme() : _ndeme;
     return *this;
   };
   
@@ -599,6 +617,7 @@ public:
         break;
       }
     }
+    sort(node_compare);
     return *this;
   };
 };

@@ -27,14 +27,14 @@ plot.gpsim <- function (
 ) {
   x |>
     getInfo(
-      tree=TRUE,t0=TRUE,time=TRUE,
+      newick=TRUE,t0=TRUE,time=TRUE,
       prune=prune,
       obscure=obscure
     ) -> out
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
   treeplot(
-    tree=out$tree,
+    tree=out$newick,
     time=time,
     t0=t0,
     ...

@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -53,21 +53,21 @@ Type 'q()' to quit R.
 > 
 > x |>
 +   curtail(time=0) |>
-+   getInfo(time=TRUE,prune=FALSE,obscure=FALSE,tree=TRUE)
++   getInfo(time=TRUE,prune=FALSE,obscure=FALSE,newick=TRUE)
 $time
 [1] 0
 
-$tree
+$newick
 [1] "(o_1_13:0.000000)m_1_9:0.000000;(o_1_20:0.000000)m_1_8:0.000000;(o_1_47:0.000000)m_1_6:0.000000;(o_0_24:0.000000)m_0_3:0.000000;(o_0_22:0.000000)m_0_1:0.000000;(o_0_50:0.000000)m_0_0:0.000000;"
 
 > 
 > x |>
 +   curtail(time=-1) |>
-+   getInfo(time=TRUE,prune=FALSE,obscure=FALSE,tree=TRUE)
++   getInfo(time=TRUE,prune=FALSE,obscure=FALSE,newick=TRUE)
 $time
 [1] -1
 
-$tree
+$newick
 [1] ""
 
 > 

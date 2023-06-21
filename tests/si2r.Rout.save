@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -28,7 +28,7 @@ Type 'q()' to quit R.
 > options(digits=3)
 > 
 > runSI2R(time=10)
-<gpsim for model 'SI2R'>
+<gpsim for SI2R model>
 > 
 > runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2) |>
 +   simulate(time=5) |>

@@ -31,10 +31,6 @@ public:
   inventory_t (raw_t *o) {
     o >> *this;
   };
-  //! constructor from serialized binary form (in double disguise)
-  inventory_t (double_t *o) {
-    reinterpret_cast<const raw_t&>(o) >> *this;
-  };
   //! constructor from node sequence (via 'extant' operation).
   //! this constructs an inventory from a genealogy.
   inventory_t (std::pair<node_it,node_it>&& I) {
@@ -83,10 +79,6 @@ public:
     for (size_t i = 0; i < ndeme; i++) 
       s += _inven[i].bytesize();
     return s;
-  };
-  size_t doublesize (void) const {
-    size_t s = bytesize();
-    return s/sizeof(double) + 1;
   };
   //! binary serialization
   friend raw_t* operator>> (const inventory_t& I, raw_t* o) {

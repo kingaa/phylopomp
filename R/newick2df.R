@@ -4,8 +4,7 @@
 ##'
 ##' @rdname newick2df
 ##' @include parse.R
-##' @param tree tree data in Newick format.
-##' @param t0 time of the root.
+##' @inheritParams parse_newick
 ##' @return A data frame suitable for use as \code{pomp} input, containing three columns:
 ##' \describe{
 ##'   \item{time}{numeric; time of the genealogy event.}
@@ -23,11 +22,10 @@
 ##' @importFrom dplyr bind_rows
 ##' @example examples/newick2df.R
 ##' @export
-newick2df <- function (tree, t0 = 0) {
-  if (missing(tree) || is.null(tree) || !is.character(tree))
-    pStop(sQuote("tree")," must be furnished as a string in Newick format.")
-  t0 <- as.numeric(t0)
-  tree |>
-    parse_newick(t0=as.numeric(t0),lineages=TRUE,time=TRUE) |>
+newick2df <- function (x, t0 = 0, tf = NA) {
+  if (missing(x) || is.null(x) || !is.character(x))
+    pStop(sQuote("x")," must be furnished as a string in Newick format.")
+  parse_newick(x,t0,tf) |>
+    getInfo(lineages=TRUE) |>
     getElement("lineages")
 }

@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -29,7 +29,7 @@ Type 'q()' to quit R.
 > 
 > runSEIR(time=10) -> x
 > x
-<gpsim for model 'SEIR'>
+<gpsim for SEIR model>
 > 
 > runSEIR(Beta=3,sigma=1,gamma=1,psi=5,S0=100,I0=5,time=2) |>
 +   plot(points=TRUE,obscure=FALSE)

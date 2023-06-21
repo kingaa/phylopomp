@@ -38,13 +38,15 @@ public:
   };
   //! binary serialization
   friend raw_t* operator>> (const master_t& A, raw_t* o) {
-    return A.geneal >>
-      (reinterpret_cast<const popul_t&>(A) >> o);
+    o = (reinterpret_cast<const popul_t&>(A) >> o);
+    o = (A.geneal >> o);
+    return o;
   }
   //! binary deserialization
   friend raw_t* operator>> (raw_t* o, master_t& A) {
     A.clean();
-    o = (o >> reinterpret_cast<popul_t&>(A) >> A.geneal);
+    o = (o >> reinterpret_cast<popul_t&>(A));
+    o = (o >> A.geneal);
     A.inventory = A.geneal.extant();
     return o;
   }
@@ -71,14 +73,16 @@ public:
   //! copy constructor
   master_t (const master_t& A) {
     raw_t *o = new raw_t[A.bytesize()];
-    A >> o >> *this;
+    A >> o;
+    o >> *this;
     delete[] o;
   };
   //! copy assignment operator
   master_t & operator= (const master_t& A) {
     clean();
     raw_t *o = new raw_t[A.bytesize()];
-    A >> o >> *this;
+    A >> o;
+    o >> *this;
     delete[] o;
     return *this;
   };
@@ -89,6 +93,10 @@ public:
   //! destructor
   ~master_t (void) {
     clean();
+  };
+  //! get zero-time
+  slate_t timezero (void) const {
+    return geneal.timezero();
   };
   //! runs the process to time `tfin`
   int play (double tfin) {
@@ -103,7 +111,6 @@ public:
   void curtail (slate_t tnew) {
     geneal.curtail(tnew);
     if (tnew < popul_t::time()) popul_t::current = tnew;
-    if (tnew < popul_t::timezero()) popul_t::t0 = tnew;
   };
 
 public:

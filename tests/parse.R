@@ -12,8 +12,9 @@ runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=FALSE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
-  tree |> parse_newick(prune=FALSE,obscure=FALSE,tree=TRUE) |>
-    getElement("tree") |>
+  tree |> parse_newick() |>
+    getInfo(prune=FALSE,obscure=FALSE,newick=TRUE) |>
+    getElement("newick") |>
     treeplot(points=TRUE),
   nrow=1
 )
@@ -22,8 +23,9 @@ runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
-  tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
-    getElement("tree") |>
+  tree |> parse_newick() |>
+    getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
+    getElement("newick") |>
     treeplot(points=TRUE),
   nrow=1
 )
@@ -32,8 +34,9 @@ runSEIR(time=30,I0=3) |>
   newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
-  tree |> parse_newick(prune=FALSE,obscure=TRUE,tree=TRUE) |>
-    getElement("tree") |>
+  tree |> parse_newick() |>
+    getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
+    getElement("newick") |>
     treeplot(points=TRUE),
   nrow=1
 )
@@ -42,8 +45,9 @@ runSEIR(time=3,I0=3) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
   tree |> treeplot(points=TRUE),
-  tree |> parse_newick(prune=TRUE,obscure=FALSE,tree=TRUE) |>
-    getElement("tree") |>
+  tree |> parse_newick() |>
+    getInfo(prune=TRUE,obscure=FALSE,newick=TRUE) |>
+    getElement("newick") |>
     treeplot(points=TRUE),
   nrow=1
 )
@@ -53,8 +57,9 @@ x |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   x |> plot(points=TRUE,prune=TRUE,obscure=TRUE),
-  tree |> parse_newick(prune=TRUE,obscure=TRUE,tree=TRUE) |>
-    getElement("tree") |>
+  tree |> parse_newick() |>
+    getInfo(prune=TRUE,obscure=TRUE,newick=TRUE) |>
+    getElement("newick") |>
     treeplot(points=TRUE),
   nrow=1
 )
@@ -65,7 +70,8 @@ plot_grid(
   x |> plot(prune=TRUE,obscure=FALSE,points=TRUE),
   x |> lineages(prune=TRUE,obscure=FALSE) |> plot(legend.position="none"),
   x |> newick(prune=TRUE,obscure=FALSE) |>
-    parse_newick(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
+    parse_newick() |>
+    getInfo(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
       time=TRUE,yaml=TRUE,structure=TRUE) |>
     getElement("lineages") |>  
     plot(legend.position="none")+
@@ -79,7 +85,8 @@ stopifnot(
     x |> lineages(prune=FALSE,obscure=FALSE) |>
       slice(1:20),
     x |> newick(prune=FALSE,obscure=FALSE) |>
-      parse_newick(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
+      parse_newick() |>
+      getInfo(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
       getElement("lineages") |>
       slice(1:20),
     tolerance=1e-4
@@ -93,121 +100,132 @@ try(
 
 try(
   r"{((o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,time=TRUE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,o_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000)()));}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_9_1:1.000000,m_1_3:1.000000)m_0_0:0.000000;}" |>
-  parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+  parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:1.000000,b_0_0:3,,)m_0_0:0.000000;}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(,o_9_1:1.000000,)g_1_3:1.000000,h)m_0_0:0.000000))));}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000))y));}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{((((o_9_1:1.000000)g_1_3:1.000000)m_0_0:0.000000)g_3:22)()))));}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 r"{(o_9_1:1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_a9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0(:0.500000,b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_)0_0:0.500000,b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,(b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,  b_2_45:17}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,
        b_2____45:17}" |>
-   parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3))m_0_0:0.000000,b_____2:17;}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17))));}" |>
-     parse_newick(prune=FALSE,obscure=FALSE,lineages=FALSE,tree=TRUE)
+     parse_newick()
 )
 
 try(r"{((o_9:20,b_9:20)g_9:10,b_9:10)m______}" |> parse_newick())

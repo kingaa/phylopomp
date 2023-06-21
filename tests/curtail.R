@@ -34,11 +34,11 @@ plot_grid(
 
 x |>
   curtail(time=0) |>
-  getInfo(time=TRUE,prune=FALSE,obscure=FALSE,tree=TRUE)
+  getInfo(time=TRUE,prune=FALSE,obscure=FALSE,newick=TRUE)
 
 x |>
   curtail(time=-1) |>
-  getInfo(time=TRUE,prune=FALSE,obscure=FALSE,tree=TRUE)
+  getInfo(time=TRUE,prune=FALSE,obscure=FALSE,newick=TRUE)
 
 plot_grid(
   x |>

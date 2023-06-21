@@ -2,54 +2,21 @@
 % Please edit documentation in R/parse.R
 \name{parse_newick}
 \alias{parse_newick}
-\title{parse_newick}
+\title{parse a Newick string}
 \usage{
-parse_newick(
-  x,
-  prune = TRUE,
-  obscure = TRUE,
-  t0 = 0,
-  time = FALSE,
-  description = FALSE,
-  structure = FALSE,
-  yaml = FALSE,
-  lineages = TRUE,
-  tree = FALSE
-)
+parse_newick(x, t0 = 0, tf = NA)
 }
 \arguments{
 \item{x}{character; the Newick description.
 See Details for specifics.}
 
-\item{prune}{logical; prune the genealogy?}
-
-\item{obscure}{logical; obscure the demes?}
-
 \item{t0}{numeric; the root time.}
 
-\item{time}{logical; return the current time?}
-
-\item{description}{logical; return the description?}
-
-\item{structure}{logical; return the structure in \R list format?}
-
-\item{yaml}{logical; return the structure in YAML format?}
-
-\item{lineages}{logical; return the lineage-count function?}
-
-\item{tree}{logical; return the tree?}
+\item{tf}{numeric; the current or final time.}
 }
 \value{
-A list containing the requested elements, including any or all of:
-\describe{
-  \item{time}{the current time}
-  \item{description}{a human readable description of the state of the genealogy process}
-  \item{yaml}{the state of the genealogy process in YAML format}
-  \item{structure}{the state of the genealogy process in \R list format}
-  \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
-  \item{tree}{the genealogical tree, in Newick format}
-}
+An object of class \dQuote{gpsim} with attribute \dQuote{model} set to \dQuote{"Bare"}.
 }
 \description{
-Parse a Newick description and extract various equivalent representations.
+Parses a Newick description and returns a binary version of the genealogy.
 }

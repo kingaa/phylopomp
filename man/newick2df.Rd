@@ -4,12 +4,15 @@
 \alias{newick2df}
 \title{Convert a tree in Newick format to data frame}
 \usage{
-newick2df(tree, t0 = 0)
+newick2df(x, t0 = 0, tf = NA)
 }
 \arguments{
-\item{tree}{tree data in Newick format.}
+\item{x}{character; the Newick description.
+See Details for specifics.}
 
-\item{t0}{time of the root.}
+\item{t0}{numeric; the root time.}
+
+\item{tf}{numeric; the current or final time.}
 }
 \value{
 A data frame suitable for use as \code{pomp} input, containing three columns:

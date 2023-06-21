@@ -30,7 +30,6 @@ protected:
   // MEMBER DATA  
   slate_t next;                 // time of next event
   size_t event;                 // mark of next event
-  slate_t t0;                   // initial time
   slate_t current;              // current time
   state_t state;                // current state
   parameters_t params;          // model parameters
@@ -44,12 +43,12 @@ public:
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
-    return 3*sizeof(slate_t) + sizeof(size_t)
+    return 2*sizeof(slate_t) + sizeof(size_t)
       + sizeof(state_t) + sizeof(parameters_t);
   };
   //! binary serialization
   friend raw_t* operator>> (const popul_proc_t &X, raw_t *o) {
-    slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
+    slate_t A[2]; A[0] = X.current; A[1] = X.next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,&X.event,sizeof(size_t)); o += sizeof(size_t);
     memcpy(o,&X.state,sizeof(state_t)); o += sizeof(state_t);
@@ -59,9 +58,9 @@ public:
   //! binary deserialization
   friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
     X.clean();
-    slate_t A[3];
+    slate_t A[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
-    X.t0 = A[0]; X.current = A[1]; X.next = A[2]; 
+    X.current = A[0]; X.next = A[1]; 
     memcpy(&X.event,o,sizeof(size_t)); o += sizeof(size_t);
     memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
@@ -74,7 +73,7 @@ public:
   //!  t0 = initial time
   popul_proc_t (double t0 = 0) {
     clean();
-    next = current = t0 = slate_t(t0);
+    next = current = slate_t(t0);
     event = 0;
   };
   //! constructor from serialized binary form
@@ -84,14 +83,16 @@ public:
   //! copy constructor
   popul_proc_t (const popul_proc_t & X) {
     raw_t *o = new raw_t[X.bytesize()];
-    X >> o >> *this;
+    X >> o;
+    o >> *this;
     delete[] o;
   };
   //! copy assignment operator
   popul_proc_t & operator= (const popul_proc_t & X) {
     clean();
     raw_t *o = new raw_t[X.bytesize()];
-    X >> o >> *this;
+    X >> o;
+    o >> *this;
     delete[] o;
     return *this;
   };
@@ -110,10 +111,6 @@ public:
   //! get current time.
   slate_t time (void) const {
     return current;
-  };
-  //! get zero time.
-  slate_t timezero (void) const {
-    return t0;
   };
 
 public:

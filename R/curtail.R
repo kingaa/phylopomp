@@ -6,8 +6,7 @@
 ##' @include getinfo.R
 ##' @inheritParams getInfo
 ##' @return A curtailed genealogy object.
-##' @examples
-##' simulate("SIIR",time=1) |> newick()
+##' @example examples/curtail.R
 ##' @rdname curtail
 ##' @export
 curtail <- function (object, time = NA, prune = TRUE, obscure = TRUE) {
@@ -21,6 +20,7 @@ curtail <- function (object, time = NA, prune = TRUE, obscure = TRUE) {
     modelLBDP = .Call(P_curtailLBDP,object,time),
     modelMoran = .Call(P_curtailMoran,object,time),
     modelSI2R = .Call(P_curtailSI2R,object,time),
+    modelBare = .Call(P_curtailBare,object,time),
     model = pStop("no model specified"),
     pStop("unrecognized model ",sQuote(attr(object,"model")))
   ) |>

@@ -11,6 +11,13 @@ SEXP ndeme (TYPE& X) {
 }
 
 template <class TYPE>
+SEXP nsample (TYPE& X) {
+  SEXP o = NEW_INTEGER(1);
+  *INTEGER(o) = int(X.geneal.nsample());
+  return o;
+}
+
+template <class TYPE>
 SEXP timezero (TYPE& X) {
   SEXP o = NEW_NUMERIC(1);
   *REAL(o) = X.timezero();
@@ -58,6 +65,14 @@ SEXP describe (const TYPE& X) {
 template <class TYPE>
 SEXP structure (const TYPE& G) {
   return G.structure();
+}
+
+//! serialized with lineages traced
+template <class TYPE>
+SEXP trace_lineages (const TYPE& X) {
+  genealogy_t G = X.geneal;
+  G.trace_lineages();
+  return serial(G);
 }
 
 //! tree in newick format
@@ -125,17 +140,20 @@ SEXP lineage_count (const TYPE& G) {
 //! extract requested information
 //! prune and/or obscure if requested
 template <class TYPE>
-SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
+SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Trace,
            SEXP T0, SEXP Time, SEXP Descript,
            SEXP Yaml, SEXP Structure, SEXP Ndeme,
-           SEXP Lineages, SEXP Tree) {
+           SEXP Lineages, SEXP Tree,
+           SEXP Nsample, SEXP Genealogy) {
   TYPE A = State;
 
   // prune and/or obscure if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
+  bool do_trace = *LOGICAL(AS_LOGICAL(Trace));
   if (do_prune) A.geneal.prune();
   if (do_obscure) A.geneal.obscure();
+  if (do_trace) A.geneal.trace_lineages();
 
   size_t nout = 0;
 
@@ -162,6 +180,12 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
 
   bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
   if (get_tree) nout++;
+
+  bool get_nsamp = *LOGICAL(AS_LOGICAL(Nsample));
+  if (get_nsamp) nout++;
+
+  bool get_geneal = *LOGICAL(AS_LOGICAL(Genealogy));
+  if (get_geneal) nout++;
 
   // pack up return values in a list
   int k = 0;
@@ -190,8 +214,15 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure,
     k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
   }
   if (get_tree) {
-    k = set_list_elem(out,outnames,newick(A),"tree",k);
+    k = set_list_elem(out,outnames,newick(A),"newick",k);
   }
+  if (get_nsamp) {
+    k = set_list_elem(out,outnames,nsample(A),"nsample",k);
+  }
+  if (get_geneal) {
+    k = set_list_elem(out,outnames,serial(A.geneal),"genealogy",k);
+  }
+
   SET_NAMES(out,outnames);
 
   UNPROTECT(2);
@@ -222,15 +253,18 @@ SEXP curtail (SEXP State, SEXP Time) {
     return curtail<TYPE>(State,Time);                                   \
   }                                                                     \
 
-#define INFOFN(X,TYPE) SEXP info ## X (                                 \
-                                       SEXP State, SEXP Prune, SEXP Obscure, \
-                                       SEXP T0, SEXP Time, SEXP Descript, \
-                                       SEXP Yaml, SEXP Structure, SEXP Ndeme, \
-                                       SEXP Lineages, SEXP Tree) {      \
-    return info<TYPE>(State, Prune, Obscure,                            \
+#define INFOFN(X,TYPE) SEXP info ## X (					\
+  SEXP State, SEXP Prune, SEXP Obscure, SEXP Trace,			\
+  SEXP T0, SEXP Time,							\
+  SEXP Descript,							\
+  SEXP Yaml, SEXP Structure, SEXP Ndeme,				\
+  SEXP Lineages, SEXP Tree, SEXP Nsample,				\
+  SEXP Genealogy) {							\
+    return info<TYPE>(State, Prune, Obscure, Trace,			\
                       T0, Time, Descript,                               \
                       Yaml, Structure, Ndeme,                           \
-                      Lineages, Tree);                                  \
+                      Lineages, Tree,                                   \
+                      Nsample, Genealogy);                              \
   }                                                                     \
 
 #define GENERICS(X,TYPE)                        \

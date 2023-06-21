@@ -27,14 +27,18 @@ class node_t;
 //! - an "owner": a pointer to the node in which it was originally created
 //! - a deme
 class ball_t {
+
 private:
   node_t *_holder;
   node_t *_owner;
   name_t _deme;
+
 public:
   name_t uniq;
   color_t color;
+  
 public:
+
   //! size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
   //! binary serialization
@@ -55,7 +59,8 @@ public:
   };
 public:
   //! basic constructor for ball class
-  ball_t (node_t *who = 0, name_t u = 0, color_t col = green, name_t d = undeme) {
+  ball_t (node_t *who = 0, name_t u = 0,
+          color_t col = green, name_t d = undeme) {
     _holder = _owner = who;
     uniq = u;
     color = col;
@@ -83,16 +88,12 @@ public:
       err("meddle not in the deme of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
-  //! view lineage (of a green ball).
+  //! view lineage
   name_t lineage (void) const {
-    if (color != green)
-      err("ask not the lineage of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
-  //! change lineage (of a green ball).
+  //! change lineage
   name_t& lineage (void) {
-    if (color != green)
-      err("meddle not with the lineage of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
   //! view owner
@@ -132,7 +133,7 @@ public:
   std::string describe (void) const {
     std::string o = color_name()
       + "(" + std::to_string(uniq);
-    if (is(black)) {
+    if (_deme != undeme) {
       o += "," + std::to_string(_deme);
     }
     o += ")";

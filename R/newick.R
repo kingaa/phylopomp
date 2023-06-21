@@ -11,6 +11,6 @@
 ##' @rdname newick
 ##' @export
 newick <- function (object, prune = TRUE, obscure = TRUE) {
-  getInfo(object,tree=TRUE,prune=prune,obscure=obscure) |>
-    getElement("tree")
+  getInfo(object,newick=TRUE,prune=prune,obscure=obscure) |>
+    getElement("newick")
 }

@@ -1,5 +1,5 @@
 
-R version 4.3.0 (2023-04-21) -- "Already Tomorrow"
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
 Copyright (C) 2023 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
@@ -68,21 +68,21 @@ null device
 +   getInfo(description=TRUE) |>
 +   getElement("description") |>
 +   cat()
-time = 0.300000
 t0 = 0.000000
+time = 0.300000
 node(7,0) {green(7), green(30)}, t = 0.000000
 node(2,0) {green(2), green(61)}, t = 0.000000
 node(0,0) {green(0), green(42)}, t = 0.000000
-node(30,0) {blue(30)}, t = 0.074094
-node(42,0) {blue(42)}, t = 0.161458
-node(61,0) {blue(61)}, t = 0.240436
+node(30,0) {blue(30,0)}, t = 0.074094
+node(42,0) {blue(42,0)}, t = 0.161458
+node(61,0) {blue(61,0)}, t = 0.240436
 > 
 > simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
 +   getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
 +   getElement("description") |>
 +   cat()
-time = 0.300000
 t0 = 0.000000
+time = 0.300000
 node(19,1) {green(19), green(31)}, t = 0.000000
 node(18,1) {green(18), green(27)}, t = 0.000000
 node(17,1) {green(17), green(30)}, t = 0.000000
@@ -101,7 +101,7 @@ node(3,0) {green(3), green(20)}, t = 0.000000
 node(2,0) {green(2), black(2,0)}, t = 0.000000
 node(1,0) {green(1), green(22)}, t = 0.000000
 node(0,0) {green(0), black(0,0)}, t = 0.000000
-node(20,0) {blue(20)}, t = 0.000031
+node(20,0) {blue(20,0)}, t = 0.000031
 node(21,1) {green(25), green(33)}, t = 0.005067
 node(22,0) {green(32), green(54)}, t = 0.023831
 node(23,0) {green(24), green(26)}, t = 0.040646
@@ -109,7 +109,7 @@ node(24,0) {green(36), green(62)}, t = 0.042779
 node(25,1) {black(25,1)}, t = 0.055307
 node(26,0) {black(23,0), black(26,0)}, t = 0.059290
 node(27,1) {black(18,1), green(46)}, t = 0.064146
-node(28,0) {blue(28), green(44)}, t = 0.069683
+node(28,0) {blue(28,0), green(44)}, t = 0.069683
 node(29,1) {green(45), green(64)}, t = 0.071972
 node(30,1) {green(35), green(40)}, t = 0.079430
 node(31,1) {green(39), green(43)}, t = 0.080001
@@ -128,7 +128,7 @@ node(43,1) {black(19,1)}, t = 0.151287
 node(44,0) {black(7,0), green(57)}, t = 0.170206
 node(45,1) {black(45,1)}, t = 0.184868
 node(46,1) {green(51), green(65)}, t = 0.190774
-node(47,0) {black(16,0), blue(47)}, t = 0.193504
+node(47,0) {black(16,0), blue(47,0)}, t = 0.193504
 node(48,1) {black(14,1), green(58)}, t = 0.203629
 node(49,0) {black(4,0), black(49,0)}, t = 0.204710
 node(50,0) {black(50,0)}, t = 0.213707
@@ -143,7 +143,7 @@ node(58,1) {black(48,1), black(58,1)}, t = 0.240923
 node(59,0) {green(61), green(74)}, t = 0.242048
 node(60,0) {black(60,0), green(76)}, t = 0.248481
 node(61,0) {black(6,0), black(61,0)}, t = 0.250152
-node(62,0) {black(24,0), blue(62)}, t = 0.252043
+node(62,0) {black(24,0), blue(62,0)}, t = 0.252043
 node(63,0) {black(36,0), black(63,0)}, t = 0.255962
 node(64,1) {black(64,1), green(75)}, t = 0.258006
 node(65,1) {black(27,0)}, t = 0.264001

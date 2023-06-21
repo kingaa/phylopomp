@@ -8,6 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
+  trace = FALSE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -15,7 +16,9 @@ getInfo(
   yaml = FALSE,
   ndeme = FALSE,
   lineages = FALSE,
-  tree = FALSE
+  newick = FALSE,
+  nsample = FALSE,
+  genealogy = FALSE
 )
 }
 \arguments{
@@ -24,6 +27,8 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{trace}{logical; trace the lineages?}
 
 \item{t0}{logical; return the zero-time?}
 
@@ -39,19 +44,25 @@ getInfo(
 
 \item{lineages}{logical; return the lineage-count function?}
 
-\item{tree}{logical; return the tree?}
+\item{newick}{logical; return a Newick-format description of the tree?}
+
+\item{nsample}{logical; return the number of samples?}
+
+\item{genealogy}{logical; return the lineage-traced genealogy?}
 }
 \value{
 A list containing the requested elements, including any or all of:
 \describe{
   \item{t0}{the initial time}
   \item{time}{the current time}
-  \item{tree}{the genealogical tree, in Newick format}
+  \item{newick}{the genealogical tree, in Newick format}
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
   \item{ndeme}{the number of demes (an integer)}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+  \item{nsample}{the number of samples (an integer)}
+  \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
 }
 }
 \description{
