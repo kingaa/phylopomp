@@ -1,0 +1,126 @@
+
+R version 4.3.1 (2023-06-16) -- "Beagle Scouts"
+Copyright (C) 2023 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="seir2-%02d.png",res=100)
+> 
+> suppressPackageStartupMessages({
++   library(tidyverse)
++   library(phylopomp)
++   library(pomp)
++ })
+> theme_set(theme_bw())
+> set.seed(842110120)
+> options(digits=3)
+> 
+> runSEIR(
++   Beta=4,sigma=1,gamma=1,psi=1,delta=1,
++   S0=100,E0=3,I0=5,R0=100,
++   time=5
++ ) -> G
+> G |> plot(prune=FALSE,obscure=FALSE,points=TRUE)
+> 
+> G |> plot(points=TRUE)
+> 
+> G |>
++   curtail(time=3) |>
++   plot(points=TRUE)
+> 
+> G |>
++   curtail(time=3) |>
++   seirs_pomp(
++     Beta=4,sigma=1,gamma=1,psi=1,delta=1,
++     S0=100,E0=3,I0=5,R0=100
++   ) -> po
+NOTE: The provided objects 'genealogy','nsample' are available for use by POMP basic components.
+> 
+> po |> rinit(nsim=5)
+         .id
+name        [,1]   [,2]   [,3]   [,4]   [,5]
+  S       100.00 100.00 100.00 100.00 100.00
+  E         3.00   3.00   3.00   3.00   3.00
+  I         5.00   5.00   5.00   5.00   5.00
+  R       100.00 100.00 100.00 100.00 100.00
+  ll        3.33   3.84   3.84   3.84   2.82
+  linE      1.00   2.00   2.00   2.00   0.00
+  linI      5.00   4.00   4.00   4.00   6.00
+  lineage   1.00   1.00   0.00   0.00   1.00
+            1.00   0.00   1.00   1.00   1.00
+            1.00   1.00   0.00   1.00   1.00
+              NA     NA     NA     NA     NA
+            0.00   0.00   1.00   1.00   1.00
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+              NA     NA     NA     NA     NA
+            1.00   1.00   1.00   0.00   1.00
+            1.00   1.00   1.00   1.00   1.00
+> 
+> po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
+> pf |> logLik()
+ [1] -30.4 -32.9 -32.9 -32.1 -32.2 -31.2 -32.5 -32.2 -31.6 -32.1 -30.5 -33.3
+[13] -32.4 -32.0 -32.7 -30.5 -32.5 -30.5 -31.5 -30.0
+> pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
+    est      se     ess 
+-31.334   0.239   9.959 
+> 
+> pf |> plot(type='s')
+> 
+> plot_grid(
++   G |>
++     curtail(time=3) |>
++     plot(points=TRUE)+
++     expand_limits(x=3),
++   pf |>
++     cond_logLik(format="d") |>
++     mutate(
++       logLik=value,
++       time=time(po)[name]
++     ) |>
++     ggplot(aes(x=time,y=logLik,group=.L1))+
++     geom_step(direction="vh",alpha=0.3)+
++     labs(x="")+
++     expand_limits(x=3),
++   pf |>
++     eff_sample_size(format="d") |>
++     mutate(
++       ess=value,
++       time=time(po)[name]
++     ) |>
++     ggplot(aes(x=time,y=ess,group=.L1))+
++     geom_step(direction="vh",alpha=0.3)+
++     geom_hline(yintercept=100,color="red")+
++     expand_limits(x=3),
++   ncol=1,align="v",rel_heights=c(2,1,1)
++ )
+> 
+> dev.off()
+null device 
+          1 
+> 

@@ -5,6 +5,7 @@
 \alias{SEIR}
 \alias{runSEIR}
 \alias{continueSEIR}
+\alias{seirs_pomp}
 \title{Classical susceptible-exposed-infected-recovered model}
 \usage{
 runSEIR(
@@ -30,6 +31,8 @@ continueSEIR(
   psi = NA,
   delta = NA
 )
+
+seirs_pomp(x, Beta, sigma, gamma, psi, delta = 0, S0, E0, I0, R0)
 }
 \arguments{
 \item{time}{final time}
@@ -56,12 +59,17 @@ continueSEIR(
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
+
+\item{x}{genealogy in \pkg{phylopomp} format.}
 }
 \value{
 \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
 }
 \description{
 The population is structured by infection progression.
+}
+\details{
+\code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
 }
 \examples{
 simulate("SEIR",Beta=2,sigma=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>

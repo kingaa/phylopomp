@@ -49,3 +49,61 @@ continueSEIR <- function (
   .Call(P_runSEIR,x,time) |>
     structure(model="SEIR",class="gpsim")
 }
+
+##' @name seirs_pomp
+##' @rdname seir
+##' @include lbdp.R sir.R
+##' @param x genealogy in \pkg{phylopomp} format.
+##' @details
+##' \code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
+##' @importFrom pomp pomp onestep covariate_table
+##' @importFrom utils tail
+##' @export
+seirs_pomp <- function (
+  x,
+  Beta, sigma, gamma, psi, delta = 0,
+  S0, E0, I0, R0
+)
+{
+  x |>
+    getInfo(
+      prune=TRUE,obscure=TRUE,trace=TRUE,
+      t0=TRUE,time=TRUE,nsample=TRUE,
+      lineages=TRUE,genealogy=TRUE
+    ) -> geninfo
+  ic <- as.integer(c(S0=S0,E0=E0,I0=I0,R0=R0))
+  if (any(ic < 0))
+    pStop(paste(sQuote(names(ic)),collapse=","),
+      " must be nonnegative integers.")
+  names(ic) <- c("S0","E0","I0","R0")
+  geninfo$lineages |> as.data.frame() -> dat
+  nsample <- geninfo$nsample
+  dat["time"] |>
+    tail(-1L) |>
+    pomp(
+      times="time",t0=geninfo$t0,
+      params=c(
+        Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta,
+        ic,N=sum(ic)
+      ),
+      covar=covariate_table(
+        dat[c("time","lineages","event_type")],
+        times="time",
+        order="constant"
+      ),
+      nstatevars=nsample+7L,
+      genealogy=geninfo$genealogy,
+      nsample=nsample,
+      rinit="seirs_rinit",
+      rprocess=onestep("seirs_gill"),
+      dmeasure="seirs_dmeas",
+      accumvars=c("ll"),
+      statenames=c("S","E","I","R","ll","linE","linI","lineage"),
+      paramnames=c(
+        "Beta","sigma","gamma","psi","delta",
+        "S0","E0","I0","R0","N"
+      ),
+      covarnames=c("lineages","event_type"),
+      PACKAGE="phylopomp"
+    )
+}
