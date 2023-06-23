@@ -91,14 +91,14 @@ seirs_pomp <- function (
         times="time",
         order="constant"
       ),
-      nstatevars=nsample+7L,
+      nstatevars=nsample+8L,
       genealogy=geninfo$genealogy,
       nsample=nsample,
       rinit="seirs_rinit",
       rprocess=onestep("seirs_gill"),
       dmeasure="seirs_dmeas",
       accumvars=c("ll"),
-      statenames=c("S","E","I","R","ll","linE","linI","lineage"),
+      statenames=c("S","E","I","R","ll","node","linE","linI","lineage"),
       paramnames=c(
         "Beta","sigma","gamma","psi","delta",
         "S0","E0","I0","R0","N"

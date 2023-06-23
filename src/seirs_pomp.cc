@@ -3,7 +3,6 @@
 #include "internal.h"
 #include "genealogy.h"
 
-static double T0 = 0;
 static int nSAMPLE = 0;
 
 static inline int random_choice (double n) {
@@ -79,9 +78,10 @@ static double event_rates
 #define I         (__x[__stateindex[2]])
 #define R         (__x[__stateindex[3]])
 #define ll        (__x[__stateindex[4]])
-#define linE      (__x[__stateindex[5]])
-#define linI      (__x[__stateindex[6]])
-#define LINEAGE   (__x[__stateindex[7]])
+#define node      (__x[__stateindex[5]])
+#define linE      (__x[__stateindex[6]])
+#define linI      (__x[__stateindex[7]])
+#define LINEAGE   (__x[__stateindex[8]])
 
 extern "C" {
 
@@ -99,7 +99,6 @@ extern "C" {
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
     
-    T0 = t0;
     nSAMPLE = *INTEGER(gud("nsample"));
 
     double m = N/(S0+E0+I0+R0);
@@ -113,8 +112,10 @@ extern "C" {
     ll = 0;
 
     double prop_prob = E0/(E0+I0);
+    int node_count = -1;
     node_it i = G.cbegin();
-    while ((*i)->slate <= T0 && i != G.cend()) {
+    while ((*i)->is_root() && i != G.cend()) {
+      node_count++;
       node_t *p = *(i++);
       for (ball_it j = p->cbegin(); j != p->cend(); j++) {
         ball_t *b = *j;
@@ -134,6 +135,7 @@ extern "C" {
     linE = nearbyint(linE);
     linI = nearbyint(linI);
     check_lineages(lineage,linE,linI,t0,__func__);
+    node = node_count;
   }
   
   void seirs_gill
@@ -158,9 +160,21 @@ extern "C" {
     linI = nearbyint(linI);
     check_lineages(lineage,linE,linI,t,"three");
 
+    //    Rprintf("rprocess: (%lg, %lg)\n",t,tmax);
+
+    int M = nearbyint(node);
+    int node_count = 0;
     node_it k = G.cbegin();
-    while ((*k)->slate < t) k++;
+    while (node_count < M && k != G.cend()) {
+      node_count++; k++;
+    }
+    if (k == G.cend())
+      err("something is terribly wrong in '%s'!",__func__);
+
     node_t *p = *k;
+    node = node+1;
+
+    //    Rprintf("########## step %ld %lg\n%s",M,t,p->describe().c_str());
 
     //    rprint(p->describe());
     //    for (int i = 0; i < nSAMPLE; i++) Rprintf("%ld ",int(lineage[i]));
@@ -168,61 +182,75 @@ extern "C" {
 
     if (!p->is_root()) {
       // FIXME: adjust for root-deme proposals here?
-
       int parent = p->green_ball()->lineage();
+      if (parent < 0 || parent >= nSAMPLE)
+        err("big trouble!");
       if (ISNA(lineage[parent])) {
-	rprint(p->green_ball()->holder()->describe()); // parent node
-	rprint(p->describe());		   // this node
-	err("bad");
+        err("bad:\n%s%s%s%ld %lg\n%ld %lg",
+            p->describe().c_str(),
+            p->green_ball()->holder()->describe().c_str(),
+            p->green_ball()->holder()->green_ball()->holder()->describe().c_str(),
+            parent,lineage[parent],
+            p->green_ball()->holder()->green_ball()->lineage(),
+            lineage[p->green_ball()->holder()->green_ball()->lineage()]);
       } else if (nearbyint(lineage[parent]) != 1) {
-	ll += R_NegInf;
-	//	Rprintf("discrete-event fail: parent %lg\n",lineage[parent]);
-	return;
-      } else if (p->holds(blue)) { // sample
-	if (p->holds(green)) {	   // saturation = (0,1)
-	  ll += log(psi);
-	  lineage[p->ball(green)->lineage()] = 1;
-	} else {		// saturation = (0,0)
-	  ll += log(psi*(I-linI+1));
-	  linI -= 1.0;
-	}
-	lineage[p->ball(blue)->lineage()] = R_NaReal;
-	if (!R_FINITE(ll)) {
-	  //	    Rprintf("sample fail: %lg %lg %lg %lg\n",E,I,linE,linI);
-	  return;
-	}
-      } else if (p->holds(green)) { // branch point s = (1,1)
-	ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
-	S -= 1; E += 1;
-	linE += 1;
-	ball_t *a = p->last_ball();
-	ball_t *b = p->other(a);
-	if (a->lineage() == b->lineage()) err("oh no.");
-	if (a->lineage() != p->green_ball()->lineage() &&
-	    b->lineage() != p->green_ball()->lineage()) err("oh dear.");
-	if (unif_rand() < 0.5) {
-	  lineage[a->lineage()] = 0;
-	  lineage[b->lineage()] = 1;
-	} else {
-	  lineage[a->lineage()] = 1;
-	  lineage[b->lineage()] = 0;
-	}
-	ll -= log(0.5);
-	if (!R_FINITE(ll)) {
-	  //	  Rprintf("branch fail: %lg %lg %lg\n",S,E,I);
-	  return;
-	}
-      } else {
-	err("inconceivable!! in '%s'!!",__func__);       // #nocov
+        ll += R_NegInf;
+        lineage[parent] = 1;
+        linE -= 1; linI += 1;
       }
-
-      linE = nearbyint(linE);
-      linI = nearbyint(linI);
-      check_lineages(lineage,linE,linI,t,__func__);
-
+      if (p->holds(blue)) { // sample
+        ball_t *b = p->ball(blue);
+        if (p->holds(green)) {     // saturation = (0,1)
+          ball_t *a = p->other(b);
+          ll += log(psi);
+          lineage[a->lineage()] = 1;
+          linI += 1;
+          // Rprintf("sample s=1:\n%s%s%ld %lg\n%ld %lg\n%ld %lg\n",
+          //      p->describe().c_str(),a->owner()->describe().c_str(),
+          //      parent,lineage[parent],
+          //      a->lineage(),lineage[a->lineage()],
+          //      b->lineage(),lineage[b->lineage()]);
+        } else {                // saturation = (0,0)
+          ll += log(psi*(I-linI+1));
+          // Rprintf("sample s=0:\n%s%ld %lg\n%ld %lg\n",
+          //      p->describe().c_str(),
+          //      parent,lineage[parent],
+          //      b->lineage(),lineage[b->lineage()]);
+        }
+        lineage[b->lineage()] = R_NaReal;
+        linI -= 1;
+      } else if (p->holds(green)) { // branch point s = (1,1)
+        ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
+        S -= 1; E += 1;
+        linE += 1;
+        ball_t *a = p->last_ball();
+        ball_t *b = p->other(a);
+        if (a==b || a->lineage() == b->lineage()) err("oh no.");
+        if (a->lineage() != p->green_ball()->lineage() &&
+            b->lineage() != p->green_ball()->lineage()) err("oh dear.");
+        if (unif_rand() < 0.5) {
+          lineage[a->lineage()] = 0;
+          lineage[b->lineage()] = 1;
+        } else {
+          lineage[a->lineage()] = 1;
+          lineage[b->lineage()] = 0;
+        }
+        // Rprintf("branch:\n %s %s %s %ld %lg\n%ld %lg\n",
+        //      p->describe().c_str(),
+        //      a->owner()->describe().c_str(),
+        //      b->owner()->describe().c_str(),
+        //      parent,lineage[parent],
+        //      a->lineage(),lineage[a->lineage()],
+        //      b->lineage(),lineage[b->lineage()]);
+        ll -= log(0.5);
+      } else {
+        err("inconceivable!! in '%s'!!",__func__);       // #nocov
+      }
     }
 
-    if (!R_FINITE(ll)) return;
+    linE = nearbyint(linE);
+    linI = nearbyint(linI);
+    check_lineages(lineage,linE,linI,t,__func__);
 
     // continuous portion:
     // take Gillespie steps to the end of the interval:
@@ -251,10 +279,6 @@ extern "C" {
           u = unif_rand();
           if (u < p) {          // propose an I -> E deme change
             ll += log(2*(I-linI)/I*(I+1)/(E+1));
-            if (!R_FINITE(ll)) {
-	      //              Rprintf("trans A %lg %lg %lg %lg\n",E,I,linE,linI);
-              return;
-            }
             int n = random_choice(linI);
             int i = -1;
             while (i < nSAMPLE && n > 0) {
@@ -266,23 +290,11 @@ extern "C" {
             linE += 1; linI -= 1;
           } else if (u < 2*p) { // propose an I -> I deme change
             ll += log(2*(E-linE+1)/(E+1)*(I+1)/I);
-            if (!R_FINITE(ll)) {
-	      //              Rprintf("trans B %lg %lg %lg %lg\n",E,I,linE,linI);
-              return;
-            }
           } else {              // propose no deme change
             ll += log((I-linI)/I*(E-linE+1)/(I-linI+1)*(I+1)/(E+1));
-            if (!R_FINITE(ll)) {
-	      //              Rprintf("trans C %lg %lg %lg %lg\n",E,I,linE,linI);
-              return;
-            }
           }
         } else {                // no deme change possible
           ll += log((I-linI)/I*(I+1)/(I-linI+1));
-          if (!R_FINITE(ll)) {
-	    //            Rprintf("trans D %lg %lg %lg %lg\n",E,I,linE,linI);
-            return;
-          }
         }
         S -= 1; E += 1;
         break;
@@ -291,10 +303,6 @@ extern "C" {
           double p = linE/(E+1);
           if (unif_rand() < p) { // propose an E -> I deme change
             ll += log((E+1)/(I+1));
-            if (!R_FINITE(ll)) {
-	      //              Rprintf("prog A %lg %lg %lg %lg\n",E,I,linE,linI);
-              return;
-            }
             int n = random_choice(linE);
             int i = -1;
             while (i < nSAMPLE && n > 0) {
@@ -306,17 +314,9 @@ extern "C" {
             linE -= 1; linI += 1;
           } else {              // propose no deme change
             ll += log((I-linI+1)/(E-linE+1)*(E+1)/(I+1));
-            if (!R_FINITE(ll)) {
-	      //              Rprintf("prog B %lg %lg %lg %lg\n",E,I,linE,linI);
-              return;
-            }
           }
         } else {                // no deme change possible (i.e. p = 0)
           ll += log((I-linI+1)/(I+1));
-          if (!R_FINITE(ll)) {
-	    //            Rprintf("prog C %lg %lg %lg %lg\n",E,I,linE,linI);
-            return;
-          }
         }
         E -= 1; I += 1;
         break;
@@ -331,8 +331,6 @@ extern "C" {
         break;                                       // #nocov
       }
 
-      if (!R_FINITE(ll)) return;
-      
       linE = nearbyint(linE);
       linI = nearbyint(linI);
       check_lineages(lineage,linE,linI,t,"three");
