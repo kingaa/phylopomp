@@ -110,14 +110,6 @@ SEXP run (SEXP State, SEXP Tout) {
   return out;
 }
 
-//! curtail the given genealogy
-template <class TYPE>
-SEXP curtail (SEXP State, SEXP Time) {
-  TYPE A = State;
-  A.curtail(*REAL(AS_NUMERIC(Time)));
-  return serial(A);
-}
-
 //! extract the bare genealogy
 template <class TYPE>
 SEXP genealogy (SEXP State) {
@@ -137,13 +129,9 @@ SEXP genealogy (SEXP State) {
     return run<TYPE>(State,Times);                              \
   }                                                             \
 
-#define GENEALFN(X,TYPE) SEXP geneal ## X (SEXP State) {		\
-    return genealogy<TYPE>(State);					\
-  }                                                                     \
-
-#define CURTAILFN(X,TYPE) SEXP curtail ## X (SEXP State, SEXP Time) {   \
-    return curtail<TYPE>(State,Time);                                   \
-  }                                                                     \
+#define GENEALFN(X,TYPE) SEXP geneal ## X (SEXP State) {        \
+    return genealogy<TYPE>(State);                              \
+  }                                                             \
 
 #define GENERICS(X,TYPE)                        \
   extern "C" {                                  \
@@ -154,10 +142,8 @@ SEXP genealogy (SEXP State) {
                                                 \
     RUNFN(X,TYPE)                               \
                                                 \
-    GENEALFN(X,TYPE)				\
+    GENEALFN(X,TYPE)                            \
                                                 \
-    CURTAILFN(X,TYPE)                           \
-                                                \
-  }						\
+  }                                             \
   
 #endif

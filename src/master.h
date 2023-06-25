@@ -105,14 +105,6 @@ public:
     geneal.time() = tfin;
     return count;
   };
-  //! curtail the genealogy by removing nodes
-  //! with times later than tnew
-  //! NB: this destroys the master process inasmuch
-  //! as the state is no longer correct.
-  void curtail (slate_t tnew) {
-    geneal.curtail(tnew);
-    if (tnew < popul_t::time()) popul_t::current = tnew;
-  };
 
 public:
   //! current time

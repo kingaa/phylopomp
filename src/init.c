@@ -3,7 +3,7 @@
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
-SEXP curtailBare (SEXP, SEXP);
+SEXP curtail (SEXP, SEXP);
 
 // edit this file to register new model routines with R
 // for each model, there must be
@@ -24,7 +24,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SI2R),
   METHODS(SEIR),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
-  {"curtailBare", (DL_FUNC) &curtailBare, 2},
+  {"curtail", (DL_FUNC) &curtail, 2},
   {NULL, NULL, 0}
 };
 
