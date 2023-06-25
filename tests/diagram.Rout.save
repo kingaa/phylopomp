@@ -456,6 +456,254 @@ genealogy:
     - color: blue
       name: 10
 > 
+> simulate("LBDP",time=0.5) |> geneal() |> yaml()
+t0: 0.000000
+time: 0.500000
+nodes:
+- name: 4
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 4
+  - color: black
+    name: 4
+    deme: 0
+- name: 3
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 3
+  - color: green
+    name: 8
+- name: 2
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 2
+  - color: black
+    name: 2
+    deme: 0
+- name: 1
+  deme: 0
+  time: 0.000000
+  pocket:
+  - color: green
+    name: 1
+  - color: green
+    name: 5
+- name: 5
+  deme: 0
+  time: 0.024802
+  pocket:
+  - color: green
+    name: 6
+  - color: green
+    name: 7
+- name: 6
+  deme: 0
+  time: 0.135422
+  pocket:
+  - color: blue
+    name: 6
+  - color: green
+    name: 10
+- name: 7
+  deme: 0
+  time: 0.225639
+  pocket:
+  - color: blue
+    name: 7
+  - color: green
+    name: 12
+- name: 8
+  deme: 0
+  time: 0.257510
+  pocket:
+  - color: green
+    name: 9
+- name: 9
+  deme: 0
+  time: 0.258911
+  pocket:
+  - color: green
+    name: 11
+- name: 10
+  deme: 0
+  time: 0.300515
+  pocket:
+  - color: black
+    name: 1
+    deme: 0
+  - color: black
+    name: 10
+    deme: 0
+- name: 11
+  deme: 0
+  time: 0.329387
+  pocket:
+  - color: black
+    name: 8
+    deme: 0
+  - color: black
+    name: 11
+    deme: 0
+- name: 12
+  deme: 0
+  time: 0.344377
+  pocket:
+  - color: black
+    name: 5
+    deme: 0
+  - color: blue
+    name: 12
+> 
+> simulate("LBDP",time=0.5) |> yaml()
+parameter:
+  lambda: 2.000000
+  mu: 1.000000
+  psi: 1.000000
+  n0: 5
+state:
+  n: 11
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 4
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 4
+    - color: black
+      name: 4
+      deme: 0
+  - name: 3
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 3
+    - color: green
+      name: 9
+  - name: 2
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 2
+    - color: green
+      name: 5
+  - name: 0
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 0
+    - color: green
+      name: 7
+  - name: 5
+    deme: 0
+    time: 0.160661
+    pocket:
+    - color: green
+      name: 6
+    - color: green
+      name: 12
+  - name: 6
+    deme: 0
+    time: 0.169066
+    pocket:
+    - color: black
+      name: 5
+      deme: 0
+    - color: black
+      name: 6
+      deme: 0
+  - name: 7
+    deme: 0
+    time: 0.229060
+    pocket:
+    - color: green
+      name: 8
+    - color: green
+      name: 13
+  - name: 8
+    deme: 0
+    time: 0.259936
+    pocket:
+    - color: black
+      name: 7
+      deme: 0
+    - color: black
+      name: 8
+      deme: 0
+  - name: 9
+    deme: 0
+    time: 0.344839
+    pocket:
+    - color: blue
+      name: 9
+    - color: green
+      name: 10
+  - name: 10
+    deme: 0
+    time: 0.406375
+    pocket:
+    - color: green
+      name: 11
+    - color: green
+      name: 14
+  - name: 11
+    deme: 0
+    time: 0.407760
+    pocket:
+    - color: black
+      name: 3
+      deme: 0
+    - color: blue
+      name: 11
+  - name: 12
+    deme: 0
+    time: 0.421925
+    pocket:
+    - color: blue
+      name: 12
+    - color: green
+      name: 15
+  - name: 13
+    deme: 0
+    time: 0.439575
+    pocket:
+    - color: black
+      name: 0
+      deme: 0
+    - color: black
+      name: 13
+      deme: 0
+  - name: 14
+    deme: 0
+    time: 0.453841
+    pocket:
+    - color: black
+      name: 10
+      deme: 0
+    - color: black
+      name: 14
+      deme: 0
+  - name: 15
+    deme: 0
+    time: 0.465254
+    pocket:
+    - color: black
+      name: 2
+      deme: 0
+    - color: blue
+      name: 15
+> 
 > try(
 +   simulate("SIR",time=1) |> simulate(time=0.1)
 + )

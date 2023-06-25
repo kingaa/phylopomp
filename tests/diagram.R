@@ -46,6 +46,10 @@ simulate("LBDP",time=0.5) |> yaml(prune=FALSE,obscure=TRUE)
 
 simulate("LBDP",time=0.5) |> yaml(trace=TRUE)
 
+simulate("LBDP",time=0.5) |> geneal() |> yaml()
+
+simulate("LBDP",time=0.5) |> yaml()
+
 try(
   simulate("SIR",time=1) |> simulate(time=0.1)
 )

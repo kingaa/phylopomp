@@ -21,5 +21,5 @@ geneal <- function (object) {
     model = object,
     pStop("unrecognized model ",sQuote(attr(object,"model")))
   ) |>
-    structure(model=attr(object,"model"),class="gpsim")
+    structure(class="gpsim")
 }
