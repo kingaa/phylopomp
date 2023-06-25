@@ -159,98 +159,305 @@ node(74,0) {black(59,0), black(74,0)}, t = 0.286359
 node(75,1) {black(15,1), black(75,1)}, t = 0.290813
 node(76,0) {black(1,0), black(76,0)}, t = 0.297674
 > 
-> simulate("SIR",time=0.5) |>
-+   getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
-+   getElement("yaml") |>
-+   cat()
-t0: 0.000000
-time: 0.500000
-nodes:
-- name: 0
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 0
-  - color: black
-    name: 0
+> simulate("SIR",time=0.5) |> yaml(prune=FALSE)
+parameter:
+  Beta: 2.000000
+  gamma: 1.000000
+  psi: 1.000000
+  delta: 0.000000
+  S0: 100
+  I0: 2
+  R0: 0
+state:
+  S: 100
+  I: 1
+  R: 1
+  N: 102.000000
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 0
     deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 0
+    - color: black
+      name: 0
+      deme: 0
 > 
-> simulate("LBDP",time=0.5) |>
-+   getInfo(yaml=TRUE) |>
-+   getElement("yaml") |>
-+   cat()
-t0: 0.000000
-time: 0.500000
-nodes:
-- name: 4
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 4
-  - color: green
-    name: 13
-- name: 3
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 3
-  - color: green
-    name: 11
-- name: 2
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 2
-  - color: green
-    name: 14
-- name: 0
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 0
-  - color: green
-    name: 5
-- name: 5
-  deme: 0
-  time: 0.021172
-  pocket:
-  - color: blue
-    name: 5
-- name: 11
-  deme: 0
-  time: 0.148050
-  pocket:
-  - color: blue
-    name: 11
-- name: 13
-  deme: 0
-  time: 0.326312
-  pocket:
-  - color: blue
-    name: 13
-  - color: green
-    name: 18
-- name: 14
-  deme: 0
-  time: 0.331420
-  pocket:
-  - color: blue
-    name: 14
-- name: 18
-  deme: 0
-  time: 0.478962
-  pocket:
-  - color: blue
-    name: 18
+> simulate("LBDP",time=0.5) |> yaml(prune=FALSE,obscure=TRUE)
+parameter:
+  lambda: 2.000000
+  mu: 1.000000
+  psi: 1.000000
+  n0: 5
+state:
+  n: 11
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 4
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 4
+    - color: green
+      name: 10
+  - name: 3
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 3
+    - color: green
+      name: 6
+  - name: 2
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 2
+    - color: green
+      name: 7
+  - name: 1
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 9
+  - name: 0
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 0
+    - color: green
+      name: 5
+  - name: 5
+    deme: 0
+    time: 0.021172
+    pocket:
+    - color: blue
+      name: 5
+    - color: green
+      name: 15
+  - name: 6
+    deme: 0
+    time: 0.029307
+    pocket:
+    - color: green
+      name: 11
+    - color: green
+      name: 12
+  - name: 7
+    deme: 0
+    time: 0.105442
+    pocket:
+    - color: green
+      name: 14
+  - name: 9
+    deme: 0
+    time: 0.121624
+    pocket:
+    - color: black
+      name: 1
+      deme: 0
+    - color: green
+      name: 20
+  - name: 10
+    deme: 0
+    time: 0.132903
+    pocket:
+    - color: green
+      name: 13
+  - name: 11
+    deme: 0
+    time: 0.148050
+    pocket:
+    - color: black
+      name: 6
+      deme: 0
+    - color: blue
+      name: 11
+  - name: 12
+    deme: 0
+    time: 0.268857
+    pocket:
+    - color: black
+      name: 12
+      deme: 0
+  - name: 13
+    deme: 0
+    time: 0.326312
+    pocket:
+    - color: blue
+      name: 13
+    - color: green
+      name: 16
+  - name: 14
+    deme: 0
+    time: 0.331420
+    pocket:
+    - color: black
+      name: 7
+      deme: 0
+    - color: blue
+      name: 14
+  - name: 15
+    deme: 0
+    time: 0.369906
+    pocket:
+    - color: black
+      name: 0
+      deme: 0
+    - color: green
+      name: 19
+  - name: 16
+    deme: 0
+    time: 0.411556
+    pocket:
+    - color: green
+      name: 17
+  - name: 17
+    deme: 0
+    time: 0.467762
+    pocket:
+    - color: black
+      name: 10
+      deme: 0
+    - color: green
+      name: 18
+  - name: 18
+    deme: 0
+    time: 0.478962
+    pocket:
+    - color: black
+      name: 17
+      deme: 0
+    - color: blue
+      name: 18
+  - name: 19
+    deme: 0
+    time: 0.485843
+    pocket:
+    - color: black
+      name: 15
+      deme: 0
+    - color: black
+      name: 19
+      deme: 0
+  - name: 20
+    deme: 0
+    time: 0.499067
+    pocket:
+    - color: black
+      name: 9
+      deme: 0
+    - color: black
+      name: 20
+      deme: 0
+> 
+> simulate("LBDP",time=0.5) |> yaml(trace=TRUE)
+parameter:
+  lambda: 2.000000
+  mu: 1.000000
+  psi: 1.000000
+  n0: 5
+state:
+  n: 6
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 4
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 4
+    - color: green
+      name: 6
+  - name: 3
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 3
+    - color: green
+      name: 5
+  - name: 1
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 7
+  - name: 0
+    deme: 0
+    time: 0.000000
+    pocket:
+    - color: green
+      name: 0
+    - color: green
+      name: 10
+  - name: 5
+    deme: 0
+    time: 0.112479
+    pocket:
+    - color: green
+      name: 8
+  - name: 6
+    deme: 0
+    time: 0.139726
+    pocket:
+    - color: black
+      name: 4
+      deme: 0
+    - color: black
+      name: 6
+      deme: 0
+  - name: 7
+    deme: 0
+    time: 0.186755
+    pocket:
+    - color: green
+      name: 9
+  - name: 8
+    deme: 0
+    time: 0.342700
+    pocket:
+    - color: black
+      name: 3
+      deme: 0
+    - color: black
+      name: 8
+      deme: 0
+  - name: 9
+    deme: 0
+    time: 0.383668
+    pocket:
+    - color: black
+      name: 7
+      deme: 0
+  - name: 10
+    deme: 0
+    time: 0.421009
+    pocket:
+    - color: black
+      name: 0
+      deme: 0
+    - color: blue
+      name: 10
 > 
 > try(
-+   simulate("SIR",time=1) |>
-+     simulate(time=0.1)
++   simulate("SIR",time=1) |> simulate(time=0.1)
 + )
 Error : cannot simulate backward! (current t=1, requested t=0.1)
 > 
@@ -319,4 +526,24 @@ The following objects are masked from 'package:base':
 > dev.off()
 null device 
           1 
+> 
+> x |> getInfo(obscure=FALSE,trace=TRUE,nsample=TRUE,ndeme=TRUE) |> unlist()
+nsample   ndeme 
+     37       2 
+> x |> getInfo(obscure=FALSE,trace=TRUE,genealogy=TRUE)
+$genealogy
+<phylopomp genealogy>
+
+> 
+> try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
+Error : unrecognized argument 'bob' in 'getInfo'.
+> 
+> raw(0) |> geneal()
+<phylopomp genealogy>
+> try(raw(0) |> newick())
+Error : cannot deserialize a NULL.
+> try(raw(0) |> geneal() |> newick())
+Error : cannot deserialize a NULL.
+> try(raw(10) |> newick())
+Error : corrupted genealogy serialization.
 > 

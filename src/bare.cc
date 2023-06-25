@@ -13,4 +13,10 @@ extern "C" {
     return serial(A);
   }
 
+  //! curtail the given genealogy
+  SEXP yaml (SEXP State) {
+    genealogy_t A = State;
+    return mkString(A.yaml().c_str());
+  }
+
 }

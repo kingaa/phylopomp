@@ -10,3 +10,10 @@ print.gpsim <- function (x, ...) {
     cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
   }
 }
+
+##' @rdname internals
+##' @method print gpyaml
+##' @export
+print.gpyaml <- function (x, ...) {
+  cat(x)
+}

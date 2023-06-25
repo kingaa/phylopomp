@@ -4,7 +4,7 @@
 \alias{yaml}
 \title{YAML output}
 \usage{
-yaml(object, prune = TRUE, obscure = TRUE)
+yaml(object, prune = TRUE, obscure = TRUE, trace = FALSE)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
@@ -12,6 +12,8 @@ yaml(object, prune = TRUE, obscure = TRUE)
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{trace}{logical; trace the lineages?}
 }
 \value{
 A string in yaml format.

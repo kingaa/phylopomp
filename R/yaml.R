@@ -12,9 +12,20 @@
 ##' 
 ##' @rdname yaml
 ##' @export
-yaml <- function (object, prune = TRUE, obscure = TRUE) {
-  getInfo(object,yaml=TRUE,prune=prune,obscure=obscure) |>
-    getElement("yaml")
+yaml <- function (object, prune = TRUE, obscure = TRUE, trace = FALSE) {
+  switch(
+    paste0("model",as.character(attr(object,"model"))),
+    modelSIR = .Call(P_yamlSIR,object),
+    modelSIRS = .Call(P_yamlSIR,object),
+    modelSEIR = .Call(P_yamlSEIR,object),
+    modelSIIR = .Call(P_yamlSIIR,object),
+    modelLBDP = .Call(P_yamlLBDP,object),
+    modelMoran = .Call(P_yamlMoran,object),
+    modelSI2R = .Call(P_yamlSI2R,object),
+    model = .Call(P_yaml,object),
+    pStop("unrecognized model ",sQuote(attr(object,"model")))
+  ) |>
+    structure(class="gpyaml")
 }
 
 ##' @importFrom yaml as.yaml

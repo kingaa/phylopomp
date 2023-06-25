@@ -133,6 +133,10 @@ SEXP genealogy (SEXP State) {
     return genealogy<TYPE>(State);                              \
   }                                                             \
 
+#define YAMLFN(X,TYPE) SEXP yaml ## X (SEXP State) {		\
+    return yaml<TYPE>(State);					\
+  }                                                             \
+
 #define GENERICS(X,TYPE)                        \
   extern "C" {                                  \
                                                 \
@@ -143,6 +147,8 @@ SEXP genealogy (SEXP State) {
     RUNFN(X,TYPE)                               \
                                                 \
     GENEALFN(X,TYPE)                            \
+                                                \
+    YAMLFN(X,TYPE)				\
                                                 \
   }                                             \
   

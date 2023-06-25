@@ -93,6 +93,20 @@ stopifnot(
   )
 )
 
+plot_grid(
+  x |> newick(prune=FALSE,obscure=FALSE) |>
+    parse_newick(tf=3) |>
+    plot()+expand_limits(x=7),
+  x |> newick(prune=FALSE,obscure=FALSE) |>
+    parse_newick() |>
+    plot()+expand_limits(x=7),
+  x |> newick(prune=FALSE,obscure=FALSE) |>
+    parse_newick(tf=7) |>
+    plot()+expand_limits(x=7),
+  align="hv",axis="tblr",
+  ncol=1,rel_heights=c(1,1,1)
+  )
+
 try(
   r"{(((p_9_0:1.0000,b_3_5:0.999,o_1_8:0.5555)g_0_88:0.5;}" |>
      parse_newick()
@@ -200,6 +214,9 @@ try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,(b_____2:17;}" |>
      parse_newick()
 )
+
+r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
+   parse_newick()
 
 r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
    parse_newick() |>

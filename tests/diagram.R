@@ -40,19 +40,14 @@ simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
   getElement("description") |>
   cat()
 
-simulate("SIR",time=0.5) |>
-  getInfo(yaml=TRUE,t0=TRUE,prune=FALSE) |>
-  getElement("yaml") |>
-  cat()
+simulate("SIR",time=0.5) |> yaml(prune=FALSE)
 
-simulate("LBDP",time=0.5) |>
-  getInfo(yaml=TRUE) |>
-  getElement("yaml") |>
-  cat()
+simulate("LBDP",time=0.5) |> yaml(prune=FALSE,obscure=TRUE)
+
+simulate("LBDP",time=0.5) |> yaml(trace=TRUE)
 
 try(
-  simulate("SIR",time=1) |>
-    simulate(time=0.1)
+  simulate("SIR",time=1) |> simulate(time=0.1)
 )
 
 pal <- c("#00274c55","#ffcb0555","#00659755")
@@ -102,3 +97,13 @@ x |>
   diagram(obscure=FALSE,palette=pal[c(2,3)]) |>
   print(vp=viewport(x=0.52,y=0.1,width=0.9,height=0.05))
 dev.off()
+
+x |> getInfo(obscure=FALSE,trace=TRUE,nsample=TRUE,ndeme=TRUE) |> unlist()
+x |> getInfo(obscure=FALSE,trace=TRUE,genealogy=TRUE)
+
+try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
+
+raw(0) |> geneal()
+try(raw(0) |> newick())
+try(raw(0) |> geneal() |> newick())
+try(raw(10) |> newick())

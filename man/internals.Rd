@@ -14,6 +14,7 @@
 \alias{preDrawDetails.ballGrob}
 \alias{postDrawDetails.ballGrob}
 \alias{print.gpsim}
+\alias{print.gpyaml}
 \title{Diagramming internals}
 \usage{
 genealogyGrob(object, m = NULL, n = NULL, vp = NULL, palette, ...)
@@ -39,6 +40,8 @@ resizingTextGrob(..., vp = NULL)
 \method{postDrawDetails}{ballGrob}(x)
 
 \method{print}{gpsim}(x, ...)
+
+\method{print}{gpyaml}(x, ...)
 }
 \arguments{
 \item{object}{list; pocket structure}
