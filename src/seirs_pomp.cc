@@ -361,7 +361,7 @@ extern "C" {
 
     if (R_FINITE(ll) &&
         S >= 0 && R >= 0 &&
-	//	E >= linE && I >= linI &&
+	E >= linE && I >= linI &&
         linE >= 0 && linI >= 0) {
       lik = (give_log) ? ll : exp(ll);
     } else {
