@@ -156,10 +156,6 @@ extern "C" {
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
-    linE = nearbyint(linE);
-    linI = nearbyint(linI);
-    check_lineages(lineage,linE,linI,t,"three");
-
     //    Rprintf("rprocess: (%lg, %lg)\n",t,tmax);
 
     int M = nearbyint(node);
@@ -248,9 +244,9 @@ extern "C" {
       }
     }
 
-    linE = nearbyint(linE);
-    linI = nearbyint(linI);
-    check_lineages(lineage,linE,linI,t,__func__);
+    // linE = nearbyint(linE);
+    // linI = nearbyint(linI);
+    // check_lineages(lineage,linE,linI,t,__func__);
 
     // continuous portion:
     // take Gillespie steps to the end of the interval:
@@ -333,7 +329,7 @@ extern "C" {
 
       linE = nearbyint(linE);
       linI = nearbyint(linI);
-      check_lineages(lineage,linE,linI,t,"three");
+      check_lineages(lineage,linE,linI,t,__func__);
 
       t += tstep;
       event_rate = event_rates(S,E,I,R,N,linE,linI,
@@ -363,11 +359,9 @@ extern "C" {
    double t
    ) {
 
-    check_lineages(&LINEAGE,linE,linI,t,__func__);
-    
     if (R_FINITE(ll) &&
         S >= 0 && R >= 0 &&
-        //      E >= linE && I >= linI &&
+	//	E >= linE && I >= linI &&
         linE >= 0 && linI >= 0) {
       lik = (give_log) ? ll : exp(ll);
     } else {
