@@ -11,22 +11,12 @@
 #include "internal.h"
 #include "ball.h"
 
-//! Ordering for balls in pockets.
-
-//! Without this, order depends on machine state,
-//! defeating reproducibility.
-struct ball_compare {
-  bool operator() (const ball_t* a, const ball_t* b) const {
-    return compare(a,b);
-  }
-};
-
-typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
+typedef typename std::set<ball_t*,ball_t>::const_iterator ball_it;
 
 //! A pocket is a set of balls.
-
-//! An order relation among balls ensures the uniqueness of the internal representation.
-class pocket_t : public std::set<ball_t*,ball_compare> {
+//! An order relation among balls ensures the uniqueness
+//! of the internal representation.
+class pocket_t : public std::set<ball_t*,ball_t> {
   
 private:
   

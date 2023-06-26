@@ -27,11 +27,12 @@ private:
   void clean (void) { };
 
 public:
-    
+
   name_t uniq, deme;
   slate_t slate;
 
 public:
+
   //! size of binary serialization
   size_t bytesize (void) const {
     return 2*sizeof(name_t) + sizeof(slate_t)
@@ -58,7 +59,7 @@ public:
   };
 
 public:
-  
+
   //! basic constructor for node class
   node_t (name_t u = 0, slate_t t = R_NaReal, name_t d = 0) {
     uniq = u;
@@ -78,6 +79,9 @@ public:
   ~node_t (void) {
     clean();
   };
+
+public:
+
   //! pointer to my green ball
   ball_t* green_ball (void) const {
     return _green_ball;
@@ -85,6 +89,9 @@ public:
   //! set green ball
   ball_t*& green_ball (void) {
     return _green_ball;
+  };
+  node_t* parent (void) const {
+    return _green_ball->holder();
   };
   bool holds_own (void) const {
     return (_green_ball->holder() == this);
@@ -95,6 +102,9 @@ public:
   bool dead_root (void) const {
     return holds_own() && size()==1;
   };
+
+public:
+
   //! number of descendants
   int nchildren (void) const {
     int n = 0;
@@ -142,6 +152,9 @@ public:
       etype[deme] = 2;
     }
   };
+
+public:
+
   //! human-readable info
   std::string describe (void) const {
     std::string s = "node(" + std::to_string(uniq)
@@ -149,6 +162,16 @@ public:
     s += pocket_t::describe();
     s += ", t = " + std::to_string(slate) + "\n";
     return s;
+  };
+  //! machine-readable info
+  std::string yaml (std::string tab = "") const {
+    std::string t = tab + "  ";
+    std::string o = "name: " + std::to_string(uniq) + "\n"
+      + tab + "deme: " + std::to_string(deme) + "\n"
+      + tab + "time: " + std::to_string(slate) + "\n"
+      + tab + "pocket:\n"
+      + pocket_t::yaml(tab);
+    return o;
   };
   //! R list description
   SEXP structure (void) const {
@@ -169,16 +192,6 @@ public:
     SET_NAMES(O,On);
     UNPROTECT(6);
     return O;
-  };
-  //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string o = "name: " + std::to_string(uniq) + "\n"
-      + tab + "deme: " + std::to_string(deme) + "\n"
-      + tab + "time: " + std::to_string(slate) + "\n"
-      + tab + "pocket:\n"
-      + pocket_t::yaml(tab);
-    return o;
   };
   //! Newick format
   std::string newick (const slate_t& tnow, const slate_t& tpar) const {
@@ -219,17 +232,6 @@ public:
       + "_" + std::to_string(uniq)
       + ":" + std::to_string(slate - tpar);
   };
-  //! order relation
-  friend bool compare (const node_t*p, const node_t* q) {
-    return (p->slate < q->slate) ||
-      ((p->slate == q->slate) && (p->uniq < q->uniq));
-  };
 };
-
-//! Ordering for nodes.
-//! Within a node sequence, nodes should be ordered in time.
-static inline bool node_compare (const node_t* p, const node_t* q) {
-  return compare(p,q);
-}
 
 #endif

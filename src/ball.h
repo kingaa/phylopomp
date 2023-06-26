@@ -2,7 +2,7 @@
 // BALL CLASS
 #ifndef _BALL_H_
 #define _BALL_H_
-  
+
 #include <string>
 #include <cstring>
 #include "internal.h"
@@ -36,7 +36,17 @@ private:
 public:
   name_t uniq;
   color_t color;
-  
+
+public:
+
+  //! Order relation among balls.
+  //! Without this, order depends on machine state,
+  //! defeating reproducibility.
+  bool operator() (const ball_t* a, const ball_t* b) const {
+    return (a->uniq < b->uniq) ||
+      ((a->uniq == b->uniq) && (a->color < b->color));
+  };
+
 public:
 
   //! size of binary serialization
@@ -57,7 +67,9 @@ public:
     b._owner = 0;               // must be set elsewhere
     return o;
   };
+
 public:
+
   //! basic constructor for ball class
   ball_t (node_t *who = 0, name_t u = 0,
           color_t col = green, name_t d = undeme) {
@@ -76,6 +88,9 @@ public:
   ball_t & operator= (ball_t&&) = delete;
   //! destructor
   ~ball_t (void) = default;
+
+public:
+
   //! view deme (of a black ball).
   name_t deme (void) const {
     if (color != black)
@@ -109,12 +124,20 @@ public:
     return _owner;
   };
   //! in whose pocket do I lie?
+  node_t* holder (void) const {
+    return _holder;
+  };
+  //! in whose pocket do I lie?
   node_t*& holder (void) {
     return _holder;
   };
+  //! a child is the owner of a green ball
   node_t* child (void) const {
+    if (color != green)
+      err("ask not the child of a %s ball!",colores[color]); // #nocov
     return _owner;
   };
+  //! is a given ball of the given color?
   bool is (color_t c) const {
     return color==c;
   };
@@ -126,7 +149,7 @@ public:
   std::string color_symbol (void) const {
     if (is(green) && _holder==_owner)
       return "m";               // brown balls
-    else 
+    else
       return colorsymb[color];
   };
   //! human-readable info
@@ -137,6 +160,16 @@ public:
       o += "," + std::to_string(_deme);
     }
     o += ")";
+    return o;
+  };
+  //! machine-readable info
+  std::string yaml (std::string tab = "") const {
+    std::string o;
+    o = "color: " + color_name() + "\n"
+      + tab + "name: " + std::to_string(uniq) + "\n";
+    if (color==black) {
+      o += tab + "deme: " + std::to_string(_deme) + "\n";
+    }
     return o;
   };
   //! R list description
@@ -161,16 +194,6 @@ public:
     UNPROTECT(4);
     return O;
   };
-  //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string o;
-    o = "color: " + color_name() + "\n"      
-      + tab + "name: " + std::to_string(uniq) + "\n";
-    if (color==black) {
-      o += tab + "deme: " + std::to_string(_deme) + "\n";
-    }
-    return o;
-  };
   //! element of a newick representation
   std::string newick (const slate_t &t) const {
     return color_symbol()
@@ -178,11 +201,6 @@ public:
       + "_" + std::to_string(uniq)
       + ":" + std::to_string(t);
   };
-  //! arbitrary order relation
-  friend bool compare (const ball_t*a, const ball_t* b) {
-    return (a->uniq < b->uniq) ||
-      ((a->uniq == b->uniq) && (a->color < b->color));
-  }
 };
 
 #endif

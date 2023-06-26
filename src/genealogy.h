@@ -22,15 +22,15 @@ static const size_t MEMORY_MAX = (1<<28); // 256MB
 class genealogy_t : public nodeseq_t {
 
 private:
-  
+
   // GENEALOGY member data:
   // - a counter of serial numbers
   // - an initial time
   // - the current time
   // - a sequence of nodes
-  
+
   //! The next unique name.
-  name_t _unique;               
+  name_t _unique;
   //! The initial time.
   slate_t _t0;
   //! The current time.
@@ -141,7 +141,7 @@ public:
   ~genealogy_t (void) {
     clean();
   };
-  
+
   //! view/set current time.
   slate_t& time (void) {
     return _time;
@@ -156,7 +156,7 @@ public:
   };
 
 public:
-  
+
   //! lineage count, saturation, and event-type.
   //! types are:
   //! -  0 = non-event
@@ -233,7 +233,7 @@ public:
   };
 
 public:
-  
+
   //! R list description
   SEXP structure (void) const {
     SEXP O, On, T0, Time, Nodes;
@@ -251,7 +251,7 @@ public:
     UNPROTECT(5);
     return O;
   };
-  
+
 public:
 
   //! human-readable info
@@ -263,7 +263,7 @@ public:
   };
 
 public:
-  
+
   //! machine-readable info
   virtual std::string yaml (std::string tab = "") const {
     std::string o;
@@ -313,7 +313,7 @@ public:
 
 public:
 
-  //! birth into deme d 
+  //! birth into deme d
   ball_t* birth (ball_t* a, slate_t t, name_t d) {
     time() = t;
     node_t *p = make_node(a->deme());
@@ -321,7 +321,7 @@ public:
     p->insert(b);
     p->slate = time();
     add(p,a);
-    return b;           
+    return b;
   };
   //! birth of second or subsequent sibling into deme d
   ball_t* birth (node_t* p, name_t d) {
@@ -441,19 +441,19 @@ public:
     reinterpret_cast<nodeseq_t&>(*this) += reinterpret_cast<nodeseq_t&>(G);
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
-    _unique = (_unique < G._unique) ? G._unique : _unique; 
+    _unique = (_unique < G._unique) ? G._unique : _unique;
     _ndeme = (_ndeme < G.ndeme()) ? G.ndeme() : _ndeme;
     return *this;
   };
-  
+
 private:
-  
+
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
   size_t scan_label (const std::string& s, color_t* col,
                      name_t *deme, slate_t *time) const {
     size_t n = s.size();
-    if (n < 5) 
+    if (n < 5)
       err("in '%s': invalid Newick format: empty or invalid label.",__func__);
     switch (s[0]) {
     case 'o':
@@ -575,7 +575,7 @@ private:
   };
 
 public:
-  
+
   //! Parse a Newick string and create the indicated genealogy.
   genealogy_t& parse (const std::string& s, slate_t t0, node_t *p = 0) {
     size_t i = 0;
@@ -618,7 +618,7 @@ public:
         break;
       }
     }
-    sort(node_compare);
+    sort();
     return *this;
   };
 };

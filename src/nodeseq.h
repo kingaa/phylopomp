@@ -19,6 +19,7 @@ typedef typename std::list<node_t*>::const_reverse_iterator node_rev_it;
 class nodeseq_t : public std::list<node_t*> {
 
 private:
+
   //! clean up: delete all nodes, reset globals
   void clean (void) {
     for (node_it i = begin(); i != end(); i++) delete *i;
@@ -26,11 +27,14 @@ private:
   };
 
 public:
+
   //! destructor
   ~nodeseq_t (void) {
     clean();
   };
-  
+
+public:
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
@@ -71,6 +75,7 @@ public:
   };
 
 private:
+
   //! Needed in deserialization.
   //! This function repairs the links green balls and their names.
   void repair_owners (std::unordered_map<name_t,ball_t*>& names) {
@@ -84,10 +89,32 @@ private:
       } else {
         err("in '%s': cannot find node %ld",__func__,p->uniq); // #nocov
       }
-      
+
     }
   };
-  
+
+private:
+
+  //! Order relation among nodes.
+  //! Nodes should be ordered by time, then by unique name.
+  static bool compare (node_t* p, node_t* q) {
+    return (p->slate < q->slate) ||
+      ((p->slate == q->slate) && (p->uniq < q->uniq));
+  };
+
+public:
+
+  //! merge two node sequences
+  nodeseq_t& operator+= (nodeseq_t& other) {
+    merge(other,compare);
+    return *this;
+  };
+
+  //! order nodes in order of increasing time
+  void sort (void) {
+    std::list<node_t*>::sort(compare);
+  };
+
 private:
 
   //! Earliest time in the sequence.
@@ -100,7 +127,7 @@ private:
   }
 
 public:
-  
+
   //! Get all balls of a color.
   pocket_t* colored (color_t col) const {
     pocket_t *p = new pocket_t;
@@ -122,45 +149,9 @@ public:
     }
     return count;
   };
-  //! human-readable info
-  std::string describe (void) const {
-    std::string o = "";
-    for (node_it p = begin(); p != end(); p++) {
-      o += (*p)->describe();
-    }
-    return o;
-  };
-  //! human- & machine-readable info
-  virtual std::string yaml (std::string tab = "") const {
-    std::string o = "";
-    std::string t = tab + "  ";
-    for (node_it p = begin(); p != end(); p++) {
-      o += tab + "- " + (*p)->yaml(t);
-    }
-    return o;
-  };
-  //! R list description
-  SEXP structure (void) const {
-    SEXP Nodes;
-    PROTECT(Nodes = NEW_LIST(size()));
-    int k = 0;
-    for (node_it i = begin(); i != end(); i++) {
-      SET_ELEMENT(Nodes,k++,(*i)->structure());
-    }
-    UNPROTECT(1);
-    return Nodes;
-  };
-  //! put genealogy at time `t` into Newick format.
-  std::string newick (slate_t t) const {
-    slate_t te = dawn();
-    std::string o = "";
-    for (node_it i = begin(); i != end(); i++) {
-      if ((*i)->is_root()) {
-        o += (*i)->newick(t,te) + ";";
-      }
-    }
-    return o;
-  };
+
+public:
+
   //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
@@ -220,14 +211,9 @@ public:
       }
     }
   };
-  //! merge two node sequences.
-  nodeseq_t& operator+= (nodeseq_t& other) {
-    this->merge(other,node_compare);
-    return *this;
-  };
 
 private:
-  
+
   //! trace back a single lineage.
   //! this results in the deme slot for all green balls along
   //! the lineage of 'b' begin replaced by the lineage of 'b'.
@@ -240,7 +226,7 @@ private:
   };
 
 public:
-  
+
   //! trace back all sample lineages.
   //! this results in the deme slots of all green balls being
   //! replaced by the unique names of the lineages they trace.
@@ -260,6 +246,48 @@ public:
         }
       }
     }
+  };
+
+public:
+
+  //! human-readable info
+  std::string describe (void) const {
+    std::string o = "";
+    for (node_it p = begin(); p != end(); p++) {
+      o += (*p)->describe();
+    }
+    return o;
+  };
+  //! human- & machine-readable info
+  virtual std::string yaml (std::string tab = "") const {
+    std::string o = "";
+    std::string t = tab + "  ";
+    for (node_it p = begin(); p != end(); p++) {
+      o += tab + "- " + (*p)->yaml(t);
+    }
+    return o;
+  };
+  //! R list description
+  SEXP structure (void) const {
+    SEXP Nodes;
+    PROTECT(Nodes = NEW_LIST(size()));
+    int k = 0;
+    for (node_it i = begin(); i != end(); i++) {
+      SET_ELEMENT(Nodes,k++,(*i)->structure());
+    }
+    UNPROTECT(1);
+    return Nodes;
+  };
+  //! put genealogy at time `t` into Newick format.
+  std::string newick (slate_t t) const {
+    slate_t te = dawn();
+    std::string o = "";
+    for (node_it i = begin(); i != end(); i++) {
+      if ((*i)->is_root()) {
+        o += (*i)->newick(t,te) + ";";
+      }
+    }
+    return o;
   };
 };
 
