@@ -41,6 +41,9 @@ rsession: RSESSION = R
 default: .roxy .NEWS .instdocs .source .includes .headers
 	@echo $(PKGVERS)
 
+version:
+	@echo $(PKGVERS)
+
 roxy: .roxy
 
 dist: .dist
@@ -115,13 +118,13 @@ inst/NEWS: inst/NEWS.Rd
 	$(RCMD) Rdconv -t txt $^ -o $@
 
 htmlhelp: install manual
+	mkdir -p $(MANUALDIR)/source
+	doxygen
 	rsync --delete -a library/$(PKG)/html/ $(MANUALDIR)/html
 	rsync --delete --exclude=aliases.rds --exclude=paths.rds --exclude=$(PKG).rdb --exclude=$(PKG).rdx --exclude=macros -a library/$(PKG)/help/ $(MANUALDIR)/help
 	(cd $(MANUALDIR); (cat links.ed && echo w ) | ed - html/00Index.html)
 	$(CP) $(PKG).pdf $(MANUALDIR)
 	$(CP) $(REPODIR)/assets/R.css $(MANUALDIR)/html
-	mkdir -p $(MANUALDIR)/source
-	doxygen
 
 www: install
 	$(MAKE)	-C www
@@ -145,10 +148,13 @@ rhub:
 covr: covr.rds
 
 covr.rds: DESCRIPTION
-	$(REXE) -e 'library(covr); package_coverage(type="all") -> cov; report(cov,file="covr.html",browse=TRUE); saveRDS(cov,file="covr.rds")'
+	$(REXE) -e 'library(covr); package_coverage(type="all") -> cov; saveRDS(cov,file="covr.rds")'
 
 xcovr: covr
 	$(REXE) -e 'library(covr); readRDS("covr.rds") -> cov; codecov(coverage=cov,quiet=FALSE)'
+
+vcovr: covr
+	$(REXE) -e 'library(covr); readRDS("covr.rds") -> cov; report(cov,file="covr.html",browse=TRUE)'
 
 win: dist
 	curl -T $(TARBALL) ftp://win-builder.r-project.org/R-release/

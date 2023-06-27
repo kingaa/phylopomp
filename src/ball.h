@@ -39,16 +39,6 @@ public:
 
 public:
 
-  //! Order relation among balls.
-  //! Without this, order depends on machine state,
-  //! defeating reproducibility.
-  bool operator() (const ball_t* a, const ball_t* b) const {
-    return (a->uniq < b->uniq) ||
-      ((a->uniq == b->uniq) && (a->color < b->color));
-  };
-
-public:
-
   //! size of binary serialization
   static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
   //! binary serialization
@@ -79,11 +69,11 @@ public:
     _deme = d;
   };
   //! copy constructor
-  ball_t (const ball_t&) = default;
+  ball_t (const ball_t&) = delete;
   //! move constructor
   ball_t (ball_t&&) = delete;
   //! copy assignment operator
-  ball_t & operator= (const ball_t&) = default;
+  ball_t & operator= (const ball_t&) = delete;
   //! move assignment operator
   ball_t & operator= (ball_t&&) = delete;
   //! destructor
@@ -152,6 +142,9 @@ public:
     else
       return colorsymb[color];
   };
+
+public:
+
   //! human-readable info
   std::string describe (void) const {
     std::string o = color_name()

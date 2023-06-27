@@ -11,15 +11,26 @@
 #include "internal.h"
 #include "ball.h"
 
-typedef typename std::set<ball_t*,ball_t>::const_iterator ball_it;
+//! Ordering for balls in pockets.
+
+//! Without this, order depends on machine state,
+//! defeating reproducibility.
+struct ball_compare {
+  bool operator() (const ball_t* a, const ball_t* b) const {
+    return (a->uniq < b->uniq) ||
+      ((a->uniq == b->uniq) && (a->color < b->color));
+  };
+};
+
+typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
 
 //! A pocket is a set of balls.
-//! An order relation among balls ensures the uniqueness
-//! of the internal representation.
-class pocket_t : public std::set<ball_t*,ball_t> {
-  
+
+//! An order relation among balls ensures the uniqueness of the internal representation.
+class pocket_t : public std::set<ball_t*,ball_compare> {
+
 private:
-  
+
   //! delete balls and clear pocket
   void clean (void) {
     for (ball_it i = begin(); i != end(); i++) delete *i;
@@ -27,7 +38,7 @@ private:
   };
 
 public:
-  
+
   // SERIALIZATION
   //! size of binary serialization
   size_t bytesize (void) const {
@@ -37,7 +48,7 @@ public:
   friend raw_t* operator>> (const pocket_t &p, raw_t *o) {
     size_t psize = p.size();
     memcpy(o,&psize,sizeof(size_t)); o += sizeof(size_t);
-    for (ball_it i = p.begin(); i != p.end(); i++) 
+    for (ball_it i = p.begin(); i != p.end(); i++)
       o = (**i >> o);
     return o;
   };
@@ -63,7 +74,7 @@ protected:
       (*i)->holder() = p;
     }
   };
-  
+
 public:
   //! Needed in deserialization.
   //! This function repairs the links green balls and their names.
@@ -84,7 +95,7 @@ public:
       }
     }
   };
-  
+
 public:
 
   //! destructor
@@ -93,7 +104,7 @@ public:
   };
 
 public:
-  
+
   //! does this node hold the given ball?
   bool holds (ball_t *b) const {
     ball_it i = find(b);
