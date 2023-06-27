@@ -44,21 +44,13 @@ plot_grid(
     expand_limits(x=3),
   pf |>
     cond_logLik(format="d") |>
-    mutate(
-      logLik=value,
-      time=time(po)[name]
-    ) |>
-    ggplot(aes(x=time,y=logLik,group=.L1))+
+    ggplot(aes(x=time,y=cond.logLik,group=.id))+
     geom_step(direction="vh",alpha=0.3)+
     labs(x="")+
     expand_limits(x=3),
   pf |>
     eff_sample_size(format="d") |>
-    mutate(
-      ess=value,
-      time=time(po)[name]
-    ) |>
-    ggplot(aes(x=time,y=ess,group=.L1))+
+    ggplot(aes(x=time,y=eff.sample.size,group=.id))+
     geom_step(direction="vh",alpha=0.3)+
     geom_hline(yintercept=100,color="red")+
     expand_limits(x=3),

@@ -94,11 +94,11 @@ extern "C" {
    const int *__parindex,
    const int *__covindex,
    const double *__covars
-   ){ 
+   ){
     double *lineage = &LINEAGE;
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
-    
+
     nSAMPLE = *INTEGER(gud("nsample"));
 
     double m = N/(S0+E0+I0+R0);
@@ -137,7 +137,7 @@ extern "C" {
     check_lineages(lineage,linE,linI,t0,__func__);
     node = node_count;
   }
-  
+
   void seirs_gill
   (
    double *__x,
@@ -152,7 +152,7 @@ extern "C" {
     double tstep = 0.0, tmax = t + dt;
     double cutoff[4];
     double *lineage = &LINEAGE;
-    
+
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
@@ -336,7 +336,7 @@ extern "C" {
                                Beta,sigma,gamma,Delta,psi,
                                cutoff,&penalty);
       tstep = exp_rand()/event_rate;
-      
+
     }
     tstep = tmax - t;
     ll -= penalty*tstep;
@@ -361,7 +361,7 @@ extern "C" {
 
     if (R_FINITE(ll) &&
         S >= 0 && R >= 0 &&
-	E >= linE && I >= linI &&
+        E >= linE && I >= linI &&
         linE >= 0 && linI >= 0) {
       lik = (give_log) ? ll : exp(ll);
     } else {
