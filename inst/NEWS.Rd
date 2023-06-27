@@ -4,6 +4,9 @@
   \itemize{
     \item Inclusion of \pkg{pomp} methods for SEIRS model.
     \item The new function \code{geneal} extracts the bare genealogy from a simulated master process object.
+    \item Changes in the interfaces to \code{lbdp_exact}, \code{lbdp_pomp}, and \code{moran_exact}.
+    These functions now take as data objects of class \sQuote{gpgen}.
+    \item The old function \code{newick2df} is no more.
     \item Considerable reworking of the internals.
     \item Definition of new class, \sQuote{gpsim}, for bare genealogies.
     \item Definition of new class, \sQuote{gpyaml}, for YAML descriptions.

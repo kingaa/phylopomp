@@ -7,6 +7,12 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
         • The new function ‘geneal’ extracts the bare genealogy from a
           simulated master process object.
 
+        • Changes in the interfaces to ‘lbdp_exact’, ‘lbdp_pomp’, and
+          ‘moran_exact’.  These functions now take as data objects of
+          class ‘gpgen’.
+
+        • The old function ‘newick2df’ is no more.
+
         • Considerable reworking of the internals.
 
         • Definition of new class, ‘gpsim’, for bare genealogies.
