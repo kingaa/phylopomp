@@ -30,6 +30,9 @@ runSEIR <- function (
 ) {
   params <- c(Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta)
   ivps <- c(S0=S0,E0=E0,I0=I0,R0=R0)
+  if (any(ivps < 0))
+    pStop(paste(sQuote(names(ivps)),collapse=","),
+      " must be nonnegative integers.")
   x <- .Call(P_makeSEIR,params,ivps,t0)
   .Call(P_runSEIR,x,time) |>
     structure(model="SEIR",class=c("gpsim","gpgen"))
@@ -70,12 +73,11 @@ seirs_pomp <- function (
       t0=TRUE,time=TRUE,nsample=TRUE,
       lineages=TRUE,genealogy=TRUE
     ) -> geninfo
-  ic <- as.integer(c(S0=S0,E0=E0,I0=I0,R0=R0))
-  if (any(ic < 0))
-    pStop("the initial conditions, ",
-      paste(sQuote(c("S0","E0","I0","R0")),collapse=", "),
-      ", must be nonnegative integers.")
+  ic <- as.integer(c(S0,E0,I0,R0))
   names(ic) <- c("S0","E0","I0","R0")
+  if (any(ic < 0))
+    pStop(paste(sQuote(names(ic)),collapse=","),
+      " must be nonnegative integers.")
   geninfo$lineages |> as.data.frame() -> dat
   nsample <- geninfo$nsample
   pomp(

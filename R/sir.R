@@ -23,7 +23,7 @@ NULL
 ##' @rdname sir
 ##' @export
 runSIR <- function (
-  time,  t0 = 0, 
+  time,  t0 = 0,
   Beta = 2, gamma = 1, psi = 1, delta = 0,
   S0 = 100, I0 = 2, R0 = 0
 ) {
@@ -56,37 +56,39 @@ continueSIR <- function (
 ##' @name sir_pomp
 ##' @rdname sir
 ##' @include lbdp.R
-##' @param data data frame containing the lineage count function
+##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
 ##' @details
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @export
-sir_pomp <- function (data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
+sir_pomp <- function (x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
 {
-  ic <- as.integer(c(S0=S0,I0=I0,R0=R0))
+  ic <- as.integer(c(S0,I0,R0))
+  names(ic) <- c("S0","I0","R0")
   if (any(ic < 0))
     pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
-  names(ic) <- c("S0","I0","R0")
-  data <- encode_data(data)
-  data["time"] |>
-    pomp(
-      times="time",t0=t0,
-      params=c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,ic,N=sum(ic)),
-      covar=covariate_table(
-        data,
-        times="time",
-        order="constant"
-      ),
-      rinit="sirs_rinit",
-      rprocess=onestep("sirs_gill"),
-      dmeasure="sirs_dmeas",
-      accumvars=c("ll"),
-      statenames=c("S","I","R","ll"),
-      paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
-      covarnames=c("lineages","code"),
-      PACKAGE="phylopomp"
-    )
+  x |>
+    lineages(prune=TRUE,obscure=TRUE) |>
+    encode_data() -> dat
+  pomp(
+    data=NULL,
+    times=dat$time[-1L],t0=t0,
+    params=c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,ic,N=sum(ic)),
+    covar=covariate_table(
+      dat,
+      times="time",
+      order="constant"
+    ),
+    rinit="sirs_rinit",
+    rprocess=onestep("sirs_gill"),
+    dmeasure="sirs_dmeas",
+    accumvars=c("ll"),
+    statenames=c("S","I","R","ll"),
+    paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
+    covarnames=c("lineages","code"),
+    PACKAGE="phylopomp"
+  )
 }
 
 ##' @rdname sir

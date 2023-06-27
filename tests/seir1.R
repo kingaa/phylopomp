@@ -25,4 +25,6 @@ x |> lineages(obscure=FALSE) |> plot()
 simulate("SEIR",delta=1,time=2,I0=3) |>
   diagram(obscure=FALSE,prune=TRUE)
 
+try(simulate("SEIR",delta=1,I0=-5,time=3))
+
 dev.off()

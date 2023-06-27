@@ -38,7 +38,7 @@ runSIRS(
 
 continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
 
-sir_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
+sir_pomp(x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 
 runSIRS(
   time,
@@ -54,7 +54,7 @@ runSIRS(
 
 continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
 
-sirs_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
+sirs_pomp(x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 }
 \arguments{
 \item{time}{final time}
@@ -78,7 +78,7 @@ sirs_pomp(data, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 
-\item{data}{data frame containing the lineage count function}
+\item{x}{genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).}
 }
 \value{
 \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.

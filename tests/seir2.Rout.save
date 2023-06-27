@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -46,7 +48,7 @@ Type 'q()' to quit R.
 +       S0=100,E0=3,I0=-5,R0=100
 +     ) -> po
 + )
-Error : in 'seirs_pomp': the initial conditions, 'S0', 'E0', 'I0', 'R0', must be nonnegative integers.
+Error : in 'seirs_pomp': 'S0','E0','I0','R0' must be nonnegative integers.
 > 
 > G |>
 +   curtail(time=3) |>

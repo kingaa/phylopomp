@@ -22,9 +22,9 @@ runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
 simulate("SIR",Beta=3,gamma=1,psi=2,delta=1,S0=100,I0=5,time=10) -> x
 x |> yaml() -> y
 x |> lineages() |> plot()
+x |> geneal()
 
 x |>
-  lineages() |>
   sir_pomp(
     Beta=3,gamma=1,psi=2,delta=1,
     S0=100,I0=5,R0=0
@@ -37,7 +37,6 @@ pf |> plot()
 try(runSIR(S0=-10,time=1))
 try(
   x |>
-    lineages() |>
     sir_pomp(
       Beta=3,gamma=1,psi=2,delta=1,
       S0=-100,I0=5,R0=0

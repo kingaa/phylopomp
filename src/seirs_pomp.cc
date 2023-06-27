@@ -21,12 +21,12 @@ static void check_lineages
     else if (lineage[i]==1) nI++;
   }
   if ((linE != nE) || (linI != nI)) {
-    Rprintf("%ld %ld (%lg %lg): ",nE,nI,linE,linI);
-    for (int i = 0; i < nSAMPLE; i++) {
-      Rprintf("%lg ",lineage[i]);
-    }
-    Rprintf("\n");
-    err("in '%s' at time %lg: bad lineage count!",func,t);
+    Rprintf("%ld %ld (%lg %lg): ",nE,nI,linE,linI);        // #nocov
+    for (int i = 0; i < nSAMPLE; i++) {                    // #nocov
+      Rprintf("%lg ",lineage[i]);                          // #nocov
+    }                                                      // #nocov
+    Rprintf("\n");                                         // #nocov
+    err("in '%s' at time %lg: bad lineage count!",func,t); // #nocov
   }
 }
 
@@ -171,8 +171,7 @@ extern "C" {
     if (!p->is_root()) {
       // FIXME: adjust for root-deme proposals here?
       int parent = p->green_ball()->lineage();
-      if (parent < 0 || parent >= nSAMPLE)
-        err("big trouble!");
+      if (parent < 0 || parent >= nSAMPLE) err("big trouble!"); // #nocov
       if (ISNA(lineage[parent])) {
         err("undefined parent lineage"); // #nocov
       } else if (nearbyint(lineage[parent]) != 1) {
