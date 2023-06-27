@@ -79,11 +79,11 @@ public:
     _deme = d;
   };
   //! copy constructor
-  ball_t (const ball_t&) = delete;
+  ball_t (const ball_t&) = default;
   //! move constructor
   ball_t (ball_t&&) = delete;
   //! copy assignment operator
-  ball_t & operator= (const ball_t&) = delete;
+  ball_t & operator= (const ball_t&) = default;
   //! move assignment operator
   ball_t & operator= (ball_t&&) = delete;
   //! destructor
