@@ -1,11 +1,23 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.9}{
+  \itemize{
+    \item Inclusion of \pkg{pomp} methods for SEIRS model.
+    \item The new function \code{geneal} extracts the bare genealogy from a simulated master process object.
+    \item Considerable reworking of the internals.
+  }
+}
+\section{Changes in \pkg{phylopomp} version 0.8}{
+  \itemize{
+    \item The interface to \code{getInfo} has changed.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.7}{
   \itemize{
     \item In genealogy diagrams, the nodes are now colored according to deme.
     This can be controlled through the use of the \code{diagram} function's \code{palette} argument (cf. \code{plot}).
-    \item The new function `curtail` curtails a genealogy (i.e., casts away nodes beyond a given time).
-    \item The new function `newick` extracts a Newick-format description of a genealogy.
+    \item The new function \code{curtail} curtails a genealogy (i.e., casts away nodes beyond a given time).
+    \item The new function \code{newick} extracts a Newick-format description of a genealogy.
     \item The SIRS model is included as a synonym for SIR.
     Both allow waning of immunity.
     \item The \code{lineages} function now returns the saturation and a code for the event-type as well as the lineage-count.

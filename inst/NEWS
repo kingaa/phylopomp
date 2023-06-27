@@ -1,15 +1,28 @@
 _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._9:
+
+        • Inclusion of ‘pomp’ methods for SEIRS model.
+
+        • The new function ‘geneal’ extracts the bare genealogy from a
+          simulated master process object.
+
+        • Considerable reworking of the internals.
+
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._8:
+
+        • The interface to ‘getInfo’ has changed.
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._7:
 
         • In genealogy diagrams, the nodes are now colored according to
           deme.  This can be controlled through the use of the
           ‘diagram’ function's ‘palette’ argument (cf. ‘plot’).
 
-        • The new function `curtail` curtails a genealogy (i.e., casts
+        • The new function ‘curtail’ curtails a genealogy (i.e., casts
           away nodes beyond a given time).
 
-        • The new function `newick` extracts a Newick-format
+        • The new function ‘newick’ extracts a Newick-format
           description of a genealogy.
 
         • The SIRS model is included as a synonym for SIR.  Both allow
