@@ -113,7 +113,11 @@ SEXP run (SEXP State, SEXP Tout) {
 template <class TYPE>
 SEXP genealogy (SEXP State) {
   TYPE A = State;
-  return serial(A.geneal);
+  SEXP out;
+  PROTECT(out = serial(A.geneal));
+  SET_ATTR(out,install("class"),mkString("gpgen"));
+  UNPROTECT(1);
+  return out;
 }
 
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
