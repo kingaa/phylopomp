@@ -12,7 +12,7 @@ runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
 
 continueMoran(object, time, mu = NA, psi = NA)
 
-moran_exact(data, n = 100, mu = 1, psi = 1)
+moran_exact(x, n = 100, mu = 1, psi = 1)
 }
 \arguments{
 \item{time}{final time}
@@ -28,7 +28,7 @@ moran_exact(data, n = 100, mu = 1, psi = 1)
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 
-\item{data}{data frame containing the genealogy event times.}
+\item{x}{genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).}
 }
 \value{
 \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.

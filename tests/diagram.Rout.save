@@ -785,6 +785,9 @@ $genealogy
 > 
 > try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
 Error : unrecognized argument 'bob' in 'getInfo'.
+> attr(x,"model") <- "bob"
+> try(x |> geneal())
+Error : in 'geneal': unrecognized model 'bob'
 > 
 > raw(0) |> geneal()
 <phylopomp genealogy>

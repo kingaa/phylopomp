@@ -31,13 +31,12 @@ Type 'q()' to quit R.
 > ## Example 1
 > runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) -> x
 > x |> plot()
-> x |> lineages() -> dat
 > 
-> dat |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
+> x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
 > llex
 [1] 12.6
 > 
-> dat |>
+> x |>
 +   lbdp_pomp(lambda=6,mu=1,psi=1) |>
 +   pfilter(Np=10000) |>
 +   replicate(n=10) |>
@@ -51,7 +50,7 @@ Type 'q()' to quit R.
 +   logmeanexp(se=TRUE) -> llpf
 > llpf
     est      se 
-12.6353  0.0366 
+12.6064  0.0322 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -61,21 +60,19 @@ Type 'q()' to quit R.
 > ## Example 2
 > runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
 > x |> plot(points=TRUE)
-> x |> lineages() -> dat
-> 
-> dat |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
-[1] -29
+> x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
+[1] 8.49
 > 
 > replicate(
 +   n=10,
-+   dat |>
++   x |>
 +     lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
 +     pfilter(Np=10000) |>
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-      est        se 
--29.03667   0.00897 
+  est    se 
+8.497 0.014 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -85,21 +82,19 @@ Type 'q()' to quit R.
 > ## Example 3
 > runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
 > x |> plot(points=TRUE)
-> x |> lineages() -> dat
-> 
-> dat |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] -23.9
+> x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
+[1] -21.8
 > 
 > replicate(
 +   n=10,
-+   dat |>
++   x |>
 +     lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
 +     pfilter(Np=10000) |>
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
      est       se 
--23.9112   0.0154 
+-21.8301   0.0121 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],

@@ -46,9 +46,10 @@ continueMoran <- function (
 ##' @details
 ##' \code{moran_exact} gives the exact log likelihood of a genealogy under the uniformly-sampled Moran process.
 ##' @return \code{moran_exact} returns the log likelihood of the genealogy.
-##' @param data data frame containing the genealogy event times. 
+##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
 ##' @export
-moran_exact <- function (data, n = 100, mu = 1, psi = 1) {
+moran_exact <- function (x, n = 100, mu = 1, psi = 1) {
+  x |> lineages() -> data
   ndat <- nrow(data)
   code <- as.integer(c(2L,diff(data$lineages)))
   code[ndat] <- -2L

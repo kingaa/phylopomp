@@ -13,8 +13,7 @@ x
 x |> yaml() -> y
 x |> lineages()
 
-x |> lineages() -> dat
-dat |>
+x |>
   moran_exact() |>
   round(1) |>
   all.equal(-1164.6) |>
@@ -34,7 +33,7 @@ expand_grid(
 ) |>
   rowwise() |>
   mutate(
-    logLik=moran_exact(dat,n=n,mu=mu,psi=psi)
+    logLik=moran_exact(x,n=n,mu=mu,psi=psi)
   ) |>
   ungroup() |>
   filter(is.finite(logLik)) |>
@@ -52,7 +51,7 @@ expand_grid(
 ) |>
   rowwise() |>
   mutate(
-    logLik=moran_exact(dat,n=n,mu=mu,psi=psi)
+    logLik=moran_exact(x,n=n,mu=mu,psi=psi)
   ) |>
   ungroup() |>
   filter(is.finite(logLik)) |>

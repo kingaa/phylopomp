@@ -76,12 +76,12 @@ Type 'q()' to quit R.
 Warning message:
 Using alpha for a discrete variable is not advised. 
 > 
-> dat |>
+> x |>
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
 > llex
 [1] 5.23
 > 
-> dat |>
+> x |>
 +   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
 +   pfilter(Np=1000) |>
 +   logLik() |>
@@ -89,7 +89,7 @@ Using alpha for a discrete variable is not advised.
 +   logmeanexp(se=TRUE) -> llpf
 > llpf
    est     se 
-5.2370 0.0295 
+5.2150 0.0227 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -97,17 +97,10 @@ Using alpha for a discrete variable is not advised.
 + )
 > 
 > try(
-+   dat |>
++   x |>
 +     lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
 + )
 Error : in 'lbdp_exact': 'n0' must be a positive integer.
-> 
-> try(
-+   dat |>
-+     mutate(event_type=if_else(event_type==1L,0L,event_type)) |>
-+     lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
-+ )
-Error : in 'lbdp_exact': internal inconsistency in 'data'.
 > 
 > dev.off()
 null device 

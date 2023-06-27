@@ -47,8 +47,7 @@ Type 'q()' to quit R.
 10 0.0510     1       67          1          1
 # ℹ 1,301 more rows
 > 
-> x |> lineages() -> dat
-> dat |>
+> x |>
 +   moran_exact() |>
 +   round(1) |>
 +   all.equal(-1164.6) |>
@@ -68,7 +67,7 @@ Type 'q()' to quit R.
 + ) |>
 +   rowwise() |>
 +   mutate(
-+     logLik=moran_exact(dat,n=n,mu=mu,psi=psi)
++     logLik=moran_exact(x,n=n,mu=mu,psi=psi)
 +   ) |>
 +   ungroup() |>
 +   filter(is.finite(logLik)) |>
@@ -86,7 +85,7 @@ Type 'q()' to quit R.
 + ) |>
 +   rowwise() |>
 +   mutate(
-+     logLik=moran_exact(dat,n=n,mu=mu,psi=psi)
++     logLik=moran_exact(x,n=n,mu=mu,psi=psi)
 +   ) |>
 +   ungroup() |>
 +   filter(is.finite(logLik)) |>

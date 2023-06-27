@@ -22,6 +22,14 @@ G |>
   curtail(time=3) |>
   plot(points=TRUE)
 
+try(
+  G |>
+    seirs_pomp(
+      Beta=4,sigma=1,gamma=1,psi=1,delta=1,
+      S0=100,E0=3,I0=-5,R0=100
+    ) -> po
+)
+
 G |>
   curtail(time=3) |>
   seirs_pomp(

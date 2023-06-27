@@ -106,6 +106,8 @@ x |> getInfo(obscure=FALSE,trace=TRUE,nsample=TRUE,ndeme=TRUE) |> unlist()
 x |> getInfo(obscure=FALSE,trace=TRUE,genealogy=TRUE)
 
 try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
+attr(x,"model") <- "bob"
+try(x |> geneal())
 
 raw(0) |> geneal()
 try(raw(0) |> newick())

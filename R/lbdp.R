@@ -20,7 +20,7 @@ NULL
 ##' @rdname lbdp
 ##' @export
 runLBDP <- function (
-  time,  t0 = 0, 
+  time,  t0 = 0,
   lambda = 2, mu = 1, psi = 1,
   n0 = 5
 ) {
@@ -52,11 +52,11 @@ continueLBDP <- function (
 ##' The derivation is also given in comments in the code.
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
-##' @param data data frame containing the genealogy event times and the lineage-count function.
+##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
 ##' @references
 ##' \Stadler2010
 ##' @export
-lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
+lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
   ## Theorem 3.5 in Stadler (2010) with rho=0
 
   ## Here, we reverse the direction of time.
@@ -64,7 +64,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## (i.e., psi = 0 for t < 0, psi = const > 0 for t > 0).
   ## Suppose we have a linear birth-death-sampling process, n(t), with
   ## constant rates; assume that n(t_or) = 1.
-  ## 
+  ##
   ## Let p0(t) = probability that an individual alive at time t is ancestral to no samples.
   ## Then dp0/dt = mu - (lambda+mu+psi) p0 + lambda p0^2 and p0(0) = 1.
   ## Let f(z) = (1-z)/(1+z).  Note f(f(z))=z.
@@ -95,7 +95,9 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   ## Here, m = number of live samples, k = number of dead samples.
   ##
   ## Note that the Q here is the reciprocal of the q in Stadler (2010).
-  data <- encode_data(data)
+  x |>
+    lineages(prune=TRUE,obscure=TRUE) |>
+    encode_data() -> data
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
   tf <- data$time[nrow(data)]
@@ -107,7 +109,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   m <- sum(data$code==-1)          ## number of live samples
 
   if (m - n != length(x))
-    pStop("internal inconsistency in ",sQuote("data"),".")
+    pStop("internal inconsistency in ",sQuote("data"),".") #nocov
 
   ## A simple fractional linear transformation (1-z)/(1+z),
   ## defined on the whole of the Riemann sphere.
@@ -126,7 +128,7 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
   a <- (lambda+mu+psi)/2/lambda
   b <- d/2/lambda
   z0 <- f((1-a)/b)
-  
+
   p0 <- function (t) {
     a+b*f(z0*exp(d*t))
   }
@@ -153,30 +155,32 @@ lbdp_exact <- function (data, lambda, mu, psi, n0 = 1) {
 ##' @importFrom pomp pomp onestep euler covariate_table
 ##' @inheritParams lbdp_exact
 ##' @export
-lbdp_pomp <- function (data, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
 {
   n0 <- round(n0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")
-  data <- encode_data(data)
-  data["time"] |>
-    pomp(
-      times="time",t0=t0,
-      params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
-      rinit="lbdp_rinit",
-      dmeasure="lbdp_dmeas",
-      rprocess=onestep("lbdp_gill"),
-      accumvars=c("ll"),
-      statenames=c("n","ll"),
-      paramnames=c("lambda","mu","psi","n0"),
-      covarnames=c("lineages","code"),
-      covar=covariate_table(
-        data,
-        times="time",
-        order="constant"
-      ),
-      PACKAGE="phylopomp"
-    )
+  x |>
+    lineages(prune=TRUE,obscure=TRUE) |>
+    encode_data() -> data
+  pomp(
+    data=NULL,
+    times=data$time[-1L],t0=t0,
+    params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+    rinit="lbdp_rinit",
+    dmeasure="lbdp_dmeas",
+    rprocess=onestep("lbdp_gill"),
+    accumvars=c("ll"),
+    statenames=c("n","ll"),
+    paramnames=c("lambda","mu","psi","n0"),
+    covarnames=c("lineages","code"),
+    covar=covariate_table(
+      data,
+      times="time",
+      order="constant"
+    ),
+    PACKAGE="phylopomp"
+  )
 }
 
 encode_data <- function (data) {

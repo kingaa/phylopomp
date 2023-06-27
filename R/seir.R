@@ -1,7 +1,7 @@
 ##' Classical susceptible-exposed-infected-recovered model
-##' 
+##'
 ##' The population is structured by infection progression.
-##' 
+##'
 ##' @name seir
 ##' @aliases SEIR
 ##' @family Genealogy processes
@@ -17,9 +17,9 @@
 ##' @param R0 initial size of immune population
 ##' @inheritParams runSIR
 ##' @return \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
-##' 
+##'
 ##' @example examples/seir.R
-##' 
+##'
 NULL
 
 ##' @rdname seir
@@ -72,8 +72,9 @@ seirs_pomp <- function (
     ) -> geninfo
   ic <- as.integer(c(S0=S0,E0=E0,I0=I0,R0=R0))
   if (any(ic < 0))
-    pStop(paste(sQuote(names(ic)),collapse=","),
-      " must be nonnegative integers.")
+    pStop("the initial conditions, ",
+      paste(sQuote(c("S0","E0","I0","R0")),collapse=", "),
+      ", must be nonnegative integers.")
   names(ic) <- c("S0","E0","I0","R0")
   geninfo$lineages |> as.data.frame() -> dat
   nsample <- geninfo$nsample

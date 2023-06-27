@@ -55,11 +55,11 @@ plot_grid(
   rel_heights=c(2,1,2)
 )
 
-dat |>
+x |>
   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
 llex
 
-dat |>
+x |>
   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
   pfilter(Np=1000) |>
   logLik() |>
@@ -73,14 +73,8 @@ stopifnot(
 )
 
 try(
-  dat |>
+  x |>
     lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
-)
-
-try(
-  dat |>
-    mutate(event_type=if_else(event_type==1L,0L,event_type)) |>
-    lbdp_exact(lambda=4,mu=1,psi=2,n0=2)
 )
 
 dev.off()

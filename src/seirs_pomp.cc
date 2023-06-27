@@ -156,8 +156,6 @@ extern "C" {
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
-    //    Rprintf("rprocess: (%lg, %lg)\n",t,tmax);
-
     int M = nearbyint(node);
     int node_count = 0;
     node_it k = G.cbegin();
@@ -165,16 +163,10 @@ extern "C" {
       node_count++; k++;
     }
     if (k == G.cend())
-      err("something is terribly wrong in '%s'!",__func__);
+      err("something is terribly wrong in '%s'!",__func__); // #nocov
 
     node_t *p = *k;
     node = node+1;
-
-    //    Rprintf("########## step %ld %lg\n%s",M,t,p->describe().c_str());
-
-    //    rprint(p->describe());
-    //    for (int i = 0; i < nSAMPLE; i++) Rprintf("%ld ",int(lineage[i]));
-    //    Rprintf("\n");
 
     if (!p->is_root()) {
       // FIXME: adjust for root-deme proposals here?
@@ -182,13 +174,7 @@ extern "C" {
       if (parent < 0 || parent >= nSAMPLE)
         err("big trouble!");
       if (ISNA(lineage[parent])) {
-        err("bad:\n%s%s%s%ld %lg\n%ld %lg",
-            p->describe().c_str(),
-            p->green_ball()->holder()->describe().c_str(),
-            p->green_ball()->holder()->green_ball()->holder()->describe().c_str(),
-            parent,lineage[parent],
-            p->green_ball()->holder()->green_ball()->lineage(),
-            lineage[p->green_ball()->holder()->green_ball()->lineage()]);
+        err("undefined parent lineage"); // #nocov
       } else if (nearbyint(lineage[parent]) != 1) {
         ll += R_NegInf;
         lineage[parent] = 1;
@@ -201,17 +187,8 @@ extern "C" {
           ll += log(psi);
           lineage[a->lineage()] = 1;
           linI += 1;
-          // Rprintf("sample s=1:\n%s%s%ld %lg\n%ld %lg\n%ld %lg\n",
-          //      p->describe().c_str(),a->owner()->describe().c_str(),
-          //      parent,lineage[parent],
-          //      a->lineage(),lineage[a->lineage()],
-          //      b->lineage(),lineage[b->lineage()]);
         } else {                // saturation = (0,0)
           ll += log(psi*(I-linI+1));
-          // Rprintf("sample s=0:\n%s%ld %lg\n%ld %lg\n",
-          //      p->describe().c_str(),
-          //      parent,lineage[parent],
-          //      b->lineage(),lineage[b->lineage()]);
         }
         lineage[b->lineage()] = R_NaReal;
         linI -= 1;
@@ -231,22 +208,11 @@ extern "C" {
           lineage[a->lineage()] = 1;
           lineage[b->lineage()] = 0;
         }
-        // Rprintf("branch:\n %s %s %s %ld %lg\n%ld %lg\n",
-        //      p->describe().c_str(),
-        //      a->owner()->describe().c_str(),
-        //      b->owner()->describe().c_str(),
-        //      parent,lineage[parent],
-        //      a->lineage(),lineage[a->lineage()],
-        //      b->lineage(),lineage[b->lineage()]);
         ll -= log(0.5);
       } else {
         err("inconceivable!! in '%s'!!",__func__);       // #nocov
       }
     }
-
-    // linE = nearbyint(linE);
-    // linI = nearbyint(linI);
-    // check_lineages(lineage,linE,linI,t,__func__);
 
     // continuous portion:
     // take Gillespie steps to the end of the interval:
@@ -281,7 +247,8 @@ extern "C" {
               i++;
               if (!ISNA(lineage[i]) && nearbyint(lineage[i]) == 1) n--;
             }
-            if (n != 0 || lineage[i] != 1) err("yikes 0! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
+            if (n != 0 || lineage[i] != 1)
+              err("yikes 0! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
             lineage[i] = 0;
             linE += 1; linI -= 1;
           } else if (u < 2*p) { // propose an I -> I deme change
@@ -305,7 +272,8 @@ extern "C" {
               i++;
               if (!ISNA(lineage[i]) && nearbyint(lineage[i]) == 0) n--;
             }
-            if (n != 0 || lineage[i] != 0) err("yikes 1! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
+            if (n != 0 || lineage[i] != 0)
+              err("yikes 1! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
             lineage[i] = 1;
             linE -= 1; linI += 1;
           } else {              // propose no deme change

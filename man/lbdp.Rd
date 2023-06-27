@@ -13,9 +13,9 @@ runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
 
 continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
 
-lbdp_exact(data, lambda, mu, psi, n0 = 1)
+lbdp_exact(x, lambda, mu, psi, n0 = 1)
 
-lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp(x, lambda, mu, psi, n0 = 1, t0 = 0)
 }
 \arguments{
 \item{time}{final time}
@@ -33,7 +33,7 @@ lbdp_pomp(data, lambda, mu, psi, n0 = 1, t0 = 0)
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
 
-\item{data}{data frame containing the genealogy event times and the lineage-count function.}
+\item{x}{genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).}
 }
 \value{
 \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
