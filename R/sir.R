@@ -34,7 +34,7 @@ runSIR <- function (
       " must be nonnegative integers.")
   x <- .Call(P_makeSIR,params,ivps,t0)
   .Call(P_runSIR,x,time) |>
-    structure(model="SIR",class="gpsim")
+    structure(model="SIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname sir
@@ -50,7 +50,7 @@ continueSIR <- function (
   params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time) |>
-    structure(model="SIR",class="gpsim")
+    structure(model="SIR",class=c("gpsim","gpgen"))
 }
 
 ##' @name sir_pomp

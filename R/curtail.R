@@ -11,5 +11,5 @@
 ##' @export
 curtail <- function (object, time = NA, prune = TRUE, obscure = TRUE) {
   .Call(P_curtail,geneal(object),time) |>
-    structure(class="gpsim")
+    structure(class="gpgen")
 }

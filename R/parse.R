@@ -9,10 +9,10 @@
 ##' @param tf numeric; the current or final time.
 ##' @importFrom tibble tibble
 ##' @return
-##' An object of class \dQuote{gpsim}.
+##' An object of class \dQuote{gpgen}.
 ##' @rdname parse
 ##' @export
 parse_newick <- function (x, t0 = 0, tf = NA) {
   .Call(P_parse_newick,x,t0,tf) |>
-    structure(class="gpsim")
+    structure(class="gpgen")
 }

@@ -18,10 +18,10 @@ NULL
 
 ##' @rdname treeplot
 ##' @inheritParams getInfo
-##' @param x object of class \sQuote{gpsim}
-##' @method plot gpsim
+##' @param x object of class \sQuote{gpgen}
+##' @method plot gpgen
 ##' @export
-plot.gpsim <- function (
+plot.gpgen <- function (
   x, ..., time, t0,
   prune = TRUE, obscure = TRUE
 ) {

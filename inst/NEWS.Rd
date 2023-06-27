@@ -5,6 +5,8 @@
     \item Inclusion of \pkg{pomp} methods for SEIRS model.
     \item The new function \code{geneal} extracts the bare genealogy from a simulated master process object.
     \item Considerable reworking of the internals.
+    \item Definition of new class, \sQuote{gpsim}, for bare genealogies.
+    \item Definition of new class, \sQuote{gpyaml}, for YAML descriptions.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.8}{

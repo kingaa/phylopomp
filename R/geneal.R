@@ -4,7 +4,7 @@
 ##'
 ##' @name geneal
 ##' @include package.R
-##' @param object a \sQuote{gpsim} object.
+##' @param object a \sQuote{gpgen} object.
 ##' @return A bare genealogy object.
 ##' @rdname geneal
 ##' @export
@@ -18,8 +18,7 @@ geneal <- function (object) {
     modelLBDP = .Call(P_genealLBDP,object),
     modelMoran = .Call(P_genealMoran,object),
     modelSI2R = .Call(P_genealSI2R,object),
-    model = object,
+    model = structure(object,class=c("gpgen")),
     pStop("unrecognized model ",sQuote(attr(object,"model")))
-  ) |>
-    structure(class="gpsim")
+  )
 }

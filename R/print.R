@@ -4,11 +4,15 @@
 ##' @method print gpsim
 ##' @export
 print.gpsim <- function (x, ...) {
-  if (is.null(attr(x,"model"))) {
-    cat("<phylopomp genealogy>\n",sep=" ")
-  } else {
-    cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
-  }
+  cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
+}
+
+##' @rdname internals
+##' @keywords internals
+##' @method print gpgen
+##' @export
+print.gpgen <- function (x, ...) {
+  cat("<phylopomp genealogy>\n")
 }
 
 ##' @rdname internals

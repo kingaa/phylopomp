@@ -27,7 +27,7 @@ runMoran <- function (
   ivps <- c(n=n)
   x <- .Call(P_makeMoran,params,ivps,t0)
   .Call(P_runMoran,x,time) |>
-    structure(model="Moran",class="gpsim")
+    structure(model="Moran",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname moran
@@ -39,7 +39,7 @@ continueMoran <- function (
   params <- as.numeric(c(mu=mu,psi=psi))
   x <- .Call(P_reviveMoran,object,params)
   .Call(P_runMoran,x,time) |>
-    structure(model="Moran",class="gpsim")
+    structure(model="Moran",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname moran

@@ -14,6 +14,7 @@
 \alias{preDrawDetails.ballGrob}
 \alias{postDrawDetails.ballGrob}
 \alias{print.gpsim}
+\alias{print.gpgen}
 \alias{print.gpyaml}
 \title{Diagramming internals}
 \usage{
@@ -40,6 +41,8 @@ resizingTextGrob(..., vp = NULL)
 \method{postDrawDetails}{ballGrob}(x)
 
 \method{print}{gpsim}(x, ...)
+
+\method{print}{gpgen}(x, ...)
 
 \method{print}{gpyaml}(x, ...)
 }

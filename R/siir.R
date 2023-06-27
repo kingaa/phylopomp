@@ -38,7 +38,7 @@ runSIIR <- function (
   ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
   x <- .Call(P_makeSIIR,params,ivps,t0)
   .Call(P_runSIIR,x,time) |>
-    structure(model="SIIR",class="gpsim")
+    structure(model="SIIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname siir
@@ -55,5 +55,5 @@ continueSIIR <- function (
   )
   x <- .Call(P_reviveSIIR,object,params)
   .Call(P_runSIIR,x,time) |>
-    structure(model="SIIR",class="gpsim")
+    structure(model="SIIR",class=c("gpsim","gpgen"))
 }

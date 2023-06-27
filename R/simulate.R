@@ -3,7 +3,7 @@
 ##' Simulate Markov genealogy processes
 ##'
 ##' @name simulate
-##' @include getinfo.R sir.R siir.R si2r.R lbdp.R moran.R
+##' @include getinfo.R seir.R sir.R siir.R si2r.R lbdp.R moran.R
 ##' 
 ##' @family Genealogy processes
 ##' 
@@ -61,7 +61,7 @@ simulate.character <- function (object, time, ...) {
     pStop_("unrecognized model: ",sQuote(object),".\n",
       "Do ",sQuote("simulate()")," to view available models.")
   ) |>
-    structure(model=object,class="gpsim")
+    structure(model=object,class=c("gpsim","gpgen"))
 }
 
 ##' @rdname simulate
@@ -86,5 +86,5 @@ simulate.gpsim <- function (object, time, ...) {
     model = pStop_("no model attribute detected."),
     pStop_("unrecognized model ",sQuote(model),".")
   ) |>
-    structure(model=model,class="gpsim")
+    structure(model=model,class=c("gpsim","gpgen"))
 }

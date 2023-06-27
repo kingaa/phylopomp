@@ -15,7 +15,7 @@ See Details for specifics.}
 \item{tf}{numeric; the current or final time.}
 }
 \value{
-An object of class \dQuote{gpsim}.
+An object of class \dQuote{gpgen}.
 }
 \description{
 Parses a Newick description and returns a binary version of the genealogy.

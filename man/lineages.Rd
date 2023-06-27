@@ -16,7 +16,7 @@ lineages(object, prune = TRUE, obscure = TRUE)
 
 \item{obscure}{logical; obscure the demes?}
 
-\item{x}{object of class \sQuote{gpsim}}
+\item{x}{object of class \sQuote{gpgen}}
 
 \item{...}{passed to \code{\link[ggplot2]{theme}}.}
 

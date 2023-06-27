@@ -4,6 +4,16 @@
 #include "generics.h"
 #include "internal.h"
 
+template<>
+SEXP serial (const genealogy_t& X) {
+  SEXP out;
+  PROTECT(out = NEW_RAW(X.bytesize()));
+  X >> RAW(out);
+  SET_ATTR(out,install("class"),mkString("gpgen"));
+  UNPROTECT(1);
+  return out;
+}
+
 extern "C" {
 
   //! curtail the given genealogy

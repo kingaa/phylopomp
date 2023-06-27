@@ -2,10 +2,10 @@
 % Please edit documentation in R/treeplot.R
 \name{treeplot}
 \alias{treeplot}
-\alias{plot.gpsim}
+\alias{plot.gpgen}
 \title{Fancy tree plotter}
 \usage{
-\method{plot}{gpsim}(x, ..., time, t0, prune = TRUE, obscure = TRUE)
+\method{plot}{gpgen}(x, ..., time, t0, prune = TRUE, obscure = TRUE)
 
 treeplot(
   tree,
@@ -18,7 +18,7 @@ treeplot(
 )
 }
 \arguments{
-\item{x}{object of class \sQuote{gpsim}}
+\item{x}{object of class \sQuote{gpgen}}
 
 \item{...}{\code{plot} passes extra arguments to \code{\link{treeplot}}.
 \code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.}

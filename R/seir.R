@@ -32,7 +32,7 @@ runSEIR <- function (
   ivps <- c(S0=S0,E0=E0,I0=I0,R0=R0)
   x <- .Call(P_makeSEIR,params,ivps,t0)
   .Call(P_runSEIR,x,time) |>
-    structure(model="SEIR",class="gpsim")
+    structure(model="SEIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname seir
@@ -47,7 +47,7 @@ continueSEIR <- function (
   )
   x <- .Call(P_reviveSEIR,object,params)
   .Call(P_runSEIR,x,time) |>
-    structure(model="SEIR",class="gpsim")
+    structure(model="SEIR",class=c("gpsim","gpgen"))
 }
 
 ##' @name seirs_pomp

@@ -29,7 +29,6 @@ SEXP serial (const TYPE& X) {
   SEXP out;
   PROTECT(out = NEW_RAW(X.bytesize()));
   X >> RAW(out);
-  setAttrib(out,install("class"),mkString("gpsim"));
   UNPROTECT(1);
   return out;
 }
@@ -120,7 +119,7 @@ SEXP genealogy (SEXP State) {
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
     return make<TYPE>(Params,IVPs,T0);                                  \
   }                                                                     \
-  
+
 #define REVIVEFN(X,TYPE) SEXP revive ## X (SEXP State, SEXP Params) {   \
     return revive<TYPE>(State,Params);                                  \
   }                                                                     \
@@ -133,9 +132,9 @@ SEXP genealogy (SEXP State) {
     return genealogy<TYPE>(State);                              \
   }                                                             \
 
-#define YAMLFN(X,TYPE) SEXP yaml ## X (SEXP State) {		\
-    return yaml<TYPE>(State);					\
-  }                                                             \
+#define YAMLFN(X,TYPE) SEXP yaml ## X (SEXP State) {    \
+    return yaml<TYPE>(State);                           \
+  }                                                     \
 
 #define GENERICS(X,TYPE)                        \
   extern "C" {                                  \
@@ -148,8 +147,8 @@ SEXP genealogy (SEXP State) {
                                                 \
     GENEALFN(X,TYPE)                            \
                                                 \
-    YAMLFN(X,TYPE)				\
+    YAMLFN(X,TYPE)                              \
                                                 \
   }                                             \
-  
+
 #endif
