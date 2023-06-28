@@ -43,4 +43,6 @@ try(
     )
 )
 
+simulate("SIRS",time=10) |> geneal()
+
 dev.off()

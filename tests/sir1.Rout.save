@@ -67,6 +67,9 @@ Error : in 'runSIR': 'S0','I0','R0' must be nonnegative integers.
 + )
 Error : in 'sir_pomp': 'S0','I0','R0' must be nonnegative integers.
 > 
+> simulate("SIRS",time=10) |> geneal()
+<phylopomp genealogy>
+> 
 > dev.off()
 null device 
           1 
