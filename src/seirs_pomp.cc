@@ -71,8 +71,6 @@ static double event_rates
 #define I0        (__p[__parindex[7]])
 #define R0        (__p[__parindex[8]])
 #define N         (__p[__parindex[9]])
-#define lin_ct    (__covars[__covindex[0]])
-#define code      (__covars[__covindex[1]])
 #define S         (__x[__stateindex[0]])
 #define E         (__x[__stateindex[1]])
 #define I         (__x[__stateindex[2]])
@@ -179,9 +177,9 @@ extern "C" {
         lineage[parent] = 1;
         linE -= 1; linI += 1;
       }
-      if (p->holds(blue)) { // sample
+      if (p->holds(blue)) {     // sample
         ball_t *b = p->ball(blue);
-        if (p->holds(green)) {     // saturation = (0,1)
+        if (p->holds(green)) {  // saturation = (0,1)
           ball_t *a = p->other(b);
           ll += log(psi);
           lineage[a->lineage()] = 1;
@@ -256,7 +254,7 @@ extern "C" {
             ll += log((I-linI)/I*(E-linE+1)/(I-linI+1)*(I+1)/(E+1));
           }
         } else {                // no deme change possible
-          ll += log((I-linI)/I*(I+1)/(I-linI+1));
+          ll += log((E-linE+1)/(E+1));
         }
         S -= 1; E += 1;
         break;

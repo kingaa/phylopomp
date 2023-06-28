@@ -59,7 +59,7 @@ continueSEIR <- function (
 ##' @param x genealogy in \pkg{phylopomp} format.
 ##' @details
 ##' \code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
-##' @importFrom pomp pomp onestep covariate_table
+##' @importFrom pomp pomp onestep
 ##' @export
 seirs_pomp <- function (
   x,
@@ -70,8 +70,7 @@ seirs_pomp <- function (
   x |>
     getInfo(
       prune=TRUE,obscure=TRUE,trace=TRUE,
-      t0=TRUE,time=TRUE,nsample=TRUE,
-      lineages=TRUE,genealogy=TRUE
+      nsample=TRUE,lineages=TRUE,genealogy=TRUE
     ) -> geninfo
   ic <- as.integer(c(S0,E0,I0,R0))
   names(ic) <- c("S0","E0","I0","R0")
@@ -82,15 +81,11 @@ seirs_pomp <- function (
   nsample <- geninfo$nsample
   pomp(
     data=NULL,
-    t0=geninfo$t0,times=dat$time[-1L],
+    t0=dat$time[1L],
+    times=dat$time[-1L],
     params=c(
       Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta,
       ic,N=sum(ic)
-    ),
-    covar=covariate_table(
-      dat[c("time","lineages","event_type")],
-      times="time",
-      order="constant"
     ),
     nstatevars=nsample+8L,
     genealogy=geninfo$genealogy,
@@ -104,7 +99,6 @@ seirs_pomp <- function (
       "Beta","sigma","gamma","psi","delta",
       "S0","E0","I0","R0","N"
     ),
-    covarnames=c("lineages","event_type"),
     PACKAGE="phylopomp"
   )
 }
