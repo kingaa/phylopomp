@@ -50,8 +50,8 @@ library(pomp)
 library(phylopomp)
 library(cowplot)
 stopifnot(getRversion() >= "4.2")
-stopifnot(packageVersion("pomp")>="5.1")
-stopifnot(packageVersion("phylopomp")>="0.4")
+stopifnot(packageVersion("pomp")>="5.2")
+stopifnot(packageVersion("phylopomp")>="0.9")
 theme_set(theme_bw(base_family="serif"))
 options(
   dplyr.summarise.inform=FALSE,
@@ -69,14 +69,13 @@ with(
   true.params,
   runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=5)
 ) -> x
-x |> lineages() -> lbdp_dat
 ```
 
 ```{r lbdp1_plot}
 #| echo: false
 plot_grid(
   x |> plot(points=TRUE),
-  lbdp_dat |> plot(),
+  x |> lineages() |> plot(),
   ncol=1,
   align="hv",
   rel_heights=c(2,1)
@@ -115,12 +114,12 @@ foreach (
 ) %dopar% {
   with(
     p,
-    lbdp_dat |>
+    x |>
       lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
   ) -> ll1
   with(
     p,
-    lbdp_dat |>
+    x |>
       lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
       pfilter(Np=Np) |>
       logLik()
@@ -132,7 +131,7 @@ foreach (
 #| include: false
 bake(
   file="lbdp_compar.rds",
-  dependson=c(lbdp_dat,params),
+  dependson=c(x,params),
   {
     <<lbdp3>>
   }
