@@ -23,11 +23,11 @@ x |>
   concat() -> pfs
 
 pfs |>
-  plot(type="h")
+  plot(type="s")
 
 pfs |>
   logLik() |>
-  logmeanexp(se=TRUE) -> llpf
+  logmeanexp(se=TRUE,ess=TRUE) -> llpf
 llpf
 
 stopifnot(

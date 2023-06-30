@@ -170,7 +170,6 @@ lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
     rinit="lbdp_rinit",
     dmeasure="lbdp_dmeas",
     rprocess=onestep("lbdp_gill"),
-    accumvars=c("ll"),
     statenames=c("n","ll"),
     paramnames=c("lambda","mu","psi","n0"),
     covarnames=c("lineages","code"),

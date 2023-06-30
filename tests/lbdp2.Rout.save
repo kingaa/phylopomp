@@ -43,14 +43,14 @@ Type 'q()' to quit R.
 +   concat() -> pfs
 > 
 > pfs |>
-+   plot(type="h")
++   plot(type="s")
 > 
 > pfs |>
 +   logLik() |>
-+   logmeanexp(se=TRUE) -> llpf
++   logmeanexp(se=TRUE,ess=TRUE) -> llpf
 > llpf
-    est      se 
-12.6064  0.0322 
+    est      se     ess 
+12.6064  0.0322  9.9082 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
