@@ -51,7 +51,7 @@ library(phylopomp)
 library(cowplot)
 stopifnot(getRversion() >= "4.2")
 stopifnot(packageVersion("pomp")>="5.2")
-stopifnot(packageVersion("phylopomp")>="0.9")
+stopifnot(packageVersion("phylopomp")>="0.9.2")
 theme_set(theme_bw(base_family="serif"))
 options(
   dplyr.summarise.inform=FALSE,

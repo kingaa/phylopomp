@@ -51,7 +51,7 @@ library(pomp)
 library(phylopomp)
 stopifnot(getRversion() >= "4.2")
 stopifnot(packageVersion("pomp")>="5.1")
-stopifnot(packageVersion("phylopomp")>="0.4")
+stopifnot(packageVersion("phylopomp")>="0.9.2")
 theme_set(theme_bw(base_family="serif"))
 options(
   dplyr.summarise.inform=FALSE,
@@ -77,13 +77,6 @@ bake(
 
 ```{r process_data}
 sim |>
-  lineages() |>
-  mutate(
-    code=lineages-lag(lineages),
-    code=if_else(is.na(code),2,code)
-  ) -> sirs_dat
-
-sirs_dat |>
   sir_pomp(
     Beta=4,gamma=2,psi=1,delta=1,
     S0=97,I0=3,R0=3,t0=0
@@ -93,7 +86,7 @@ sirs_dat |>
 ```{r pfilter1}
 bake(
   file="sirs2.rds",
-  dependson=sirs_dat,
+  dependson=sim,
   {
     library(doParallel)
     library(doRNG)
