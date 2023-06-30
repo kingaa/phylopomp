@@ -83,7 +83,6 @@ sir_pomp <- function (x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
     rinit="sirs_rinit",
     rprocess=onestep("sirs_gill"),
     dmeasure="sirs_dmeas",
-    accumvars=c("ll"),
     statenames=c("S","I","R","ll"),
     paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
     covarnames=c("lineages","code"),

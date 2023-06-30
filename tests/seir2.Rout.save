@@ -102,7 +102,7 @@ name        [,1]   [,2]   [,3]   [,4]   [,5]
     est      se     ess 
 -28.349   0.178  12.657 
 > 
-> pf |> plot(type='s')
+> pf |> plot(type="s")
 > 
 > plot_grid(
 +   G |>

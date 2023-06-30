@@ -43,7 +43,7 @@ po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
 pf |> logLik()
 pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
 
-pf |> plot(type='s')
+pf |> plot(type="s")
 
 plot_grid(
   G |>

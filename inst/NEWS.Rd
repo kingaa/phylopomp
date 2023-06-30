@@ -3,6 +3,7 @@
 \section{Changes in \pkg{phylopomp} version 0.9}{
   \itemize{
     \item Inclusion of \pkg{pomp} methods for SEIRS model.
+    \item Refactored \code{sirs_pomp} and \code{lbdp_pomp}.
     \item The new function \code{geneal} extracts the bare genealogy from a simulated master process object.
     \item Changes in the interfaces to \code{lbdp_exact}, \code{lbdp_pomp}, \code{moran_exact}, and \code{sir_pomp}.
     These functions now take as data objects of class \sQuote{gpgen}.

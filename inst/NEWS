@@ -4,6 +4,8 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
 
         • Inclusion of ‘pomp’ methods for SEIRS model.
 
+        • Refactored ‘sirs_pomp’ and ‘lbdp_pomp’.
+
         • The new function ‘geneal’ extracts the bare genealogy from a
           simulated master process object.
 
