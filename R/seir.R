@@ -93,7 +93,6 @@ seirs_pomp <- function (
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
     dmeasure="seirs_dmeas",
-    accumvars=c("ll"),
     statenames=c("S","E","I","R","ll","node","linE","linI","lineage"),
     paramnames=c(
       "Beta","sigma","gamma","psi","delta",

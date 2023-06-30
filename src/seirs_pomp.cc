@@ -121,11 +121,11 @@ extern "C" {
           if (unif_rand() < prop_prob) {
             lineage[b->lineage()] = 0; // lineage is put into E deme
             linE += 1.0;
-            ll -= log(prop_prob); // FIXME: this will be ignored if 'll' is an accumulator variable
+            ll -= log(prop_prob);
           } else {
             lineage[b->lineage()] = 1; // lineage is put into I deme
             linI += 1.0;
-            ll -= log(1-prop_prob); // FIXME: this will be ignored if 'll' is an accumulator variable
+            ll -= log(1-prop_prob);
           }
         }
       }
@@ -167,7 +167,7 @@ extern "C" {
     node = node+1;
 
     if (!p->is_root()) {
-      // FIXME: adjust for root-deme proposals here?
+      ll = 0;
       int parent = p->green_ball()->lineage();
       if (parent < 0 || parent >= nSAMPLE) err("big trouble!"); // #nocov
       if (ISNA(lineage[parent])) {
