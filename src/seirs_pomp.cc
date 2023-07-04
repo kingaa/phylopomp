@@ -287,9 +287,9 @@ extern "C" {
       case 3:                   // waning
         R -= 1; S += 1;
         break;
-      default:                                       // #nocov
-        error("impossible error in '%s'!",__func__); // #nocov
-        break;                                       // #nocov
+      default:                                     // #nocov
+        err("impossible error in '%s'!",__func__); // #nocov
+        break;                                     // #nocov
       }
 
       linE = nearbyint(linE);

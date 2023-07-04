@@ -116,9 +116,9 @@ void sirs_gill
     case 2:                     // loss of immunity
       R -= 1; S += 1;
       break;
-    default:                                       // #nocov
-      error("impossible error in '%s'!",__func__); // #nocov
-      break;                                       // #nocov
+    default:                                     // #nocov
+      err("impossible error in '%s'!",__func__); // #nocov
+      break;                                     // #nocov
     }
     t += tstep;
     event_rate = event_rates(__x,__p,t,
