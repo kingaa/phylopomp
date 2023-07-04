@@ -96,7 +96,7 @@ void sirs_gill
   // take Gillespie steps to the end of the interval:
   int event;
   double penalty = 0;
-  double rate[2];
+  double rate[3];
 
   double event_rate = event_rates(__x,__p,t,
                                   __stateindex,__parindex,__covindex,
