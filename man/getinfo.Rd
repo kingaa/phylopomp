@@ -8,7 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
-  trace = FALSE,
+  trace = TRUE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,

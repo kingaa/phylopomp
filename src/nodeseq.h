@@ -165,7 +165,7 @@ public:
   //! the deme of p is changed to match that of a
   void add (node_t *p, ball_t *a) {
     swap(a,p->green_ball());
-    p->deme = a->deme();
+    p->deme() = a->deme();
     push_back(p);
   };
   //! drop the black ball 'a' and the node if either

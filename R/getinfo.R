@@ -38,7 +38,7 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune = TRUE, obscure = TRUE, trace = FALSE,
+  object, prune = TRUE, obscure = TRUE, trace = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,

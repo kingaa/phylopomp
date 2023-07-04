@@ -23,15 +23,17 @@ class node_t;
 //! Each ball has:
 //! - a globally unique name
 //! - a color
+//! - a deme
+//! - a lineage
 //! - a "holder": a pointer to the node in whose pocket it lies
 //! - an "owner": a pointer to the node in which it was originally created
-//! - a deme
 class ball_t {
 
 private:
   node_t *_holder;
   node_t *_owner;
   name_t _deme;
+  name_t _lineage;
 
 public:
   name_t uniq;
@@ -40,18 +42,19 @@ public:
 public:
 
   //! size of binary serialization
-  static const size_t bytesize = 2*sizeof(name_t)+sizeof(color_t);
+  static const size_t bytesize = 3*sizeof(name_t)+sizeof(color_t);
   //! binary serialization
   friend raw_t* operator>> (const ball_t &b, raw_t *o) {
-    memcpy(o,&b.uniq,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(o,&b._deme,sizeof(name_t)); o += sizeof(name_t);
+    name_t buf[3] = {b.uniq, b._deme, b._lineage};
+    memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,&b.color,sizeof(color_t)); o += sizeof(color_t);
     return o;
   };
   //! binary deserialization
   friend raw_t* operator>> (raw_t *o, ball_t &b) {
-    memcpy(&b.uniq,o,sizeof(name_t)); o += sizeof(name_t);
-    memcpy(&b._deme,o,sizeof(name_t)); o += sizeof(name_t);
+    name_t buf[3];
+    memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
+    b.uniq = buf[0]; b._deme = buf[1]; b._lineage = buf[2];
     memcpy(&b.color,o,sizeof(color_t)); o += sizeof(color_t);
     b._holder = 0;              // must be set elsewhere
     b._owner = 0;               // must be set elsewhere
@@ -67,6 +70,7 @@ public:
     uniq = u;
     color = col;
     _deme = d;
+    _lineage = null_lineage;
   };
   //! copy constructor
   ball_t (const ball_t&) = delete;
@@ -81,25 +85,21 @@ public:
 
 public:
 
-  //! view deme (of a black ball).
+  //! view deme
   name_t deme (void) const {
-    if (color != black)
-      err("ask not the deme of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
-  //! change deme (of a black ball).
+  //! change deme
   name_t& deme (void) {
-    if (color != black)
-      err("meddle not in the deme of a %s ball!",colores[color]); // #nocov
     return _deme;
   };
   //! view lineage
   name_t lineage (void) const {
-    return _deme;
+    return _lineage;
   };
   //! change lineage
   name_t& lineage (void) {
-    return _deme;
+    return _lineage;
   };
   //! view owner
   node_t* owner (void) const {
@@ -113,6 +113,12 @@ public:
       err("meddle not with the owner of a %s ball!",colores[color]); // #nocov
     return _owner;
   };
+  //! a child is the owner of a green ball
+  node_t* child (void) const {
+    if (color != green)
+      err("ask not the child of a %s ball!",colores[color]); // #nocov
+    return _owner;
+  };
   //! in whose pocket do I lie?
   node_t* holder (void) const {
     return _holder;
@@ -120,12 +126,6 @@ public:
   //! in whose pocket do I lie?
   node_t*& holder (void) {
     return _holder;
-  };
-  //! a child is the owner of a green ball
-  node_t* child (void) const {
-    if (color != green)
-      err("ask not the child of a %s ball!",colores[color]); // #nocov
-    return _owner;
   };
   //! is a given ball of the given color?
   bool is (color_t c) const {
@@ -148,9 +148,13 @@ public:
   //! human-readable info
   std::string describe (void) const {
     std::string o = color_name()
-      + "(" + std::to_string(uniq);
+      + "(" + std::to_string(uniq) + ",";
     if (_deme != undeme) {
-      o += "," + std::to_string(_deme);
+      o += std::to_string(_deme);
+    }
+    o += ",";
+    if (_lineage != null_lineage) {
+      o += std::to_string(_lineage);
     }
     o += ")";
     return o;

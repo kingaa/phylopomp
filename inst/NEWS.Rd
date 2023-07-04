@@ -2,6 +2,13 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.9}{
   \itemize{
+    \item Default for \code{trace} option in \code{getInfo()} is now \code{TRUE}.
+    \item Lineage and deme information has been refactored: nodes no longer carry deme information, balls do.
+    \item The genealogy description (\code{getInfo(description=TRUE)}) now reports both deme and lineage.
+  }
+}
+\section{Changes in \pkg{phylopomp} version 0.9}{
+  \itemize{
     \item Inclusion of \pkg{pomp} methods for SEIRS model.
     \item Refactored \code{sirs_pomp} and \code{lbdp_pomp}.
     \item The new function \code{geneal} extracts the bare genealogy from a simulated master process object.
@@ -57,7 +64,7 @@
     \item Corrected certain inconsistencies in the way the lineage-count table was reported and used in pomp objects.
     The \code{lbdp_pomp} and \code{sir_pomp} functions assume a particular form of the lineage count table, such that every entry corresponds to either a root, a branch point, or a sample (but NB, the last entry is treated differently).
     This assumption was violated beginning with version 0.2.0.0 in that the lineage count table returned by \code{lineages()} contained an entry for internal nodes.
-    Now, when \code{obscure=TRUE} (the default), the behavior is as it was before, consistent with the assumptions of \code{lbdp_pomp} and \code{sir_pomp} 
+    Now, when \code{obscure=TRUE} (the default), the behavior is as it was before, consistent with the assumptions of \code{lbdp_pomp} and \code{sir_pomp}
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.2}{

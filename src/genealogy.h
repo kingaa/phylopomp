@@ -304,8 +304,8 @@ public:
   node_t* make_node (name_t d) {
     check_genealogy_size(0);
     name_t u = unique();
-    node_t *p = new node_t(u,_time,d);
-    ball_t *g = new ball_t(p,u,green);
+    node_t *p = new node_t(u,_time);
+    ball_t *g = new ball_t(p,u,green,d);
     p->green_ball() = g;
     p->insert(g);
     return p;
@@ -390,7 +390,7 @@ public:
     delete blacks;
     // erase deme information from nodes.
     for (node_it i = begin(); i != end(); i++) {
-      (*i)->deme = 0;
+      (*i)->deme() = 0;
     }
     // drop superfluous nodes (holding just one ball).
     comb();
@@ -420,7 +420,7 @@ public:
         case blue:
           b->color = black;
         case black:
-          b->deme() = p->deme;
+          b->deme() = p->deme();
           swap(b,p->green_ball());
         case green:
           destroy_node(p);
@@ -544,8 +544,8 @@ private:
     t += t0;
     _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
     _time = (_time < t) ? t : _time;
-    node_t *p = new node_t(u,t,deme);
-    ball_t *g = new ball_t(p,u,green);
+    node_t *p = new node_t(u,t);
+    ball_t *g = new ball_t(p,u,green,deme);
     p->green_ball() = g;
     p->insert(g);
     if (col==blue) {
