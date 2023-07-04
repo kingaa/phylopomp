@@ -486,6 +486,12 @@ private:
     catch (const std::out_of_range& e) {
       err("in '%s': invalid Newick format: deme out of range.",__func__);
     }
+    catch (const std::exception& e) {
+      err("in '%s': parsing deme label: %s.",__func__,e.what());
+    }
+    catch (...) {
+      err("in '%s': other deme-parsing error.",__func__);
+    }
     // skip to branch length
     while (i < n && s[i] != ':' &&
            s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
@@ -500,6 +506,12 @@ private:
     }
     catch (const std::out_of_range& e) {
       err("in '%s': invalid Newick format: branch length out of range.",__func__);
+    }
+    catch (const std::exception& e) {
+      err("in '%s': parsing branch-length: %s.",__func__,e.what());
+    }
+    catch (...) {
+      err("in '%s': other branch-length parsing error.",__func__);
     }
     i += sz;
     return i;
