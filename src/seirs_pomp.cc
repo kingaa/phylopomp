@@ -93,7 +93,7 @@ extern "C" {
    const int *__covindex,
    const double *__covars
    ){
-    double *lineage = &LINEAGE;
+    double *linvec = &LINEAGE;
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
@@ -119,11 +119,11 @@ extern "C" {
         ball_t *b = *j;
         if (p->green_ball() != b) { // exclude own balls
           if (unif_rand() < prop_prob) {
-            lineage[b->lineage()] = 0; // lineage is put into E deme
+            linvec[p->lineage(b)] = 0; // lineage is put into E deme
             linE += 1.0;
             ll -= log(prop_prob);
           } else {
-            lineage[b->lineage()] = 1; // lineage is put into I deme
+            linvec[p->lineage(b)] = 1; // lineage is put into I deme
             linI += 1.0;
             ll -= log(1-prop_prob);
           }
@@ -132,7 +132,7 @@ extern "C" {
     }
     linE = nearbyint(linE);
     linI = nearbyint(linI);
-    check_lineages(lineage,linE,linI,t0,__func__);
+    check_lineages(linvec,linE,linI,t0,__func__);
     node = node_count;
   }
 
@@ -149,7 +149,7 @@ extern "C" {
    ){
     double tstep = 0.0, tmax = t + dt;
     double cutoff[4];
-    double *lineage = &LINEAGE;
+    double *linvec = &LINEAGE;
 
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
@@ -168,26 +168,26 @@ extern "C" {
 
     if (!p->is_root()) {
       ll = 0;
-      int parent = p->green_ball()->lineage();
+      int parent = p->lineage();
       if (parent < 0 || parent >= nSAMPLE) err("big trouble!"); // #nocov
-      if (ISNA(lineage[parent])) {
+      if (ISNA(linvec[parent])) {
         err("undefined parent lineage"); // #nocov
-      } else if (nearbyint(lineage[parent]) != 1) {
+      } else if (nearbyint(linvec[parent]) != 1) {
         ll += R_NegInf;
-        lineage[parent] = 1;
+        linvec[parent] = 1;
         linE -= 1; linI += 1;
       }
       if (p->holds(blue)) {     // sample
         ball_t *b = p->ball(blue);
         if (p->holds(green)) {  // saturation = (0,1)
-          ball_t *a = p->other(b);
+          ball_t *g = p->other(b);
           ll += log(psi);
-          lineage[a->lineage()] = 1;
+          linvec[p->lineage(g)] = 1;
           linI += 1;
         } else {                // saturation = (0,0)
           ll += log(psi*(I-linI+1));
         }
-        lineage[b->lineage()] = R_NaReal;
+        linvec[parent] = R_NaReal;
         linI -= 1;
       } else if (p->holds(green)) { // branch point s = (1,1)
         ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
@@ -195,15 +195,15 @@ extern "C" {
         linE += 1;
         ball_t *a = p->last_ball();
         ball_t *b = p->other(a);
-        if (a==b || a->lineage() == b->lineage()) err("oh no.");
-        if (a->lineage() != p->green_ball()->lineage() &&
-            b->lineage() != p->green_ball()->lineage()) err("oh dear.");
+        if (a==b || p->lineage(a) == p->lineage(b)) err("oh no.");
+        if (p->lineage(a) != p->lineage() &&
+            p->lineage(b) != p->lineage()) err("oh dear.");
         if (unif_rand() < 0.5) {
-          lineage[a->lineage()] = 0;
-          lineage[b->lineage()] = 1;
+          linvec[p->lineage(a)] = 0;
+          linvec[p->lineage(b)] = 1;
         } else {
-          lineage[a->lineage()] = 1;
-          lineage[b->lineage()] = 0;
+          linvec[p->lineage(a)] = 1;
+          linvec[p->lineage(b)] = 0;
         }
         ll -= log(0.5);
       } else {
@@ -242,11 +242,11 @@ extern "C" {
             int i = -1;
             while (i < nSAMPLE && n > 0) {
               i++;
-              if (!ISNA(lineage[i]) && nearbyint(lineage[i]) == 1) n--;
+              if (!ISNA(linvec[i]) && nearbyint(linvec[i]) == 1) n--;
             }
-            if (n != 0 || lineage[i] != 1)
-              err("yikes 0! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
-            lineage[i] = 0;
+            if (n != 0 || linvec[i] != 1)
+              err("yikes 0! %ld %ld %ld %lg",nSAMPLE,i,n,linvec[i]); // #nocov
+            linvec[i] = 0;
             linE += 1; linI -= 1;
           } else if (u < 2*p) { // propose an I -> I deme change
             ll += log(2*(E-linE+1)/(E+1)*(I+1)/I);
@@ -267,11 +267,11 @@ extern "C" {
             int i = -1;
             while (i < nSAMPLE && n > 0) {
               i++;
-              if (!ISNA(lineage[i]) && nearbyint(lineage[i]) == 0) n--;
+              if (!ISNA(linvec[i]) && nearbyint(linvec[i]) == 0) n--;
             }
-            if (n != 0 || lineage[i] != 0)
-              err("yikes 1! %ld %ld %ld %lg",nSAMPLE,i,n,lineage[i]); // #nocov
-            lineage[i] = 1;
+            if (n != 0 || linvec[i] != 0)
+              err("yikes 1! %ld %ld %ld %lg",nSAMPLE,i,n,linvec[i]); // #nocov
+            linvec[i] = 1;
             linE -= 1; linI += 1;
           } else {              // propose no deme change
             ll += log((I-linI+1)/(E-linE+1)*(E+1)/(I+1));
@@ -294,7 +294,7 @@ extern "C" {
 
       linE = nearbyint(linE);
       linI = nearbyint(linI);
-      check_lineages(lineage,linE,linI,t,__func__);
+      check_lineages(linvec,linE,linI,t,__func__);
 
       t += tstep;
       event_rate = event_rates(S,E,I,R,N,linE,linI,

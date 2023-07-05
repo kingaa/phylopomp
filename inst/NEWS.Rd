@@ -5,6 +5,7 @@
     \item \code{getInfo()}, \code{parse_newick()} now always trace lineages.
     \item Lineage and deme information has been refactored: nodes no longer carry deme information, balls do.
     \item The genealogy description (\code{getInfo(description=TRUE)}) now reports both deme and lineage.
+    \item \code{curtail()} more carefully rewinds the history.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.9}{

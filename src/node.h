@@ -10,18 +10,22 @@
 #include <string>
 #include <cstring>
 
+static const name_t null_lineage = name_t(NA_INTEGER);
+
 //! Encodes a genealogical node.
 
 //! Each node has:
 //! - a unique name (uniq)
 //! - a pocket containting two or more balls
 //! - a "slate" with the time
+//! - a lineage
 //! - a pointer to its own green ball
 class node_t : public pocket_t {
 
 private:
 
   ball_t *_green_ball;
+  name_t _lineage;
 
   void clean (void) { };
 
@@ -34,20 +38,23 @@ public:
 
   //! size of binary serialization
   size_t bytesize (void) const {
-    return sizeof(name_t) + sizeof(slate_t)
+    return 2*sizeof(name_t) + sizeof(slate_t)
       + pocket_t::bytesize();
   };
   //! binary serialization of node_t
   friend raw_t* operator>> (const node_t &p, raw_t *o) {
-    memcpy(o,&p.uniq,sizeof(name_t)); o += sizeof(name_t);
+    name_t buf[2] = {p.uniq, p._lineage};
+    memcpy(o,buf,sizeof(buf)); o += sizeof(buf);
     memcpy(o,&p.slate,sizeof(slate_t)); o += sizeof(slate_t);
     return reinterpret_cast<const pocket_t&>(p) >> o;
   };
   //! binary deserialization of node_t
   friend raw_t* operator>> (raw_t *o, node_t &p) {
     p.clean();
-    memcpy(&p.uniq,o,sizeof(name_t)); o += sizeof(name_t);
+    name_t buf[2];
+    memcpy(buf,o,sizeof(buf)); o += sizeof(buf);
     memcpy(&p.slate,o,sizeof(slate_t)); o += sizeof(slate_t);
+    p.uniq = buf[0]; p._lineage = buf[1];
     o = (o >> reinterpret_cast<pocket_t&>(p));
     p.repair_holder(&p);
     return o;
@@ -60,6 +67,7 @@ public:
     uniq = u;
     slate = t;
     _green_ball = 0;
+    _lineage = null_lineage;
   };
   //! copy constructor
   node_t (const node_t &p) = delete;
@@ -84,11 +92,25 @@ public:
   ball_t*& green_ball (void) {
     return _green_ball;
   };
+  //! view deme
+  name_t deme (void) const {
+    return _green_ball->deme();
+  };
+  //! set deme
   name_t& deme (void) {
     return _green_ball->deme();
   };
-  name_t deme (void) const {
-    return _green_ball->deme();
+  //! view lineage
+  name_t lineage (void) const {
+    return _lineage;
+  };
+  //! view lineage associated with a green ball
+  name_t lineage (const ball_t *g) const {
+    return g->owner()->lineage();
+  };
+  //! set lineage
+  name_t& lineage (void) {
+    return _lineage;
   };
   node_t* parent (void) const {
     return _green_ball->holder();
@@ -158,9 +180,13 @@ public:
 
   //! human-readable info
   std::string describe (void) const {
-    std::string s = "node(" + std::to_string(uniq)
-      + "," + std::to_string(deme()) + ") ";
-    s += pocket_t::describe();
+    std::string s = "node("
+      + std::to_string(uniq)
+      + "," + std::to_string(deme()) + ",";
+    if (lineage() != null_lineage) {
+      s += std::to_string(lineage());
+    }
+    s += ")" + pocket_t::describe();
     s += ", t = " + std::to_string(slate) + "\n";
     return s;
   };
@@ -168,10 +194,12 @@ public:
   std::string yaml (std::string tab = "") const {
     std::string t = tab + "  ";
     std::string o = "name: " + std::to_string(uniq) + "\n"
-      + tab + "deme: " + std::to_string(deme()) + "\n"
       + tab + "time: " + std::to_string(slate) + "\n"
-      + tab + "pocket:\n"
-      + pocket_t::yaml(tab);
+      + tab + "deme: " + std::to_string(deme()) + "\n";
+    if (lineage() != null_lineage) {
+      o += tab + "lineage: " + std::to_string(lineage()) + "\n";
+    }
+    o += tab + "pocket:\n" + pocket_t::yaml(tab);
     return o;
   };
   //! R list description

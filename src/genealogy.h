@@ -407,10 +407,10 @@ public:
         while (p->size() > 1) {
           b = p->last_ball();
           switch (b->color) {
-          case blue: case black:
+          case black:
             p->erase(b); delete b;
             break;
-          case green:                                // #nocov
+          case green: case blue:                     // #nocov
             err("in '%s': inconceivable!",__func__); // #nocov
             break;                                   // #nocov
           }

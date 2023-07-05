@@ -154,7 +154,7 @@ Error : in 'parse': invalid Newick string: unbalanced parentheses.
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:1.000000,b_1_2:1.000000)m_0_0:0.000000;"
+[1] "(b_1_2:1.000000,o_9_1:1.000000)m_0_0:0.000000;"
 
 > 
 > try(
@@ -180,7 +180,7 @@ $newick
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
+[1] "(b_0_2:3.000000,o_9_1:3.000000)m_0_0:0.000000;"
 
 > 
 > try(
@@ -211,14 +211,14 @@ Error : in 'scan_label': invalid Newick format: missing or invalid branch length
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
+[1] "(b_0_2:3.000000,o_9_1:3.000000)m_0_0:0.000000;"
 
 > 
 > r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:3.000000,b_0_2:3.000000)m_0_0:0.000000;"
+[1] "(b_0_2:3.000000,o_9_1:3.000000)m_0_0:0.000000;"
 
 > 
 > try(
@@ -231,14 +231,14 @@ Error : in 'scan_label': invalid Newick format: invalid branch length.
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > try(
@@ -279,21 +279,21 @@ Error : in 'scan_tree': premature end of Newick string.
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,b_2_45:17}" |>
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,  b_2_45:17}" |>
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,
@@ -301,7 +301,7 @@ $newick
 +    parse_newick() |>
 +    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 $newick
-[1] "(o_9_1:17.000000,b_0_2:3.000000)m_0_0:0.000000;b_2_3:17.000000;"
+[1] "(b_0_2:3.000000,o_9_1:17.000000)m_0_0:0.000000;b_2_3:17.000000;"
 
 > 
 > try(

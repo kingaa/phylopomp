@@ -17,8 +17,8 @@
 //! defeating reproducibility.
 struct ball_compare {
   bool operator() (const ball_t* a, const ball_t* b) const {
-    return (a->uniq < b->uniq) ||
-      ((a->uniq == b->uniq) && (a->color < b->color));
+    return (a->color < b->color) ||
+      ((a->color == b->color) && (a->uniq < b->uniq));
   };
 };
 

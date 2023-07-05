@@ -70,12 +70,12 @@ null device
 +   cat()
 t0 = 0.000000
 time = 0.300000
-node(7,0) {green(7,0,0), green(30,0,0)}, t = 0.000000
-node(2,0) {green(2,0,2), green(61,0,2)}, t = 0.000000
-node(0,0) {green(0,0,1), green(42,0,1)}, t = 0.000000
-node(30,0) {blue(30,0,0)}, t = 0.074094
-node(42,0) {blue(42,0,1)}, t = 0.161458
-node(61,0) {blue(61,0,2)}, t = 0.240436
+node(7,0,0){green(7,0), green(30,0)}, t = 0.000000
+node(2,0,2){green(2,0), green(61,0)}, t = 0.000000
+node(0,0,1){green(0,0), green(42,0)}, t = 0.000000
+node(30,0,0){blue(30,0)}, t = 0.074094
+node(42,0,1){blue(42,0)}, t = 0.161458
+node(61,0,2){blue(61,0)}, t = 0.240436
 > 
 > simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
 +   getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
@@ -83,83 +83,83 @@ node(61,0) {blue(61,0,2)}, t = 0.240436
 +   cat()
 t0 = 0.000000
 time = 0.300000
-node(19,1) {green(19,1,), green(31,1,)}, t = 0.000000
-node(18,1) {green(18,1,), green(27,1,)}, t = 0.000000
-node(17,1) {green(17,1,), green(30,1,)}, t = 0.000000
-node(16,1) {green(16,1,2), green(38,1,2)}, t = 0.000000
-node(15,1) {green(15,1,), green(29,1,)}, t = 0.000000
-node(14,1) {green(14,1,), green(37,1,)}, t = 0.000000
-node(13,1) {green(13,1,), green(21,1,)}, t = 0.000000
-node(12,1) {green(12,1,), green(34,1,)}, t = 0.000000
-node(10,1) {green(10,1,), green(41,1,)}, t = 0.000000
-node(9,0) {green(9,0,), green(52,0,)}, t = 0.000000
-node(8,0) {green(8,0,3), green(23,0,3)}, t = 0.000000
-node(7,0) {green(7,0,1), green(28,0,1)}, t = 0.000000
-node(6,0) {green(6,0,), green(59,0,)}, t = 0.000000
-node(4,0) {green(4,0,), green(49,0,)}, t = 0.000000
-node(3,0) {green(3,0,0), green(20,0,0)}, t = 0.000000
-node(2,0) {green(2,0,), black(2,0,)}, t = 0.000000
-node(1,0) {green(1,0,), green(22,0,)}, t = 0.000000
-node(0,0) {green(0,0,), black(0,0,)}, t = 0.000000
-node(20,0) {blue(20,0,0)}, t = 0.000031
-node(21,1) {green(25,1,), green(33,1,)}, t = 0.005067
-node(22,0) {green(32,0,), green(54,0,)}, t = 0.023831
-node(23,0) {green(24,0,3), green(26,0,)}, t = 0.040646
-node(24,0) {green(36,0,), green(62,0,3)}, t = 0.042779
-node(25,1) {black(25,1,)}, t = 0.055307
-node(26,0) {black(23,0,), black(26,0,)}, t = 0.059290
-node(27,1) {black(18,1,), green(46,1,)}, t = 0.064146
-node(28,0) {blue(28,0,1), green(44,0,)}, t = 0.069683
-node(29,1) {green(45,1,), green(64,1,)}, t = 0.071972
-node(30,1) {green(35,1,), green(40,1,)}, t = 0.079430
-node(31,1) {green(39,1,), green(43,1,)}, t = 0.080001
-node(32,0) {green(60,0,)}, t = 0.093457
-node(33,1) {black(13,1,)}, t = 0.109055
-node(34,1) {green(53,1,)}, t = 0.111349
-node(35,1) {green(55,1,), green(66,1,)}, t = 0.116827
-node(36,0) {black(8,0,), green(63,0,)}, t = 0.121774
-node(37,1) {green(48,1,)}, t = 0.125376
-node(38,1) {green(47,0,2)}, t = 0.146179
-node(39,1) {green(50,0,)}, t = 0.146444
-node(40,1) {black(17,1,), black(40,1,)}, t = 0.149848
-node(41,1) {black(41,1,), green(42,1,)}, t = 0.150213
-node(42,1) {black(10,1,)}, t = 0.151112
-node(43,1) {black(19,1,)}, t = 0.151287
-node(44,0) {black(7,0,), green(57,0,)}, t = 0.170206
-node(45,1) {black(45,1,)}, t = 0.184868
-node(46,1) {green(51,1,), green(65,1,)}, t = 0.190774
-node(47,0) {black(16,0,), blue(47,0,2)}, t = 0.193504
-node(48,1) {black(14,1,), green(58,1,)}, t = 0.203629
-node(49,0) {black(4,0,), black(49,0,)}, t = 0.204710
-node(50,0) {black(50,0,)}, t = 0.213707
-node(51,1) {black(46,1,), black(51,1,)}, t = 0.220083
-node(52,0) {green(69,0,), green(72,0,)}, t = 0.220564
-node(53,1) {black(12,1,), green(56,1,)}, t = 0.226935
-node(54,0) {black(22,0,), black(54,0,)}, t = 0.227430
-node(55,1) {black(55,1,), green(67,1,)}, t = 0.235071
-node(56,1) {black(53,1,), green(68,1,)}, t = 0.236979
-node(57,0) {black(44,0,), green(70,0,)}, t = 0.240208
-node(58,1) {black(48,1,), black(58,1,)}, t = 0.240923
-node(59,0) {green(61,0,), green(74,0,)}, t = 0.242048
-node(60,0) {black(60,0,), green(76,0,)}, t = 0.248481
-node(61,0) {black(6,0,), black(61,0,)}, t = 0.250152
-node(62,0) {black(24,0,), blue(62,0,3)}, t = 0.252043
-node(63,0) {black(36,0,), black(63,0,)}, t = 0.255962
-node(64,1) {black(64,1,), green(75,1,)}, t = 0.258006
-node(65,1) {black(27,0,)}, t = 0.264001
-node(66,1) {black(30,1,), black(66,1,)}, t = 0.264938
-node(67,1) {black(35,1,), black(67,1,)}, t = 0.265127
-node(68,1) {black(68,1,), green(71,1,)}, t = 0.268119
-node(69,0) {black(9,0,), black(69,0,)}, t = 0.270881
-node(70,0) {black(57,0,), black(70,0,)}, t = 0.274486
-node(71,1) {black(71,1,), green(73,1,)}, t = 0.274868
-node(72,0) {black(52,0,), black(72,0,)}, t = 0.284145
-node(73,1) {black(56,0,)}, t = 0.285561
-node(74,0) {black(59,0,), black(74,0,)}, t = 0.286359
-node(75,1) {black(15,1,), black(75,1,)}, t = 0.290813
-node(76,0) {black(1,0,), black(76,0,)}, t = 0.297674
+node(19,1,){green(19,1), green(31,1)}, t = 0.000000
+node(18,1,){green(18,1), green(27,1)}, t = 0.000000
+node(17,1,){green(17,1), green(30,1)}, t = 0.000000
+node(16,1,2){green(16,1), green(38,1)}, t = 0.000000
+node(15,1,){green(15,1), green(29,1)}, t = 0.000000
+node(14,1,){green(14,1), green(37,1)}, t = 0.000000
+node(13,1,){green(13,1), green(21,1)}, t = 0.000000
+node(12,1,){green(12,1), green(34,1)}, t = 0.000000
+node(10,1,){green(10,1), green(41,1)}, t = 0.000000
+node(9,0,){green(9,0), green(52,0)}, t = 0.000000
+node(8,0,3){green(8,0), green(23,0)}, t = 0.000000
+node(7,0,1){green(7,0), green(28,0)}, t = 0.000000
+node(6,0,){green(6,0), green(59,0)}, t = 0.000000
+node(4,0,){green(4,0), green(49,0)}, t = 0.000000
+node(3,0,0){green(3,0), green(20,0)}, t = 0.000000
+node(2,0,){green(2,0), black(2,0)}, t = 0.000000
+node(1,0,){green(1,0), green(22,0)}, t = 0.000000
+node(0,0,){green(0,0), black(0,0)}, t = 0.000000
+node(20,0,0){blue(20,0)}, t = 0.000031
+node(21,1,){green(25,1), green(33,1)}, t = 0.005067
+node(22,0,){green(32,0), green(54,0)}, t = 0.023831
+node(23,0,3){green(24,0), green(26,0)}, t = 0.040646
+node(24,0,3){green(36,0), green(62,0)}, t = 0.042779
+node(25,1,){black(25,1)}, t = 0.055307
+node(26,0,){black(23,0), black(26,0)}, t = 0.059290
+node(27,1,){green(46,1), black(18,1)}, t = 0.064146
+node(28,0,1){green(44,0), blue(28,0)}, t = 0.069683
+node(29,1,){green(45,1), green(64,1)}, t = 0.071972
+node(30,1,){green(35,1), green(40,1)}, t = 0.079430
+node(31,1,){green(39,1), green(43,1)}, t = 0.080001
+node(32,0,){green(60,0)}, t = 0.093457
+node(33,1,){black(13,1)}, t = 0.109055
+node(34,1,){green(53,1)}, t = 0.111349
+node(35,1,){green(55,1), green(66,1)}, t = 0.116827
+node(36,0,){green(63,0), black(8,0)}, t = 0.121774
+node(37,1,){green(48,1)}, t = 0.125376
+node(38,1,2){green(47,0)}, t = 0.146179
+node(39,1,){green(50,0)}, t = 0.146444
+node(40,1,){black(17,1), black(40,1)}, t = 0.149848
+node(41,1,){green(42,1), black(41,1)}, t = 0.150213
+node(42,1,){black(10,1)}, t = 0.151112
+node(43,1,){black(19,1)}, t = 0.151287
+node(44,0,){green(57,0), black(7,0)}, t = 0.170206
+node(45,1,){black(45,1)}, t = 0.184868
+node(46,1,){green(51,1), green(65,1)}, t = 0.190774
+node(47,0,2){blue(47,0), black(16,0)}, t = 0.193504
+node(48,1,){green(58,1), black(14,1)}, t = 0.203629
+node(49,0,){black(4,0), black(49,0)}, t = 0.204710
+node(50,0,){black(50,0)}, t = 0.213707
+node(51,1,){black(46,1), black(51,1)}, t = 0.220083
+node(52,0,){green(69,0), green(72,0)}, t = 0.220564
+node(53,1,){green(56,1), black(12,1)}, t = 0.226935
+node(54,0,){black(22,0), black(54,0)}, t = 0.227430
+node(55,1,){green(67,1), black(55,1)}, t = 0.235071
+node(56,1,){green(68,1), black(53,1)}, t = 0.236979
+node(57,0,){green(70,0), black(44,0)}, t = 0.240208
+node(58,1,){black(48,1), black(58,1)}, t = 0.240923
+node(59,0,){green(61,0), green(74,0)}, t = 0.242048
+node(60,0,){green(76,0), black(60,0)}, t = 0.248481
+node(61,0,){black(6,0), black(61,0)}, t = 0.250152
+node(62,0,3){blue(62,0), black(24,0)}, t = 0.252043
+node(63,0,){black(36,0), black(63,0)}, t = 0.255962
+node(64,1,){green(75,1), black(64,1)}, t = 0.258006
+node(65,1,){black(27,0)}, t = 0.264001
+node(66,1,){black(30,1), black(66,1)}, t = 0.264938
+node(67,1,){black(35,1), black(67,1)}, t = 0.265127
+node(68,1,){green(71,1), black(68,1)}, t = 0.268119
+node(69,0,){black(9,0), black(69,0)}, t = 0.270881
+node(70,0,){black(57,0), black(70,0)}, t = 0.274486
+node(71,1,){green(73,1), black(71,1)}, t = 0.274868
+node(72,0,){black(52,0), black(72,0)}, t = 0.284145
+node(73,1,){black(56,0)}, t = 0.285561
+node(74,0,){black(59,0), black(74,0)}, t = 0.286359
+node(75,1,){black(15,1), black(75,1)}, t = 0.290813
+node(76,0,){black(1,0), black(76,0)}, t = 0.297674
 > 
-> simulate("SIR",time=0.5) |> yaml(prune=FALSE)
+> simulate("SIR",time=0.5) |> yaml()
 parameter:
   Beta: 2.000000
   gamma: 1.000000
@@ -178,387 +178,14 @@ genealogy:
   time: 0.500000
   nodes:
   - name: 0
-    deme: 0
     time: 0.000000
+    deme: 0
     pocket:
     - color: green
       name: 0
     - color: black
       name: 0
       deme: 0
-> 
-> simulate("LBDP",time=0.5) |> yaml(prune=FALSE,obscure=TRUE)
-parameter:
-  lambda: 2.000000
-  mu: 1.000000
-  psi: 1.000000
-  n0: 5
-state:
-  n: 11
-genealogy:
-  t0: 0.000000
-  time: 0.500000
-  nodes:
-  - name: 4
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 4
-    - color: green
-      name: 10
-  - name: 3
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 3
-    - color: green
-      name: 6
-  - name: 2
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 2
-    - color: green
-      name: 7
-  - name: 1
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 1
-    - color: green
-      name: 9
-  - name: 0
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 0
-    - color: green
-      name: 5
-  - name: 5
-    deme: 0
-    time: 0.021172
-    pocket:
-    - color: blue
-      name: 5
-    - color: green
-      name: 15
-  - name: 6
-    deme: 0
-    time: 0.029307
-    pocket:
-    - color: green
-      name: 11
-    - color: green
-      name: 12
-  - name: 7
-    deme: 0
-    time: 0.105442
-    pocket:
-    - color: green
-      name: 14
-  - name: 9
-    deme: 0
-    time: 0.121624
-    pocket:
-    - color: black
-      name: 1
-      deme: 0
-    - color: green
-      name: 20
-  - name: 10
-    deme: 0
-    time: 0.132903
-    pocket:
-    - color: green
-      name: 13
-  - name: 11
-    deme: 0
-    time: 0.148050
-    pocket:
-    - color: black
-      name: 6
-      deme: 0
-    - color: blue
-      name: 11
-  - name: 12
-    deme: 0
-    time: 0.268857
-    pocket:
-    - color: black
-      name: 12
-      deme: 0
-  - name: 13
-    deme: 0
-    time: 0.326312
-    pocket:
-    - color: blue
-      name: 13
-    - color: green
-      name: 16
-  - name: 14
-    deme: 0
-    time: 0.331420
-    pocket:
-    - color: black
-      name: 7
-      deme: 0
-    - color: blue
-      name: 14
-  - name: 15
-    deme: 0
-    time: 0.369906
-    pocket:
-    - color: black
-      name: 0
-      deme: 0
-    - color: green
-      name: 19
-  - name: 16
-    deme: 0
-    time: 0.411556
-    pocket:
-    - color: green
-      name: 17
-  - name: 17
-    deme: 0
-    time: 0.467762
-    pocket:
-    - color: black
-      name: 10
-      deme: 0
-    - color: green
-      name: 18
-  - name: 18
-    deme: 0
-    time: 0.478962
-    pocket:
-    - color: black
-      name: 17
-      deme: 0
-    - color: blue
-      name: 18
-  - name: 19
-    deme: 0
-    time: 0.485843
-    pocket:
-    - color: black
-      name: 15
-      deme: 0
-    - color: black
-      name: 19
-      deme: 0
-  - name: 20
-    deme: 0
-    time: 0.499067
-    pocket:
-    - color: black
-      name: 9
-      deme: 0
-    - color: black
-      name: 20
-      deme: 0
-> 
-> simulate("LBDP",time=0.5) |> yaml(trace=TRUE)
-parameter:
-  lambda: 2.000000
-  mu: 1.000000
-  psi: 1.000000
-  n0: 5
-state:
-  n: 6
-genealogy:
-  t0: 0.000000
-  time: 0.500000
-  nodes:
-  - name: 4
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 4
-    - color: green
-      name: 6
-  - name: 3
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 3
-    - color: green
-      name: 5
-  - name: 1
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 1
-    - color: green
-      name: 7
-  - name: 0
-    deme: 0
-    time: 0.000000
-    pocket:
-    - color: green
-      name: 0
-    - color: green
-      name: 10
-  - name: 5
-    deme: 0
-    time: 0.112479
-    pocket:
-    - color: green
-      name: 8
-  - name: 6
-    deme: 0
-    time: 0.139726
-    pocket:
-    - color: black
-      name: 4
-      deme: 0
-    - color: black
-      name: 6
-      deme: 0
-  - name: 7
-    deme: 0
-    time: 0.186755
-    pocket:
-    - color: green
-      name: 9
-  - name: 8
-    deme: 0
-    time: 0.342700
-    pocket:
-    - color: black
-      name: 3
-      deme: 0
-    - color: black
-      name: 8
-      deme: 0
-  - name: 9
-    deme: 0
-    time: 0.383668
-    pocket:
-    - color: black
-      name: 7
-      deme: 0
-  - name: 10
-    deme: 0
-    time: 0.421009
-    pocket:
-    - color: black
-      name: 0
-      deme: 0
-    - color: blue
-      name: 10
-> 
-> simulate("LBDP",time=0.5) |> geneal() |> yaml()
-t0: 0.000000
-time: 0.500000
-nodes:
-- name: 4
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 4
-  - color: black
-    name: 4
-    deme: 0
-- name: 3
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 3
-  - color: green
-    name: 8
-- name: 2
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 2
-  - color: black
-    name: 2
-    deme: 0
-- name: 1
-  deme: 0
-  time: 0.000000
-  pocket:
-  - color: green
-    name: 1
-  - color: green
-    name: 5
-- name: 5
-  deme: 0
-  time: 0.024802
-  pocket:
-  - color: green
-    name: 6
-  - color: green
-    name: 7
-- name: 6
-  deme: 0
-  time: 0.135422
-  pocket:
-  - color: blue
-    name: 6
-  - color: green
-    name: 10
-- name: 7
-  deme: 0
-  time: 0.225639
-  pocket:
-  - color: blue
-    name: 7
-  - color: green
-    name: 12
-- name: 8
-  deme: 0
-  time: 0.257510
-  pocket:
-  - color: green
-    name: 9
-- name: 9
-  deme: 0
-  time: 0.258911
-  pocket:
-  - color: green
-    name: 11
-- name: 10
-  deme: 0
-  time: 0.300515
-  pocket:
-  - color: black
-    name: 1
-    deme: 0
-  - color: black
-    name: 10
-    deme: 0
-- name: 11
-  deme: 0
-  time: 0.329387
-  pocket:
-  - color: black
-    name: 8
-    deme: 0
-  - color: black
-    name: 11
-    deme: 0
-- name: 12
-  deme: 0
-  time: 0.344377
-  pocket:
-  - color: black
-    name: 5
-    deme: 0
-  - color: blue
-    name: 12
 > 
 > simulate("LBDP",time=0.5) |> yaml()
 parameter:
@@ -573,8 +200,402 @@ genealogy:
   time: 0.500000
   nodes:
   - name: 4
-    deme: 0
     time: 0.000000
+    deme: 0
+    lineage: 2
+    pocket:
+    - color: green
+      name: 4
+    - color: green
+      name: 10
+  - name: 3
+    time: 0.000000
+    deme: 0
+    lineage: 1
+    pocket:
+    - color: green
+      name: 3
+    - color: green
+      name: 6
+  - name: 2
+    time: 0.000000
+    deme: 0
+    lineage: 3
+    pocket:
+    - color: green
+      name: 2
+    - color: green
+      name: 7
+  - name: 1
+    time: 0.000000
+    deme: 0
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 9
+  - name: 0
+    time: 0.000000
+    deme: 0
+    lineage: 0
+    pocket:
+    - color: green
+      name: 0
+    - color: green
+      name: 5
+  - name: 5
+    time: 0.021172
+    deme: 0
+    lineage: 0
+    pocket:
+    - color: green
+      name: 15
+    - color: blue
+      name: 5
+  - name: 6
+    time: 0.029307
+    deme: 0
+    lineage: 1
+    pocket:
+    - color: green
+      name: 11
+    - color: green
+      name: 12
+  - name: 7
+    time: 0.105442
+    deme: 0
+    lineage: 3
+    pocket:
+    - color: green
+      name: 14
+  - name: 9
+    time: 0.121624
+    deme: 0
+    pocket:
+    - color: green
+      name: 20
+    - color: black
+      name: 1
+      deme: 0
+  - name: 10
+    time: 0.132903
+    deme: 0
+    lineage: 2
+    pocket:
+    - color: green
+      name: 13
+  - name: 11
+    time: 0.148050
+    deme: 0
+    lineage: 1
+    pocket:
+    - color: blue
+      name: 11
+    - color: black
+      name: 6
+      deme: 0
+  - name: 12
+    time: 0.268857
+    deme: 0
+    pocket:
+    - color: black
+      name: 12
+      deme: 0
+  - name: 13
+    time: 0.326312
+    deme: 0
+    lineage: 2
+    pocket:
+    - color: green
+      name: 16
+    - color: blue
+      name: 13
+  - name: 14
+    time: 0.331420
+    deme: 0
+    lineage: 3
+    pocket:
+    - color: blue
+      name: 14
+    - color: black
+      name: 7
+      deme: 0
+  - name: 15
+    time: 0.369906
+    deme: 0
+    pocket:
+    - color: green
+      name: 19
+    - color: black
+      name: 0
+      deme: 0
+  - name: 16
+    time: 0.411556
+    deme: 0
+    lineage: 4
+    pocket:
+    - color: green
+      name: 17
+  - name: 17
+    time: 0.467762
+    deme: 0
+    lineage: 4
+    pocket:
+    - color: green
+      name: 18
+    - color: black
+      name: 10
+      deme: 0
+  - name: 18
+    time: 0.478962
+    deme: 0
+    lineage: 4
+    pocket:
+    - color: blue
+      name: 18
+    - color: black
+      name: 17
+      deme: 0
+  - name: 19
+    time: 0.485843
+    deme: 0
+    pocket:
+    - color: black
+      name: 15
+      deme: 0
+    - color: black
+      name: 19
+      deme: 0
+  - name: 20
+    time: 0.499067
+    deme: 0
+    pocket:
+    - color: black
+      name: 9
+      deme: 0
+    - color: black
+      name: 20
+      deme: 0
+> 
+> simulate("LBDP",time=0.5) |> yaml()
+parameter:
+  lambda: 2.000000
+  mu: 1.000000
+  psi: 1.000000
+  n0: 5
+state:
+  n: 6
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 4
+    time: 0.000000
+    deme: 0
+    pocket:
+    - color: green
+      name: 4
+    - color: green
+      name: 6
+  - name: 3
+    time: 0.000000
+    deme: 0
+    pocket:
+    - color: green
+      name: 3
+    - color: green
+      name: 5
+  - name: 1
+    time: 0.000000
+    deme: 0
+    pocket:
+    - color: green
+      name: 1
+    - color: green
+      name: 7
+  - name: 0
+    time: 0.000000
+    deme: 0
+    lineage: 0
+    pocket:
+    - color: green
+      name: 0
+    - color: green
+      name: 10
+  - name: 5
+    time: 0.112479
+    deme: 0
+    pocket:
+    - color: green
+      name: 8
+  - name: 6
+    time: 0.139726
+    deme: 0
+    pocket:
+    - color: black
+      name: 4
+      deme: 0
+    - color: black
+      name: 6
+      deme: 0
+  - name: 7
+    time: 0.186755
+    deme: 0
+    pocket:
+    - color: green
+      name: 9
+  - name: 8
+    time: 0.342700
+    deme: 0
+    pocket:
+    - color: black
+      name: 3
+      deme: 0
+    - color: black
+      name: 8
+      deme: 0
+  - name: 9
+    time: 0.383668
+    deme: 0
+    pocket:
+    - color: black
+      name: 7
+      deme: 0
+  - name: 10
+    time: 0.421009
+    deme: 0
+    lineage: 0
+    pocket:
+    - color: blue
+      name: 10
+    - color: black
+      name: 0
+      deme: 0
+> 
+> simulate("LBDP",time=0.5) |> geneal() |> yaml()
+t0: 0.000000
+time: 0.500000
+nodes:
+- name: 4
+  time: 0.000000
+  deme: 0
+  pocket:
+  - color: green
+    name: 4
+  - color: black
+    name: 4
+    deme: 0
+- name: 3
+  time: 0.000000
+  deme: 0
+  pocket:
+  - color: green
+    name: 3
+  - color: green
+    name: 8
+- name: 2
+  time: 0.000000
+  deme: 0
+  pocket:
+  - color: green
+    name: 2
+  - color: black
+    name: 2
+    deme: 0
+- name: 1
+  time: 0.000000
+  deme: 0
+  lineage: 0
+  pocket:
+  - color: green
+    name: 1
+  - color: green
+    name: 5
+- name: 5
+  time: 0.024802
+  deme: 0
+  lineage: 0
+  pocket:
+  - color: green
+    name: 6
+  - color: green
+    name: 7
+- name: 6
+  time: 0.135422
+  deme: 0
+  lineage: 0
+  pocket:
+  - color: green
+    name: 10
+  - color: blue
+    name: 6
+- name: 7
+  time: 0.225639
+  deme: 0
+  lineage: 1
+  pocket:
+  - color: green
+    name: 12
+  - color: blue
+    name: 7
+- name: 8
+  time: 0.257510
+  deme: 0
+  pocket:
+  - color: green
+    name: 9
+- name: 9
+  time: 0.258911
+  deme: 0
+  pocket:
+  - color: green
+    name: 11
+- name: 10
+  time: 0.300515
+  deme: 0
+  pocket:
+  - color: black
+    name: 1
+    deme: 0
+  - color: black
+    name: 10
+    deme: 0
+- name: 11
+  time: 0.329387
+  deme: 0
+  pocket:
+  - color: black
+    name: 8
+    deme: 0
+  - color: black
+    name: 11
+    deme: 0
+- name: 12
+  time: 0.344377
+  deme: 0
+  lineage: 2
+  pocket:
+  - color: blue
+    name: 12
+  - color: black
+    name: 5
+    deme: 0
+> 
+> simulate("LBDP",time=0.5) |> yaml()
+parameter:
+  lambda: 2.000000
+  mu: 1.000000
+  psi: 1.000000
+  n0: 5
+state:
+  n: 11
+genealogy:
+  t0: 0.000000
+  time: 0.500000
+  nodes:
+  - name: 4
+    time: 0.000000
+    deme: 0
     pocket:
     - color: green
       name: 4
@@ -582,40 +603,43 @@ genealogy:
       name: 4
       deme: 0
   - name: 3
-    deme: 0
     time: 0.000000
+    deme: 0
+    lineage: 0
     pocket:
     - color: green
       name: 3
     - color: green
       name: 9
   - name: 2
-    deme: 0
     time: 0.000000
+    deme: 0
+    lineage: 2
     pocket:
     - color: green
       name: 2
     - color: green
       name: 5
   - name: 0
-    deme: 0
     time: 0.000000
+    deme: 0
     pocket:
     - color: green
       name: 0
     - color: green
       name: 7
   - name: 5
-    deme: 0
     time: 0.160661
+    deme: 0
+    lineage: 2
     pocket:
     - color: green
       name: 6
     - color: green
       name: 12
   - name: 6
-    deme: 0
     time: 0.169066
+    deme: 0
     pocket:
     - color: black
       name: 5
@@ -624,16 +648,16 @@ genealogy:
       name: 6
       deme: 0
   - name: 7
-    deme: 0
     time: 0.229060
+    deme: 0
     pocket:
     - color: green
       name: 8
     - color: green
       name: 13
   - name: 8
-    deme: 0
     time: 0.259936
+    deme: 0
     pocket:
     - color: black
       name: 7
@@ -642,41 +666,45 @@ genealogy:
       name: 8
       deme: 0
   - name: 9
-    deme: 0
     time: 0.344839
+    deme: 0
+    lineage: 0
     pocket:
-    - color: blue
-      name: 9
     - color: green
       name: 10
+    - color: blue
+      name: 9
   - name: 10
-    deme: 0
     time: 0.406375
+    deme: 0
+    lineage: 1
     pocket:
     - color: green
       name: 11
     - color: green
       name: 14
   - name: 11
-    deme: 0
     time: 0.407760
+    deme: 0
+    lineage: 1
     pocket:
+    - color: blue
+      name: 11
     - color: black
       name: 3
       deme: 0
-    - color: blue
-      name: 11
   - name: 12
-    deme: 0
     time: 0.421925
+    deme: 0
+    lineage: 2
     pocket:
-    - color: blue
-      name: 12
     - color: green
       name: 15
+    - color: blue
+      name: 12
   - name: 13
-    deme: 0
     time: 0.439575
+    deme: 0
     pocket:
     - color: black
       name: 0
@@ -685,8 +713,8 @@ genealogy:
       name: 13
       deme: 0
   - name: 14
-    deme: 0
     time: 0.453841
+    deme: 0
     pocket:
     - color: black
       name: 10
@@ -695,14 +723,15 @@ genealogy:
       name: 14
       deme: 0
   - name: 15
-    deme: 0
     time: 0.465254
+    deme: 0
+    lineage: 3
     pocket:
+    - color: blue
+      name: 15
     - color: black
       name: 2
       deme: 0
-    - color: blue
-      name: 15
 > 
 > try(
 +   simulate("SIR",time=1) |> simulate(time=0.1)
@@ -775,10 +804,10 @@ The following objects are masked from 'package:base':
 null device 
           1 
 > 
-> x |> getInfo(obscure=FALSE,trace=TRUE,nsample=TRUE,ndeme=TRUE) |> unlist()
+> x |> getInfo(obscure=FALSE,nsample=TRUE,ndeme=TRUE) |> unlist()
 nsample   ndeme 
      37       2 
-> x |> getInfo(obscure=FALSE,trace=TRUE,genealogy=TRUE)
+> x |> getInfo(obscure=FALSE,genealogy=TRUE)
 $genealogy
 <phylopomp genealogy>
 

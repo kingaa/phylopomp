@@ -71,6 +71,7 @@ public:
       (*i)->repair_owners(node_names,&ball_names);
     }
     G.repair_owners(ball_names);
+    G.trace_lineages();
     return o;
   };
 
@@ -217,11 +218,11 @@ private:
   //! trace back a single lineage.
   //! this results in the deme slot for all green balls along
   //! the lineage of 'b' begin replaced by the lineage of 'b'.
-  void trace_lineage (ball_t *b) {
-    ball_t *g = b->holder()->green_ball();
-    while (g->lineage() == null_lineage) {
-      g->lineage() = b->lineage();
-      g = g->holder()->green_ball();
+  void trace_lineage (ball_t *b, name_t u) {
+    node_t *p = b->holder();
+    while (p->lineage() == null_lineage) {
+      p->lineage() = u;
+      p = p->parent();
     }
   };
 
@@ -240,8 +241,7 @@ public:
       for (ball_it j = p->begin(); j != p->end(); j++) {
         ball_t *b = *j;
         if (b->color==blue) {
-          b->lineage() = u;
-          trace_lineage(b);
+          trace_lineage(b,u);
           u++;
         }
       }
