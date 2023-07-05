@@ -8,7 +8,6 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
-  trace = TRUE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -27,8 +26,6 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
-
-\item{trace}{logical; trace the lineages?}
 
 \item{t0}{logical; return the zero-time?}
 

@@ -40,11 +40,11 @@ simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
   getElement("description") |>
   cat()
 
-simulate("SIR",time=0.5) |> yaml(prune=FALSE)
+simulate("SIR",time=0.5) |> yaml()
 
-simulate("LBDP",time=0.5) |> yaml(prune=FALSE,obscure=TRUE)
+simulate("LBDP",time=0.5) |> yaml()
 
-simulate("LBDP",time=0.5) |> yaml(trace=TRUE)
+simulate("LBDP",time=0.5) |> yaml()
 
 simulate("LBDP",time=0.5) |> geneal() |> yaml()
 
@@ -102,8 +102,8 @@ x |>
   print(vp=viewport(x=0.52,y=0.1,width=0.9,height=0.05))
 dev.off()
 
-x |> getInfo(obscure=FALSE,trace=TRUE,nsample=TRUE,ndeme=TRUE) |> unlist()
-x |> getInfo(obscure=FALSE,trace=TRUE,genealogy=TRUE)
+x |> getInfo(obscure=FALSE,nsample=TRUE,ndeme=TRUE) |> unlist()
+x |> getInfo(obscure=FALSE,genealogy=TRUE)
 
 try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
 attr(x,"model") <- "bob"

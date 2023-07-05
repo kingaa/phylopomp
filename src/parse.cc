@@ -19,11 +19,12 @@ extern "C" {
     G.parse(x,t0);
     if (!ISNA(tf)) {
       if (G.time() > tf) {
-	G.curtail(tf);
+        G.curtail(tf);
       } else {
-	G.time() = tf;
+        G.time() = tf;
       }
     }
+    G.trace_lineages();
     UNPROTECT(3);
     return serial(G);
   }

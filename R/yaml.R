@@ -6,13 +6,13 @@
 ##' @include getinfo.R
 ##'
 ##' @inheritParams getInfo
-##' @return A string in yaml format.
+##' @return A string in yaml format, with class \dQuote{gpyaml}.
 ##' @examples
-##' simulate("SIIR",time=1) |> yaml() |> cat()
+##' simulate("SIIR",time=1) |> yaml()
 ##' 
 ##' @rdname yaml
 ##' @export
-yaml <- function (object, prune = TRUE, obscure = TRUE, trace = FALSE) {
+yaml <- function (object) {
   switch(
     paste0("model",as.character(attr(object,"model"))),
     modelSIR = .Call(P_yamlSIR,object),
@@ -37,3 +37,10 @@ yaml::as.yaml
 ##' @docType import
 ##' @export
 yaml::read_yaml
+
+##' @rdname internals
+##' @method print gpyaml
+##' @export
+print.gpyaml <- function (x, ...) {
+  cat(x)
+}

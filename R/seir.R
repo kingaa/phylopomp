@@ -69,7 +69,7 @@ seirs_pomp <- function (
 {
   x |>
     getInfo(
-      prune=TRUE,obscure=TRUE,trace=TRUE,
+      prune=TRUE,obscure=TRUE,
       nsample=TRUE,lineages=TRUE,genealogy=TRUE
     ) -> geninfo
   ic <- as.integer(c(S0,E0,I0,R0))

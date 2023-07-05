@@ -7,7 +7,6 @@
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
 ##' @param obscure logical; obscure the demes?
-##' @param trace logical; trace the lineages?
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param newick logical; return a Newick-format description of the tree?
@@ -38,7 +37,7 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune = TRUE, obscure = TRUE, trace = TRUE,
+  object, prune = TRUE, obscure = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
@@ -46,7 +45,7 @@ getInfo <- function (
 {
   x <- .External(P_getInfo,
     object=geneal(object),
-    prune=prune,obscure=obscure,trace=trace,
+    prune=prune,obscure=obscure,
     t0=t0,time=time,nsample=nsample,ndeme=ndeme,
     description=description,yaml=yaml,
     structure=structure,newick=newick,

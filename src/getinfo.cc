@@ -1,4 +1,4 @@
-// Bare genealogy
+// Get information about a genealogy
 
 #include "genealogy.h"
 #include "generics.h"
@@ -18,7 +18,7 @@ extern "C" {
   //! prune and/or obscure if requested
   SEXP getInfo (SEXP args) {
     const char *argname[] = {
-      "object","prune","obscure","trace",
+      "object","prune","obscure",
       "t0","time","nsample","ndeme",
       "description","structure","yaml","newick",
       "lineages","genealogy"};
@@ -38,7 +38,7 @@ extern "C" {
       if (j == 0) {
         object = arg;
         flag[0] = true;
-      } else if (j < 4) {
+      } else if (j < 3) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
       } else if (j < narg) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
@@ -49,50 +49,51 @@ extern "C" {
       args = CDR(args);
     }
 
-    // prune and/or obscure if requested
     if (!flag[0]) err("no genealogy furnished to '%s'",__func__);
     genealogy_t A = object;
 
-    if (flag[1]) A.prune();
-    if (flag[2]) A.obscure();
-    if (flag[3]) A.trace_lineages();
+    // prune and/or obscure if requested
+    const bool *f = flag+1;
+    if (*(f++)) A.prune();
+    if (*(f++)) A.obscure();
+    A.trace_lineages();
 
     SEXP out, outnames;
     PROTECT(out = NEW_LIST(nout));
     PROTECT(outnames = NEW_CHARACTER(nout));
     k = 0;
-    if (flag[4]) {              // t0
-      k = set_list_elem(out,outnames,timezero(A),argname[4],k);
+    if (*(f++)) {               // t0
+      k = set_list_elem(out,outnames,timezero(A),"t0",k);
     }
-    if (flag[5]) {              // time
-      k = set_list_elem(out,outnames,time(A),argname[5],k);
+    if (*(f++)) {               // time
+      k = set_list_elem(out,outnames,time(A),"time",k);
     }
-    if (flag[6]) {              // nsample
-      k = set_list_elem(out,outnames,nsample(A),argname[6],k);
+    if (*(f++)) {               // nsample
+      k = set_list_elem(out,outnames,nsample(A),"nsample",k);
     }
-    if (flag[7]) {              // ndeme
-      k = set_list_elem(out,outnames,ndeme(A),argname[7],k);
+    if (*(f++)) {               // ndeme
+      k = set_list_elem(out,outnames,ndeme(A),"ndeme",k);
     }
-    if (flag[8]) {              // description
-      k = set_list_elem(out,outnames,describe(A),argname[8],k);
+    if (*(f++)) {               // description
+      k = set_list_elem(out,outnames,describe(A),"description",k);
     }
-    if (flag[9]) {              // structure
-      k = set_list_elem(out,outnames,structure(A),argname[9],k);
+    if (*(f++)) {               // structure
+      k = set_list_elem(out,outnames,structure(A),"structure",k);
     }
-    if (flag[10]) {             // yaml
-      k = set_list_elem(out,outnames,yaml(A),argname[10],k);
+    if (*(f++)) {               // yaml
+      k = set_list_elem(out,outnames,yaml(A),"yaml",k);
     }
-    if (flag[11]) {             // newick
-      k = set_list_elem(out,outnames,newick(A),argname[11],k);
+    if (*(f++)) {               // newick
+      k = set_list_elem(out,outnames,newick(A),"newick",k);
     }
-    if (flag[12]) {             // lineages
-      k = set_list_elem(out,outnames,lineage_count(A),argname[12],k);
+    if (*(f++)) {               // lineages
+      k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
     }
-    if (flag[13]) {             // genealogy
+    if (*(f++)) {               // genealogy
       SEXP S;
       PROTECT(S = serial(A));
       SET_ATTR(S,install("class"),mkString("gpgen"));
-      k = set_list_elem(out,outnames,S,argname[13],k);
+      k = set_list_elem(out,outnames,S,"genealogy",k);
       UNPROTECT(1);
     }
     SET_NAMES(out,outnames);

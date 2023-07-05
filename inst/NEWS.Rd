@@ -2,7 +2,7 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.9}{
   \itemize{
-    \item Default for \code{trace} option in \code{getInfo()} is now \code{TRUE}.
+    \item \code{getInfo()}, \code{parse_newick()} now always trace lineages.
     \item Lineage and deme information has been refactored: nodes no longer carry deme information, balls do.
     \item The genealogy description (\code{getInfo(description=TRUE)}) now reports both deme and lineage.
   }

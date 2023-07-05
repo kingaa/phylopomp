@@ -4,24 +4,18 @@
 \alias{yaml}
 \title{YAML output}
 \usage{
-yaml(object, prune = TRUE, obscure = TRUE, trace = FALSE)
+yaml(object)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
-
-\item{prune}{logical; prune the genealogy?}
-
-\item{obscure}{logical; obscure the demes?}
-
-\item{trace}{logical; trace the lineages?}
 }
 \value{
-A string in yaml format.
+A string in yaml format, with class \dQuote{gpyaml}.
 }
 \description{
 Human- and machine-readable description
 }
 \examples{
-simulate("SIIR",time=1) |> yaml() |> cat()
+simulate("SIIR",time=1) |> yaml()
 
 }

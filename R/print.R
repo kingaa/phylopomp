@@ -14,10 +14,3 @@ print.gpsim <- function (x, ...) {
 print.gpgen <- function (x, ...) {
   cat("<phylopomp genealogy>\n")
 }
-
-##' @rdname internals
-##' @method print gpyaml
-##' @export
-print.gpyaml <- function (x, ...) {
-  cat(x)
-}
