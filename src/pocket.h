@@ -23,6 +23,7 @@ struct ball_compare {
 };
 
 typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
+typedef typename std::set<ball_t*,ball_compare>::const_reverse_iterator ball_rev_it;
 
 //! A pocket is a set of balls.
 
@@ -154,7 +155,7 @@ public:
     SEXP o;
     PROTECT(o = NEW_LIST(size()));
     int k = 0;
-    for (ball_it i = begin(); i != end(); i++) {
+    for (ball_rev_it i = crbegin(); i != crend(); i++) {
       SET_ELEMENT(o,k++,(*i)->structure());
     }
     UNPROTECT(1);
