@@ -1,6 +1,6 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
-\section{Changes in \pkg{phylopomp} version 0.9}{
+\section{Changes in \pkg{phylopomp} version 0.10}{
   \itemize{
     \item \code{getInfo()}, \code{parse_newick()} now always trace lineages.
     \item Lineage and deme information has been refactored: nodes no longer carry deme information, balls do.
