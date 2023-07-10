@@ -15,20 +15,20 @@
 
 //! Without this, order depends on machine state,
 //! defeating reproducibility.
-struct ball_compare {
+struct ball_order {
   bool operator() (const ball_t* a, const ball_t* b) const {
     return (a->color < b->color) ||
       ((a->color == b->color) && (a->uniq < b->uniq));
   };
 };
 
-typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
-typedef typename std::set<ball_t*,ball_compare>::const_reverse_iterator ball_rev_it;
+typedef typename std::set<ball_t*,ball_order>::const_iterator ball_it;
+typedef typename std::set<ball_t*,ball_order>::const_reverse_iterator ball_rev_it;
 
 //! A pocket is a set of balls.
 
 //! An order relation among balls ensures the uniqueness of the internal representation.
-class pocket_t : public std::set<ball_t*,ball_compare> {
+class pocket_t : public std::set<ball_t*,ball_order> {
 
 private:
 
