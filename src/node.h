@@ -154,11 +154,7 @@ public:
     for (ball_it i = cbegin(); i != cend(); i++) {
       ball_t *b = *i;
       switch (b->color) {
-      case green:
-        incr[b->child()->deme()]++;
-        sat[b->child()->deme()]++;
-        break;
-      case black:
+      case green: case black:
         incr[b->deme()]++;
         sat[b->deme()]++;
         break;
