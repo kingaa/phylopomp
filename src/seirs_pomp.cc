@@ -30,37 +30,6 @@ static void check_lineages
   }
 }
 
-static double event_rates
-(
- double S, double E, double I, double R, double N,
- double linE, double linI,
- double Beta, double sigma, double gamma, double Delta, double psi,
- double *cutoff, double *penalty
- ) {
-  double event_rate = 0;
-  *penalty = 0;
-  // transmission
-  event_rate += (*cutoff = Beta*S*I/N);
-  cutoff++;
-  // progression
-  event_rate += (*cutoff = sigma*E);
-  cutoff++;
-  // recovery
-  if (I > linI) {
-    event_rate += (*cutoff = gamma*I);
-  } else {
-    *cutoff = 0;
-    *penalty += gamma*I;
-  }
-  cutoff++;
-  // waning
-  event_rate += (*cutoff = Delta*R);
-  cutoff++;
-  // sampling
-  *penalty += psi*I;
-  return event_rate;
-}
-
 #define Beta      (__p[__parindex[0]])
 #define sigma     (__p[__parindex[1]])
 #define gamma     (__p[__parindex[2]])
@@ -80,6 +49,42 @@ static double event_rates
 #define linE      (__x[__stateindex[6]])
 #define linI      (__x[__stateindex[7]])
 #define LINEAGE   (__x[__stateindex[8]])
+
+static double event_rates
+(
+ double *__x,
+ const double *__p,
+ double t,
+ const int *__stateindex,
+ const int *__parindex,
+ const int *__covindex,
+ const double *__covars,
+ double *rate,
+ double *penalty
+ ) {
+  double event_rate = 0;
+  *penalty = 0;
+  // transmission
+  event_rate += (*rate = Beta*S*I/N);
+  rate++;
+  // progression
+  event_rate += (*rate = sigma*E);
+  rate++;
+  // recovery
+  if (I > linI) {
+    event_rate += (*rate = gamma*I);
+  } else {
+    *rate = 0;
+    *penalty += gamma*I;
+  }
+  rate++;
+  // waning
+  event_rate += (*rate = Delta*R);
+  rate++;
+  // sampling
+  *penalty += psi*I;
+  return event_rate;
+}
 
 extern "C" {
 
@@ -148,7 +153,7 @@ extern "C" {
    double dt
    ){
     double tstep = 0.0, tmax = t + dt;
-    double cutoff[4];
+    double rate[4];
     double *linvec = &LINEAGE;
 
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
@@ -218,9 +223,9 @@ extern "C" {
     double event_rate = 0;
     double penalty = 0;
 
-    event_rate = event_rates(S,E,I,R,N,linE,linI,
-                             Beta,sigma,gamma,Delta,psi,
-                             cutoff,&penalty);
+    event_rate = event_rates(__x,__p,t,
+                             __stateindex,__parindex,__covindex,
+                             __covars,rate,&penalty);
     tstep = exp_rand()/event_rate;
 
     while (t + tstep < tmax) {
@@ -229,7 +234,7 @@ extern "C" {
       event = -1;
       while (u > 0) {
         event++;
-        u -= cutoff[event];
+        u -= rate[event];
       }
       switch (event) {
       case 0:                   // transmission
@@ -297,9 +302,9 @@ extern "C" {
       check_lineages(linvec,linE,linI,t,__func__);
 
       t += tstep;
-      event_rate = event_rates(S,E,I,R,N,linE,linI,
-                               Beta,sigma,gamma,Delta,psi,
-                               cutoff,&penalty);
+      event_rate = event_rates(__x,__p,t,
+                               __stateindex,__parindex,__covindex,
+                               __covars,rate,&penalty);
       tstep = exp_rand()/event_rate;
 
     }
