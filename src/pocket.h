@@ -15,6 +15,7 @@
 
 //! Without this, order depends on machine state,
 //! defeating reproducibility.
+//! The correctness of the algorithms depends on this order.
 struct ball_order {
   bool operator() (const ball_t* a, const ball_t* b) const {
     return (a->color < b->color) ||

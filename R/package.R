@@ -4,12 +4,11 @@
 ##' 
 ##' @name phylopomp
 ##' @aliases phylopomp-package
-##' @docType package
 ##' @author Aaron A. King, Qianying Lin
 ##' @import ggplot2
 ##' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"
 ##'
-NULL
+"_PACKAGE"
 
 ##' @include package.R
 ##' @importFrom foreach registerDoSEQ

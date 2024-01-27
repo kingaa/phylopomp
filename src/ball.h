@@ -9,7 +9,8 @@
 
 //! BALL COLORS
 
-//! NB: The correctness of the algorithms depends on green being the first color.
+//! NB: The correctness of the algorithms depends on
+//! green being the first color and black being the last.
 typedef enum {green, blue, black} color_t;
 static const char* colores[] = {"green", "blue", "black"};
 static const char* colorsymb[] = {"g", "b", "o"};
