@@ -21,7 +21,7 @@ static void check_lineages
     else if (lineage[i]==1) nI++;
   }
   if ((linE != nE) || (linI != nI)) {
-    Rprintf("%ld %ld (%lg %lg): ",nE,nI,linE,linI);        // #nocov
+    Rprintf("%d %d (%g %g): ",nE,nI,linE,linI);		   // #nocov
     for (int i = 0; i < nSAMPLE; i++) {                    // #nocov
       Rprintf("%lg ",lineage[i]);                          // #nocov
     }                                                      // #nocov
@@ -250,7 +250,7 @@ extern "C" {
               if (!ISNA(linvec[i]) && nearbyint(linvec[i]) == 1) n--;
             }
             if (n != 0 || linvec[i] != 1)
-              err("yikes 0! %ld %ld %ld %lg",nSAMPLE,i,n,linvec[i]); // #nocov
+              err("yikes 0! %d %d %d %lg",nSAMPLE,i,n,linvec[i]); // #nocov
             linvec[i] = 0;
             linE += 1; linI -= 1;
           } else if (u < 2*p) { // propose an I -> I deme change
@@ -275,7 +275,7 @@ extern "C" {
               if (!ISNA(linvec[i]) && nearbyint(linvec[i]) == 0) n--;
             }
             if (n != 0 || linvec[i] != 0)
-              err("yikes 1! %ld %ld %ld %lg",nSAMPLE,i,n,linvec[i]); // #nocov
+              err("yikes 1! %d %d %d %lg",nSAMPLE,i,n,linvec[i]); // #nocov
             linvec[i] = 1;
             linE -= 1; linI += 1;
           } else {              // propose no deme change

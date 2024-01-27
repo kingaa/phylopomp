@@ -78,7 +78,7 @@ void lbdp_genealogy_t::jump (int event) {
     sample();
     break;
   default:                                                // #nocov
-    err("in %s: c'est impossible! (%ld)",__func__,event); // #nocov
+    err("in %s: c'est impossible! (%d)",__func__,event);  // #nocov
     break;                                                // #nocov
   }
 }

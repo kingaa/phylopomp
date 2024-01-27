@@ -47,7 +47,7 @@ static inline int rcateg (double erate, double *rate, int nrate) {
   int e = 0;
   while (u > rate[e] && e < nrate) {
     if (rate[e] < 0)
-      err("in '%s': invalid rate rate[%ld]=%lg",__func__,e,rate[e]); // #nocov
+      err("in '%s': invalid rate rate[%d]=%lg",__func__,e,rate[e]); // #nocov
     u -= rate[e++];
   }
   if (e == nrate)
