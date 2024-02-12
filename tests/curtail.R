@@ -8,7 +8,7 @@ theme_set(theme_bw())
 set.seed(24963811)
 options(digits=3)
 
-runSEIR(time=5,S0=20,delta=2) -> x
+runSEIR(time=5,S0=20,omega=2) -> x
 
 plot_grid(
   x |>

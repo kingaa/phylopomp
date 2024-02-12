@@ -34,7 +34,7 @@ static void check_lineages
 #define sigma     (__p[__parindex[1]])
 #define gamma     (__p[__parindex[2]])
 #define psi       (__p[__parindex[3]])
-#define Delta     (__p[__parindex[4]])
+#define omega     (__p[__parindex[4]])
 #define S0        (__p[__parindex[5]])
 #define E0        (__p[__parindex[6]])
 #define I0        (__p[__parindex[7]])
@@ -79,7 +79,7 @@ static double event_rates
   }
   rate++;
   // waning
-  event_rate += (*rate = Delta*R);
+  event_rate += (*rate = omega*R);
   rate++;
   // sampling
   *penalty += psi*I;

@@ -10,7 +10,7 @@
 ##' @param sigma progression rate
 ##' @param gamma recovery rate
 ##' @param psi per capita sampling rate
-##' @param delta rate of waning of immunity
+##' @param omega rate of waning of immunity
 ##' @param S0 initial size of susceptible population
 ##' @param E0 initial size of exposed population
 ##' @param I0 initial size of infected population
@@ -26,9 +26,9 @@ NULL
 ##' @export
 runSEIR <- function (
   time, t0 = 0,
-  Beta = 4, sigma = 1, gamma = 1, psi = 1, delta = 0, S0 = 100, E0 = 5, I0 = 5, R0 = 0
+  Beta = 4, sigma = 1, gamma = 1, psi = 1, omega = 0, S0 = 100, E0 = 5, I0 = 5, R0 = 0
 ) {
-  params <- c(Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega)
   ivps <- c(S0=S0,E0=E0,I0=I0,R0=R0)
   if (any(ivps < 0))
     pStop(paste(sQuote(names(ivps)),collapse=","),
@@ -43,10 +43,10 @@ runSEIR <- function (
 ##' @export
 continueSEIR <- function (
   object, time,
-  Beta = NA, sigma = NA, gamma = NA, psi = NA, delta = NA
+  Beta = NA, sigma = NA, gamma = NA, psi = NA, omega = NA
 ) {
   params <- c(
-    Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta
+    Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega
   )
   x <- .Call(P_reviveSEIR,object,params)
   .Call(P_runSEIR,x,time) |>
@@ -63,7 +63,7 @@ continueSEIR <- function (
 ##' @export
 seirs_pomp <- function (
   x,
-  Beta, sigma, gamma, psi, delta = 0,
+  Beta, sigma, gamma, psi, omega = 0,
   S0, E0, I0, R0
 )
 {
@@ -84,7 +84,7 @@ seirs_pomp <- function (
     t0=dat$time[1L],
     times=dat$time[-1L],
     params=c(
-      Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,delta=delta,
+      Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
       ic,N=sum(ic)
     ),
     nstatevars=nsample+8L,
@@ -95,7 +95,7 @@ seirs_pomp <- function (
     dmeasure="seirs_dmeas",
     statenames=c("S","E","I","R","ll","node","linE","linI","lineage"),
     paramnames=c(
-      "Beta","sigma","gamma","psi","delta",
+      "Beta","sigma","gamma","psi","omega",
       "S0","E0","I0","R0","N"
     ),
     PACKAGE="phylopomp"

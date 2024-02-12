@@ -11,7 +11,7 @@
 ##' @param Beta transmission rate
 ##' @param mu mean superspreading-event cluster size
 ##' @param gamma recovery rate
-##' @param delta rate of waning of immunity
+##' @param omega rate of waning of immunity
 ##' @param psi1,psi2 sampling rates for demes 1 and 2, respectively
 ##' @param sigma12,sigma21 movement rates from deme 1 to 2 and 2 to 1, respectively
 ##' @param S0 initial size of susceptible population
@@ -37,13 +37,13 @@ NULL
 ##' @export
 runSI2R <- function (
   time, t0 = 0,
-  Beta = 5, mu = 5, gamma = 1, delta = 0,
+  Beta = 5, mu = 5, gamma = 1, omega = 0,
   psi1 = 1, psi2 = 0,
   sigma12 = 1, sigma21 = 3,
   S0 = 500, I0 = 10, R0 = 0
 ) {
   params <- c(
-    Beta=Beta,mu=mu,gamma=gamma,delta=delta,
+    Beta=Beta,mu=mu,gamma=gamma,omega=omega,
     psi1=psi1,psi2=psi2,
     sigma12=sigma12,sigma21=sigma21
   )
@@ -58,12 +58,12 @@ runSI2R <- function (
 ##' @export
 continueSI2R <- function (
   object, time,
-  Beta = NA, mu = NA, gamma = NA, delta = NA,
+  Beta = NA, mu = NA, gamma = NA, omega = NA,
   psi1 = NA, psi2 = NA,
   sigma12 = NA, sigma21 = NA
 ) {
   params <- c(
-    Beta=Beta,mu=mu,gamma=gamma,delta=delta,
+    Beta=Beta,mu=mu,gamma=gamma,omega=omega,
     psi1=psi1,psi2=psi2,
     sigma12=sigma12,sigma21=sigma21
   )

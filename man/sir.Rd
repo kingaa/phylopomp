@@ -18,7 +18,7 @@ runSIR(
   Beta = 2,
   gamma = 1,
   psi = 1,
-  delta = 0,
+  omega = 0,
   S0 = 100,
   I0 = 2,
   R0 = 0
@@ -30,15 +30,15 @@ runSIRS(
   Beta = 2,
   gamma = 1,
   psi = 1,
-  delta = 0,
+  omega = 0,
   S0 = 100,
   I0 = 2,
   R0 = 0
 )
 
-continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
+continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
 
-sir_pomp(x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
+sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
 
 runSIRS(
   time,
@@ -46,15 +46,15 @@ runSIRS(
   Beta = 2,
   gamma = 1,
   psi = 1,
-  delta = 0,
+  omega = 0,
   S0 = 100,
   I0 = 2,
   R0 = 0
 )
 
-continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, delta = NA)
+continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
 
-sirs_pomp(x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
+sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
 }
 \arguments{
 \item{time}{final time}
@@ -67,7 +67,7 @@ sirs_pomp(x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0 = 0)
 
 \item{psi}{sampling rate.}
 
-\item{delta}{immunity waning rate}
+\item{omega}{immunity waning rate}
 
 \item{S0}{initial size of susceptible population.}
 
@@ -101,8 +101,8 @@ runSIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
 plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
   ncol=1,rel_heights=c(4,1))
 
-simulate("SIRS",delta=1,time=20,I0=4) |> plot()
-simulate("SIRS",delta=1,time=20,I0=4) |> lineages() |> plot()
+simulate("SIRS",omega=1,time=20,I0=4) |> plot()
+simulate("SIRS",omega=1,time=20,I0=4) |> lineages() |> plot()
 }
 \seealso{
 More example genealogy processes: 

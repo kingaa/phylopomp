@@ -39,8 +39,8 @@ parameter:
     description: rate of movement from deme 2 to deme 1
     default: 0
     type: double
-  delta:
-    name: delta
+  omega:
+    name: omega
     description: rate of loss of immunity
     default: 0
     type: double
@@ -116,4 +116,4 @@ events:
     rate: params.sigma21 * state.I2
   wane:
     jump: state.S += 1; state.R -= 1;
-    rate: params.delta * state.R
+    rate: params.omega * state.R

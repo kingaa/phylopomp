@@ -24,8 +24,8 @@ parameter:
     description: per capita sampling rate
     default: 1
     type: double
-  delta:
-    name: delta
+  omega:
+    name: omega
     description: rate of waning of immunity
     default: 0
     type: double
@@ -89,4 +89,4 @@ events:
     jump: sample(1);
   waning:
     jump: state.R -= 1; state.S += 1;
-    rate: params.delta * state.R
+    rate: params.omega * state.R

@@ -17,7 +17,7 @@ typedef struct {
   double Beta;
   double mu;
   double gamma;
-  double delta;
+  double omega;
   double psi1;
   double psi2;
   double sigma12;
@@ -37,7 +37,7 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(Beta)
     + YAML_PARAM(mu)
     + YAML_PARAM(gamma)
-    + YAML_PARAM(delta)
+    + YAML_PARAM(omega)
     + YAML_PARAM(psi1)
     + YAML_PARAM(psi2)
     + YAML_PARAM(sigma12)
@@ -60,7 +60,7 @@ void si2r_proc_t::update_params (double *p, int n) {
   PARAM_SET(Beta);
   PARAM_SET(mu);
   PARAM_SET(gamma);
-  PARAM_SET(delta);
+  PARAM_SET(omega);
   PARAM_SET(psi1);
   PARAM_SET(psi2);
   PARAM_SET(sigma12);
@@ -89,7 +89,7 @@ double si2r_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.psi2 * state.I2);
   RATE_CALC(params.sigma12 * state.I1);
   RATE_CALC(params.sigma21 * state.I2);
-  RATE_CALC(params.delta * state.R);
+  RATE_CALC(params.omega * state.R);
   if (m != n) err("wrong number of events!");
   return total;
 }

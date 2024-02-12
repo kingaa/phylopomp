@@ -5,7 +5,7 @@
 #define Beta      (__p[__parindex[0]])
 #define gamma     (__p[__parindex[1]])
 #define psi       (__p[__parindex[2]])
-#define Delta     (__p[__parindex[3]])
+#define omega     (__p[__parindex[3]])
 #define S0        (__p[__parindex[4]])
 #define I0        (__p[__parindex[5]])
 #define R0        (__p[__parindex[6]])
@@ -44,7 +44,7 @@ static double event_rates
   event_rate += (*rate = gamma*I);
   rate++;
   // loss of immunity
-  event_rate += (*rate = Delta*R);
+  event_rate += (*rate = omega*R);
   rate++;
   // sampling
   *penalty += psi*I;
@@ -150,7 +150,7 @@ void sirs_dmeas
 }
 
 #undef lik
-#undef Delta
+#undef omega
 #undef Beta
 #undef gamma
 #undef psi

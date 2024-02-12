@@ -15,7 +15,7 @@ runSEIR(
   sigma = 1,
   gamma = 1,
   psi = 1,
-  delta = 0,
+  omega = 0,
   S0 = 100,
   E0 = 5,
   I0 = 5,
@@ -29,10 +29,10 @@ continueSEIR(
   sigma = NA,
   gamma = NA,
   psi = NA,
-  delta = NA
+  omega = NA
 )
 
-seirs_pomp(x, Beta, sigma, gamma, psi, delta = 0, S0, E0, I0, R0)
+seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
 }
 \arguments{
 \item{time}{final time}
@@ -47,7 +47,7 @@ seirs_pomp(x, Beta, sigma, gamma, psi, delta = 0, S0, E0, I0, R0)
 
 \item{psi}{per capita sampling rate}
 
-\item{delta}{rate of waning of immunity}
+\item{omega}{rate of waning of immunity}
 
 \item{S0}{initial size of susceptible population}
 
@@ -83,9 +83,9 @@ runSEIR(Beta=3,gamma=0.1,psi=0.2,S0=100,I0=5,R0=0,time=2,t0=0) -> x
 plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
   ncol=1,rel_heights=c(4,1))
 
-simulate("SEIR",sigma=1,delta=1,time=20,I0=4) |> plot(obscure=FALSE)
+simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |> plot(obscure=FALSE)
 
-simulate("SEIR",sigma=1,delta=1,time=20,I0=4) |>
+simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |>
   lineages(obscure=FALSE) |>
   plot()
 }

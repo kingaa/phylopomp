@@ -17,7 +17,7 @@ runSIIR(
   psi2 = 0,
   sigma12 = 0,
   sigma21 = 0,
-  delta = 0,
+  omega = 0,
   S0 = 500,
   I1_0 = 10,
   I2_0 = 10,
@@ -34,7 +34,7 @@ continueSIIR(
   psi2 = NA,
   sigma12 = NA,
   sigma21 = NA,
-  delta = NA
+  omega = NA
 )
 }
 \arguments{
@@ -50,7 +50,7 @@ continueSIIR(
 
 \item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
 
-\item{delta}{rate of loss of immunity}
+\item{omega}{rate of loss of immunity}
 
 \item{S0}{initial size of susceptible population.}
 

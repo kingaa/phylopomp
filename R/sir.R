@@ -9,7 +9,7 @@
 ##' @param Beta transmission rate.
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
-##' @param delta immunity waning rate
+##' @param omega immunity waning rate
 ##' @param S0 initial size of susceptible population.
 ##' @param I0 initial size of infected population.
 ##' @param R0 initial size of recovered population.
@@ -24,10 +24,10 @@ NULL
 ##' @export
 runSIR <- function (
   time,  t0 = 0,
-  Beta = 2, gamma = 1, psi = 1, delta = 0,
+  Beta = 2, gamma = 1, psi = 1, omega = 0,
   S0 = 100, I0 = 2, R0 = 0
 ) {
-  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,omega=omega)
   ivps <- c(S0=S0,I0=I0,R0=R0)
   if (any(ivps < 0))
     pStop(paste(sQuote(names(ivps)),collapse=","),
@@ -45,9 +45,9 @@ runSIRS <- runSIR
 ##' @inheritParams simulate
 ##' @export
 continueSIR <- function (
-  object, time, Beta = NA, gamma = NA, psi = NA, delta = NA
+  object, time, Beta = NA, gamma = NA, psi = NA, omega = NA
 ) {
-  params <- c(Beta=Beta,gamma=gamma,psi=psi,delta=delta)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,omega=omega)
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time) |>
     structure(model="SIR",class=c("gpsim","gpgen"))
@@ -61,7 +61,7 @@ continueSIR <- function (
 ##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @export
-sir_pomp <- function (x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
+sir_pomp <- function (x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0=0)
 {
   ic <- as.integer(c(S0,I0,R0))
   names(ic) <- c("S0","I0","R0")
@@ -74,7 +74,7 @@ sir_pomp <- function (x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
   pomp(
     data=NULL,
     times=dat$time[-1L],t0=t0,
-    params=c(Beta=Beta,gamma=gamma,psi=psi,delta=delta,ic,N=sum(ic)),
+    params=c(Beta=Beta,gamma=gamma,psi=psi,omega=omega,ic,N=sum(ic)),
     covar=covariate_table(
       dat,
       times="time",
@@ -84,7 +84,7 @@ sir_pomp <- function (x, Beta, gamma, psi, delta = 0, S0, I0, R0, t0=0)
     rprocess=onestep("sirs_gill"),
     dmeasure="sirs_dmeas",
     statenames=c("S","I","R","ll"),
-    paramnames=c("Beta","gamma","psi","delta","S0","I0","R0","N"),
+    paramnames=c("Beta","gamma","psi","omega","S0","I0","R0","N"),
     covarnames=c("lineages","code"),
     PACKAGE="phylopomp"
   )

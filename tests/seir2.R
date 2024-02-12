@@ -10,7 +10,7 @@ set.seed(842110120)
 options(digits=3)
 
 runSEIR(
-  Beta=4,sigma=1,gamma=1,psi=1,delta=1,
+  Beta=4,sigma=1,gamma=1,psi=1,omega=1,
   S0=100,E0=3,I0=5,R0=100,
   time=5
 ) -> G
@@ -25,7 +25,7 @@ G |>
 try(
   G |>
     seirs_pomp(
-      Beta=4,sigma=1,gamma=1,psi=1,delta=1,
+      Beta=4,sigma=1,gamma=1,psi=1,omega=1,
       S0=100,E0=3,I0=-5,R0=100
     ) -> po
 )
@@ -33,7 +33,7 @@ try(
 G |>
   curtail(time=3) |>
   seirs_pomp(
-    Beta=4,sigma=1,gamma=1,psi=1,delta=1,
+    Beta=4,sigma=1,gamma=1,psi=1,omega=1,
     S0=100,E0=3,I0=5,R0=100
   ) -> po
 

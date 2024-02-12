@@ -6,6 +6,7 @@
     \item Lineage and deme information has been refactored: nodes no longer carry deme information, balls do.
     \item The genealogy description (\code{getInfo(description=TRUE)}) now reports both deme and lineage.
     \item \code{curtail()} more carefully rewinds the history.
+    \item Parameter name changes in some of the examples.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.9}{

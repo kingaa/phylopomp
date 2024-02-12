@@ -19,7 +19,7 @@ x |> plot(prune=FALSE,obscure=FALSE)
 x |> yaml() -> y
 x |> lineages(obscure=FALSE) |> plot()
 
-runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2,delta=1) |>
+runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2,omega=1) |>
   simulate(time=5) |>
   plot(prune=FALSE,obscure=FALSE,points=TRUE)
 

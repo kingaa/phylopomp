@@ -39,7 +39,7 @@ Type 'q()' to quit R.
 +   simulate(time=100) |>
 +   plot(points=TRUE,time=NULL)
 > 
-> simulate("SIR",Beta=3,gamma=1,psi=2,delta=1,S0=100,I0=5,time=10) -> x
+> simulate("SIR",Beta=3,gamma=1,psi=2,omega=1,S0=100,I0=5,time=10) -> x
 > x |> yaml() -> y
 > x |> lineages() |> plot()
 > x |> geneal()
@@ -47,7 +47,7 @@ Type 'q()' to quit R.
 > 
 > x |>
 +   sir_pomp(
-+     Beta=3,gamma=1,psi=2,delta=1,
++     Beta=3,gamma=1,psi=2,omega=1,
 +     S0=100,I0=5,R0=0
 +   ) |>
 +   pfilter(Np=5000) -> pf
@@ -61,7 +61,7 @@ Error : in 'runSIR': 'S0','I0','R0' must be nonnegative integers.
 > try(
 +   x |>
 +     sir_pomp(
-+       Beta=3,gamma=1,psi=2,delta=1,
++       Beta=3,gamma=1,psi=2,omega=1,
 +       S0=-100,I0=5,R0=0
 +     )
 + )

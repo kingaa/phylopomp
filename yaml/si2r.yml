@@ -19,8 +19,8 @@ parameter:
     description: recovery rate
     type: double
     default: 1
-  delta:
-    name: delta
+  omega:
+    name: omega
     description: rate of waning of immunity
     default: 0
     type: double
@@ -118,4 +118,4 @@ events:
     rate: params.sigma21 * state.I2
   waning:
     jump: state.R -= 1; state.S += 1;
-    rate: params.delta * state.R
+    rate: params.omega * state.R

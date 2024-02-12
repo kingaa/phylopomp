@@ -16,7 +16,7 @@ typedef struct {
   double Beta;
   double gamma;
   double psi;
-  double delta;
+  double omega;
   int S0;
   int I0;
   int R0;
@@ -32,7 +32,7 @@ std::string sir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(Beta)
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
-    + YAML_PARAM(delta)
+    + YAML_PARAM(omega)
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
@@ -50,7 +50,7 @@ void sir_proc_t::update_params (double *p, int n) {
   PARAM_SET(Beta);
   PARAM_SET(gamma);
   PARAM_SET(psi);
-  PARAM_SET(delta);
+  PARAM_SET(omega);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -70,7 +70,7 @@ double sir_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.Beta * state.S * state.I / state.N);
   RATE_CALC(params.gamma * state.I);
   RATE_CALC(params.psi * state.I);
-  RATE_CALC(params.delta * state.R);
+  RATE_CALC(params.omega * state.R);
   if (m != n) err("wrong number of events!");
   return total;
 }

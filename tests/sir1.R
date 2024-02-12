@@ -19,14 +19,14 @@ runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
   simulate(time=100) |>
   plot(points=TRUE,time=NULL)
 
-simulate("SIR",Beta=3,gamma=1,psi=2,delta=1,S0=100,I0=5,time=10) -> x
+simulate("SIR",Beta=3,gamma=1,psi=2,omega=1,S0=100,I0=5,time=10) -> x
 x |> yaml() -> y
 x |> lineages() |> plot()
 x |> geneal()
 
 x |>
   sir_pomp(
-    Beta=3,gamma=1,psi=2,delta=1,
+    Beta=3,gamma=1,psi=2,omega=1,
     S0=100,I0=5,R0=0
   ) |>
   pfilter(Np=5000) -> pf
@@ -38,7 +38,7 @@ try(runSIR(S0=-10,time=1))
 try(
   x |>
     sir_pomp(
-      Beta=3,gamma=1,psi=2,delta=1,
+      Beta=3,gamma=1,psi=2,omega=1,
       S0=-100,I0=5,R0=0
     )
 )

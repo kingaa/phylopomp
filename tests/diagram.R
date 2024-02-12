@@ -30,12 +30,12 @@ freeze(
 ) |> diagram(prune=FALSE,obscure=FALSE)
 dev.off()
 
-simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,delta=1) |>
+simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,omega=1) |>
   getInfo(description=TRUE) |>
   getElement("description") |>
   cat()
 
-simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
+simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,omega=1) |>
   getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
   getElement("description") |>
   cat()
@@ -58,16 +58,16 @@ pal <- c("#00274c55","#ffcb0555","#00659755")
 
 png(filename="diagram-05.png",res=100,
   width=1000,height=190,units="px")
-freeze(simulate("SEIR",time=1,delta=1),seed=234551276) |>
+freeze(simulate("SEIR",time=1,omega=1),seed=234551276) |>
   diagram(obscure=FALSE,palette=pal)
 dev.off()
 
 try(
-  simulate("SEIR",time=2,delta=1) |>
+  simulate("SEIR",time=2,omega=1) |>
     diagram(obscure=FALSE,palette=pal[1])
 )
 
-simulate("SEIR",Beta=10,psi=2,sigma=3,time=1,delta=1) |>
+simulate("SEIR",Beta=10,psi=2,sigma=3,time=1,omega=1) |>
   freeze(seed=118551276) -> x
 
 png(filename="diagram-06.png",res=100,

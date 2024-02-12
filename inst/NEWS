@@ -12,6 +12,8 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
 
         • ‘curtail()’ more carefully rewinds the history.
 
+        • Parameter name changes in some of the examples.
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._9:
 
         • Inclusion of ‘pomp’ methods for SEIRS model.

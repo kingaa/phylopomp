@@ -13,7 +13,7 @@ runSI2R(
   Beta = 5,
   mu = 5,
   gamma = 1,
-  delta = 0,
+  omega = 0,
   psi1 = 1,
   psi2 = 0,
   sigma12 = 1,
@@ -29,7 +29,7 @@ continueSI2R(
   Beta = NA,
   mu = NA,
   gamma = NA,
-  delta = NA,
+  omega = NA,
   psi1 = NA,
   psi2 = NA,
   sigma12 = NA,
@@ -47,7 +47,7 @@ continueSI2R(
 
 \item{gamma}{recovery rate}
 
-\item{delta}{rate of waning of immunity}
+\item{omega}{rate of waning of immunity}
 
 \item{psi1, psi2}{sampling rates for demes 1 and 2, respectively}
 
@@ -96,7 +96,7 @@ simulate("SI2R",time=5) |>
 simulate("SI2R",time=2) |>
   diagram(m=30)
 
-simulate("SI2R",time=20,delta=0.2,mu=20) -> x
+simulate("SI2R",time=20,omega=0.2,mu=20) -> x
 plot_grid(
   x |> plot(obscure=FALSE),
   x |> lineages(obscure=FALSE) |> plot(),

@@ -94,7 +94,7 @@ null device
 null device 
           1 
 > 
-> simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,delta=1) |>
+> simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,omega=1) |>
 +   getInfo(description=TRUE) |>
 +   getElement("description") |>
 +   cat()
@@ -107,7 +107,7 @@ node(30,0,0){blue(30,0)}, t = 0.074094
 node(42,0,1){blue(42,0)}, t = 0.161458
 node(61,0,2){blue(61,0)}, t = 0.240436
 > 
-> simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,delta=1) |>
+> simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,omega=1) |>
 +   getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
 +   getElement("description") |>
 +   cat()
@@ -194,7 +194,7 @@ parameter:
   Beta: 2.000000
   gamma: 1.000000
   psi: 1.000000
-  delta: 0.000000
+  omega: 0.000000
   S0: 100
   I0: 2
   R0: 0
@@ -772,19 +772,19 @@ Error : cannot simulate backward! (current t=1, requested t=0.1)
 > 
 > png(filename="diagram-05.png",res=100,
 +   width=1000,height=190,units="px")
-> freeze(simulate("SEIR",time=1,delta=1),seed=234551276) |>
+> freeze(simulate("SEIR",time=1,omega=1),seed=234551276) |>
 +   diagram(obscure=FALSE,palette=pal)
 > dev.off()
 null device 
           1 
 > 
 > try(
-+   simulate("SEIR",time=2,delta=1) |>
++   simulate("SEIR",time=2,omega=1) |>
 +     diagram(obscure=FALSE,palette=pal[1])
 + )
 Error : in 'diagram': if specified as a vector, 'palette' must have length at least 2.
 > 
-> simulate("SEIR",Beta=10,psi=2,sigma=3,time=1,delta=1) |>
+> simulate("SEIR",Beta=10,psi=2,sigma=3,time=1,omega=1) |>
 +   freeze(seed=118551276) -> x
 > 
 > png(filename="diagram-06.png",res=100,
