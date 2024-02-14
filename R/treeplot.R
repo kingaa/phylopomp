@@ -83,7 +83,8 @@ treeplot <- function (
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(
       deme=if_else(deme=="NA",NA_character_,deme),
-      label=if_else(label=="NA",NA_character_,label)
+      label=if_else(label=="NA",NA_character_,label),
+      y=y-3
     ) -> dat
 
   ndeme <- max(1L,length(unique(dat$deme))-1L)
@@ -131,6 +132,7 @@ treeplot <- function (
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(dat$x,t0,time))+
+    coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
     theme_tree2()+
     theme(...) -> pl
 

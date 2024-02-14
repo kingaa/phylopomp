@@ -7,6 +7,7 @@
     \item The genealogy description (\code{getInfo(description=TRUE)}) now reports both deme and lineage.
     \item \code{curtail()} more carefully rewinds the history.
     \item Parameter name changes in some of the examples.
+    \item In plotting, trees are shifted down on the y axis.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.9}{
