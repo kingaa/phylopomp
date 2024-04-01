@@ -3,7 +3,7 @@
 ##' Simulation and inference of Markov genealogy processes.
 ##' 
 ##' @name phylopomp
-##' @aliases phylopomp-package
+##' @aliases phylopomp,package phylopomp-package
 ##' @author Aaron A. King, Qianying Lin
 ##' @import ggplot2
 ##' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"

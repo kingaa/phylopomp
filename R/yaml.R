@@ -1,15 +1,16 @@
 ##' YAML output
 ##'
-##' Human- and machine-readable description
+##' Human- and machine-readable description.
 ##'
 ##' @name yaml
 ##' @include getinfo.R
-##'
 ##' @inheritParams getInfo
-##' @return A string in yaml format, with class \dQuote{gpyaml}.
+##' @return A string in YAML format, with class \dQuote{gpyaml}.
 ##' @examples
 ##' simulate("SIIR",time=1) |> yaml()
-##' 
+##'
+NULL
+
 ##' @rdname yaml
 ##' @export
 yaml <- function (object) {

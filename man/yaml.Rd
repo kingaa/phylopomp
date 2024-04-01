@@ -10,10 +10,10 @@ yaml(object)
 \item{object}{\code{gpsim} object.}
 }
 \value{
-A string in yaml format, with class \dQuote{gpyaml}.
+A string in YAML format, with class \dQuote{gpyaml}.
 }
 \description{
-Human- and machine-readable description
+Human- and machine-readable description.
 }
 \examples{
 simulate("SIIR",time=1) |> yaml()

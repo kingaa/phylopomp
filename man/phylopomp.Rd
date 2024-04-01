@@ -3,6 +3,7 @@
 \docType{package}
 \name{phylopomp}
 \alias{phylopomp}
+\alias{phylopomp,package}
 \alias{phylopomp-package}
 \title{Phylodynamics for POMP models}
 \description{

@@ -18,11 +18,13 @@
 *.gcda
 *.gcno
 *.pdf
+*.sif
 /scripts
 lib
 library
 check
 repo
+wiki
 tmp
 covr.html
 covr.rds

@@ -1,4 +1,5 @@
 examples/
+rchk/
 repo/
 revdep/
 scripts/
@@ -19,6 +20,7 @@ LICENSE\.md$
 README\.(.?)$
 CRAN\.md$
 TODO\.md$
+BUILD\.md$
 ^\.gitignore$
 \.github
 ^\.travis\.yml$

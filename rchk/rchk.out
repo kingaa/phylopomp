@@ -1,0 +1,1836 @@
+
+Note: Setting PKG_ROOT variable to the current directory.
+Output will be in ./lib, ./build and ./libsonly subdirectories.
+If it is not, maybe your local singularity configuration does
+not allow singularity container to access your current directory;
+it may help to try with PKG_ROOT=/tmp or check the configurarion.
+
+source("/opt/rchk/scripts/utils.r"); install_package_libs("/home/kingaa/projects/Rpkg/phylopomp/phylopomp_0.10.3.1.tar.gz")
+make[2]: Entering directory '/tmp/Rtmp7baO0D/make_packages'
+begin installing package ‘digest’
+begin installing package ‘mvtnorm’
+begin installing package ‘deSolve’
+begin installing package ‘coda’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘coda’ ...
+** package ‘coda’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (coda)
+begin installing package ‘data.table’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘mvtnorm’ ...
+** package ‘mvtnorm’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/d9aHEGdu/mvtnorm/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c C_FORTRAN_interface.c -o C_FORTRAN_interface.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c lpmvnorm.c -o lpmvnorm.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c ltMatrices.c -o ltMatrices.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c miwa.c -o miwa.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c mvt.f -o mvt.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c mvtnorm-init.c -o mvtnorm-init.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c tvpack.f -o tvpack.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o mvtnorm.so C_FORTRAN_interface.o lpmvnorm.o ltMatrices.o miwa.o mvt.o mvtnorm-init.o tvpack.o -L/opt/R-devel/lib -lRlapack -L/opt/R-devel/lib -lRblas -lgfortran -lm -lquadmath -lgfortran -lm -lquadmath
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/d9aHEGdu/mvtnorm/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-mvtnorm/00new/mvtnorm/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (mvtnorm)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘digest’ ...
+** package ‘digest’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/sPGZ0tPD/digest/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c SpookyV2.cpp -o SpookyV2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c aes.c -o aes.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c blake3.c -o blake3.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c blake3_dispatch.c -o blake3_dispatch.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c blake3_portable.c -o blake3_portable.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c crc32.c -o crc32.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c crc32c.cpp -o crc32c.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c crc32c_portable.cpp -o crc32c_portable.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c digest.c -o digest.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c digest2int.c -o digest2int.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c md5.c -o md5.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c pmurhash.c -o pmurhash.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c raes.c -o raes.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c sha1.c -o sha1.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c sha2.c -o sha2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c sha256.c -o sha256.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c spooky_serialize.cpp -o spooky_serialize.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I.  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c xxhash.c -o xxhash.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o digest.so SpookyV2.o aes.o blake3.o blake3_dispatch.o blake3_portable.o crc32.o crc32c.o crc32c_portable.o digest.o digest2int.o init.o md5.o pmurhash.o raes.o sha1.o sha2.o sha256.o spooky_serialize.o xxhash.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/sPGZ0tPD/digest/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-digest/00new/digest/libs
+** R
+** demo
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (digest)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘data.table’ ...
+** package ‘data.table’ successfully unpacked and MD5 sums checked
+** using staged installation
+zlib 1.2.11 is available ok
+R CMD SHLIB supports OpenMP without any extra hint
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/nsZyYmL3/data.table/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c assign.c -o assign.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c between.c -o between.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c bmerge.c -o bmerge.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c chmatch.c -o chmatch.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c cj.c -o cj.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c coalesce.c -o coalesce.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c dogroups.c -o dogroups.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fastmean.c -o fastmean.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fcast.c -o fcast.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fifelse.c -o fifelse.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fmelt.c -o fmelt.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c forder.c -o forder.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c frank.c -o frank.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fread.c -o fread.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c freadR.c -o freadR.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c froll.c -o froll.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c frollR.c -o frollR.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c frolladaptive.c -o frolladaptive.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fsort.c -o fsort.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fwrite.c -o fwrite.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c fwriteR.c -o fwriteR.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c gsumm.c -o gsumm.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c idatetime.c -o idatetime.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c ijoin.c -o ijoin.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c inrange.c -o inrange.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c nafill.c -o nafill.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c negate.c -o negate.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c nqrecreateindices.c -o nqrecreateindices.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c openmp-utils.c -o openmp-utils.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c programming.c -o programming.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c quickselect.c -o quickselect.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c rbindlist.c -o rbindlist.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c reorder.c -o reorder.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c shift.c -o shift.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c snprintf.c -o snprintf.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c subset.c -o subset.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c transpose.c -o transpose.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c types.c -o types.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c uniqlist.c -o uniqlist.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c vecseq.c -o vecseq.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include    -fPIC  -Wall -g -O0 -fPIC  -c wrappers.c -o wrappers.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o data.table.so assign.o between.o bmerge.o chmatch.o cj.o coalesce.o dogroups.o fastmean.o fcast.o fifelse.o fmelt.o forder.o frank.o fread.o freadR.o froll.o frollR.o frolladaptive.o fsort.o fwrite.o fwriteR.o gsumm.o idatetime.o ijoin.o init.o inrange.o nafill.o negate.o nqrecreateindices.o openmp-utils.o programming.o quickselect.o rbindlist.o reorder.o shift.o snprintf.o subset.o transpose.o types.o uniqlist.o utils.o vecseq.o wrappers.o -lz
+PKG_CFLAGS =
+PKG_LIBS = -lz
+if [ "data.table.so" != "data_table.so" ]; then mv data.table.so data_table.so; fi
+if [ "" != "Windows_NT" ] && [ `uname -s` = 'Darwin' ]; then install_name_tool -id data_table.so data_table.so; fi
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/nsZyYmL3/data.table/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-data.table/00new/data.table/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (data.table)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘deSolve’ ...
+** package ‘deSolve’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/6uCNaUSZ/deSolve/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c DLLutil.c -o DLLutil.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c R_init_deSolve.c -o R_init_deSolve.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c brent.c -o brent.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_daspk.c -o call_daspk.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_euler.c -o call_euler.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_iteration.c -o call_iteration.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_lsoda.c -o call_lsoda.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_radau.c -o call_radau.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_rk4.c -o call_rk4.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_rkAuto.c -o call_rkAuto.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_rkFixed.c -o call_rkFixed.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_rkImplicit.c -o call_rkImplicit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c call_zvode.c -o call_zvode.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c daux.f -o daux.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c ddaspk.f -o ddaspk.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c deSolve_utils.c -o deSolve_utils.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c dintdy2.f -o dintdy2.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c dlinpk.f -o dlinpk.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c dlsoder.f -o dlsoder.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c dsparsk.f -o dsparsk.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c dvode.f -o dvode.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c errmsg.f -o errmsg.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ex_Aquaphy.c -o ex_Aquaphy.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ex_CCL4model.c -o ex_CCL4model.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ex_ChemicalDAE.c -o ex_ChemicalDAE.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ex_SCOC.c -o ex_SCOC.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c forcings.c -o forcings.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c lags.c -o lags.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c opkda1.f -o opkda1.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c opkdmain.f -o opkdmain.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c radau5.f -o radau5.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c radau5a.f -o radau5a.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rk_auto.c -o rk_auto.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rk_fixed.c -o rk_fixed.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rk_implicit.c -o rk_implicit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rk_util.c -o rk_util.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rprintf.c -o rprintf.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c twoDmap.c -o twoDmap.o
+gfortran -fno-optimize-sibling-calls  -fpic  -g -O2  -c zvode.f -o zvode.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o deSolve.so DLLutil.o R_init_deSolve.o brent.o call_daspk.o call_euler.o call_iteration.o call_lsoda.o call_radau.o call_rk4.o call_rkAuto.o call_rkFixed.o call_rkImplicit.o call_zvode.o daux.o ddaspk.o deSolve_utils.o dintdy2.o dlinpk.o dlsoder.o dsparsk.o dvode.o errmsg.o ex_Aquaphy.o ex_CCL4model.o ex_ChemicalDAE.o ex_SCOC.o forcings.o lags.o opkda1.o opkdmain.o radau5.o radau5a.o rk_auto.o rk_fixed.o rk_implicit.o rk_util.o rprintf.o twoDmap.o zvode.o -L/opt/R-devel/lib -lRblas -lgfortran -lm -lquadmath -lgfortran -lm -lquadmath
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/6uCNaUSZ/deSolve/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-deSolve/00new/deSolve/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** demo
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+Creating a new generic function for ‘matplot’ in package ‘deSolve’
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (deSolve)
+begin installing package ‘pomp’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘pomp’ ...
+** package ‘pomp’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/FGn8MPsX/pomp/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c bspline.c -o bspline.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dinit.c -o dinit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c distributions.c -o distributions.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dmeasure.c -o dmeasure.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dprior.c -o dprior.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dprocess.c -o dprocess.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c emeasure.c -o emeasure.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c euler.c -o euler.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c gompertz.c -o gompertz.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c logmeanexp.c -o logmeanexp.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c lookup_table.c -o lookup_table.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c mif2.c -o mif2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ou2.c -o ou2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c partrans.c -o partrans.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c pfilter.c -o pfilter.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c pomp_fun.c -o pomp_fun.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c probe.c -o probe.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c probe_acf.c -o probe_acf.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c probe_marginal.c -o probe_marginal.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c probe_nlar.c -o probe_nlar.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c resample.c -o resample.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rinit.c -o rinit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rmeasure.c -o rmeasure.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rprior.c -o rprior.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rprocess.c -o rprocess.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c simulate.c -o simulate.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c skeleton.c -o skeleton.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c sobolseq.c -o sobolseq.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ssa.c -o ssa.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c synth_lik.c -o synth_lik.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c trajectory.c -o trajectory.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c transformations.c -o transformations.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c userdata.c -o userdata.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c vmeasure.c -o vmeasure.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c wpfilter.c -o wpfilter.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o pomp.so bspline.o dinit.o distributions.o dmeasure.o dprior.o dprocess.o emeasure.o euler.o gompertz.o init.o logmeanexp.o lookup_table.o mif2.o ou2.o partrans.o pfilter.o pomp_fun.o probe.o probe_acf.o probe_marginal.o probe_nlar.o resample.o rinit.o rmeasure.o rprior.o rprocess.o simulate.o skeleton.o sobolseq.o ssa.o synth_lik.o trajectory.o transformations.o userdata.o vmeasure.o wpfilter.o -L/opt/R-devel/lib -lRlapack -L/opt/R-devel/lib -lRblas -lgfortran -lm -lquadmath
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/FGn8MPsX/pomp/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-pomp/00new/pomp/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (pomp)
+make[2]: Leaving directory '/tmp/Rtmp7baO0D/make_packages'
+make[2]: Entering directory '/tmp/Rtmp7baO0D/make_packages'
+begin installing package ‘colorspace’
+begin installing package ‘utf8’
+begin installing package ‘stringi’
+begin installing package ‘cli’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘colorspace’ ...
+** package ‘colorspace’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/hu1vuc71/colorspace/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c colorspace.c -o colorspace.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o colorspace.so colorspace.o init.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/hu1vuc71/colorspace/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-colorspace/00new/colorspace/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** demo
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (colorspace)
+begin installing package ‘glue’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘utf8’ ...
+** package ‘utf8’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/HheGGEnX/utf8/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c as_utf8.c -o as_utf8.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c bytes.c -o bytes.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c context.c -o context.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c render.c -o render.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c render_table.c -o render_table.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c string.c -o string.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c text.c -o text.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8_encode.c -o utf8_encode.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8_format.c -o utf8_format.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8_normalize.c -o utf8_normalize.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8_valid.c -o utf8_valid.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8_width.c -o utf8_width.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c util.c -o util.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/array.c -o utf8lite/src/array.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/char.c -o utf8lite/src/char.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/encode.c -o utf8lite/src/encode.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/error.c -o utf8lite/src/error.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/escape.c -o utf8lite/src/escape.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/graph.c -o utf8lite/src/graph.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/graphscan.c -o utf8lite/src/graphscan.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/normalize.c -o utf8lite/src/normalize.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/render.c -o utf8lite/src/render.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/text.c -o utf8lite/src/text.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/textassign.c -o utf8lite/src/textassign.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/textiter.c -o utf8lite/src/textiter.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -Iutf8lite/src -fPIC  -Wall -g -O0 -fPIC  -c utf8lite/src/textmap.c -o utf8lite/src/textmap.o
+ar rcs libcutf8lite.a utf8lite/src/array.o utf8lite/src/char.o utf8lite/src/encode.o utf8lite/src/error.o utf8lite/src/escape.o utf8lite/src/graph.o utf8lite/src/graphscan.o utf8lite/src/normalize.o utf8lite/src/render.o utf8lite/src/text.o utf8lite/src/textassign.o utf8lite/src/textiter.o utf8lite/src/textmap.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o utf8.so as_utf8.o bytes.o context.o init.o render.o render_table.o string.o text.o utf8_encode.o utf8_format.o utf8_normalize.o utf8_valid.o utf8_width.o util.o -L. -lcutf8lite
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/HheGGEnX/utf8/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-utf8/00new/utf8/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (utf8)
+begin installing package ‘isoband’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘glue’ ...
+** package ‘glue’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/GLyrAAGw/glue/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c glue.c -o glue.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c trim.c -o trim.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o glue.so glue.o init.o trim.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/GLyrAAGw/glue/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-glue/00new/glue/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (glue)
+begin installing package ‘rlang’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘cli’ ...
+** package ‘cli’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/y609sDgT/cli/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c ansi.c -o ansi.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c cleancall.c -o cleancall.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c diff.c -o diff.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c errors.c -o errors.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c glue.c -o glue.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c inst.c -o inst.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c keypress-unix.c -o keypress-unix.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c keypress-win.c -o keypress-win.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c keypress.c -o keypress.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c md5.c -o md5.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c progress-altrep.c -o progress-altrep.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c progress.c -o progress.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c sha1.c -o sha1.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c sha256.c -o sha256.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c thread.c -o thread.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c tty.c -o tty.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c utf8.c -o utf8.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c vt.c -o vt.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c vtparse.c -o vtparse.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c vtparse_table.c -o vtparse_table.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c win-utf8.c -o win-utf8.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -I../inst/include -fPIC  -Wall -g -O0 -fPIC  -c winfiles.c -o winfiles.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o cli.so ansi.o cleancall.o diff.o errors.o glue.o init.o inst.o keypress-unix.o keypress-win.o keypress.o md5.o progress-altrep.o progress.o sha1.o sha256.o thread.o tty.o utf8.o utils.o vt.o vtparse.o vtparse_table.o win-utf8.o winfiles.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/y609sDgT/cli/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-cli/00new/cli/libs
+** R
+** exec
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (cli)
+begin installing package ‘withr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘withr’ ...
+** package ‘withr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (withr)
+begin installing package ‘farver’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘isoband’ ...
+** package ‘isoband’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/p151d6q9/isoband/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c clip-lines.cpp -o clip-lines.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c init.cpp -o init.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c isoband.cpp -o isoband.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c polygon.cpp -o polygon.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c separate-polygons.cpp -o separate-polygons.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c test-clip-lines.cpp -o test-clip-lines.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c test-runner.cpp -o test-runner.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c test-separate-polygons.cpp -o test-separate-polygons.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -shared -L/usr/local/lib -o isoband.so clip-lines.o init.o isoband.o polygon.o separate-polygons.o test-clip-lines.o test-runner.o test-separate-polygons.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/p151d6q9/isoband/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-isoband/00new/isoband/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (isoband)
+begin installing package ‘labeling’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘rlang’ ...
+** package ‘rlang’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/2lHYQSct/rlang/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang/  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c capture.c -o capture.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang/  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c internal.c -o internal.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang/  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rlang.c -o rlang.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang/  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c version.c -o version.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o rlang.so capture.o internal.o rlang.o version.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/2lHYQSct/rlang/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-rlang/00new/rlang/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (rlang)
+begin installing package ‘R6’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘R6’ ...
+** package ‘R6’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (R6)
+begin installing package ‘RColorBrewer’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘labeling’ ...
+** package ‘labeling’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (labeling)
+begin installing package ‘viridisLite’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘RColorBrewer’ ...
+** package ‘RColorBrewer’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (RColorBrewer)
+begin installing package ‘Rcpp’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘viridisLite’ ...
+** package ‘viridisLite’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (viridisLite)
+begin installing package ‘generics’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘farver’ ...
+** package ‘farver’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/rimiTmUU/farver/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c ColorSpace.cpp -o ColorSpace.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c Comparison.cpp -o Comparison.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c Conversion.cpp -o Conversion.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c encode.cpp -o encode.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c farver.cpp -o farver.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c init.cpp -o init.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++11 -shared -L/usr/local/lib -o farver.so ColorSpace.o Comparison.o Conversion.o encode.o farver.o init.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/rimiTmUU/farver/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-farver/00new/farver/libs
+** R
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (farver)
+begin installing package ‘magrittr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘generics’ ...
+** package ‘generics’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (generics)
+begin installing package ‘fansi’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘magrittr’ ...
+** package ‘magrittr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/eif8ldup/magrittr/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c pipe.c -o pipe.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o magrittr.so pipe.o utils.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/eif8ldup/magrittr/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-magrittr/00new/magrittr/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (magrittr)
+begin installing package ‘pkgconfig’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘pkgconfig’ ...
+** package ‘pkgconfig’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (pkgconfig)
+begin installing package ‘iterators’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘iterators’ ...
+** package ‘iterators’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (iterators)
+begin installing package ‘cpp11’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘fansi’ ...
+** package ‘fansi’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/BjUSYTPe/fansi/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c assumptions.c -o assumptions.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c carry.c -o carry.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c has.c -o has.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c nchar.c -o nchar.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c normalize.c -o normalize.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c read.c -o read.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rnchar.c -o rnchar.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c state.c -o state.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c strip.c -o strip.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c substr.c -o substr.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c tabs.c -o tabs.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c tohtml.c -o tohtml.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c trimws.c -o trimws.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c unhandled.c -o unhandled.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c utf8.c -o utf8.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c wrap.c -o wrap.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c write.c -o write.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o fansi.so assumptions.o carry.o has.o init.o nchar.o normalize.o read.o rnchar.o state.o strip.o substr.o tabs.o tohtml.o trimws.o unhandled.o utf8.o utils.o wrap.o write.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/BjUSYTPe/fansi/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-fansi/00new/fansi/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (fansi)
+begin installing package ‘yaml’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘cpp11’ ...
+** package ‘cpp11’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (cpp11)
+begin installing package ‘lifecycle’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘yaml’ ...
+** package ‘yaml’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/2IKTdCiv/yaml/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c api.c -o api.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dumper.c -o dumper.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c emitter.c -o emitter.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c implicit.c -o implicit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c loader.c -o loader.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c parser.c -o parser.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c r_emit.c -o r_emit.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c r_ext.c -o r_ext.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c r_parse.c -o r_parse.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c reader.c -o reader.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c scanner.c -o scanner.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I. -DNDEBUG  -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c writer.c -o writer.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o yaml.so api.o dumper.o emitter.o implicit.o loader.o parser.o r_emit.o r_ext.o r_parse.o reader.o scanner.o writer.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/2IKTdCiv/yaml/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-yaml/00new/yaml/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (yaml)
+begin installing package ‘munsell’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘lifecycle’ ...
+** package ‘lifecycle’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (lifecycle)
+begin installing package ‘foreach’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘munsell’ ...
+** package ‘munsell’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (munsell)
+begin installing package ‘gtable’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘foreach’ ...
+** package ‘foreach’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** demo
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (foreach)
+begin installing package ‘vctrs’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘gtable’ ...
+** package ‘gtable’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (gtable)
+begin installing package ‘scales’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘scales’ ...
+** package ‘scales’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (scales)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘vctrs’ ...
+** package ‘vctrs’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/xTSklfdc/vctrs/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c altrep-lazy-character.c -o altrep-lazy-character.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c altrep-rle.c -o altrep-rle.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c altrep.c -o altrep.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c arg-counter.c -o arg-counter.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c arg.c -o arg.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c assert.c -o assert.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c bind.c -o bind.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c c-unchop.c -o c-unchop.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c c.c -o c.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c callables.c -o callables.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c cast-bare.c -o cast-bare.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c cast-dispatch.c -o cast-dispatch.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c cast.c -o cast.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c compare.c -o compare.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c complete.c -o complete.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c conditions.c -o conditions.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c dictionary.c -o dictionary.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c dim.c -o dim.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c empty.c -o empty.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c equal.c -o equal.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c expand.c -o expand.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c fields.c -o fields.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c fill.c -o fill.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c globals.c -o globals.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c group.c -o group.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c growable.c -o growable.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c hash.c -o hash.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c interval.c -o interval.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c match-joint.c -o match-joint.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c match.c -o match.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c missing.c -o missing.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c names.c -o names.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c order-collate.c -o order-collate.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c order-groups.c -o order-groups.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c order-sortedness.c -o order-sortedness.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c order-truelength.c -o order-truelength.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c order.c -o order.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c poly-op.c -o poly-op.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c proxy-restore.c -o proxy-restore.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c proxy.c -o proxy.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c ptype-common.c -o ptype-common.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c ptype.c -o ptype.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c ptype2-dispatch.c -o ptype2-dispatch.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c ptype2.c -o ptype2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rank.c -o rank.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rep.c -o rep.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rlang-dev.c -o rlang-dev.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c rlang.c -o rlang.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c runs.c -o runs.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c set.c -o set.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c shape.c -o shape.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c size-common.c -o size-common.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c size.c -o size.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice-array.c -o slice-array.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice-assign-array.c -o slice-assign-array.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice-assign.c -o slice-assign.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice-chop.c -o slice-chop.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice-interleave.c -o slice-interleave.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c slice.c -o slice.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c split.c -o split.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c subscript-loc.c -o subscript-loc.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c subscript.c -o subscript.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c translate.c -o translate.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-data-frame.c -o type-data-frame.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-date-time.c -o type-date-time.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-factor.c -o type-factor.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-info.c -o type-info.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-integer64.c -o type-integer64.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c type-tibble.c -o type-tibble.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c typeof2-s3.c -o typeof2-s3.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c typeof2.c -o typeof2.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c unspecified.c -o unspecified.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c utils-dispatch.c -o utils-dispatch.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c vctrs-core.c -o vctrs-core.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG -I./rlang  -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c version.c -o version.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o vctrs.so altrep-lazy-character.o altrep-rle.o altrep.o arg-counter.o arg.o assert.o bind.o c-unchop.o c.o callables.o cast-bare.o cast-dispatch.o cast.o compare.o complete.o conditions.o dictionary.o dim.o empty.o equal.o expand.o fields.o fill.o globals.o group.o growable.o hash.o init.o interval.o match-joint.o match.o missing.o names.o order-collate.o order-groups.o order-sortedness.o order-truelength.o order.o poly-op.o proxy-restore.o proxy.o ptype-common.o ptype.o ptype2-dispatch.o ptype2.o rank.o rep.o rlang-dev.o rlang.o runs.o set.o shape.o size-common.o size.o slice-array.o slice-assign-array.o slice-assign.o slice-chop.o slice-interleave.o slice.o split.o subscript-loc.o subscript.o translate.o type-data-frame.o type-date-time.o type-factor.o type-info.o type-integer64.o type-tibble.o typeof2-s3.o typeof2.o unspecified.o utils-dispatch.o utils.o vctrs-core.o version.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/xTSklfdc/vctrs/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-vctrs/00new/vctrs/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (vctrs)
+begin installing package ‘pillar’
+begin installing package ‘tidyselect’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘Rcpp’ ...
+** package ‘Rcpp’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/FQx0kpwT/Rcpp/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c api.cpp -o api.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c attributes.cpp -o attributes.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c barrier.cpp -o barrier.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c date.cpp -o date.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c module.cpp -o module.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I../inst/include/  -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c rcpp_init.cpp -o rcpp_init.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o Rcpp.so api.o attributes.o barrier.o date.o module.o rcpp_init.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/FQx0kpwT/Rcpp/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-Rcpp/00new/Rcpp/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (Rcpp)
+begin installing package ‘purrr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘tidyselect’ ...
+** package ‘tidyselect’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (tidyselect)
+begin installing package ‘ape’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘pillar’ ...
+** package ‘pillar’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (pillar)
+begin installing package ‘tibble’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘purrr’ ...
+** package ‘purrr’ successfully unpacked and MD5 sums checked
+** using staged installation
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/dLVs5Gkh/purrr/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c backports.c -o backports.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c cleancall.c -o cleancall.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c coerce.c -o coerce.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c conditions.c -o conditions.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c flatten.c -o flatten.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c map.c -o map.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c pluck.c -o pluck.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c transpose.c -o transpose.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cli/include' -I/usr/local/include  -fvisibility=hidden -fPIC  -Wall -g -O0 -fPIC  -c utils.c -o utils.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o purrr.so backports.o cleancall.o coerce.o conditions.o flatten.o init.o map.o pluck.o transpose.o utils.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/dLVs5Gkh/purrr/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-purrr/00new/purrr/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (purrr)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘tibble’ ...
+** package ‘tibble’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/qybuHd0t/tibble/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c attributes.c -o attributes.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c coerce.c -o coerce.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c init.c -o init.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c matrixToDataFrame.c -o matrixToDataFrame.o
+/usr/local/bin/wllvm -shared -L/usr/local/lib -o tibble.so attributes.o coerce.o init.o matrixToDataFrame.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/qybuHd0t/tibble/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-tibble/00new/tibble/libs
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (tibble)
+begin installing package ‘ggplot2’
+begin installing package ‘dplyr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘dplyr’ ...
+** package ‘dplyr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/hgaOsDkY/dplyr/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c chop.cpp -o chop.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c filter.cpp -o filter.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c funs.cpp -o funs.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c group_by.cpp -o group_by.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c group_data.cpp -o group_data.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c imports.cpp -o imports.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c init.cpp -o init.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c mask.cpp -o mask.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c mutate.cpp -o mutate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c reconstruct.cpp -o reconstruct.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c slice.cpp -o slice.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG   -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c summarise.cpp -o summarise.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o dplyr.so chop.o filter.o funs.o group_by.o group_data.o imports.o init.o mask.o mutate.o reconstruct.o slice.o summarise.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/hgaOsDkY/dplyr/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-dplyr/00new/dplyr/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (dplyr)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘ggplot2’ ...
+** package ‘ggplot2’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (ggplot2)
+begin installing package ‘cowplot’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘cowplot’ ...
+** package ‘cowplot’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (cowplot)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘ape’ ...
+** package ‘ape’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/sPgFyIf1/ape/src'
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c BIONJ.c -o BIONJ.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c NNI.c -o NNI.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c RcppExports.cpp -o RcppExports.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c SPR.c -o SPR.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c additive.c -o additive.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ape.c -o ape.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c bNNI.c -o bNNI.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c bionjs.c -o bionjs.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c bipartition.c -o bipartition.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c bitsplits.c -o bitsplits.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c delta_plot.c -o delta_plot.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dist_dna.c -o dist_dna.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c dist_nodes.c -o dist_nodes.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ewLasso.c -o ewLasso.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c heap.c -o heap.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c mat_expo.c -o mat_expo.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c me.c -o me.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c me_balanced.c -o me_balanced.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c me_ols.c -o me_ols.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c mvr.c -o mvr.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c mvrs.c -o mvrs.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c nj.c -o nj.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c njs.c -o njs.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c pic.c -o pic.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c plot_phylo.c -o plot_phylo.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c prop_part.cpp -o prop_part.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c rTrait.c -o rTrait.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c read_dna.c -o read_dna.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c reorder_Rcpp.cpp -o reorder_Rcpp.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c reorder_phylo.c -o reorder_phylo.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c treePop.c -o treePop.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c tree_build.c -o tree_build.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c tree_phylo.c -o tree_phylo.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c triangMtd.c -o triangMtd.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c triangMtds.c -o triangMtds.o
+/usr/local/bin/wllvm -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/Rcpp/include' -I/usr/local/include   -fPIC  -Wall -g -O0 -fPIC  -c ultrametric.c -o ultrametric.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o ape.so BIONJ.o NNI.o RcppExports.o SPR.o additive.o ape.o bNNI.o bionjs.o bipartition.o bitsplits.o delta_plot.o dist_dna.o dist_nodes.o ewLasso.o heap.o mat_expo.o me.o me_balanced.o me_ols.o mvr.o mvrs.o nj.o njs.o pic.o plot_phylo.o prop_part.o rTrait.o read_dna.o reorder_Rcpp.o reorder_phylo.o treePop.o tree_build.o tree_phylo.o triangMtd.o triangMtds.o ultrametric.o -L/opt/R-devel/lib -lRlapack -L/opt/R-devel/lib -lRblas -lgfortran -lm -lquadmath
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/sPgFyIf1/ape/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-ape/00new/ape/libs
+** R
+** data
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (ape)
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘stringi’ ...
+** package ‘stringi’ successfully unpacked and MD5 sums checked
+** using staged installation
+checking for R_HOME... /opt/R-devel
+checking for R... /opt/R-devel/bin/R
+checking for endianness... little
+checking for cat... /usr/bin/cat
+checking whether the C++ compiler works... yes
+checking for C++ compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether the compiler supports GNU C++... yes
+checking whether /usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 accepts -g... yes
+checking for /usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 option to enable C++11 features... none needed
+checking whether the C++ compiler supports the 'long long' type... yes
+checking whether the compiler implements namespaces... yes
+checking whether the compiler supports the Standard Template Library... yes
+checking whether std::map is available... yes
+checking for pkg-config... /usr/bin/pkg-config
+checking with 'pkg-config' for the system ICU4C (icu-i18n icu-uc)... 66.1
+checking for ICU4C >= 61... yes
+checking for additional CPPFLAGS, LDFLAGS, and LIBS required... done
+checking whether an ICU4C-based project can be built... yes
+checking programmatically for sufficient U_ICU_VERSION_MAJOR_NUM... yes
+checking the capabilities of the ICU data library (ucnv, uloc, utrans)... yes
+checking the capabilities of the ICU data library (ucol)... yes
+checking for stdio.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for strings.h... yes
+checking for sys/stat.h... yes
+checking for sys/types.h... yes
+checking for unistd.h... yes
+checking for elf.h... yes
+configure: creating ./config.status
+config.status: creating src/Makevars
+config.status: creating src/uconfig_local.h
+config.status: creating src/install.libs.R
+
+*** stringi configure summary:
+    ICU_FOUND=1
+    STRINGI_CXXSTD=
+    STRINGI_CXXFLAGS=  -fpic
+    STRINGI_CPPFLAGS=-I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H 
+    STRINGI_LDFLAGS=  -L/usr/lib/x86_64-linux-gnu
+    STRINGI_LIBS=  -licui18n -licuuc -licudata
+
+*** Compiler settings used:
+    CXX=/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14
+    LD=/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14
+    CXXFLAGS=-g -O2 -Wall -pedantic
+    CPPFLAGS=-I/usr/local/include
+    LDFLAGS=
+    LIBS=
+
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/Rmjsc1WP/stringi/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_brkiter.cpp -o stri_brkiter.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_collator.cpp -o stri_collator.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_common.cpp -o stri_common.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_compare.cpp -o stri_compare.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_base.cpp -o stri_container_base.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_bytesearch.cpp -o stri_container_bytesearch.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_listint.cpp -o stri_container_listint.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_listraw.cpp -o stri_container_listraw.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_listutf8.cpp -o stri_container_listutf8.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_regex.cpp -o stri_container_regex.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_usearch.cpp -o stri_container_usearch.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_utf16.cpp -o stri_container_utf16.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_utf8.cpp -o stri_container_utf8.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_container_utf8_indexable.cpp -o stri_container_utf8_indexable.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_encoding_conversion.cpp -o stri_encoding_conversion.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_encoding_detection.cpp -o stri_encoding_detection.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_encoding_management.cpp -o stri_encoding_management.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_escape.cpp -o stri_escape.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_exception.cpp -o stri_exception.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_ICU_settings.cpp -o stri_ICU_settings.o
+In file included from stri_ICU_settings.cpp:37:
+./uconfig_local.h:42:9: warning: 'UCONFIG_USE_WINDOWS_LCID_MAPPING_API' macro redefined [-Wmacro-redefined]
+#define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 0
+        ^
+/usr/include/unicode/uconfig.h:381:12: note: previous definition is here
+#   define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 1
+           ^
+1 warning generated.
+In file included from stri_ICU_settings.cpp:37:
+./uconfig_local.h:42:9: warning: 'UCONFIG_USE_WINDOWS_LCID_MAPPING_API' macro redefined [-Wmacro-redefined]
+#define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 0
+        ^
+/usr/include/unicode/uconfig.h:381:12: note: previous definition is here
+#   define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 1
+           ^
+1 warning generated.
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_join.cpp -o stri_join.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_length.cpp -o stri_length.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_pad.cpp -o stri_pad.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_prepare_arg.cpp -o stri_prepare_arg.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_random.cpp -o stri_random.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_reverse.cpp -o stri_reverse.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_count.cpp -o stri_search_class_count.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_detect.cpp -o stri_search_class_detect.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_extract.cpp -o stri_search_class_extract.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_locate.cpp -o stri_search_class_locate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_replace.cpp -o stri_search_class_replace.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_split.cpp -o stri_search_class_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_startsendswith.cpp -o stri_search_class_startsendswith.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_subset.cpp -o stri_search_class_subset.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_class_trim.cpp -o stri_search_class_trim.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_common.cpp -o stri_search_common.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_count.cpp -o stri_search_coll_count.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_detect.cpp -o stri_search_coll_detect.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_extract.cpp -o stri_search_coll_extract.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_locate.cpp -o stri_search_coll_locate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_replace.cpp -o stri_search_coll_replace.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_split.cpp -o stri_search_coll_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_startsendswith.cpp -o stri_search_coll_startsendswith.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_coll_subset.cpp -o stri_search_coll_subset.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_boundaries_count.cpp -o stri_search_boundaries_count.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_boundaries_extract.cpp -o stri_search_boundaries_extract.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_boundaries_locate.cpp -o stri_search_boundaries_locate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_boundaries_split.cpp -o stri_search_boundaries_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_count.cpp -o stri_search_fixed_count.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_detect.cpp -o stri_search_fixed_detect.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_extract.cpp -o stri_search_fixed_extract.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_locate.cpp -o stri_search_fixed_locate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_replace.cpp -o stri_search_fixed_replace.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_split.cpp -o stri_search_fixed_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_subset.cpp -o stri_search_fixed_subset.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_fixed_startsendswith.cpp -o stri_search_fixed_startsendswith.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_in.cpp -o stri_search_in.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_other_split.cpp -o stri_search_other_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_count.cpp -o stri_search_regex_count.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_detect.cpp -o stri_search_regex_detect.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_extract.cpp -o stri_search_regex_extract.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_locate.cpp -o stri_search_regex_locate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_match.cpp -o stri_search_regex_match.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_replace.cpp -o stri_search_regex_replace.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_split.cpp -o stri_search_regex_split.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_search_regex_subset.cpp -o stri_search_regex_subset.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_sort.cpp -o stri_sort.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_sprintf.cpp -o stri_sprintf.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_stats.cpp -o stri_stats.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_string8.cpp -o stri_string8.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_stringi.cpp -o stri_stringi.o
+In file included from stri_stringi.cpp:39:
+./uconfig_local.h:42:9: warning: 'UCONFIG_USE_WINDOWS_LCID_MAPPING_API' macro redefined [-Wmacro-redefined]
+#define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 0
+        ^
+/usr/include/unicode/uconfig.h:381:12: note: previous definition is here
+#   define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 1
+           ^
+1 warning generated.
+In file included from stri_stringi.cpp:39:
+./uconfig_local.h:42:9: warning: 'UCONFIG_USE_WINDOWS_LCID_MAPPING_API' macro redefined [-Wmacro-redefined]
+#define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 0
+        ^
+/usr/include/unicode/uconfig.h:381:12: note: previous definition is here
+#   define UCONFIG_USE_WINDOWS_LCID_MAPPING_API 1
+           ^
+1 warning generated.
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_sub.cpp -o stri_sub.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_test.cpp -o stri_test.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_time_zone.cpp -o stri_time_zone.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_time_calendar.cpp -o stri_time_calendar.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_time_symbols.cpp -o stri_time_symbols.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_time_format.cpp -o stri_time_format.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_trans_casemap.cpp -o stri_trans_casemap.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_trans_other.cpp -o stri_trans_other.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_trans_normalization.cpp -o stri_trans_normalization.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_trans_transliterate.cpp -o stri_trans_transliterate.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_ucnv.cpp -o stri_ucnv.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_uloc.cpp -o stri_uloc.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_utils.cpp -o stri_utils.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG -I.   -UDEBUG -DNDEBUG -DU_HAVE_ELF_H   -I/usr/local/include  -fpic -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c stri_wrap.cpp -o stri_wrap.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o stringi.so stri_brkiter.o stri_collator.o stri_common.o stri_compare.o stri_container_base.o stri_container_bytesearch.o stri_container_listint.o stri_container_listraw.o stri_container_listutf8.o stri_container_regex.o stri_container_usearch.o stri_container_utf16.o stri_container_utf8.o stri_container_utf8_indexable.o stri_encoding_conversion.o stri_encoding_detection.o stri_encoding_management.o stri_escape.o stri_exception.o stri_ICU_settings.o stri_join.o stri_length.o stri_pad.o stri_prepare_arg.o stri_random.o stri_reverse.o stri_search_class_count.o stri_search_class_detect.o stri_search_class_extract.o stri_search_class_locate.o stri_search_class_replace.o stri_search_class_split.o stri_search_class_startsendswith.o stri_search_class_subset.o stri_search_class_trim.o stri_search_common.o stri_search_coll_count.o stri_search_coll_detect.o stri_search_coll_extract.o stri_search_coll_locate.o stri_search_coll_replace.o stri_search_coll_split.o stri_search_coll_startsendswith.o stri_search_coll_subset.o stri_search_boundaries_count.o stri_search_boundaries_extract.o stri_search_boundaries_locate.o stri_search_boundaries_split.o stri_search_fixed_count.o stri_search_fixed_detect.o stri_search_fixed_extract.o stri_search_fixed_locate.o stri_search_fixed_replace.o stri_search_fixed_split.o stri_search_fixed_subset.o stri_search_fixed_startsendswith.o stri_search_in.o stri_search_other_split.o stri_search_regex_count.o stri_search_regex_detect.o stri_search_regex_extract.o stri_search_regex_locate.o stri_search_regex_match.o stri_search_regex_replace.o stri_search_regex_split.o stri_search_regex_subset.o stri_sort.o stri_sprintf.o stri_stats.o stri_string8.o stri_stringi.o stri_sub.o stri_test.o stri_time_zone.o stri_time_calendar.o stri_time_symbols.o stri_time_format.o stri_trans_casemap.o stri_trans_other.o stri_trans_normalization.o stri_trans_transliterate.o stri_ucnv.o stri_uloc.o stri_utils.o stri_wrap.o -L/usr/lib/x86_64-linux-gnu -licui18n -licuuc -licudata
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/Rmjsc1WP/stringi/src'
+installing via 'install.libs.R' to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-stringi/00new/stringi
+** R
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (stringi)
+begin installing package ‘stringr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘stringr’ ...
+** package ‘stringr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (stringr)
+begin installing package ‘tidyr’
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+* installing *source* package ‘tidyr’ ...
+** package ‘tidyr’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+make[3]: Entering directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/iAfBvddr/tidyr/src'
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cpp11/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c cpp11.cpp -o cpp11.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cpp11/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c melt.cpp -o melt.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -I"/opt/R-devel/include" -DNDEBUG  -I'/home/kingaa/projects/Rpkg/phylopomp/rchk/lib/cpp11/include' -I/usr/local/include   -fpic  -Wall -g -O0 -fPIC -I/usr/include/libcxxabi  -c simplifyPieces.cpp -o simplifyPieces.o
+/usr/local/bin/wllvm++ -stdlib=libc++ -std=gnu++14 -shared -L/usr/local/lib -o tidyr.so cpp11.o melt.o simplifyPieces.o
+make[3]: Leaving directory '/home/kingaa/projects/Rpkg/phylopomp/rchk/build/iAfBvddr/tidyr/src'
+installing to /home/kingaa/projects/Rpkg/phylopomp/rchk/lib/00LOCK-tidyr/00new/tidyr/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** preparing package for lazy loading
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+During startup - Warning message:
+Setting LC_TIME failed, using "C" 
+** testing if installed package keeps a record of temporary installation path
+* DONE (tidyr)
+make[2]: Leaving directory '/tmp/Rtmp7baO0D/make_packages'
+Could not install package  phylopomp 
+character(0)
+
+
+Rchk version: 3d653b7c8f92dac912532856b55f44d2986c6553
+R version: 79896/R Under development (unstable) (2021-01-28 r79896)
+LLVM version: 10.0.0
