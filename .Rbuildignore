@@ -21,6 +21,7 @@ README\.(.?)$
 CRAN\.md$
 TODO\.md$
 BUILD\.md$
+^rchk\.out$
 ^\.gitignore$
 \.github
 ^\.travis\.yml$
