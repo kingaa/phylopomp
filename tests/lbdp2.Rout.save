@@ -1,6 +1,6 @@
 
-R version 4.3.2 (2023-10-31) -- "Eye Holes"
-Copyright (C) 2023 The R Foundation for Statistical Computing
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -50,7 +50,7 @@ Type 'q()' to quit R.
 +   logmeanexp(se=TRUE,ess=TRUE) -> llpf
 > llpf
     est      se     ess 
-12.6064  0.0322  9.9082 
+12.6521  0.0407  9.8536 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -61,7 +61,7 @@ Type 'q()' to quit R.
 > runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
-[1] 8.49
+[1] -5.15
 > 
 > replicate(
 +   n=10,
@@ -71,8 +71,8 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-  est    se 
-8.497 0.014 
+    est      se 
+-5.1400  0.0101 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -83,7 +83,7 @@ Type 'q()' to quit R.
 > runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] -21.8
+[1] -16.3
 > 
 > replicate(
 +   n=10,
@@ -94,7 +94,7 @@ Type 'q()' to quit R.
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
      est       se 
--21.8301   0.0121 
+-16.3073   0.0104 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],

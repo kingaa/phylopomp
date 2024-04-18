@@ -1,6 +1,6 @@
 
-R version 4.3.2 (2023-10-31) -- "Eye Holes"
-Copyright (C) 2023 The R Foundation for Statistical Computing
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -89,7 +89,7 @@ Using alpha for a discrete variable is not advised.
 +   logmeanexp(se=TRUE) -> llpf
 > llpf
    est     se 
-5.2150 0.0227 
+5.2192 0.0248 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
