@@ -8,8 +8,8 @@
 
 #ifndef STANDALONE
 
-#define err(...) errorcall(R_NilValue,__VA_ARGS__)
-#define warn(...) warningcall(R_NilValue,__VA_ARGS__)
+#define err(...) Rf_errorcall(R_NilValue,__VA_ARGS__)
+#define warn(...) Rf_warningcall(R_NilValue,__VA_ARGS__)
 #define rprint(S) Rprintf("%s\n",(S).c_str())
 
 #else
@@ -19,6 +19,17 @@
 #define err(...) {printf(__VA_ARGS__); printf("\n"); exit(-1);}
 #define warn(...) {printf(__VA_ARGS__); printf("\n");}
 #define rprint(S) printf("%s\n",(S).c_str())
+
+#endif
+
+#ifdef __cplusplus
+
+#define mkChar Rf_mkChar
+#define mkString Rf_mkString
+#define ScalarInteger Rf_ScalarInteger
+#define ScalarReal Rf_ScalarReal
+#define install Rf_install
+#define isNull Rf_isNull
 
 #endif
 
