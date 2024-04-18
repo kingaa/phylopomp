@@ -58,8 +58,7 @@ qcheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=FALSE,\
 args=c("--no-tests"))
 qqcheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=FALSE,\
 args=c("--no-tests","--no-codoc","--no-examples"))
-xcheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=TRUE,\
-env_vars=c("_R_CHECK_DEPENDS_ONLY_"="TRUE"))
+xcheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=TRUE)
 ycheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=TRUE,\
 args=c("--run-dontrun","--run-donttest"))
 
