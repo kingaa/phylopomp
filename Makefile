@@ -1,6 +1,7 @@
 REPODIR = repo
 INCLUDES =
 HEADERS = src/decls.h
+SESSION_PKGS = datasets,utils,grDevices,graphics,stats,methods,tidyverse,pomp,$(PKG)
 
 include rules.mk
 

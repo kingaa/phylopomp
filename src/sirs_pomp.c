@@ -31,20 +31,29 @@ static double event_rates
  ) {
   double event_rate = 0;
   *penalty = 0;
+  if (I < lin) err("I < lin");
   // transmission with saturation 0 or 1
   {
     double f = Beta*S*I/N;
     double g = lin*(lin-1)/I/(I+1);
     g = (g < 1) ? g : 1;
+    *rate = f*(1-g);
+    event_rate += *rate;
     *penalty += f*g;
-    event_rate += (*rate = f*(1-g));
   }
   rate++;
   // recovery
-  event_rate += (*rate = gamma*I);
+  if (I > lin) {
+    *rate = gamma*I;
+    event_rate += *rate;
+  } else {
+    *rate = 0;
+    *penalty += gamma*I;
+  }
   rate++;
   // loss of immunity
-  event_rate += (*rate = omega*R);
+  *rate = omega*R;
+  event_rate += *rate;
   rate++;
   // sampling
   *penalty += psi*I;
@@ -83,16 +92,18 @@ void sirs_gill
   // deal with event at start of interval:
   ll = 0;
   int ind = nearbyint(code);
-  if (ind == 1) {                // coalescent
+  if (ind == 1) {                // birth, s = 2
     ll += (I > 0) ? log(Beta*S*I/N) : R_NegInf;
     S -= 1; I += 1;
     ll += (I >= lin && lin > 1) ? -log(I*(I-1)/2) : R_NegInf;
-  } else if (ind == 0) {         // dead sample
+  } else if (ind == 0) {         // sample, s = 1
     ll += (I >= lin) ? log(psi) : R_NegInf;
-  } else if (ind == -1) {        // live sample
+  } else if (ind == -1) {        // sample, s = 0
     ll += (I > 0) ? log(psi*I) : R_NegInf;
     ll += (I > lin) ? log(1-lin/I) : R_NegInf;
   }
+  if (I < lin) err("cannot have I < lin!");
+
   // take Gillespie steps to the end of the interval:
   int event;
   double penalty = 0;

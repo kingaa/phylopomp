@@ -21,7 +21,6 @@ static double event_rates
  const int *__covindex,
  const double *__covars,
  double *rate,
- double *boost,
  double *penalty
  ) {
   double event_rate = 0;
@@ -29,10 +28,9 @@ static double event_rates
   if (n < lin) err("n < lin");
   // birth with saturation 0 or 1
   *rate = lambda*(n-lin*(lin-1)/(n+1));
-  *boost = 0;
   *penalty += lambda*n-(*rate);
   event_rate += *rate;
-  rate++; boost++;
+  rate++;
   // death
   if (n > lin) {
     *rate = mu*n;
@@ -40,7 +38,6 @@ static double event_rates
     *rate = 0;
     *penalty += mu*n;
   }
-  *boost = 0;
   event_rate += *rate;
   rate++;
   // sampling
@@ -89,17 +86,16 @@ void lbdp_gill
   // Gillespie steps:
   int event;
   double penalty = 0;
-  double rate[2], boost[2];
+  double rate[2];
 
   double event_rate = event_rates(__x,__p,t,
                                   __stateindex,__parindex,__covindex,
-                                  __covars,rate,boost,&penalty);
+                                  __covars,rate,&penalty);
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
     ll -= penalty*tstep;
     event = rcateg(event_rate,rate,2);
-    ll += boost[event];
     switch (event) {
     case 0:                     // birth
       n += 1;
@@ -114,7 +110,7 @@ void lbdp_gill
     t += tstep;
     event_rate = event_rates(__x,__p,t,
                              __stateindex,__parindex,__covindex,
-                             __covars,rate,boost,&penalty);
+                             __covars,rate,&penalty);
     tstep = exp_rand()/event_rate;
   }
   tstep = tmax - t;
