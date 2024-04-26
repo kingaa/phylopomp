@@ -147,12 +147,12 @@ public:
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-        err("in '%s': invalid rate[%ld]=%lg",__func__,event,rate[event]); // #nocov
+        err("in '%s': invalid rate[%zd]=%lg",__func__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;
     }
     if (event >= nevent)
-      err("in '%s': invalid event %ld!",__func__,event); // #nocov
+      err("in '%s': invalid event %zd!",__func__,event); // #nocov
   };
 
   //! run process to a specified time.
