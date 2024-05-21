@@ -1,6 +1,8 @@
 #ifndef _PHYLOPOMP_INTERNAL_H_
 #define _PHYLOPOMP_INTERNAL_H_
 
+#define R_NO_REMAP
+
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
@@ -49,7 +51,7 @@ static inline int set_list_elem
  const char *name, int pos
  ) {
   SET_ELEMENT(list,pos,element);
-  SET_STRING_ELT(names,pos,mkChar(name));
+  SET_STRING_ELT(names,pos,Rf_mkChar(name));
   return ++pos;
 }
 
