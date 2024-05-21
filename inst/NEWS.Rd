@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.11}{
+  \itemize{
+    \item The SEIRS model pomp object has been refactored.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.10}{
   \itemize{
     \item \code{getInfo()}, \code{parse_newick()} now always trace lineages.
