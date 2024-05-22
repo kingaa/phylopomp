@@ -1,8 +1,8 @@
 #ifndef _INIT_H_
 #define _INIT_H_
 
-#include "internal.h"
 #include <R_ext/Rdynload.h>
+#include "internal.h"
 
 #define DECLARATIONS(X)							\
   SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0);			\

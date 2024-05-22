@@ -90,13 +90,13 @@ public:
   name_t& deme (void) {
     return _deme;
   };
-  //! view owner
+  //! view owner of a green ball
   node_t* owner (void) const {
     if (color != green)
       err("ask not who owns a %s ball!",colores[color]); // #nocov
     return _owner;
   };
-  //! change owner
+  //! change owner of a green ball
   node_t*& owner (void) {
     if (color != green)
       err("meddle not with the owner of a %s ball!",colores[color]); // #nocov

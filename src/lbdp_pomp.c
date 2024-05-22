@@ -24,21 +24,25 @@ static double event_rates
  double *penalty
  ) {
   double event_rate = 0;
+  double alpha, disc;
   *penalty = 0;
-  if (n < lin) err("n < lin");
+  assert(n >= lin);
   // birth with saturation 0 or 1
-  *rate = lambda*(n-lin*(lin-1)/(n+1));
-  *penalty += lambda*n-(*rate);
+  alpha = lambda*n;
+  disc = lin*(lin-1)/n/(n+1);
+  *rate = alpha*(1-disc);
   event_rate += *rate;
+  *penalty += alpha*disc;
   rate++;
   // death
+  alpha = mu*n;
   if (n > lin) {
-    *rate = mu*n;
+    *rate = alpha;
+    event_rate += *rate;
   } else {
     *rate = 0;
-    *penalty += mu*n;
+    *penalty += alpha;
   }
-  event_rate += *rate;
   rate++;
   // sampling
   *penalty += psi*n;
@@ -94,8 +98,8 @@ void lbdp_gill
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
-    ll -= penalty*tstep;
     event = rcateg(event_rate,rate,2);
+    ll -= penalty*tstep;
     switch (event) {
     case 0:                     // birth
       n += 1;
@@ -103,9 +107,9 @@ void lbdp_gill
     case 1:                     // death
       n -= 1;
       break;
-    default:                                     // #nocov
-      err("impossible error in '%s'!",__func__); // #nocov
-      break;                                     // #nocov
+    default:			// #nocov
+      assert(0);		// #nocov
+      break;			// #nocov
     }
     t += tstep;
     event_rate = event_rates(__x,__p,t,
@@ -135,13 +139,3 @@ void lbdp_dmeas
  ) {
   lik = (give_log) ? ll : exp(ll);
 }
-
-#undef lik
-#undef lambda
-#undef mu
-#undef n0
-#undef psi
-#undef lin
-#undef code
-#undef n
-#undef ll

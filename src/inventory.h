@@ -5,10 +5,10 @@
 #define _INVENTORY_H_
 
 #include <utility>
-#include "internal.h"
 #include "ball.h"
 #include "pocket.h"
 #include "node.h"
+#include "internal.h"
 
 //! Representation for the inventory process.
 

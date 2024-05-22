@@ -26,6 +26,7 @@ cc_template <-   r"{// {%name%}: {%descript%} (C++)
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
+#include "internal.h"
 
 //! {%name%} process state.
 typedef struct {
@@ -82,9 +83,9 @@ template<>
 void {%gen%}::jump (int event) {
   switch (event) {
   {%jumps%}
-  default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-    break;
+  default:			// #nocov
+    assert(false);		// #nocov
+    break;			// #nocov
   }
 }
 

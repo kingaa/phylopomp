@@ -152,7 +152,7 @@ public:
       event++;
     }
     if (event >= nevent)
-      err("in '%s': invalid event %zd!",__func__,event); // #nocov
+      err("in '%s': invalid event %zd",__func__,event); // #nocov
   };
 
   //! run process to a specified time.

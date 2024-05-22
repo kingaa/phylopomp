@@ -9,9 +9,9 @@
 #include <utility>
 #include <stdexcept>
 
-#include "internal.h"
 #include "nodeseq.h"
 #include "inventory.h"
+#include "internal.h"
 
 static const size_t MEMORY_MAX = (1<<28); // 256MB
 
@@ -410,9 +410,9 @@ public:
           case black:
             p->erase(b); delete b;
             break;
-          case green: case blue:                     // #nocov
-            err("in '%s': inconceivable!",__func__); // #nocov
-            break;                                   // #nocov
+          case green: case blue: // #nocov
+            assert(false);       // #nocov
+            break;               // #nocov
           }
         }
         b = p->last_ball();

@@ -6,7 +6,12 @@
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
-#include <Rinternals.h>
+
+#ifdef __cplusplus
+#include <cassert>
+#else
+#include <assert.h>
+#endif
 
 #ifndef STANDALONE
 
@@ -63,8 +68,7 @@ static inline int rcateg (double erate, double *rate, int nrate) {
       err("in '%s': invalid rate rate[%d]=%lg",__func__,e,rate[e]); // #nocov
     u -= rate[e++];
   }
-  if (e == nrate)
-    err("inconceivable! in '%s'",__func__); // #nocov
+  assert(e!=nrate);             // #nocov
   return e;
 }
 

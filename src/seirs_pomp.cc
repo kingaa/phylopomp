@@ -1,22 +1,13 @@
+#include "genealogy.h"
+#include "internal.h"
+
 #include <pomp.h>
 #include <R_ext/Rdynload.h>
-#include "internal.h"
-#include "genealogy.h"
 
 static int nSAMPLE = 0;
 
 static inline int random_choice (double n) {
   return 1+int(floor(R_unif_index(n)));
-}
-
-static inline int rcateg (double *rate, double total) {
-  int event = -1;
-  double u;
-  u = total*unif_rand();
-  while (u > 0) {
-    u -= rate[++event];
-  }
-  return event;
 }
 
 static void change_color (double *y, int n, int from, int to) {
@@ -46,8 +37,8 @@ static void change_color (double *y, int n, int from, int to) {
 #define R         (__x[__stateindex[3]])
 #define ll        (__x[__stateindex[4]])
 #define node      (__x[__stateindex[5]])
-#define linE      (__x[__stateindex[6]])
-#define linI      (__x[__stateindex[7]])
+#define ellE      (__x[__stateindex[6]])
+#define ellI      (__x[__stateindex[7]])
 #define LINEAGE   (__x[__stateindex[8]])
 
 static double event_rates
@@ -68,7 +59,7 @@ static double event_rates
   *penalty = 0;
   // 0: transmission, s=(0,0)
   alpha = Beta*S*I/N;
-  pi = 1-linI/(I+1);
+  pi = 1-ellI/(I+1);
   *rate = alpha*pi;
   *logpi = log(pi);
   event_rate += *rate;
@@ -76,25 +67,25 @@ static double event_rates
   // 1: transmission, s=(0,1)
   pi = (1-pi)/2;
   *rate = alpha*pi;
-  *logpi = log(pi)-log(linI);
+  *logpi = log(pi)-log(ellI);
   event_rate += *rate;
   rate++; logpi++;
   // 2: transmission, s=(1,0)
   *rate = alpha*pi;
-  *logpi = log(pi)-log(linI);
+  *logpi = log(pi)-log(ellI);
   event_rate += *rate;
   rate++; logpi++;
   // 3: progression, s=(0,0)
   // 4: progression, s=(0,1)
   alpha = sigma*E;
-  pi = linE/(E+1);
-  if (E > linE) {
+  pi = ellE/(E+1);
+  if (E > ellE) {
     *rate = alpha*(1-pi);
     *logpi = log(1-pi);
     event_rate += *rate;
     rate++; logpi++;
     *rate = alpha*pi;
-    *logpi = log(pi)-log(linE);
+    *logpi = log(pi)-log(ellE);
     event_rate += *rate;
     rate++; logpi++;
   } else {
@@ -108,7 +99,7 @@ static double event_rates
   }
   // 5: recovery
   alpha = gamma*I;
-  if (I > linI) {
+  if (I > ellI) {
     *rate = alpha;
     *logpi = 0;
     event_rate += *rate;
@@ -153,14 +144,12 @@ extern "C" {
     I = nearbyint(I0*m);
     R = nearbyint(R0*m);
 
-    linE = 0;
-    linI = 0;
+    ellE = 0;
+    ellI = 0;
     ll = 0;
 
     double nE = E;
     double nI = I;
-    int pick;
-
     int node_count = -1;
     node_it i = G.cbegin();
     while ((*i)->is_root() && i != G.cend()) {
@@ -169,19 +158,19 @@ extern "C" {
       for (ball_it j = p->cbegin(); j != p->cend(); j++) {
         ball_t *b = *j;
         if (p->green_ball() != b) { // exclude own balls
-          pick = random_choice(nE+nI);
+          int pick = random_choice(nE+nI);
           if (pick <= nearbyint(nE)) {
             linvec[p->lineage(b)] = 0; // lineage is put into E deme
-            linE += 1; nE -= 1;
+            ellE += 1; nE -= 1;
           } else {
             linvec[p->lineage(b)] = 1; // lineage is put into I deme
-            linI += 1; nI -= 1;
+            ellI += 1; nI -= 1;
           }
         }
       }
     }
-    linE = nearbyint(linE);
-    linI = nearbyint(linI);
+    ellE = nearbyint(ellE);
+    ellI = nearbyint(ellI);
     node = node_count;
   }
 
@@ -202,51 +191,53 @@ extern "C" {
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
+    // traverse to current genealogical node
     int M = nearbyint(node);
     int node_count = 0;
     node_it k = G.cbegin();
     while (node_count < M && k != G.cend()) {
       node_count++; k++;
     }
-    if (k == G.cend())
-      err("something is terribly wrong in '%s'!",__func__); // #nocov
+    assert(k != G.cend());	// #nocov
 
     node_t *p = *k;
     node = node+1;
 
-    // singular portion
+    // singular portion of filter equation
     if (!p->is_root()) {
       ll = 0;
       int parent = p->lineage();
-      if (parent < 0 || parent >= nSAMPLE) err("big trouble!"); // #nocov
-      if (ISNA(linvec[parent])) {
-        err("undefined parent lineage"); // #nocov
-      } else if (nearbyint(linvec[parent]) != 1) { // parent is not in deme I
+
+      assert(parent >= 0 && parent < nSAMPLE); // #nocov
+      assert(!ISNA(linvec[parent]));	       // #nocov
+
+      // if parent is not in deme I, likelihood = 0
+      if (nearbyint(linvec[parent]) != 1) {
         ll += R_NegInf;
         linvec[parent] = 1;
-        linE -= 1; linI += 1;
+        ellE -= 1; ellI += 1;
         E -= 1; I += 1;
       }
+
       if (p->holds(blue)) {     // sample
         ball_t *b = p->ball(blue);
-        if (p->holds(green)) {  // s = (0,1)
+        if (p->holds(green)) {  // s=(0,1)
           ball_t *g = p->other(b);
-          ll += log(psi);
+          ll += log(psi);       // boost
           linvec[p->lineage(g)] = 1;
-        } else {                // s = (0,0)
-          linI -= 1;
-          ll += log(psi*(I-linI));
+        } else {                // s=(0,0)
+          ellI -= 1;
+          ll += log(psi*(I-ellI)); // boost
         }
         linvec[parent] = R_NaReal;
-      } else if (p->holds(green)) { // branch point s = (1,1)
+      } else if (p->holds(green)) { // branch point s=(1,1)
         ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
         S -= 1; E += 1;
-        linE += 1;
+        ellE += 1;
         ball_t *a = p->last_ball();
         ball_t *b = p->other(a);
-        if (a==b || p->lineage(a) == p->lineage(b)) err("oh no.");
-        if (p->lineage(a) != p->lineage() &&
-            p->lineage(b) != p->lineage()) err("oh dear.");
+        assert(a != b && p->lineage(a) != p->lineage(b)); // #nocov
+	assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage()); // #nocov
         if (unif_rand() < 0.5) {
           linvec[p->lineage(a)] = 0;
           linvec[p->lineage(b)] = 1;
@@ -260,8 +251,8 @@ extern "C" {
       }
     }
 
-    // continuous portion:
-    // take Gillespie steps to the end of the interval:
+    // continuous portion of filter equation:
+    // take Gillespie steps to the end of the interval
     double rate[7], logpi[7];
     int event;
     double event_rate = 0;
@@ -273,32 +264,32 @@ extern "C" {
     tstep = exp_rand()/event_rate;
 
     while (t + tstep < tmax) {
-      event = rcateg(rate,event_rate);
+      event = rcateg(event_rate,rate,7);
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                   // transmission, s=(0,0)
         S -= 1; E += 1;
-        ll += log(1-linI/I)+log(1-linE/E);
+        ll += log(1-ellI/I)+log(1-ellE/E);
         break;
       case 1:                   // transmission, s=(0,1)
         S -= 1; E += 1;
-        ll += log(1-linE/E)-log(I);
+        ll += log(1-ellE/E)-log(I);
         break;
       case 2:                   // transmission, s=(1,0)
         S -= 1; E += 1;
-        ll += log(1-linI/I)-log(E);
-        change_color(linvec,random_choice(linI),1,0);
-        linE += 1; linI -= 1;
+        ll += log(1-ellI/I)-log(E);
+        change_color(linvec,random_choice(ellI),1,0);
+        ellE += 1; ellI -= 1;
         break;
       case 3:                   // progression, s=(0,0)
         E -= 1; I += 1;
-        ll += log(1-linI/I);
+        ll += log(1-ellI/I);
         break;
       case 4:                   // progression, s=(0,1)
         E -= 1; I += 1;
         ll -= log(I);
-        change_color(linvec,random_choice(linE),0,1);
-        linE -= 1; linI += 1;
+        change_color(linvec,random_choice(ellE),0,1);
+        ellE -= 1; ellI += 1;
         break;
       case 5:                   // recovery
         I -= 1; R += 1;
@@ -306,13 +297,13 @@ extern "C" {
       case 6:                   // waning
         R -= 1; S += 1;
         break;
-      default:                                     // #nocov
-        err("impossible error in '%s'!",__func__); // #nocov
-        break;                                     // #nocov
+      default:			// #nocov
+	assert(false);		// #nocov
+	break;			// #nocov
       }
 
-      linE = nearbyint(linE);
-      linI = nearbyint(linI);
+      ellE = nearbyint(ellE);
+      ellI = nearbyint(ellI);
 
       t += tstep;
       event_rate = event_rates(__x,__p,t,
@@ -341,6 +332,7 @@ extern "C" {
    const double *__covars,
    double t
    ) {
+    assert(!ISNA(ll));		// #nocov
     lik = (give_log) ? ll : exp(ll);
   }
 

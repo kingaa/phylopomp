@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include <string>
 #include <cstring>
-#include "internal.h"
 #include "node.h"
+#include "internal.h"
 
 typedef typename std::list<node_t*>::const_iterator node_it;
 typedef typename std::list<node_t*>::iterator node_nit;
@@ -173,8 +173,7 @@ public:
   //! (1) the node becomes thereby a dead root, or
   //! (2) the node's pocket becomes thereby empty.
   void drop (ball_t *a) {
-    if (!a->is(black))
-      err("in '%s': inconceivable! (color: %s)",__func__,colores[a->color]); // #nocov
+    assert(a->is(black));
     node_t *p = a->holder();
     if (p->size() > 1) {
       p->erase(a);

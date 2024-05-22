@@ -10,7 +10,7 @@
 #define I0        (__p[__parindex[5]])
 #define R0        (__p[__parindex[6]])
 #define N         (__p[__parindex[7]])
-#define lin       (__covars[__covindex[0]])
+#define ell       (__covars[__covindex[0]])
 #define code      (__covars[__covindex[1]])
 #define S         (__x[__stateindex[0]])
 #define I         (__x[__stateindex[1]])
@@ -31,32 +31,36 @@ static double event_rates
  ) {
   double event_rate = 0;
   *penalty = 0;
-  if (I < lin) err("I < lin");
+  double alpha, disc;
+
+  assert(I >= ell);		// #nocov
+
   // transmission with saturation 0 or 1
-  {
-    double f = Beta*S*I/N;
-    double g = lin*(lin-1)/I/(I+1);
-    g = (g < 1) ? g : 1;
-    *rate = f*(1-g);
-    event_rate += *rate;
-    *penalty += f*g;
-  }
+  alpha = Beta*S*I/N;
+  disc = ell*(ell-1)/I/(I+1);
+  *rate = alpha*(1-disc);
+  event_rate += *rate;
+  *penalty += alpha*disc;
   rate++;
   // recovery
-  if (I > lin) {
-    *rate = gamma*I;
+  alpha = gamma*I;
+  if (I > ell) {
+    *rate = alpha;
     event_rate += *rate;
   } else {
     *rate = 0;
-    *penalty += gamma*I;
+    *penalty += alpha;
   }
   rate++;
   // loss of immunity
-  *rate = omega*R;
+  alpha = omega*R;
+  *rate = alpha;
   event_rate += *rate;
   rate++;
   // sampling
-  *penalty += psi*I;
+  alpha = psi*I;
+  *penalty += alpha;
+
   return event_rate;
 }
 
@@ -95,14 +99,14 @@ void sirs_gill
   if (ind == 1) {                // birth, s = 2
     ll += (I > 0) ? log(Beta*S*I/N) : R_NegInf;
     S -= 1; I += 1;
-    ll += (I >= lin && lin > 1) ? -log(I*(I-1)/2) : R_NegInf;
+    ll += (I >= ell && ell > 1) ? -log(I*(I-1)/2) : R_NegInf;
   } else if (ind == 0) {         // sample, s = 1
-    ll += (I >= lin) ? log(psi) : R_NegInf;
+    ll += (I >= ell) ? log(psi) : R_NegInf;
   } else if (ind == -1) {        // sample, s = 0
     ll += (I > 0) ? log(psi*I) : R_NegInf;
-    ll += (I > lin) ? log(1-lin/I) : R_NegInf;
+    ll += (I > ell) ? log(1-ell/I) : R_NegInf;
   }
-  if (I < lin) err("cannot have I < lin!");
+  if (I < ell) err("cannot have I < ell!");
 
   // take Gillespie steps to the end of the interval:
   int event;
@@ -115,8 +119,8 @@ void sirs_gill
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
-    ll -= penalty*tstep;
     event = rcateg(event_rate,rate,3);
+    ll -= penalty*tstep;
     switch (event) {
     case 0:                     // transmission
       S -= 1; I += 1;
@@ -127,9 +131,9 @@ void sirs_gill
     case 2:                     // loss of immunity
       R -= 1; S += 1;
       break;
-    default:                                     // #nocov
-      err("impossible error in '%s'!",__func__); // #nocov
-      break;                                     // #nocov
+    default:			// #nocov
+      assert(0);		// #nocov
+      break;			// #nocov
     }
     t += tstep;
     event_rate = event_rates(__x,__p,t,
@@ -159,19 +163,3 @@ void sirs_dmeas
  ){
   lik = (give_log) ? ll : exp(ll);
 }
-
-#undef lik
-#undef omega
-#undef Beta
-#undef gamma
-#undef psi
-#undef S0
-#undef I0
-#undef R0
-#undef N
-#undef lin
-#undef code
-#undef S
-#undef I
-#undef R
-#undef ll

@@ -8,8 +8,8 @@
 #include <unordered_map>
 #include <string>
 #include <cstring>
-#include "internal.h"
 #include "ball.h"
+#include "internal.h"
 
 //! Ordering for balls in pockets.
 

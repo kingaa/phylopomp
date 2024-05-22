@@ -2,6 +2,7 @@
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
+#include "internal.h"
 
 //! SIR process state.
 typedef struct {
@@ -99,9 +100,9 @@ void sir_genealogy_t::jump (int event) {
   case 3:
     state.R -= 1; state.S += 1;
     break;
-  default:                                                // #nocov
-    err("in %s: c'est impossible! (%d)",__func__,event);  // #nocov
-    break;                                                // #nocov
+  default:			// #nocov
+    assert(false);		// #nocov
+    break;			// #nocov
   }
 }
 

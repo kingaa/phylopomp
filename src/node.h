@@ -4,11 +4,11 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include "internal.h"
-#include "ball.h"
-#include "pocket.h"
 #include <string>
 #include <cstring>
+#include "ball.h"
+#include "pocket.h"
+#include "internal.h"
 
 static const name_t null_lineage = name_t(NA_INTEGER);
 

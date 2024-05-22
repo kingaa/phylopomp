@@ -11,9 +11,9 @@
 
 #include <string>
 #include <cstring>
-#include "internal.h"
 #include "popul_proc.h"
 #include "genealogy.h"
+#include "internal.h"
 
 //! Encodes the master process.
 
