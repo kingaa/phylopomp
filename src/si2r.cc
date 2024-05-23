@@ -142,9 +142,9 @@ void si2r_genealogy_t::jump (int event) {
   case 8:
     state.R -= 1; state.S += 1;
     break;
-  default:			// #nocov
-    assert(false);		// #nocov
-    break;			// #nocov
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

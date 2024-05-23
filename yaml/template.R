@@ -83,9 +83,9 @@ template<>
 void {%gen%}::jump (int event) {
   switch (event) {
   {%jumps%}
-  default:			// #nocov
-    assert(false);		// #nocov
-    break;			// #nocov
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 
@@ -93,16 +93,16 @@ GENERICS({%name%},{%gen%})
 }"
 
 r_template <- r"[##' {%description%}
-##' 
+##'
 ##' {%details%}
-##' 
+##'
 ##' @name {%rdname%}
 ##' @family Genealogy processes
 ##' @aliases {%name%}
 {%param_descript%}
 ##'
 ##' @return \code{run{%name%}} and \code{continue{%name%}} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{{%name%}}.
-##' 
+##'
 NULL
 
 ##' @rdname {%rdname%}
@@ -135,7 +135,7 @@ continue{%name%} <- function (
 make_model <- function (file) {
 
   read_yaml(file) -> model
-  
+
   render(
     cc_template,
     name=model$name,
@@ -257,7 +257,7 @@ make_model <- function (file) {
   ) |>
     cat(file=sprintf("R/%s.R",tolower(model$name)))
   invisible(NULL)
-}  
+}
 
 for (f in list.files(pattern=r"{.*\.yml$}")) {
   cat("processing",f,"\n")

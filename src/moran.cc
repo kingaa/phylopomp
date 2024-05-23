@@ -73,9 +73,9 @@ void moran_genealogy_t::jump (int event) {
   case 1:
     state.g += 1; sample();
     break;
-  default:			// #nocov
-    assert(false);		// #nocov
-    break;			// #nocov
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

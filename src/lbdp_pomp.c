@@ -49,6 +49,7 @@ static double event_rates
   return event_rate;
 }
 
+//! Latent-state initializer (rinit).
 void lbdp_rinit
 (
  double *__x,
@@ -63,6 +64,9 @@ void lbdp_rinit
   ll = 0;
 }
 
+//! Latent-state process simulator (rprocess).
+//!
+//! This integrates the filter equation.
 void lbdp_gill
 (
  double *__x,
@@ -107,9 +111,9 @@ void lbdp_gill
     case 1:                     // death
       n -= 1;
       break;
-    default:			// #nocov
-      assert(0);		// #nocov
-      break;			// #nocov
+    default:                    // #nocov
+      assert(0);                // #nocov
+      break;                    // #nocov
     }
     t += tstep;
     event_rate = event_rates(__x,__p,t,
@@ -123,6 +127,7 @@ void lbdp_gill
 
 # define lik  (__lik[0])
 
+//! Measurement model likelihood (dmeasure).
 void lbdp_dmeas
 (
  double *__lik,

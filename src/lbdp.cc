@@ -78,9 +78,9 @@ void lbdp_genealogy_t::jump (int event) {
   case 2:
     sample();
     break;
-  default:			// #nocov
-    assert(false);		// #nocov
-    break;			// #nocov
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

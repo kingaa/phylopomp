@@ -40,7 +40,7 @@
 
 #endif
 
-typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
+typedef Rbyte raw_t;
 typedef double slate_t;
 typedef size_t name_t;
 

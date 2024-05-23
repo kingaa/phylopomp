@@ -33,7 +33,7 @@ static double event_rates
   *penalty = 0;
   double alpha, disc;
 
-  assert(I >= ell);		// #nocov
+  assert(I >= ell);             // #nocov
 
   // transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
@@ -64,6 +64,7 @@ static double event_rates
   return event_rate;
 }
 
+//! Latent-state initializer (rinit).
 void sirs_rinit
 (
  double *__x,
@@ -81,6 +82,9 @@ void sirs_rinit
   ll = 0;
 }
 
+//! Latent-state process simulator (rprocess).
+//!
+//! This integrates the filter equation.
 void sirs_gill
 (
  double *__x,
@@ -131,9 +135,9 @@ void sirs_gill
     case 2:                     // loss of immunity
       R -= 1; S += 1;
       break;
-    default:			// #nocov
-      assert(0);		// #nocov
-      break;			// #nocov
+    default:                    // #nocov
+      assert(0);                // #nocov
+      break;                    // #nocov
     }
     t += tstep;
     event_rate = event_rates(__x,__p,t,
@@ -147,6 +151,7 @@ void sirs_gill
 
 # define lik  (__lik[0])
 
+//! Measurement model likelihood (dmeasure).
 void sirs_dmeas
 (
  double *__lik,

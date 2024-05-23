@@ -411,7 +411,7 @@ public:
             p->erase(b); delete b;
             break;
           case green: case blue: // #nocov
-            assert(false);       // #nocov
+            assert(0);       // #nocov
             break;               // #nocov
           }
         }

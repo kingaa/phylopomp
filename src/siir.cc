@@ -139,9 +139,9 @@ void siir_genealogy_t::jump (int event) {
   case 8:
     state.S += 1; state.R -= 1;
     break;
-  default:			// #nocov
-    assert(false);		// #nocov
-    break;			// #nocov
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

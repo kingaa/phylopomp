@@ -122,6 +122,12 @@ static double event_rates
 
 extern "C" {
 
+  //! Latent-state initializer (rinit component).
+  //!
+  //! The state variables include S, E, I, R
+  //! plus 'ellE' and 'ellI' (numbers of E- and I-deme lineages),
+  //! the accumulated weight ('ll'),
+  //! and the coloring of each lineage ('COLOR').
   void seirs_rinit
   (
    double *__x,
@@ -148,6 +154,7 @@ extern "C" {
     ellI = 0;
     ll = 0;
 
+    // color lineages by sampling without replacement
     double nE = E;
     double nI = I;
     int node_count = -1;
@@ -174,6 +181,10 @@ extern "C" {
     node = node_count;
   }
 
+  //! Simulator for the latent-state process (rprocess).
+  //!
+  //! This is the Gillespie algorithm applied to the solution of the
+  //! filter equation for the SEIRS process.
   void seirs_gill
   (
    double *__x,
@@ -198,7 +209,7 @@ extern "C" {
     while (node_count < M && k != G.cend()) {
       node_count++; k++;
     }
-    assert(k != G.cend());	// #nocov
+    assert(k != G.cend());      // #nocov
 
     node_t *p = *k;
     node = node+1;
@@ -237,7 +248,7 @@ extern "C" {
         ball_t *a = p->last_ball();
         ball_t *b = p->other(a);
         assert(a != b && p->lineage(a) != p->lineage(b)); // #nocov
-	assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage()); // #nocov
+        assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage()); // #nocov
         if (unif_rand() < 0.5) {
           linvec[p->lineage(a)] = 0;
           linvec[p->lineage(b)] = 1;
@@ -297,9 +308,9 @@ extern "C" {
       case 6:                   // waning
         R -= 1; S += 1;
         break;
-      default:			// #nocov
-	assert(false);		// #nocov
-	break;			// #nocov
+      default:                  // #nocov
+        assert(0);              // #nocov
+        break;                  // #nocov
       }
 
       ellE = nearbyint(ellE);
@@ -318,6 +329,7 @@ extern "C" {
 
 # define lik  (__lik[0])
 
+  //! Measurement model likelihood (dmeasure).
   void seirs_dmeas
   (
    double *__lik,
@@ -332,7 +344,7 @@ extern "C" {
    const double *__covars,
    double t
    ) {
-    assert(!ISNA(ll));		// #nocov
+    assert(!ISNA(ll));          // #nocov
     lik = (give_log) ? ll : exp(ll);
   }
 
