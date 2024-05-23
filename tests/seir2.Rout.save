@@ -59,40 +59,40 @@ Error : in 'seirs_pomp': 'S0','E0','I0','R0' must be nonnegative integers.
 NOTE: The provided objects 'genealogy','nsample' are available for use by POMP basic components.
 > 
 > po |> rinit(nsim=5)
-         .id
-name      [,1] [,2] [,3] [,4] [,5]
-  S        100  100  100  100  100
-  E          3    3    3    3    3
-  I          5    5    5    5    5
-  R        100  100  100  100  100
-  ll         0    0    0    0    0
-  node       5    5    5    5    5
-  linE       2    3    3    3    2
-  linI       4    3    3    3    4
-  lineage    1    0    1    1    1
-             0    1    1    1    0
-             1    0    0    0    1
-            NA   NA   NA   NA   NA
-             0    1    1    0    1
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-            NA   NA   NA   NA   NA
-             1    0    0    0    1
-             1    1    0    1    0
+       .id
+name    [,1] [,2] [,3] [,4] [,5]
+  S      100  100  100  100  100
+  E        3    3    3    3    3
+  I        5    5    5    5    5
+  R      100  100  100  100  100
+  ll       0    0    0    0    0
+  node     5    5    5    5    5
+  ellE     2    3    3    3    2
+  ellI     4    3    3    3    4
+  color    1    0    1    1    1
+           0    1    1    1    0
+           1    0    0    0    1
+          NA   NA   NA   NA   NA
+           0    1    1    0    1
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+           1    0    0    0    1
+           1    1    0    1    0
 > 
 > po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
 > pf |> logLik()

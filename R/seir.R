@@ -39,6 +39,10 @@ runSEIR <- function (
 }
 
 ##' @rdname seir
+##' @export
+runSEIRS <- runSEIR
+
+##' @rdname seir
 ##' @inheritParams simulate
 ##' @export
 continueSEIR <- function (
@@ -52,6 +56,10 @@ continueSEIR <- function (
   .Call(P_runSEIR,x,time) |>
     structure(model="SEIR",class=c("gpsim","gpgen"))
 }
+
+##' @rdname seir
+##' @export
+continueSEIRS <- continueSEIR
 
 ##' @name seirs_pomp
 ##' @rdname seir
@@ -93,7 +101,7 @@ seirs_pomp <- function (
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
     dmeasure="seirs_dmeas",
-    statenames=c("S","E","I","R","ll","node","linE","linI","lineage"),
+    statenames=c("S","E","I","R","ll","node","ellE","ellI","color"),
     paramnames=c(
       "Beta","sigma","gamma","psi","omega",
       "S0","E0","I0","R0","N"

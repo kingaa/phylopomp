@@ -39,7 +39,7 @@ static void change_color (double *y, int n, int from, int to) {
 #define node      (__x[__stateindex[5]])
 #define ellE      (__x[__stateindex[6]])
 #define ellI      (__x[__stateindex[7]])
-#define LINEAGE   (__x[__stateindex[8]])
+#define COLOR     (__x[__stateindex[8]])
 
 static double event_rates
 (
@@ -138,7 +138,7 @@ extern "C" {
    const int *__covindex,
    const double *__covars
    ){
-    double *linvec = &LINEAGE;
+    double *color = &COLOR;
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
 
@@ -167,10 +167,10 @@ extern "C" {
         if (p->green_ball() != b) { // exclude own balls
           int pick = random_choice(nE+nI);
           if (pick <= nearbyint(nE)) {
-            linvec[p->lineage(b)] = 0; // lineage is put into E deme
+            color[p->lineage(b)] = 0; // lineage is put into E deme
             ellE += 1; nE -= 1;
           } else {
-            linvec[p->lineage(b)] = 1; // lineage is put into I deme
+            color[p->lineage(b)] = 1; // lineage is put into I deme
             ellI += 1; nI -= 1;
           }
         }
@@ -197,7 +197,7 @@ extern "C" {
    double dt
    ){
     double tstep = 0.0, tmax = t + dt;
-    double *linvec = &LINEAGE;
+    double *color = &COLOR;
 
     get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
     genealogy_t G = gud("genealogy");
@@ -220,12 +220,12 @@ extern "C" {
       int parent = p->lineage();
 
       assert(parent >= 0 && parent < nSAMPLE); // #nocov
-      assert(!ISNA(linvec[parent]));	       // #nocov
+      assert(!ISNA(color[parent]));            // #nocov
 
       // if parent is not in deme I, likelihood = 0
-      if (nearbyint(linvec[parent]) != 1) {
+      if (nearbyint(color[parent]) != 1) {
         ll += R_NegInf;
-        linvec[parent] = 1;
+        color[parent] = 1;
         ellE -= 1; ellI += 1;
         E -= 1; I += 1;
       }
@@ -235,12 +235,12 @@ extern "C" {
         if (p->holds(green)) {  // s=(0,1)
           ball_t *g = p->other(b);
           ll += log(psi);       // boost
-          linvec[p->lineage(g)] = 1;
+          color[p->lineage(g)] = 1;
         } else {                // s=(0,0)
           ellI -= 1;
           ll += log(psi*(I-ellI)); // boost
         }
-        linvec[parent] = R_NaReal;
+        color[parent] = R_NaReal;
       } else if (p->holds(green)) { // branch point s=(1,1)
         ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
         S -= 1; E += 1;
@@ -250,11 +250,11 @@ extern "C" {
         assert(a != b && p->lineage(a) != p->lineage(b)); // #nocov
         assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage()); // #nocov
         if (unif_rand() < 0.5) {
-          linvec[p->lineage(a)] = 0;
-          linvec[p->lineage(b)] = 1;
+          color[p->lineage(a)] = 0;
+          color[p->lineage(b)] = 1;
         } else {
-          linvec[p->lineage(a)] = 1;
-          linvec[p->lineage(b)] = 0;
+          color[p->lineage(a)] = 1;
+          color[p->lineage(b)] = 0;
         }
         ll -= log(0.5);
       } else {
@@ -289,7 +289,7 @@ extern "C" {
       case 2:                   // transmission, s=(1,0)
         S -= 1; E += 1;
         ll += log(1-ellI/I)-log(E);
-        change_color(linvec,random_choice(ellI),1,0);
+        change_color(color,random_choice(ellI),1,0);
         ellE += 1; ellI -= 1;
         break;
       case 3:                   // progression, s=(0,0)
@@ -299,7 +299,7 @@ extern "C" {
       case 4:                   // progression, s=(0,1)
         E -= 1; I += 1;
         ll -= log(I);
-        change_color(linvec,random_choice(ellE),0,1);
+        change_color(color,random_choice(ellE),0,1);
         ellE -= 1; ellI += 1;
         break;
       case 5:                   // recovery

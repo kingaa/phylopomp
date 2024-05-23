@@ -4,7 +4,9 @@
 \alias{seir}
 \alias{SEIR}
 \alias{runSEIR}
+\alias{runSEIRS}
 \alias{continueSEIR}
+\alias{continueSEIRS}
 \alias{seirs_pomp}
 \title{Classical susceptible-exposed-infected-recovered model}
 \usage{
@@ -22,7 +24,31 @@ runSEIR(
   R0 = 0
 )
 
+runSEIRS(
+  time,
+  t0 = 0,
+  Beta = 4,
+  sigma = 1,
+  gamma = 1,
+  psi = 1,
+  omega = 0,
+  S0 = 100,
+  E0 = 5,
+  I0 = 5,
+  R0 = 0
+)
+
 continueSEIR(
+  object,
+  time,
+  Beta = NA,
+  sigma = NA,
+  gamma = NA,
+  psi = NA,
+  omega = NA
+)
+
+continueSEIRS(
   object,
   time,
   Beta = NA,

@@ -4,9 +4,9 @@
 ##'
 ##' @name simulate
 ##' @include getinfo.R seir.R sir.R siir.R si2r.R lbdp.R moran.R
-##' 
+##'
 ##' @family Genealogy processes
-##' 
+##'
 ##' @param object either the name of the model to simulate
 ##' \emph{or} a previously computed \sQuote{gpsim} object
 ##' @param ... additional arguments to the model-specific simulation functions
@@ -31,6 +31,7 @@ simulate.default <- function (object, ...) {
       "- SIR: standard susceptible-infected-recovered model\n    with optional waning of immunity\n",
       "- SIRS: synonymous with SIR\n",
       "- SEIR: standard susceptible-exposed-infected-recovered model\n",
+      "- SEIRS: synonymous with SEIR\n",
       "- SIIR: two-strain SIR model\n",
       "- SI2R: superspreading model\n",
       "- Moran: Moran process\n",
@@ -41,7 +42,7 @@ simulate.default <- function (object, ...) {
       sQuote("object")," must be specified as either ",
       "the name of a model or the result of a previous simulation.\n",
       "Do ",sQuote("simulate()")," to view available models."
-      )  
+    )
 }
 
 ##' @rdname simulate
@@ -52,8 +53,9 @@ simulate.character <- function (object, time, ...) {
   switch(
     object,
     SIR = runSIR(time=time,...),
-    SIRS = runSIR(time=time,...),
+    SIRS = runSIRS(time=time,...),
     SEIR = runSEIR(time=time,...),
+    SEIRS = runSEIRS(time=time,...),
     SIIR = runSIIR(time=time,...),
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
@@ -70,7 +72,7 @@ simulate.character <- function (object, time, ...) {
 ##' When \code{object} is of class \sQuote{gpsim}, i.e., the result of a genealogy-process
 ##' simulation, \code{simulate} acts to continue the simulation to a later timepoint.
 ##' Note that, one cannot change initial conditions or \code{t0} when continuing a simulation.
-##' 
+##'
 ##' @export
 simulate.gpsim <- function (object, time, ...) {
   model <- as.character(attr(object,"model"))

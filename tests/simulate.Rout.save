@@ -31,6 +31,7 @@ Available phylopomp models:
     with optional waning of immunity
 - SIRS: synonymous with SIR
 - SEIR: standard susceptible-exposed-infected-recovered model
+- SEIRS: synonymous with SEIR
 - SIIR: two-strain SIR model
 - SI2R: superspreading model
 - Moran: Moran process
