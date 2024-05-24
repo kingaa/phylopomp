@@ -1,0 +1,206 @@
+name: S2I2R2
+description: Two-host infection model with waning, immigration, and demography.
+details: |-
+  The population is structured by infection progression and host species.
+ndeme: 3
+state:
+  S1:
+    name: S1
+    type: int
+  I1:
+    name: I1
+    type: int
+  R1:
+    name: R1
+    type: int
+  S2:
+    name: S2
+    type: int
+  I2:
+    name: I2
+    type: int
+  R2:
+    name: R2
+    type: int
+  N1:
+    name: N1
+    type: double
+  N2:
+    name: N2
+    type: double
+parameter:
+  Beta11:
+    name: Beta11
+    description: transmission rate within species 1
+    type: double
+    default: 4
+  Beta12:
+    name: Beta12
+    description: transmission from species 2 to species 1
+    type: double
+    default: 0
+  Beta22:
+    name: Beta22
+    description: transmission rate within species 2
+    type: double
+    default: 4
+  gamma1:
+    name: gamma1
+    description: species 1 recovery rate
+    type: double
+    default: 1
+  gamma2:
+    name: gamma2
+    description: species 2 recovery rate
+    type: double
+    default: 1
+  psi1:
+    name: psi1
+    description: per capita sampling rate for species 1
+    default: 1
+    type: double
+  psi2:
+    name: psi2
+    description: per capita sampling rate for species 2
+    default: 0
+    type: double
+  omega1:
+    name: omega1
+    description: rate of waning of immunity for species 1
+    default: 0
+    type: double
+  omega2:
+    name: omega2
+    description: rate of waning of immunity for species 2
+    default: 0
+    type: double
+  b1:
+    name: b1
+    description: per capita birth rate for species 1
+    default: 0
+    type: double
+  b2:
+    name: b2
+    description: per capita birth rate for species 2
+    default: 0
+    type: double
+  d1:
+    name: d1
+    description: per capita death rate for species 1
+    default: 0
+    type: double
+  d2:
+    name: d2
+    description: per capita death rate for species 2
+    default: 0
+    type: double
+  iota1:
+    name: iota1
+    description: imported infections for species 1
+    default: 0
+    type: double
+  iota2:
+    name: iota2
+    description: imported infections for species 2
+    default: 0
+    type: double
+ivp:
+  S1_0:
+    name: S1_0
+    description: initial size of species 1 susceptible population
+    default: 100
+    type: int
+  S2_0:
+    name: S2_0
+    description: initial size of species 2 susceptible population
+    default: 100
+    type: int
+  I1_0:
+    name: I1_0
+    description: initial size of species 1 infected population
+    default: 0
+    type: int
+  I2_0:
+    name: I2_0
+    description: initial size of species 2 infected population
+    default: 10
+    type: int
+  R1_0:
+    name: R1_0
+    description: initial size of species 1 immune population
+    default: 0
+    type: int
+  R2_0:
+    name: R2_0
+    description: initial size of species 2 immune population
+    default: 0
+    type: int
+rinit: |-
+    state.S1 = params.S1_0;
+    state.I1 = params.I1_0;
+    state.R1 = params.R1_0;
+    state.S2 = params.S2_0;
+    state.I2 = params.I2_0;
+    state.R2 = params.R2_0;
+    state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
+    state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
+    graft(0,params.I1_0);
+    graft(1,params.I2_0);
+events:
+  infect_11:
+    rate: params.Beta11 * state.I1 / state.N1 * state.S1
+    jump: state.S1 -= 1; state.I1 += 1; birth(0,0);
+  infect_22:
+    rate: params.Beta22 * state.I2 / state.N2 * state.S2
+    jump: state.S2 -= 1; state.I2 += 1; birth(1,1);
+  infect_12:
+    rate: params.Beta12 * state.I2 / state.N2 * state.S1
+    jump: state.S1 -= 1; state.I1 += 1; birth(1,0);
+  recov1:
+    jump: state.I1 -= 1; state.R1 += 1; death(0);
+    rate: params.gamma1 * state.I1
+  recov2:
+    jump: state.I2 -= 1; state.R2 += 1; death(1);
+    rate: params.gamma2 * state.I2
+  waning1:
+    jump: state.R1 -= 1; state.S1 += 1;
+    rate: params.omega1 * state.R1
+  waning2:
+    jump: state.R2 -= 1; state.S2 += 1;
+    rate: params.omega2 * state.R2
+  sample1:
+    rate: params.psi1 * state.I1
+    jump: sample(0);
+  sample2:
+    rate: params.psi2 * state.I2
+    jump: sample(1);
+  import1:
+    rate: params.iota1 * state.S1
+    jump: state.S1 -= 1; state.I1 += 1; graft(2); birth(2,0); death(2);
+  import2:
+    rate: params.iota2 * state.S2
+    jump: state.S2 -= 1; state.I2 += 1; graft(2); birth(2,1); death(2);
+  death_S1:
+    rate: params.d1 * state.S1
+    jump: state.S1 -= 1; state.N1 -= 1;
+  death_S2:
+    rate: params.d2 * state.S2
+    jump: state.S2 -= 1; state.N2 -= 1;
+  death_I1:
+    rate: params.d1 * state.I1
+    jump: state.I1 -= 1; state.N1 -= 1; death(0);
+  death_I2:
+    rate: params.d2 * state.I2
+    jump: state.I2 -= 1; state.N2 -= 1; death(1);
+  death_R1:
+    rate: params.d1 * state.R1
+    jump: state.R1 -= 1; state.N1 -= 1;
+  death_R2:
+    rate: params.d2 * state.R2
+    jump: state.R2 -= 1; state.N2 -= 1;
+  birth1:
+    rate: params.b1 * state.N1
+    jump: state.S1 += 1; state.N1 += 1;
+  birth2:
+    rate: params.b2 * state.N2
+    jump: state.S2 += 1; state.N2 += 1;

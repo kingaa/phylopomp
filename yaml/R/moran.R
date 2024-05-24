@@ -1,7 +1,7 @@
 ##' The classical Moran model
-##' 
+##'
 ##' The Markov genealogy process induced by the classical Moran process, in which birth/death events occur at a constant rate and the population size remains constant.
-##' 
+##'
 ##' @name moran
 ##' @family Genealogy processes
 ##' @aliases Moran
@@ -10,7 +10,7 @@
 ##' @param n population size
 ##'
 ##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
-##' 
+##'
 NULL
 
 ##' @rdname moran
@@ -23,7 +23,7 @@ runMoran <- function (
   ivps <- c(n=n)
   x <- .Call(P_makeMoran,params,ivps,t0)
   .Call(P_runMoran,x,time) |>
-    structure(model="Moran",class="gpsim")
+    structure(model="Moran",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname moran
@@ -37,5 +37,5 @@ continueMoran <- function (
   )
   x <- .Call(P_reviveMoran,object,params)
   .Call(P_runMoran,x,time) |>
-    structure(model="Moran",class="gpsim")
+    structure(model="Moran",class=c("gpsim","gpgen"))
 }

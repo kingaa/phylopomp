@@ -1,7 +1,7 @@
 ##' Classical susceptible-exposed-infected-recovered model
-##' 
+##'
 ##' The population is structured by infection progression.
-##' 
+##'
 ##' @name seir
 ##' @family Genealogy processes
 ##' @aliases SEIR
@@ -16,7 +16,7 @@
 ##' @param R0 initial size of immune population
 ##'
 ##' @return \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
-##' 
+##'
 NULL
 
 ##' @rdname seir
@@ -29,7 +29,7 @@ runSEIR <- function (
   ivps <- c(S0=S0,E0=E0,I0=I0,R0=R0)
   x <- .Call(P_makeSEIR,params,ivps,t0)
   .Call(P_runSEIR,x,time) |>
-    structure(model="SEIR",class="gpsim")
+    structure(model="SEIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname seir
@@ -43,5 +43,5 @@ continueSEIR <- function (
   )
   x <- .Call(P_reviveSEIR,object,params)
   .Call(P_runSEIR,x,time) |>
-    structure(model="SEIR",class="gpsim")
+    structure(model="SEIR",class=c("gpsim","gpgen"))
 }

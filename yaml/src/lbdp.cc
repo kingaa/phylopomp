@@ -2,6 +2,7 @@
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
+#include "internal.h"
 
 //! LBDP process state.
 typedef struct {
@@ -77,9 +78,9 @@ void lbdp_genealogy_t::jump (int event) {
     case 2:
       sample();
       break;
-  default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-    break;
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

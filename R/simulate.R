@@ -34,6 +34,7 @@ simulate.default <- function (object, ...) {
       "- SEIRS: synonymous with SEIR\n",
       "- SIIR: two-strain SIR model\n",
       "- SI2R: superspreading model\n",
+      "- S2I2R2: two-species model\n",
       "- Moran: Moran process\n",
       "- LBDP: linear birth-death-sampling process\n"
     )

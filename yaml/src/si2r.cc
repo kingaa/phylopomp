@@ -2,6 +2,7 @@
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
+#include "internal.h"
 
 //! SI2R process state.
 typedef struct {
@@ -141,9 +142,9 @@ void si2r_genealogy_t::jump (int event) {
     case 8:
       state.R -= 1; state.S += 1;
       break;
-  default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-    break;
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

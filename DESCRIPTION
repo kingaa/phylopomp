@@ -33,6 +33,7 @@ Collate:
     'parse.R'
     'pomp.R'
     'print.R'
+    's2i2r2.R'
     'sir.R'
     'seir.R'
     'si2r.R'

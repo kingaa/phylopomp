@@ -2,6 +2,7 @@
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
+#include "internal.h"
 
 //! Moran process state.
 typedef struct {
@@ -72,9 +73,9 @@ void moran_genealogy_t::jump (int event) {
     case 1:
       state.g += 1; sample();
       break;
-  default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-    break;
+  default:                      // #nocov
+    assert(0);                  // #nocov
+    break;                      // #nocov
   }
 }
 

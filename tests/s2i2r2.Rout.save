@@ -1,0 +1,46 @@
+
+R version 4.4.0 (2024-04-24) -- "Puppy Cup"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="s2i2r2-%02d.png",res=100)
+> 
+> suppressPackageStartupMessages({
++   library(tidyverse)
++   library(phylopomp)
++ })
+> theme_set(theme_bw())
+> set.seed(847110120)
+> options(digits=3)
+> 
+> runS2I2R2(
++   time=20,
++   iota2=0.01,Beta12=0.1,
++   I1_0=0,I2_0=0,
++   psi1=10,psi2=10,
++   omega1=0.2,
++   b2=0.02,d2=0.02
++ ) -> x
+> 
+> x |> plot(obscure=FALSE,palette=c("#440154FF","#21908CFF","#ffffff00"))
+> 
+> x |> lineages(obscure=FALSE) |> plot()
+> 
+> dev.off()
+null device 
+          1 
+> 

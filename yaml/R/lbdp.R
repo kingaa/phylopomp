@@ -1,7 +1,7 @@
 ##' Linear birth-death-sampling model
-##' 
+##'
 ##' The genealogy process induced by a simple linear birth-death process with constant-rate sampling.
-##' 
+##'
 ##' @name lbdp
 ##' @family Genealogy processes
 ##' @aliases LBDP
@@ -11,7 +11,7 @@
 ##' @param n0 initial population size
 ##'
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
-##' 
+##'
 NULL
 
 ##' @rdname lbdp
@@ -24,7 +24,7 @@ runLBDP <- function (
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
   .Call(P_runLBDP,x,time) |>
-    structure(model="LBDP",class="gpsim")
+    structure(model="LBDP",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname lbdp
@@ -38,5 +38,5 @@ continueLBDP <- function (
   )
   x <- .Call(P_reviveLBDP,object,params)
   .Call(P_runLBDP,x,time) |>
-    structure(model="LBDP",class="gpsim")
+    structure(model="LBDP",class=c("gpsim","gpgen"))
 }

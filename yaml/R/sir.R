@@ -1,7 +1,7 @@
 ##' Classical susceptible-infected-recovered model
-##' 
+##'
 ##' A single, unstructured population of hosts.
-##' 
+##'
 ##' @name sir
 ##' @family Genealogy processes
 ##' @aliases SIR
@@ -14,7 +14,7 @@
 ##' @param R0 initial size of immune population
 ##'
 ##' @return \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
-##' 
+##'
 NULL
 
 ##' @rdname sir
@@ -27,7 +27,7 @@ runSIR <- function (
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ivps,t0)
   .Call(P_runSIR,x,time) |>
-    structure(model="SIR",class="gpsim")
+    structure(model="SIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname sir
@@ -41,5 +41,5 @@ continueSIR <- function (
   )
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time) |>
-    structure(model="SIR",class="gpsim")
+    structure(model="SIR",class=c("gpsim","gpgen"))
 }

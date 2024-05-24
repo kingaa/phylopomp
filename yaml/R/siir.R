@@ -1,7 +1,7 @@
 ##' Two-strain SIR model
-##' 
+##'
 ##' Two distinct pathogen strains compete for susceptibles.
-##' 
+##'
 ##' @name siir
 ##' @family Genealogy processes
 ##' @aliases SIIR
@@ -19,7 +19,7 @@
 ##' @param R0 initial size of immune population
 ##'
 ##' @return \code{runSIIR} and \code{continueSIIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIIR}.
-##' 
+##'
 NULL
 
 ##' @rdname siir
@@ -32,7 +32,7 @@ runSIIR <- function (
   ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,R0=R0)
   x <- .Call(P_makeSIIR,params,ivps,t0)
   .Call(P_runSIIR,x,time) |>
-    structure(model="SIIR",class="gpsim")
+    structure(model="SIIR",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname siir
@@ -46,5 +46,5 @@ continueSIIR <- function (
   )
   x <- .Call(P_reviveSIIR,object,params)
   .Call(P_runSIIR,x,time) |>
-    structure(model="SIIR",class="gpsim")
+    structure(model="SIIR",class=c("gpsim","gpgen"))
 }

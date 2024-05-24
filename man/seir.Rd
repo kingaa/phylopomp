@@ -119,6 +119,7 @@ simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |>
 More example genealogy processes: 
 \code{\link{lbdp}},
 \code{\link{moran}},
+\code{\link{s2i2r2}},
 \code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{simulate}()},

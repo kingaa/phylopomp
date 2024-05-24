@@ -22,6 +22,7 @@ DECLARATIONS(LBDP)
 DECLARATIONS(Moran)
 DECLARATIONS(SI2R)
 DECLARATIONS(SEIR)
+DECLARATIONS(S2I2R2)
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(SIR),
@@ -30,6 +31,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(Moran),
   METHODS(SI2R),
   METHODS(SEIR),
+  METHODS(S2I2R2),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 2},
   {"yaml", (DL_FUNC) &yaml, 1},

@@ -1,7 +1,7 @@
 ##' Two-deme model of superspreading
-##' 
+##'
 ##' Deme 1 consists of "ordinary infections" that transmit at rate code{Beta}. Deme 2 consists of "superspreaders" who engender clusters of infection in "superspreading events".
-##' 
+##'
 ##' @name si2r
 ##' @family Genealogy processes
 ##' @aliases SI2R
@@ -18,7 +18,7 @@
 ##' @param R0 initial size of immune population
 ##'
 ##' @return \code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
-##' 
+##'
 NULL
 
 ##' @rdname si2r
@@ -31,7 +31,7 @@ runSI2R <- function (
   ivps <- c(S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSI2R,params,ivps,t0)
   .Call(P_runSI2R,x,time) |>
-    structure(model="SI2R",class="gpsim")
+    structure(model="SI2R",class=c("gpsim","gpgen"))
 }
 
 ##' @rdname si2r
@@ -45,5 +45,5 @@ continueSI2R <- function (
   )
   x <- .Call(P_reviveSI2R,object,params)
   .Call(P_runSI2R,x,time) |>
-    structure(model="SI2R",class="gpsim")
+    structure(model="SI2R",class=c("gpsim","gpgen"))
 }

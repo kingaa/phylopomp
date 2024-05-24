@@ -18,6 +18,7 @@ geneal <- function (object) {
     modelLBDP = .Call(P_genealLBDP,object),
     modelMoran = .Call(P_genealMoran,object),
     modelSI2R = .Call(P_genealSI2R,object),
+    modelS2I2R2 = .Call(P_genealS2I2R2,object),
     model = structure(object,class=c("gpgen")),
     pStop("unrecognized model ",sQuote(attr(object,"model")))
   )
