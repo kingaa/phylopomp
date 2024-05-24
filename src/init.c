@@ -1,5 +1,8 @@
 #include "init.h"
 #include "decls.h"
+#include "pomplink.h"
+
+get_userdata_t *get_userdata;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
@@ -41,4 +44,5 @@ void R_init_phylopomp (DllInfo *info) {
   R_useDynamicSymbols(info,TRUE);
   //  R_useDynamicSymbols(info,FALSE);
   //  R_forceSymbols(info,TRUE);
+  get_userdata = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
 }

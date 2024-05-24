@@ -1,5 +1,4 @@
-#include <pomp.h>
-#include <R_ext/Rdynload.h>
+#include "pomplink.h"
 #include "internal.h"
 
 #define Beta      (__p[__parindex[0]])
@@ -33,7 +32,7 @@ static double event_rates
   *penalty = 0;
   double alpha, disc;
 
-  assert(I >= ell);             // #nocov
+  assert(I >= ell);
 
   // transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
@@ -110,7 +109,7 @@ void sirs_gill
     ll += (I > 0) ? log(psi*I) : R_NegInf;
     ll += (I > ell) ? log(1-ell/I) : R_NegInf;
   }
-  if (I < ell) err("cannot have I < ell!");
+  assert(I>=ell);
 
   // take Gillespie steps to the end of the interval:
   int event;
@@ -166,5 +165,6 @@ void sirs_dmeas
  const double *__covars,
  double t
  ){
+  assert(!ISNAN(ll));
   lik = (give_log) ? ll : exp(ll);
 }

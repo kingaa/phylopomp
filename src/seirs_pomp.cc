@@ -1,24 +1,31 @@
 #include "genealogy.h"
+#include "pomplink.h"
 #include "internal.h"
-
-#include <pomp.h>
-#include <R_ext/Rdynload.h>
-
-static int nSAMPLE = 0;
 
 static inline int random_choice (double n) {
   return 1+int(floor(R_unif_index(n)));
 }
 
-static void change_color (double *y, int n, int from, int to) {
+static void change_color (double *y, int nsample, int n, int from, int to) {
   int i = -1;
-  while (i < nSAMPLE && n > 0) {
+  while (i < nsample && n > 0) {
     i++;
     if (!ISNA(y[i]) && nearbyint(y[i]) == from) n--;
   }
-  if (i >= nSAMPLE || n != 0 || nearbyint(y[i]) != from)
-    err("error in '%s': %d %d %d %lg",__func__,nSAMPLE,i,n,y[i]); // #nocov
+  assert(i < nsample && n == 0 && nearbyint(y[i]) == from);
   y[i] = to;
+}
+
+// traverse to current genealogical node
+static node_t *traverse (genealogy_t& G, double n) {
+  int M = nearbyint(n);
+  int node_count = 0;
+  node_it k = G.cbegin();
+  while (node_count < M && k != G.cend()) {
+    node_count++; k++;
+  }
+  assert(k != G.cend());      // #nocov
+  return *k;
 }
 
 #define Beta      (__p[__parindex[0]])
@@ -139,10 +146,7 @@ extern "C" {
    const double *__covars
    ){
     double *color = &COLOR;
-    get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
-    genealogy_t G = gud("genealogy");
-
-    nSAMPLE = *INTEGER(gud("nsample"));
+    genealogy_t G = genealogy_t(get_userdata("genealogy"));
 
     double m = N/(S0+E0+I0+R0);
     S = nearbyint(S0*m);
@@ -157,10 +161,10 @@ extern "C" {
     // color lineages by sampling without replacement
     double nE = E;
     double nI = I;
-    int node_count = -1;
+    int node_pos = -1;
     node_it i = G.cbegin();
     while ((*i)->is_root() && i != G.cend()) {
-      node_count++;
+      node_pos++;
       node_t *p = *(i++);
       for (ball_it j = p->cbegin(); j != p->cend(); j++) {
         ball_t *b = *j;
@@ -178,7 +182,7 @@ extern "C" {
     }
     ellE = nearbyint(ellE);
     ellI = nearbyint(ellI);
-    node = node_count;
+    node = node_pos;
   }
 
   //! Simulator for the latent-state process (rprocess).
@@ -199,19 +203,11 @@ extern "C" {
     double tstep = 0.0, tmax = t + dt;
     double *color = &COLOR;
 
-    get_userdata_t *gud = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
-    genealogy_t G = gud("genealogy");
+    genealogy_t G = genealogy_t(get_userdata("genealogy"));
+    int nsample = *INTEGER(get_userdata("nsample"));
 
     // traverse to current genealogical node
-    int M = nearbyint(node);
-    int node_count = 0;
-    node_it k = G.cbegin();
-    while (node_count < M && k != G.cend()) {
-      node_count++; k++;
-    }
-    assert(k != G.cend());      // #nocov
-
-    node_t *p = *k;
+    node_t *p = traverse(G,node);
     node = node+1;
 
     // singular portion of filter equation
@@ -219,8 +215,8 @@ extern "C" {
       ll = 0;
       int parent = p->lineage();
 
-      assert(parent >= 0 && parent < nSAMPLE); // #nocov
-      assert(!ISNA(color[parent]));            // #nocov
+      assert(parent >= 0 && parent < nsample);
+      assert(!ISNA(color[parent]));
 
       // if parent is not in deme I, likelihood = 0
       if (nearbyint(color[parent]) != 1) {
@@ -247,8 +243,8 @@ extern "C" {
         ellE += 1;
         ball_t *a = p->last_ball();
         ball_t *b = p->other(a);
-        assert(a != b && p->lineage(a) != p->lineage(b)); // #nocov
-        assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage()); // #nocov
+        assert(a != b && p->lineage(a) != p->lineage(b));
+        assert(p->lineage(a) == p->lineage() || p->lineage(b) == p->lineage());
         if (unif_rand() < 0.5) {
           color[p->lineage(a)] = 0;
           color[p->lineage(b)] = 1;
@@ -258,7 +254,7 @@ extern "C" {
         }
         ll -= log(0.5);
       } else {
-        err("inconceivable!! in '%s'!!",__func__);       // #nocov
+	assert(0);				   // #nocov
       }
     }
 
@@ -289,7 +285,7 @@ extern "C" {
       case 2:                   // transmission, s=(1,0)
         S -= 1; E += 1;
         ll += log(1-ellI/I)-log(E);
-        change_color(color,random_choice(ellI),1,0);
+        change_color(color,nsample,random_choice(ellI),1,0);
         ellE += 1; ellI -= 1;
         break;
       case 3:                   // progression, s=(0,0)
@@ -299,7 +295,7 @@ extern "C" {
       case 4:                   // progression, s=(0,1)
         E -= 1; I += 1;
         ll -= log(I);
-        change_color(color,random_choice(ellE),0,1);
+        change_color(color,nsample,random_choice(ellE),0,1);
         ellE -= 1; ellI += 1;
         break;
       case 5:                   // recovery
@@ -344,7 +340,7 @@ extern "C" {
    const double *__covars,
    double t
    ) {
-    assert(!ISNA(ll));          // #nocov
+    assert(!ISNAN(ll));
     lik = (give_log) ? ll : exp(ll);
   }
 

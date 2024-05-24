@@ -1,5 +1,4 @@
-#include <pomp.h>
-#include <R_ext/Rdynload.h>
+#include "pomplink.h"
 #include "internal.h"
 
 #define lambda  (__p[__parindex[0]])
