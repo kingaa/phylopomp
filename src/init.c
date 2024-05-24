@@ -3,6 +3,8 @@
 #include "pomplink.h"
 
 get_userdata_t *get_userdata;
+get_userdata_double_t *get_userdata_double;
+get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
@@ -45,4 +47,6 @@ void R_init_phylopomp (DllInfo *info) {
   //  R_useDynamicSymbols(info,FALSE);
   //  R_forceSymbols(info,TRUE);
   get_userdata = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
+  get_userdata_double = (get_userdata_double_t*) R_GetCCallable("pomp","get_userdata_double");
+  get_userdata_int = (get_userdata_int_t*) R_GetCCallable("pomp","get_userdata_int");
 }

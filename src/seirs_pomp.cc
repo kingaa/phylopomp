@@ -187,7 +187,7 @@ extern "C" {
     double *color = &COLOR;
 
     genealogy_t G = genealogy_t(get_userdata("genealogy"));
-    int nsample = *INTEGER(get_userdata("nsample"));
+    int nsample = *get_userdata_int("nsample");
 
     // traverse to current genealogical node
     node_t *p = traverse(G,node);

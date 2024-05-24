@@ -26,9 +26,12 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 
 ### Checklist for adding a new model
 
-- [x] create and edit `src/<model>.cc`
+- [x] create and edit `yaml/<model>.yml`
+- [x] in `yaml/`, run `R < template.R`
+- [x] `cp yaml/src/<model>.cc src`
+- [x] `cp yaml/R/<model>.R R`
+- [x] optionally edit `R/<model>.R` and `src/<model>.cc` for style and documentation
 - [x] edit `src/init.c`
-- [x] edit `R/geneal.R`
-- [x] create and edit `R/<model>.R`
+- [x] edit `R/geneal.R`, `R/simulate.R`
 - [x] add examples to `examples/<model.R>`
 - [x] add tests to `tests/`
