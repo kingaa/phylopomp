@@ -9,7 +9,7 @@
 ##' @param mu per capita death rate
 ##' @param psi per capita sampling rate
 ##' @param n0 initial population size
-##'
+##' @inheritParams sir
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 ##'
 NULL

@@ -12,7 +12,7 @@
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of infected population
 ##' @param R0 initial size of immune population
-##'
+##' @inheritParams sir
 ##' @return \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
 ##'
 NULL

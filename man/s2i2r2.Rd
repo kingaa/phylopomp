@@ -54,6 +54,10 @@ continueS2I2R2(
 )
 }
 \arguments{
+\item{time}{final time}
+
+\item{t0}{initial time}
+
 \item{Beta11}{transmission rate within species 1}
 
 \item{Beta12}{transmission from species 2 to species 1}
@@ -95,6 +99,9 @@ continueS2I2R2(
 \item{R1_0}{initial size of species 1 immune population}
 
 \item{R2_0}{initial size of species 2 immune population}
+
+\item{object}{either the name of the model to simulate
+\emph{or} a previously computed \sQuote{gpsim} object}
 }
 \value{
 \code{runS2I2R2} and \code{continueS2I2R2} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{S2I2R2}.

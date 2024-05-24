@@ -100,7 +100,7 @@ r_template <- r"[##' {%description%}
 ##' @family Genealogy processes
 ##' @aliases {%name%}
 {%param_descript%}
-##'
+##' @inheritParams sir
 ##' @return \code{run{%name%}} and \code{continue{%name%}} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{{%name%}}.
 ##'
 NULL

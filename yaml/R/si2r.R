@@ -16,7 +16,7 @@
 ##' @param S0 initial size of susceptible population
 ##' @param I0 initial size of deme-1 infected population
 ##' @param R0 initial size of immune population
-##'
+##' @inheritParams sir
 ##' @return \code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 ##'
 NULL
