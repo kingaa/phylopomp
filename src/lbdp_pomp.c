@@ -29,20 +29,16 @@ static double event_rates
   // birth with saturation 0 or 1
   alpha = lambda*n;
   disc = lin*(lin-1)/n/(n+1);
-  *rate = alpha*(1-disc);
-  event_rate += *rate;
+  event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
-  rate++;
   // death
   alpha = mu*n;
   if (n > lin) {
-    *rate = alpha;
-    event_rate += *rate;
+    event_rate += (*rate = alpha); rate++;
   } else {
-    *rate = 0;
+    *rate = 0; rate++;
     *penalty += alpha;
   }
-  rate++;
   // sampling
   *penalty += psi*n;
   return event_rate;
@@ -141,5 +137,6 @@ void lbdp_dmeas
  const double *__covars,
  double t
  ) {
+  assert(!ISNAN(ll));
   lik = (give_log) ? ll : exp(ll);
 }

@@ -67,61 +67,44 @@ static double event_rates
   // 0: transmission, s=(0,0)
   alpha = Beta*S*I/N;
   pi = 1-ellI/(I+1);
-  *rate = alpha*pi;
-  *logpi = log(pi);
-  event_rate += *rate;
-  rate++; logpi++;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi); logpi++;
   // 1: transmission, s=(0,1)
   pi = (1-pi)/2;
-  *rate = alpha*pi;
-  *logpi = log(pi)-log(ellI);
-  event_rate += *rate;
-  rate++; logpi++;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi)-log(ellI); logpi++;
   // 2: transmission, s=(1,0)
-  *rate = alpha*pi;
-  *logpi = log(pi)-log(ellI);
-  event_rate += *rate;
-  rate++; logpi++;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi)-log(ellI); logpi++;
   // 3: progression, s=(0,0)
   // 4: progression, s=(0,1)
   alpha = sigma*E;
   pi = ellE/(E+1);
   if (E > ellE) {
-    *rate = alpha*(1-pi);
-    *logpi = log(1-pi);
-    event_rate += *rate;
-    rate++; logpi++;
-    *rate = alpha*pi;
-    *logpi = log(pi)-log(ellE);
-    event_rate += *rate;
-    rate++; logpi++;
+    event_rate += (*rate = alpha*(1-pi)); rate++;
+    *logpi = log(1-pi); logpi++;
+    event_rate += (*rate = alpha*pi); rate++;
+    *logpi = log(pi)-log(ellE); logpi++;
   } else {
-    *rate = 0;
-    *logpi = 0;
-    rate++; logpi++;
-    *rate = 0;
-    *logpi = 0;
-    rate++; logpi++;
+    *rate = 0; rate++;
+    *logpi = 0; logpi++;
+    *rate = 0; rate++;
+    *logpi = 0; logpi++;
     *penalty += alpha;
   }
   // 5: recovery
   alpha = gamma*I;
   if (I > ellI) {
-    *rate = alpha;
-    *logpi = 0;
-    event_rate += *rate;
-    rate++; logpi++;
+    event_rate += (*rate = alpha); rate++;
+    *logpi = 0; logpi++;
   } else {
-    *rate = 0;
-    *logpi = 0;
+    *rate = 0; rate++;
+    *logpi = 0; logpi++;
     *penalty += alpha;
-    rate++; logpi++;
   }
   // 6: waning
-  *rate = omega*R;
-  *logpi = 0;
-  event_rate += *rate;
-  rate++; logpi++;
+  event_rate += (*rate = omega*R); rate++;
+  *logpi = 0; logpi++;
   // 7: sampling (Q = 0)
   *penalty += psi*I;
   return event_rate;

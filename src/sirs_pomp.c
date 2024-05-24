@@ -37,25 +37,19 @@ static double event_rates
   // transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
   disc = ell*(ell-1)/I/(I+1);
-  *rate = alpha*(1-disc);
-  event_rate += *rate;
+  event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
-  rate++;
   // recovery
   alpha = gamma*I;
   if (I > ell) {
-    *rate = alpha;
-    event_rate += *rate;
+    event_rate += (*rate = alpha); rate++;
   } else {
-    *rate = 0;
+    *rate = 0; rate++;
     *penalty += alpha;
   }
-  rate++;
   // loss of immunity
   alpha = omega*R;
-  *rate = alpha;
-  event_rate += *rate;
-  rate++;
+  event_rate += (*rate = alpha); rate++;
   // sampling
   alpha = psi*I;
   *penalty += alpha;
