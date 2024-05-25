@@ -56,7 +56,6 @@ Error : in 'seirs_pomp': 'S0','E0','I0','R0' must be nonnegative integers.
 +     Beta=4,sigma=1,gamma=1,psi=1,omega=1,
 +     S0=100,E0=3,I0=5,R0=100
 +   ) -> po
-NOTE: The provided objects 'genealogy','nsample' are available for use by POMP basic components.
 > 
 > po |> rinit(nsim=5)
        .id

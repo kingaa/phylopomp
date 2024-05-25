@@ -5,7 +5,7 @@
 #define mu      (__p[__parindex[1]])
 #define psi     (__p[__parindex[2]])
 #define n0      (__p[__parindex[3]])
-#define lin     (__covars[__covindex[0]])
+#define ell     (__covars[__covindex[0]])
 #define code    (__covars[__covindex[1]])
 #define n       (__x[__stateindex[0]])
 #define ll      (__x[__stateindex[1]])
@@ -25,15 +25,15 @@ static double event_rates
   double event_rate = 0;
   double alpha, disc;
   *penalty = 0;
-  assert(n >= lin);
+  assert(n >= ell);
   // birth with saturation 0 or 1
   alpha = lambda*n;
-  disc = lin*(lin-1)/n/(n+1);
+  disc = (n > 0) ? ell*(ell-1)/n/(n+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
   // death
   alpha = mu*n;
-  if (n > lin) {
+  if (n > ell) {
     event_rate += (*rate = alpha); rate++;
   } else {
     *rate = 0; rate++;
@@ -83,7 +83,7 @@ void lbdp_gill
   } else if (ind == 0) {        // sample with s = 1
     ll += log(psi);
   } else if (ind == -1) {       // sample with s = 0
-    ll += log(psi*(n-lin));
+    ll += log(psi*(n-ell));
   }
 
   // Gillespie steps:

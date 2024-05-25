@@ -96,8 +96,10 @@ seirs_pomp <- function (
       ic,N=sum(ic)
     ),
     nstatevars=nsample+8L,
-    genealogy=geninfo$genealogy,
-    nsample=nsample,
+    userdata=list(
+      genealogy=geninfo$genealogy,
+      nsample=nsample
+    ),
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
     dmeasure="seirs_dmeas",
