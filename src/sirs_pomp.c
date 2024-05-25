@@ -36,7 +36,7 @@ static double event_rates
 
   // transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
-  disc = ell*(ell-1)/I/(I+1);
+  disc = (I > 0) ? ell*(ell-1)/I/(I+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
   // recovery
