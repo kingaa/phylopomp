@@ -151,6 +151,17 @@ public:
     return count;
   };
 
+  //! traverse to nth node
+  node_t *at (int n) {
+    int i = 0;
+    node_it k = cbegin();
+    while (i < n && k != cend()) {
+      i++; k++;
+    }
+    assert(k != cend());
+    return *k;
+  };
+
 public:
 
   //! swap balls a and b, wherever they lie

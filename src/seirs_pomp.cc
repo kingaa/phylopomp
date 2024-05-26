@@ -16,18 +16,6 @@ static void change_color (double *y, int nsample, int n, int from, int to) {
   y[i] = to;
 }
 
-// traverse to current genealogical node
-static node_t *traverse (genealogy_t& G, double n) {
-  int M = nearbyint(n);
-  int node_count = 0;
-  node_it k = G.cbegin();
-  while (node_count < M && k != G.cend()) {
-    node_count++; k++;
-  }
-  assert(k != G.cend());      // #nocov
-  return *k;
-}
-
 #define Beta      (__p[__parindex[0]])
 #define sigma     (__p[__parindex[1]])
 #define gamma     (__p[__parindex[2]])
@@ -190,7 +178,7 @@ extern "C" {
     int nsample = *get_userdata_int("nsample");
 
     // traverse to current genealogical node
-    node_t *p = traverse(G,node);
+    node_t *p = G.at(int(node));
     node = node+1;
 
     // singular portion of filter equation
