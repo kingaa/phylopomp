@@ -178,7 +178,7 @@ extern "C" {
     int nsample = *get_userdata_int("nsample");
 
     // traverse to current genealogical node
-    node_t *p = G.at(int(node));
+    node_t *p = G.position(int(node));
     node = node+1;
 
     // singular portion of filter equation

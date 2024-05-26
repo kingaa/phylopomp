@@ -151,8 +151,8 @@ public:
     return count;
   };
 
-  //! traverse to nth node
-  node_t *at (int n) {
+  //! traverse to nth node, retrieve pointer
+  node_t *position (int n) {
     int i = 0;
     node_it k = cbegin();
     while (i < n && k != cend()) {
