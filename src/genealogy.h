@@ -225,26 +225,26 @@ public:
 
   //! nodelist in data-frame format
   void gendat (double *tout, int *anc, int *lin,
-	       int *sat, int *ntype) const {
+	       int *sat, int *type) const {
     int m, n;
     node_it i, j;
     for (n = 0, i = begin(); i != end(); i++, n++) {
       node_t *p = *i;
+      assert(!p->holds(black));	// tree should be pruned first
       tout[n] = p->slate;
       sat[n] = p->nchildren();
-      lin[n] = p->lineage()+1;	// 1-based indexing
+      lin[n] = p->lineage();	// 0-based indexing
       if (p->is_root()) {
-	ntype[n] = 0;		// root node
+	type[n] = 0;		// root node
       } else if (p->holds(blue)) {
-	ntype[n] = 1;		// sample node
+	type[n] = 1;		// sample node
       } else {
-	ntype[n] = 2;		// internal node
+	type[n] = 2;		// internal node
       }
       if (p->is_root()) {
-	anc[n] = n+1;		// note 1-based indexing
+	anc[n] = n;		// 0-based indexing
       } else {
-	for (m = 1, j = begin(); j != i; j++, m++) {
-	  // note we use 1-based indexing
+	for (m = 0, j = begin(); j != i; j++, m++) {
 	  node_t *q = *j;
 	  if (p->parent()->uniq == q->uniq) {
 	    anc[n] = m;
@@ -256,23 +256,23 @@ public:
   };
   //! nodelist in data-frame format
   SEXP gendat (void) const {
-    SEXP tout, anc, lin, sat, ntype, out, outn;
+    SEXP tout, anc, lin, sat, type, out, outn;
     size_t n = length();
     PROTECT(tout = NEW_NUMERIC(n));
     PROTECT(anc = NEW_INTEGER(n));
     PROTECT(lin = NEW_INTEGER(n));
     PROTECT(sat = NEW_INTEGER(n));
-    PROTECT(ntype = NEW_INTEGER(n));
+    PROTECT(type = NEW_INTEGER(n));
     PROTECT(out = NEW_LIST(5));
     PROTECT(outn = NEW_CHARACTER(5));
-    set_list_elem(out,outn,tout,"time",0);
+    set_list_elem(out,outn,tout,"nodetime",0);
     set_list_elem(out,outn,anc,"ancestor",1);
     set_list_elem(out,outn,lin,"lineage",2);
     set_list_elem(out,outn,sat,"saturation",3);
-    set_list_elem(out,outn,ntype,"type",4);
+    set_list_elem(out,outn,type,"nodetype",4);
     SET_NAMES(out,outn);
     gendat(REAL(tout),INTEGER(anc),INTEGER(lin),
-	   INTEGER(sat),INTEGER(ntype));
+	   INTEGER(sat),INTEGER(type));
     UNPROTECT(7);
     return out;
   };

@@ -78,15 +78,14 @@ seirs_pomp <- function (
   x |>
     getInfo(
       prune=TRUE,obscure=TRUE,
-      nsample=TRUE,lineages=TRUE,genealogy=TRUE
-    ) -> geninfo
+      nsample=TRUE,lineages=TRUE,gendat=TRUE
+    ) -> gi
   ic <- as.integer(c(S0,E0,I0,R0))
   names(ic) <- c("S0","E0","I0","R0")
   if (any(ic < 0))
     pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
-  geninfo$lineages |> as.data.frame() -> dat
-  nsample <- geninfo$nsample
+  gi$lineages |> as.data.frame() -> dat
   pomp(
     data=NULL,
     t0=dat$time[1L],
@@ -95,10 +94,15 @@ seirs_pomp <- function (
       Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
       ic,N=sum(ic)
     ),
-    nstatevars=nsample+8L,
+    nstatevars=8L + gi$nsample,
     userdata=list(
-      genealogy=geninfo$genealogy,
-      nsample=nsample
+      nsample=gi$nsample,
+      nnode=nrow(gi$gendat),
+      nodetime=gi$gendat$nodetime,
+      ancestor=gi$gendat$ancestor,
+      lineage=gi$gendat$lineage,
+      saturation=gi$gendat$saturation,
+      nodetype=gi$gendat$nodetype
     ),
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
