@@ -17,7 +17,8 @@ getInfo(
   lineages = FALSE,
   newick = FALSE,
   nsample = FALSE,
-  genealogy = FALSE
+  genealogy = FALSE,
+  gendat = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ getInfo(
 \item{nsample}{logical; return the number of samples?}
 
 \item{genealogy}{logical; return the lineage-traced genealogy?}
+
+\item{gendat}{logical; return the data-frame format?}
 }
 \value{
 A list containing the requested elements, including any or all of:
@@ -59,6 +62,7 @@ A list containing the requested elements, including any or all of:
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+  \item{gendat}{a \code{\link[tibble]{tibble}} containing the (obscured) genealogy in a data-frame format}
   \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
 }
 }

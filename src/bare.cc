@@ -23,4 +23,13 @@ extern "C" {
     return mkString(A.yaml().c_str());
   }
 
+  //! data-frame format
+  SEXP gendat (SEXP State) {
+    genealogy_t A = State;
+    A.prune();
+    A.obscure();
+    A.trace_lineages();
+    return A.gendat();
+  }
+
 }

@@ -63,6 +63,12 @@ SEXP lineage_count (const TYPE& G) {
   return G.lineage_count();
 }
 
+//! data-frame format 
+template <class TYPE>
+SEXP gendat (const TYPE& G) {
+  return G.gendat();
+}
+
 //! initialization
 template<class TYPE>
 SEXP make (SEXP Params, SEXP IVPs, SEXP T0) {

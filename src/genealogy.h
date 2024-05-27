@@ -223,6 +223,60 @@ public:
     return out;
   };
 
+  //! nodelist in data-frame format
+  void gendat (double *tout, int *anc, int *lin,
+	       int *sat, int *ntype) const {
+    int m, n;
+    node_it i, j;
+    for (n = 0, i = begin(); i != end(); i++, n++) {
+      node_t *p = *i;
+      tout[n] = p->slate;
+      sat[n] = p->nchildren();
+      lin[n] = p->lineage()+1;	// 1-based indexing
+      if (p->is_root()) {
+	ntype[n] = 0;		// root node
+      } else if (p->holds(blue)) {
+	ntype[n] = 1;		// sample node
+      } else {
+	ntype[n] = 2;		// internal node
+      }
+      if (p->is_root()) {
+	anc[n] = n+1;		// note 1-based indexing
+      } else {
+	for (m = 1, j = begin(); j != i; j++, m++) {
+	  // note we use 1-based indexing
+	  node_t *q = *j;
+	  if (p->parent()->uniq == q->uniq) {
+	    anc[n] = m;
+	    break;
+	  }
+	}
+      }
+    }    
+  };
+  //! nodelist in data-frame format
+  SEXP gendat (void) const {
+    SEXP tout, anc, lin, sat, ntype, out, outn;
+    size_t n = length();
+    PROTECT(tout = NEW_NUMERIC(n));
+    PROTECT(anc = NEW_INTEGER(n));
+    PROTECT(lin = NEW_INTEGER(n));
+    PROTECT(sat = NEW_INTEGER(n));
+    PROTECT(ntype = NEW_INTEGER(n));
+    PROTECT(out = NEW_LIST(5));
+    PROTECT(outn = NEW_CHARACTER(5));
+    set_list_elem(out,outn,tout,"time",0);
+    set_list_elem(out,outn,anc,"ancestor",1);
+    set_list_elem(out,outn,lin,"lineage",2);
+    set_list_elem(out,outn,sat,"saturation",3);
+    set_list_elem(out,outn,ntype,"type",4);
+    SET_NAMES(out,outn);
+    gendat(REAL(tout),INTEGER(anc),INTEGER(lin),
+	   INTEGER(sat),INTEGER(ntype));
+    UNPROTECT(7);
+    return out;
+  };
+  
   //! number of samples
   size_t nsample (void) const {
     size_t n = 0;

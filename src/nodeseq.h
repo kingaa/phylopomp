@@ -150,7 +150,12 @@ public:
     }
     return count;
   };
-
+  //! Number of nodes in the sequence.
+  size_t length (void) const {
+    size_t count = 0;
+    for (node_it i = begin(); i != end(); i++) count++;
+    return count;
+  };
   //! traverse to nth node, retrieve pointer
   node_t *position (int n) {
     int i = 0;

@@ -21,7 +21,7 @@ extern "C" {
       "object","prune","obscure",
       "t0","time","nsample","ndeme",
       "description","structure","yaml","newick",
-      "lineages","genealogy"};
+      "lineages","gendat","genealogy"};
     const int narg = sizeof(argname)/sizeof(const char *);
     bool flag[narg];
     SEXP object = R_NilValue;
@@ -88,6 +88,9 @@ extern "C" {
     }
     if (*(f++)) {               // lineages
       k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);
+    }
+    if (*(f++)) {               // gendat
+      k = set_list_elem(out,outnames,gendat(A),"gendat",k);
     }
     if (*(f++)) {               // genealogy
       SEXP S;

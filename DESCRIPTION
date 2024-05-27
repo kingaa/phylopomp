@@ -25,6 +25,7 @@ Collate:
     'curtail.R'
     'diagram.R'
     'foreach.R'
+    'gendat.R'
     'lbdp.R'
     'lineages.R'
     'moran.R'

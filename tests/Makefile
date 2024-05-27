@@ -12,6 +12,7 @@ default: $(SAVED) clean
 
 clean:
 	$(RM) *.c *.o *.so 
+	$(RM) Rplots.*
 
 fresh: clean
 	$(RM) *.png

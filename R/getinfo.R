@@ -16,6 +16,7 @@
 ##' @param ndeme logical; return the number of demes?
 ##' @param nsample logical; return the number of samples?
 ##' @param lineages logical; return the lineage-count function?
+##' @param gendat logical; return the data-frame format?
 ##' @param genealogy logical; return the lineage-traced genealogy?
 ##' @include package.R geneal.R
 ##' @importFrom tibble as_tibble
@@ -31,6 +32,7 @@
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
+##'   \item{gendat}{a \code{\link[tibble]{tibble}} containing the (obscured) genealogy in a data-frame format}
 ##'   \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
 ##' }
 ##' @example examples/siir.R
@@ -41,18 +43,22 @@ getInfo <- function (
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
-  nsample = FALSE, genealogy = FALSE)
-{
-  x <- .External(P_getInfo,
+  nsample = FALSE, genealogy = FALSE, gendat = FALSE
+) {
+  x <- .External(
+    P_getInfo,
     object=geneal(object),
     prune=prune,obscure=obscure,
     t0=t0,time=time,nsample=nsample,ndeme=ndeme,
     description=description,yaml=yaml,
     structure=structure,newick=newick,
-    lineages=lineages,genealogy=genealogy
+    lineages=lineages,genealogy=genealogy,
+    gendat=gendat
   )
   if (!is.null(x$lineages))
     x$lineages |> reshape_lineages() -> x$lineages
+  if (!is.null(x$gendat))
+    x$gendat |> as_tibble() -> x$gendat
   x
 }
 

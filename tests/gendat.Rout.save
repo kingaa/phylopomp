@@ -1,0 +1,75 @@
+
+R version 4.4.0 (2024-04-24) -- "Puppy Cup"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="gendat-%0d.png",res=100,
++   width=1114,height=233,units="px")
+> 
+> library(phylopomp)
+
+Attaching package: 'phylopomp'
+
+The following object is masked from 'package:stats':
+
+    simulate
+
+> set.seed(1888056571)
+> 
+> runSIRS(time=4,psi=0.3) -> x
+> 
+> plot(x,points=TRUE)
+> 
+> diagram(x)
+> 
+> x |>
++   gendat() |>
++   print(n=100)
+# A tibble: 28 × 5
+      time ancestor lineage saturation  type
+     <dbl>    <int>   <int>      <int> <int>
+ 1 0              1       1          1     0
+ 2 0              2       2          1     0
+ 3 0.00310        1       1          0     1
+ 4 0.0386         2       2          2     2
+ 5 0.345          4       2          2     2
+ 6 0.420          5       2          2     2
+ 7 0.679          6       4          2     2
+ 8 1.05           7       5          2     2
+ 9 1.06           6       2          0     1
+10 1.11           7       4          2     2
+11 1.15           8       7          2     2
+12 1.15          10      10          2     2
+13 1.28           5       3          1     1
+14 1.32          10       4          1     1
+15 1.41           8       5          1     1
+16 1.51          15       6          1     1
+17 1.53          11       7          0     1
+18 1.59          13       8          0     1
+19 1.83          11       9          1     1
+20 2.00          12      10          0     1
+21 2.06           4      11          1     1
+22 2.44          12      12          0     1
+23 3.42          14      13          1     1
+24 3.45          23      14          0     1
+25 3.72          21      15          1     1
+26 3.84          16      16          0     1
+27 3.90          19      17          0     1
+28 3.92          25      18          0     1
+> 
+> dev.off()
+null device 
+          1 
+> 
