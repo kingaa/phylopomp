@@ -32,6 +32,6 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 - [x] `cp yaml/R/<model>.R R`
 - [x] optionally edit `R/<model>.R` and `src/<model>.cc` for style and documentation
 - [x] edit `src/init.c`
-- [x] edit `R/geneal.R`, `R/simulate.R`
+- [x] edit `R/geneal.R`, `R/simulate.R`, `R/yaml.R`
 - [x] add examples to `examples/<model.R>`
 - [x] add tests to `tests/`
