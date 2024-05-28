@@ -4,6 +4,8 @@ author: A.A. King
 output: rmarkdown::html_vignette
 bibliography: phylopomp.bib
 csl: jss.csl
+nocite: |
+  @King2024, @Moran1958
 vignette: >
   %\VignetteIndexEntry{Moran genealogy simulations}
   %\VignetteEngine{knitr::rmarkdown}

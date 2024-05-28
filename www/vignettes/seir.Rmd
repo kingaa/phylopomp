@@ -3,6 +3,8 @@ title: Simulations of an SEIR genealogy process
 author: A.A. King
 output: rmarkdown::html_vignette
 bibliography: phylopomp.bib
+nocite: |
+  @King2024, @King2022
 csl: jss.csl
 vignette: >
   %\VignetteIndexEntry{SEIR genealogies}

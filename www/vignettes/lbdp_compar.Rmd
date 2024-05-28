@@ -2,6 +2,10 @@
 title: Comparison of particle-filter likelihood with exact formula for the linear birth-death-sampling process
 author: A.A. King
 output: rmarkdown::html_vignette
+bibliography: phylopomp.bib
+nocite: |
+  @King2024, @King2022, @Stadler2010
+csl: jss.csl
 vignette: >
   %\VignetteIndexEntry{Verification of LBDP computations}
   %\VignetteEngine{knitr::rmarkdown}
