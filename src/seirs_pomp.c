@@ -18,14 +18,6 @@ static void change_color (double *color, int nsample,
   color[i] = to;
 }
 
-static int find_child (int start, const int parent,
-                       const int *ancestor, const int end)
-{
-  int i = start+1;
-  while (ancestor[i] != parent && i < end) i++;
-  return i;
-}
-
 #define Beta      (__p[__parindex[0]])
 #define sigma     (__p[__parindex[1]])
 #define gamma     (__p[__parindex[2]])
@@ -127,8 +119,10 @@ void seirs_rinit
   double *color = &COLOR;
   const int nnode = *get_userdata_int("nnode");
   const int *nodetype = get_userdata_int("nodetype");
-  const int *ancestor = get_userdata_int("ancestor");
   const int *lineage = get_userdata_int("lineage");
+  const int *saturation = get_userdata_int("saturation");
+  const int *index = get_userdata_int("index");
+  const int *child = get_userdata_int("child");
 
   double adj = N/(S0+E0+I0+R0);
   S = nearbyint(S0*adj);
@@ -145,18 +139,15 @@ void seirs_rinit
   double nI = I;
   int parent = 0;
   while (nodetype[parent] == 0 && parent < nnode) {
-    int child = parent;
-    while (child < nnode) {
-      child = find_child(child,parent,ancestor,nnode);
-      if (child < nnode) {
-        int pick = random_choice(nE+nI);
-        if (pick <= nearbyint(nE)) {
-          color[lineage[child]] = 0; // lineage is put into E deme
-          ellE += 1; nE -= 1;
-        } else {
-          color[lineage[child]] = 1; // lineage is put into I deme
-          ellI += 1; nI -= 1;
-        }
+    for (int i = 0, j = index[parent]; i < saturation[parent]; i++, j++) {
+      int c = child[j];
+      int pick = random_choice(nE+nI);
+      if (pick < nearbyint(nE)) {
+	color[lineage[c]] = 0; // lineage is put into E deme
+	ellE += 1; nE -= 1;
+      } else {
+	color[lineage[c]] = 1; // lineage is put into I deme
+	ellI += 1; nI -= 1;
       }
     }
     parent++;
@@ -184,11 +175,11 @@ void seirs_gill
   double tstep = 0.0, tmax = t + dt;
   double *color = &COLOR;
   const int nsample = *get_userdata_int("nsample");
-  const int nnode = *get_userdata_int("nnode");
   const int *nodetype = get_userdata_int("nodetype");
-  const int *saturation = get_userdata_int("saturation");
-  const int *ancestor = get_userdata_int("ancestor");
   const int *lineage = get_userdata_int("lineage");
+  const int *saturation = get_userdata_int("saturation");
+  const int *index = get_userdata_int("index");
+  const int *child = get_userdata_int("child");
 
   int parent = (int) node;
   node += 1;
@@ -210,8 +201,8 @@ void seirs_gill
 
     if (nodetype[parent] == 1) {     // sample
       if (saturation[parent] == 1) { // s=(0,1)
-        int child = find_child(parent,parent,ancestor,nnode);
-        color[lineage[child]] = 1;
+	int c = child[index[parent]];
+        color[lineage[c]] = 1;
         ll += log(psi);       // boost
       } else {                // s=(0,0)
         ellI -= 1;
@@ -223,18 +214,18 @@ void seirs_gill
       ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
       S -= 1; E += 1;
       ellE += 1;
-      int child1 = find_child(parent,parent,ancestor,nnode);
-      int child2 = find_child(child1,parent,ancestor,nnode);
-      assert(child1 != child2);
-      assert(lineage[child1] != lineage[child2]);
-      assert(lineage[child1] != parlin || lineage[child2] != parlin);
-      assert(lineage[child1] == parlin || lineage[child2] == parlin);
+      int c1 = child[index[parent]];
+      int c2 = child[index[parent]+1];
+      assert(c1 != c2);
+      assert(lineage[c1] != lineage[c2]);
+      assert(lineage[c1] != parlin || lineage[c2] != parlin);
+      assert(lineage[c1] == parlin || lineage[c2] == parlin);
       if (unif_rand() < 0.5) {
-        color[lineage[child1]] = 0;
-        color[lineage[child2]] = 1;
+        color[lineage[c1]] = 0;
+        color[lineage[c2]] = 1;
       } else {
-        color[lineage[child1]] = 1;
-        color[lineage[child2]] = 0;
+        color[lineage[c1]] = 1;
+        color[lineage[c2]] = 0;
       }
       ll -= log(0.5);
     } else {

@@ -225,58 +225,76 @@ public:
 
   //! nodelist in data-frame format
   void gendat (double *tout, int *anc, int *lin,
-	       int *sat, int *type) const {
-    int m, n;
+               int *sat, int *type,
+               int *index, int *child) const {
+    int m, n, k;
     node_it i, j;
-    for (n = 0, i = begin(); i != end(); i++, n++) {
+    for (k = 0, n = 0, i = begin(); i != end(); i++, n++) {
       node_t *p = *i;
-      assert(!p->holds(black));	// tree should be pruned first
+      assert(!p->holds(black)); // tree should be pruned first
       tout[n] = p->slate;
-      sat[n] = p->nchildren();
-      lin[n] = p->lineage();	// 0-based indexing
       if (p->is_root()) {
-	type[n] = 0;		// root node
+        type[n] = 0;            // root node
       } else if (p->holds(blue)) {
-	type[n] = 1;		// sample node
+        type[n] = 1;            // sample node
       } else {
-	type[n] = 2;		// internal node
+        type[n] = 2;            // internal node
       }
+      lin[n] = p->lineage();    // 0-based indexing
+      sat[n] = p->nchildren();
+      index[n] = k;
+      k += sat[n];
+      child[n] = NA_INTEGER;
       if (p->is_root()) {
-	anc[n] = n;		// 0-based indexing
+        anc[n] = n;             // 0-based indexing
       } else {
-	for (m = 0, j = begin(); j != i; j++, m++) {
-	  node_t *q = *j;
-	  if (p->parent()->uniq == q->uniq) {
-	    anc[n] = m;
-	    break;
-	  }
-	}
+        for (m = 0, j = begin(); j != i; j++, m++) {
+          node_t *q = *j;
+          if (p->parent()->uniq == q->uniq) {
+            anc[n] = m;
+            break;
+          }
+        }
       }
-    }    
+    }
+    for (k = 0, n = 0, i = begin(); i != end(); i++, n++) {
+      node_t *p = *i;
+      j = i; j++;
+      for (m = n+1; j != end(); m++, j++) {
+        node_t *q = *j;
+        if (p->uniq == q->parent()->uniq) {
+          child[k++] = m;
+        }
+      }
+    }
   };
   //! nodelist in data-frame format
   SEXP gendat (void) const {
-    SEXP tout, anc, lin, sat, type, out, outn;
+    SEXP tout, anc, lin, sat, type, index, child, out, outn;
     size_t n = length();
     PROTECT(tout = NEW_NUMERIC(n));
-    PROTECT(anc = NEW_INTEGER(n));
+    PROTECT(type = NEW_INTEGER(n));
     PROTECT(lin = NEW_INTEGER(n));
     PROTECT(sat = NEW_INTEGER(n));
-    PROTECT(type = NEW_INTEGER(n));
-    PROTECT(out = NEW_LIST(5));
-    PROTECT(outn = NEW_CHARACTER(5));
+    PROTECT(index = NEW_INTEGER(n));
+    PROTECT(child = NEW_INTEGER(n));
+    PROTECT(anc = NEW_INTEGER(n));
+    PROTECT(out = NEW_LIST(7));
+    PROTECT(outn = NEW_CHARACTER(7));
     set_list_elem(out,outn,tout,"nodetime",0);
-    set_list_elem(out,outn,anc,"ancestor",1);
+    set_list_elem(out,outn,type,"nodetype",1);
     set_list_elem(out,outn,lin,"lineage",2);
     set_list_elem(out,outn,sat,"saturation",3);
-    set_list_elem(out,outn,type,"nodetype",4);
+    set_list_elem(out,outn,index,"index",4);
+    set_list_elem(out,outn,child,"child",5);
+    set_list_elem(out,outn,anc,"ancestor",6);
     SET_NAMES(out,outn);
-    gendat(REAL(tout),INTEGER(anc),INTEGER(lin),
-	   INTEGER(sat),INTEGER(type));
-    UNPROTECT(7);
+    gendat(REAL(tout),INTEGER(anc),INTEGER(lin),INTEGER(sat),
+           INTEGER(type),INTEGER(index),INTEGER(child));
+    UNPROTECT(9);
     return out;
   };
-  
+
   //! number of samples
   size_t nsample (void) const {
     size_t n = 0;

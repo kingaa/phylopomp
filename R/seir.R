@@ -99,10 +99,12 @@ seirs_pomp <- function (
       nsample=gi$nsample,
       nnode=nrow(gi$gendat),
       nodetime=gi$gendat$nodetime,
-      ancestor=gi$gendat$ancestor,
+      nodetype=gi$gendat$nodetype,
       lineage=gi$gendat$lineage,
       saturation=gi$gendat$saturation,
-      nodetype=gi$gendat$nodetype
+      index=gi$gendat$index,
+      child=gi$gendat$child,
+      ancestor=gi$gendat$ancestor
     ),
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
