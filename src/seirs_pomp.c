@@ -132,7 +132,6 @@ void seirs_rinit
 
   ellE = 0;
   ellI = 0;
-  ll = 0;
 
   // color lineages by sampling without replacement
   double nE = E;
@@ -152,6 +151,7 @@ void seirs_rinit
     }
     parent++;
   }
+  ll = -dhyper(ellE,E,I,ellE+ellI,1);
   ellE = nearbyint(ellE);
   ellI = nearbyint(ellI);
   node = parent-1;

@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.13}{
+  \itemize{
+    \item Much faster computations with complex genealogies.
+    \item New S2I2R2 model of two-species system.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.11}{
   \itemize{
     \item The SEIRS model pomp object has been refactored.

@@ -1,6 +1,5 @@
 ## To-do List
 
-- weight adjustment in `rinit`
 - LBDP and SIRS into new format
 - use integer time?
 
