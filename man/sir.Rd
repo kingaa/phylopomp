@@ -69,11 +69,7 @@ sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
 
 \item{omega}{immunity waning rate}
 
-\item{S0}{initial size of susceptible population.}
-
-\item{I0}{initial size of infected population.}
-
-\item{R0}{initial size of recovered population.}
+\item{S0, I0, R0}{initial sizes of susceptible, infected, and recovered populations, respectively.}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
@@ -103,6 +99,11 @@ plot_grid(plotlist=list(plot(x,points=TRUE),diagram(x)),
 
 simulate("SIRS",omega=1,time=20,I0=4) |> plot()
 simulate("SIRS",omega=1,time=20,I0=4) |> lineages() |> plot()
+}
+\references{
+\King2024
+
+\King2022
 }
 \seealso{
 More example genealogy processes: 

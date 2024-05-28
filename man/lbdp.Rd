@@ -64,6 +64,12 @@ simulate("LBDP",time=4) |>
 
 }
 \references{
+\King2024
+
+\King2022
+
+\Stadler2010
+
 \Stadler2010
 }
 \seealso{

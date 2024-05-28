@@ -43,6 +43,9 @@ population size remains constant.
 \details{
 \code{moran_exact} gives the exact log likelihood of a genealogy under the uniformly-sampled Moran process.
 }
+\references{
+\Moran1958
+}
 \seealso{
 More example genealogy processes: 
 \code{\link{lbdp}},

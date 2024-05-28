@@ -4,15 +4,15 @@
 ##'
 ##' @name simulate
 ##' @include getinfo.R seir.R sir.R siir.R si2r.R lbdp.R moran.R
-##'
 ##' @family Genealogy processes
-##'
 ##' @param object either the name of the model to simulate
 ##' \emph{or} a previously computed \sQuote{gpsim} object
 ##' @param ... additional arguments to the model-specific simulation functions
-##'
 ##' @return An object of \sQuote{gpsim} class.
+##' @references
+##' \King2024
 ##'
+##' \King2022
 NULL
 
 ##' @rdname simulate

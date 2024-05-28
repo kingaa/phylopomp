@@ -9,6 +9,11 @@
 \description{
 Simulation and inference of Markov genealogy processes.
 }
+\references{
+\King2024
+
+\King2022
+}
 \author{
 Aaron A. King, Qianying Lin
 }

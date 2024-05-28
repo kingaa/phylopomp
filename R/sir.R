@@ -10,13 +10,14 @@
 ##' @param gamma recovery rate.
 ##' @param psi sampling rate.
 ##' @param omega immunity waning rate
-##' @param S0 initial size of susceptible population.
-##' @param I0 initial size of infected population.
-##' @param R0 initial size of recovered population.
+##' @param S0,I0,R0 initial sizes of susceptible, infected, and recovered populations, respectively.
 ##' @param time final time
 ##' @param t0 initial time
 ##' @return \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+##' @references
+##' \King2024
 ##'
+##' \King2022
 ##' @example examples/sir.R
 NULL
 

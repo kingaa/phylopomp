@@ -1,12 +1,16 @@
 ##' Phylodynamics for POMP models
-##' 
+##'
 ##' Simulation and inference of Markov genealogy processes.
-##' 
+##'
 ##' @name phylopomp
 ##' @aliases phylopomp,package phylopomp-package
 ##' @author Aaron A. King, Qianying Lin
 ##' @import ggplot2
 ##' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"
+##' @references
+##' \King2024
+##'
+##' \King2022
 ##'
 "_PACKAGE"
 

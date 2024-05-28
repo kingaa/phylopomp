@@ -14,7 +14,8 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
-##' 
+##' @references
+##' \Moran1958
 NULL
 
 ##' @rdname moran
@@ -63,9 +64,9 @@ moran_exact <- function (x, n = 100, mu = 1, psi = 1) {
     -Inf
   } else {
     -mfact*sum(choose(ell,2)*intervals)-
-        psi*n*diff(range(data$time))+
-          ncoal*log(mfact)+
-          (nanc+length(tips))*log(psi)+
-          sum(log(n-ell[tips]))
+      psi*n*diff(range(data$time))+
+        ncoal*log(mfact)+
+        (nanc+length(tips))*log(psi)+
+        sum(log(n-ell[tips]))
   }
 }

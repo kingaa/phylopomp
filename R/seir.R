@@ -11,15 +11,12 @@
 ##' @param gamma recovery rate
 ##' @param psi per capita sampling rate
 ##' @param omega rate of waning of immunity
-##' @param S0 initial size of susceptible population
-##' @param E0 initial size of exposed population
-##' @param I0 initial size of infected population
-##' @param R0 initial size of immune population
+##' @param S0,E0,I0,R0 initial sizes of S, E, I, R compartments, respectively.
 ##' @inheritParams runSIR
 ##' @return \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
-##'
+##' @references
+##' \King2024
 ##' @example examples/seir.R
-##'
 NULL
 
 ##' @rdname seir

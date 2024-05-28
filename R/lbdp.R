@@ -14,6 +14,12 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
+##' @references
+##' \King2024
+##'
+##' \King2022
+##'
+##' \Stadler2010
 ##' @example examples/lbdp.R
 NULL
 

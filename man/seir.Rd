@@ -75,13 +75,7 @@ seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
 
 \item{omega}{rate of waning of immunity}
 
-\item{S0}{initial size of susceptible population}
-
-\item{E0}{initial size of exposed population}
-
-\item{I0}{initial size of infected population}
-
-\item{R0}{initial size of immune population}
+\item{S0, E0, I0, R0}{initial sizes of S, E, I, R compartments, respectively.}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
@@ -114,6 +108,9 @@ simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |> plot(obscure=FALSE)
 simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |>
   lineages(obscure=FALSE) |>
   plot()
+}
+\references{
+\King2024
 }
 \seealso{
 More example genealogy processes: 

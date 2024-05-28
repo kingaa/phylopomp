@@ -34,6 +34,11 @@ When \code{object} is of class \sQuote{gpsim}, i.e., the result of a genealogy-p
 simulation, \code{simulate} acts to continue the simulation to a later timepoint.
 Note that, one cannot change initial conditions or \code{t0} when continuing a simulation.
 }
+\references{
+\King2024
+
+\King2022
+}
 \seealso{
 More example genealogy processes: 
 \code{\link{lbdp}},
