@@ -83,6 +83,7 @@ simulate.gpsim <- function (object, time, ...) {
     modelSIR = continueSIR(object,time=time,...),
     modelSIRS = continueSIR(object,time=time,...),
     modelSEIR = continueSEIR(object,time=time,...),
+    modelSEIRS = continueSEIRS(object,time=time,...),
     modelS2I2R2 = continueS2I2R2(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelSI2R = continueSI2R(object,time=time,...),
