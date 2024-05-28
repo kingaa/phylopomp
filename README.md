@@ -16,7 +16,8 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 ### Publications
 
 [“Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes” (*arXiv:2405.17032*, 2024)](https://doi.org/10.48550/arxiv.2405.17032)  
-[![](https://img.shields.io/badge/doi-10.48550/arxiv.2405.17032-yellow.svg)](https://doi.org/10.48550/arxiv.2405.17032)
+[![](https://img.shields.io/badge/doi-10.48550/arxiv.2405.17032-yellow.svg)](https://doi.org/10.48550/arxiv.2405.17032)&nbsp;
+[![](https://img.shields.io/badge/github-kingaa/structured--genealogy--process--paper-blue.svg)](https://github.com/kingaa/structured-genealogy-process-paper)
 
 [“Markov Genealogy Processes” (*Theoretical Population Biology*
 **143**:77–91, 2022)](https://doi.org/10.1016/j.tpb.2021.11.003)  
