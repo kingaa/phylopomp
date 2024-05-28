@@ -176,10 +176,10 @@ events:
     jump: sample(1);
   import1:
     rate: params.iota1 * state.S1
-    jump: state.S1 -= 1; state.I1 += 1; graft(2); birth(2,0); death(2);
+    jump: state.S1 -= 1; state.I1 += 1; graft(2); migrate(2,0);
   import2:
     rate: params.iota2 * state.S2
-    jump: state.S2 -= 1; state.I2 += 1; graft(2); birth(2,1); death(2);
+    jump: state.S2 -= 1; state.I2 += 1; graft(2); migrate(2,1);
   death_S1:
     rate: params.d1 * state.S1
     jump: state.S1 -= 1; state.N1 -= 1;

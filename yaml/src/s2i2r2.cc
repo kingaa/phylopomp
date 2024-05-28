@@ -186,10 +186,10 @@ void s2i2r2_genealogy_t::jump (int event) {
       sample(1);
       break;
     case 9:
-      state.S1 -= 1; state.I1 += 1; graft(2); birth(2,0); death(2);
+      state.S1 -= 1; state.I1 += 1; graft(2); migrate(2,0);
       break;
     case 10:
-      state.S2 -= 1; state.I2 += 1; graft(2); birth(2,1); death(2);
+      state.S2 -= 1; state.I2 += 1; graft(2); migrate(2,1);
       break;
     case 11:
       state.S1 -= 1; state.N1 -= 1;
