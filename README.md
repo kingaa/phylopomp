@@ -15,8 +15,11 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 
 ### Publications
 
+[“Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes” (*arXiv:2405.17032*, 2024)](https://doi.org/10.48550/arxiv.2405.17032)  
+[![](https://img.shields.io/badge/doi-10.48550/arxiv.2405.17032-yellow.svg)](https://doi.org/10.48550/arxiv.2405.17032)
+
 [“Markov Genealogy Processes” (*Theoretical Population Biology*
-**143**:77–91)](https://doi.org/10.1016/j.tpb.2021.11.003)  
+**143**:77–91, 2022)](https://doi.org/10.1016/j.tpb.2021.11.003)  
 [![](https://img.shields.io/badge/doi-10.1016/j.tpb.2021.11.003-yellow.svg)](https://doi.org/10.1016/j.tpb.2021.11.003)
 
 ### Related packages:
@@ -26,12 +29,12 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 
 ### Checklist for adding a new model
 
-- [x] create and edit `yaml/<model>.yml`
-- [x] in `yaml/`, run `R < template.R`
-- [x] `cp yaml/src/<model>.cc src`
-- [x] `cp yaml/R/<model>.R R`
-- [x] optionally edit `R/<model>.R` and `src/<model>.cc` for style and documentation
-- [x] edit `src/init.c`
-- [x] edit `R/geneal.R`, `R/simulate.R`, `R/yaml.R`
-- [x] add examples to `examples/<model.R>`
-- [x] add tests to `tests/`
+- [ ] create and edit `yaml/<model>.yml`
+- [ ] in `yaml/`, run `R < template.R`
+- [ ] `cp yaml/src/<model>.cc src`
+- [ ] `cp yaml/R/<model>.R R`
+- [ ] optionally edit `R/<model>.R` and `src/<model>.cc` for style and documentation
+- [ ] edit `src/init.c`
+- [ ] edit `R/geneal.R`, `R/simulate.R`, `R/yaml.R`
+- [ ] add examples to `examples/<model.R>`
+- [ ] add tests to `tests/`
