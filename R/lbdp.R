@@ -158,7 +158,7 @@ lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
 ##' @rdname lbdp
 ##' @details
 ##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
-##' @importFrom pomp pomp onestep euler covariate_table
+##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
 ##' @export
 lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)

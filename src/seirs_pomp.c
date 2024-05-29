@@ -2,7 +2,7 @@
 #include "internal.h"
 
 static inline int random_choice (double n) {
-  return (int) floor(R_unif_index(n));
+  return random_integer((int) nearbyint(n));
 }
 
 static void change_color (double *color, int nsample,
