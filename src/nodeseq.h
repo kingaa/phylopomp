@@ -84,13 +84,9 @@ private:
     for (node_it i = begin(); i != end(); i++) {
       node_t *p = *i;
       n = names.find(p->uniq);
-      if (n != names.end()) {
-        ball_t *b = n->second;
-        p->green_ball() = b;
-      } else {
-        err("in '%s': cannot find node %zd",__func__,p->uniq); // #nocov
-      }
-
+      assert(n != names.end());
+      ball_t *b = n->second;
+      p->green_ball() = b;
     }
   };
 
@@ -205,8 +201,7 @@ public:
   };
   //! remove a dead root node
   void destroy_node (node_t *p) {
-    if (!p->dead_root())
-      err("in '%s': invalid call.",__func__); // #nocov
+    assert(p->dead_root());
     remove(p);
     delete p;
   };

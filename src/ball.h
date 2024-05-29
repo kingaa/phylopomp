@@ -92,20 +92,17 @@ public:
   };
   //! view owner of a green ball
   node_t* owner (void) const {
-    if (color != green)
-      err("ask not who owns a %s ball!",colores[color]); // #nocov
+    assert(color==green);
     return _owner;
   };
   //! change owner of a green ball
   node_t*& owner (void) {
-    if (color != green)
-      err("meddle not with the owner of a %s ball!",colores[color]); // #nocov
+    assert(color==green);
     return _owner;
   };
   //! a child is the owner of a green ball
   node_t* child (void) const {
-    if (color != green)
-      err("ask not the child of a %s ball!",colores[color]); // #nocov
+    assert(color==green);
     return _owner;
   };
   //! in whose pocket do I lie?
