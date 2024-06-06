@@ -56,7 +56,8 @@ static double event_rates
   *penalty = 0;
   // 0: transmission, s=(0,0)
   alpha = Beta*S*I/N;
-  pi = 1-ellI/(I+1);
+  pi = (I > 0) ? 1-ellI/I : 0;
+  assert(I >= ellI);
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
   // 1: transmission, s=(0,1)
@@ -67,21 +68,14 @@ static double event_rates
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ellI); logpi++;
   // 3: progression, s=(0,0)
-  // 4: progression, s=(0,1)
   alpha = sigma*E;
-  pi = ellE/(E+1);
-  if (E > ellE) {
-    event_rate += (*rate = alpha*(1-pi)); rate++;
-    *logpi = log(1-pi); logpi++;
-    event_rate += (*rate = alpha*pi); rate++;
-    *logpi = log(pi)-log(ellE); logpi++;
-  } else {
-    *rate = 0; rate++;
-    *logpi = 0; logpi++;
-    *rate = 0; rate++;
-    *logpi = 0; logpi++;
-    *penalty += alpha;
-  }
+  pi = (E > 0) ? ellE/E : 1;
+  assert(E >= ellE);
+  event_rate += (*rate = alpha*(1-pi)); rate++;
+  *logpi = log(1-pi); logpi++;
+  // 4: progression, s=(0,1)
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi)-log(ellE); logpi++;
   // 5: recovery
   alpha = gamma*I;
   if (I > ellI) {
@@ -97,6 +91,7 @@ static double event_rates
   *logpi = 0; logpi++;
   // 7: sampling (Q = 0)
   *penalty += psi*I;
+  assert(!ISNAN(event_rate));
   return event_rate;
 }
 
@@ -214,6 +209,7 @@ void seirs_gill
       ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
       S -= 1; E += 1;
       ellE += 1;
+      S = (S > 0) ? S : 0;
       int c1 = child[index[parent]];
       int c2 = child[index[parent]+1];
       assert(c1 != c2);
