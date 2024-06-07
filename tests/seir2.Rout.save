@@ -59,47 +59,47 @@ Error : in 'seirs_pomp': 'S0','E0','I0','R0' must be nonnegative integers.
 > 
 > po |> rinit(nsim=5)
        .id
-name       [,1]   [,2]   [,3]   [,4]    [,5]
-  S     100.000 100.00 100.00 100.00 100.000
-  E       3.000   3.00   3.00   3.00   3.000
-  I       5.000   5.00   5.00   5.00   5.000
-  R     100.000 100.00 100.00 100.00 100.000
-  ll      0.624   1.03   1.03   1.03   0.624
-  node    5.000   5.00   5.00   5.00   5.000
-  ellE    2.000   3.00   3.00   3.00   2.000
-  ellI    4.000   3.00   3.00   3.00   4.000
-  color   1.000   0.00   1.00   1.00   1.000
-          0.000   1.00   1.00   1.00   0.000
-          1.000   0.00   0.00   0.00   1.000
-             NA     NA     NA     NA      NA
-          0.000   1.00   1.00   0.00   1.000
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-             NA     NA     NA     NA      NA
-          1.000   0.00   0.00   0.00   1.000
-          1.000   1.00   0.00   1.00   0.000
+name      [,1]   [,2]   [,3]   [,4]   [,5]
+  S     100.00 100.00 100.00 100.00 100.00
+  E       3.00   3.00   3.00   3.00   3.00
+  I       5.00   5.00   5.00   5.00   5.00
+  R     100.00 100.00 100.00 100.00 100.00
+  ll      4.03   3.33   3.33   3.33   3.33
+  node    5.00   5.00   5.00   5.00   5.00
+  ellE    1.00   2.00   2.00   2.00   2.00
+  ellI    5.00   4.00   4.00   4.00   4.00
+  color   1.00   1.00   0.00   0.00   0.00
+          1.00   0.00   1.00   1.00   1.00
+          1.00   1.00   0.00   1.00   1.00
+            NA     NA     NA     NA     NA
+          0.00   0.00   1.00   1.00   1.00
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+            NA     NA     NA     NA     NA
+          1.00   1.00   1.00   0.00   0.00
+          1.00   1.00   1.00   1.00   1.00
 > 
 > po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
 > pf |> logLik()
- [1] -31.2 -30.4 -30.4 -31.3 -32.0 -31.7 -31.9 -30.5 -31.3 -29.5 -30.3 -32.7
-[13] -30.5 -31.3 -31.1 -33.2 -31.5 -32.0 -30.7 -30.1
+ [1] -5.53 -6.20 -7.95 -7.13 -5.71 -6.44 -6.91 -4.81 -5.33 -5.96 -6.78 -6.47
+[13] -5.47 -5.11 -7.86 -4.03 -5.16 -4.70 -5.45 -6.15
 > pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
-    est      se     ess 
--30.835   0.202  11.688 
+   est     se    ess 
+-5.510  0.238 10.207 
 > 
 > pf |> plot(type="s")
 > 

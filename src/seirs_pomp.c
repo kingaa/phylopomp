@@ -2,7 +2,7 @@
 #include "internal.h"
 
 static inline int random_choice (double n) {
-  return random_integer((int) nearbyint(n));
+  return floor(R_unif_index(n));
 }
 
 static void change_color (double *color, int nsample,
@@ -55,6 +55,7 @@ static double event_rates
   double alpha, pi;
   *penalty = 0;
   // 0: transmission, s=(0,0)
+  assert(S>=0 && I>=0);
   alpha = Beta*S*I/N;
   pi = (I > 0) ? 1-ellI/I : 0;
   assert(I >= ellI);
@@ -68,6 +69,7 @@ static double event_rates
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ellI); logpi++;
   // 3: progression, s=(0,0)
+  assert(E>=0);
   alpha = sigma*E;
   pi = (E > 0) ? ellE/E : 1;
   assert(E >= ellE);
@@ -77,6 +79,7 @@ static double event_rates
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ellE); logpi++;
   // 5: recovery
+  assert(I>=0);
   alpha = gamma*I;
   if (I > ellI) {
     event_rate += (*rate = alpha); rate++;
@@ -99,7 +102,7 @@ static double event_rates
 //!
 //! The state variables include S, E, I, R
 //! plus 'ellE' and 'ellI' (numbers of E- and I-deme lineages),
-//! the accumulated weight ('ll'),
+//! the accumulated weight ('ll'), the current node number ('node'),
 //! and the coloring of each lineage ('COLOR').
 void seirs_rinit
 (
@@ -112,41 +115,44 @@ void seirs_rinit
  const double *__covars
  ){
   double *color = &COLOR;
-  const int nnode = *get_userdata_int("nnode");
   const int *nodetype = get_userdata_int("nodetype");
   const int *lineage = get_userdata_int("lineage");
-  const int *saturation = get_userdata_int("saturation");
   const int *index = get_userdata_int("index");
   const int *child = get_userdata_int("child");
+  int nnode = *get_userdata_int("nnode");
+#ifndef NDEBUG
+  const int *saturation = get_userdata_int("saturation");
+#endif
 
   double adj = N/(S0+E0+I0+R0);
   S = nearbyint(S0*adj);
   E = nearbyint(E0*adj);
   I = nearbyint(I0*adj);
   R = nearbyint(R0*adj);
-
   ellE = 0;
   ellI = 0;
+  ll = 0;
 
-  // color lineages by sampling without replacement
-  double nE = E;
-  double nI = I;
   int parent = 0;
-  while (nodetype[parent] == 0 && parent < nnode) {
-    for (int i = 0, j = index[parent]; i < saturation[parent]; i++, j++) {
-      int c = child[j];
-      int pick = random_choice(nE+nI);
-      if (pick < nearbyint(nE)) {
-        color[lineage[c]] = 0; // lineage is put into E deme
-        ellE += 1; nE -= 1;
-      } else {
-        color[lineage[c]] = 1; // lineage is put into I deme
-        ellI += 1; nI -= 1;
-      }
+  // for all roots:
+  while (parent < nnode && nodetype[parent] == 0) {
+    // color lineages by sampling without replacement
+    assert(saturation[parent]==1);
+    int c = child[index[parent]];
+    assert(lineage[parent]==lineage[c]);
+    double x = (E-ellE)/(E-ellE + I-ellI);
+    if (unif_rand() < x) {
+      // lineage is put into E deme      
+      color[lineage[c]] = 0;
+      ellE += 1;
+      ll -= log(x);
+    } else {
+      color[lineage[c]] = 1; // lineage is put into I deme
+      ellI += 1;
+      ll -= log(1-x);
     }
     parent++;
   }
-  ll = -dhyper(ellE,E,I,ellE+ellI,1);
   ellE = nearbyint(ellE);
   ellI = nearbyint(ellI);
   node = parent-1;
@@ -176,57 +182,70 @@ void seirs_gill
   const int *index = get_userdata_int("index");
   const int *child = get_userdata_int("child");
 
-  int parent = (int) node;
-  node += 1;
+  int parent = (int) nearbyint(node);
+
+#ifndef NDEBUG
+  int nnode = *get_userdata_int("nnode");
+  assert(parent>=0);
+  assert(parent<=nnode);
+#endif
+
+  int parlin = lineage[parent];
+  assert(parlin >= 0 && parlin < nsample);
+  assert(!ISNA(color[parlin]));
 
   // singular portion of filter equation
-  if (nodetype[parent] != 0) {    // not a root
+  switch (nodetype[parent]) {
+  case 0: default:
+    break;
+  case 1:                       // sample
     ll = 0;
-    int parlin = lineage[parent];
-    assert(parlin >= 0 && parlin < nsample);
-    assert(!ISNA(color[parlin]));
-
-    // if parent is not in deme I, likelihood = 0
+    // If parent is not in deme I, likelihood = 0.
     if (nearbyint(color[parlin]) != 1) {
       ll += R_NegInf;
       color[parlin] = 1;
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
-
-    if (nodetype[parent] == 1) {     // sample
-      if (saturation[parent] == 1) { // s=(0,1)
-        int c = child[index[parent]];
-        color[lineage[c]] = 1;
-        ll += log(psi);       // boost
-      } else {                // s=(0,0)
-        ellI -= 1;
-        ll += log(psi*(I-ellI)); // boost
-      }
-      color[parlin] = R_NaReal;
-    } else if (nodetype[parent] == 2) { // branch point s=(1,1)
-      assert(saturation[parent]==2);
-      ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
-      S -= 1; E += 1;
-      ellE += 1;
-      S = (S > 0) ? S : 0;
-      int c1 = child[index[parent]];
-      int c2 = child[index[parent]+1];
-      assert(c1 != c2);
-      assert(lineage[c1] != lineage[c2]);
-      assert(lineage[c1] != parlin || lineage[c2] != parlin);
-      assert(lineage[c1] == parlin || lineage[c2] == parlin);
-      if (unif_rand() < 0.5) {
-        color[lineage[c1]] = 0;
-        color[lineage[c2]] = 1;
-      } else {
-        color[lineage[c1]] = 1;
-        color[lineage[c2]] = 0;
-      }
-      ll -= log(0.5);
-    } else {
-      assert(0);                                 // #nocov
+    if (saturation[parent] == 1) { // s=(0,1)
+      int c = child[index[parent]];
+      color[lineage[c]] = 1;
+      ll += log(psi);
+    } else {                    // s=(0,0)
+      ellI -= 1;
+      ll += log(psi*(I-ellI));
     }
+    color[parlin] = R_NaReal;
+    break;
+  case 2:                       // branch point s=(1,1)
+    ll = 0;
+    // If parent is not in deme I, likelihood = 0.
+    if (nearbyint(color[parlin]) != 1) {
+      ll += R_NegInf;
+      color[parlin] = 1;
+      ellE -= 1; ellI += 1;
+      E -= 1; I += 1;
+    }
+    assert(saturation[parent]==2);
+    ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
+    S -= 1; E += 1;
+    ellE += 1;
+    S = (S > 0) ? S : 0;
+    int c1 = child[index[parent]];
+    int c2 = child[index[parent]+1];
+    assert(c1 != c2);
+    assert(lineage[c1] != lineage[c2]);
+    assert(lineage[c1] != parlin || lineage[c2] != parlin);
+    assert(lineage[c1] == parlin || lineage[c2] == parlin);
+    if (unif_rand() < 0.5) {
+      color[lineage[c1]] = 0;
+      color[lineage[c2]] = 1;
+    } else {
+      color[lineage[c1]] = 1;
+      color[lineage[c2]] = 0;
+    }
+    ll -= log(0.5);
+    break;
   }
 
   // continuous portion of filter equation:
@@ -299,6 +318,7 @@ void seirs_gill
   }
   tstep = tmax - t;
   ll -= penalty*tstep;
+  node += 1;
 }
 
 # define lik  (__lik[0])

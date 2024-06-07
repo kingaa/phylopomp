@@ -62,6 +62,8 @@ continueSEIRS <- continueSEIR
 ##' @rdname seir
 ##' @include lbdp.R sir.R
 ##' @param x genealogy in \pkg{phylopomp} format.
+##' @return
+##' \code{seirs_pomp} returns a \pkg{pomp} object.
 ##' @details
 ##' \code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
 ##' @importFrom pomp pomp onestep
@@ -72,41 +74,29 @@ seirs_pomp <- function (
   S0, E0, I0, R0
 )
 {
-  x |>
-    getInfo(
-      prune=TRUE,obscure=TRUE,
-      nsample=TRUE,lineages=TRUE,gendat=TRUE
-    ) -> gi
+  x |> gendat() -> gi
   ic <- as.integer(c(S0,E0,I0,R0))
   names(ic) <- c("S0","E0","I0","R0")
   if (any(ic < 0))
     pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
-  gi$lineages |> as.data.frame() -> dat
   pomp(
     data=NULL,
-    t0=dat$time[1L],
-    times=dat$time[-1L],
+    t0=gi$nodetime[1L],
+    times=gi$nodetime,
     params=c(
       Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
       ic,N=sum(ic)
     ),
+    userdata=gi,
     nstatevars=8L + gi$nsample,
-    userdata=list(
-      nsample=gi$nsample,
-      nnode=nrow(gi$gendat),
-      nodetime=gi$gendat$nodetime,
-      nodetype=gi$gendat$nodetype,
-      lineage=gi$gendat$lineage,
-      saturation=gi$gendat$saturation,
-      index=gi$gendat$index,
-      child=gi$gendat$child,
-      ancestor=gi$gendat$ancestor
-    ),
     rinit="seirs_rinit",
     rprocess=onestep("seirs_gill"),
     dmeasure="seirs_dmeas",
-    statenames=c("S","E","I","R","ll","node","ellE","ellI","color"),
+    statenames=c(
+      "S","E","I","R","ll",
+      "node","ellE","ellI","color"
+    ),
     paramnames=c(
       "Beta","sigma","gamma","psi","omega",
       "S0","E0","I0","R0","N"

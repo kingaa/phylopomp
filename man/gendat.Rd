@@ -10,7 +10,7 @@ gendat(object)
 \item{object}{a \sQuote{gpgen} object.}
 }
 \value{
-A tibble.
+A list of objects containing the information pertinent for filtering.
 }
 \description{
 Converts a given genealogy to a data frame.

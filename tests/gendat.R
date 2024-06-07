@@ -13,8 +13,7 @@ diagram(x)
 x |>
   gendat() -> g
 
-g |>
-  print(n=100)
+g
 
 g |>
   with({

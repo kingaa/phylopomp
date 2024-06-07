@@ -257,6 +257,7 @@ public:
         }
       }
     }
+    tout[n] = time();
     for (k = 0, n = 0, i = begin(); i != end(); i++, n++) {
       node_t *p = *i;
       j = i; j++;
@@ -270,17 +271,20 @@ public:
   };
   //! nodelist in data-frame format
   SEXP gendat (void) const {
-    SEXP tout, anc, lin, sat, type, index, child, out, outn;
+    SEXP tout, anc, lin, sat, type, index, child, ns, nn;
+    SEXP out, outn;
     size_t n = length();
-    PROTECT(tout = NEW_NUMERIC(n));
+    PROTECT(tout = NEW_NUMERIC(n+1));
     PROTECT(type = NEW_INTEGER(n));
     PROTECT(lin = NEW_INTEGER(n));
     PROTECT(sat = NEW_INTEGER(n));
     PROTECT(index = NEW_INTEGER(n));
     PROTECT(child = NEW_INTEGER(n));
     PROTECT(anc = NEW_INTEGER(n));
-    PROTECT(out = NEW_LIST(7));
-    PROTECT(outn = NEW_CHARACTER(7));
+    PROTECT(ns = NEW_INTEGER(1));
+    PROTECT(nn = NEW_INTEGER(1));
+    PROTECT(out = NEW_LIST(9));
+    PROTECT(outn = NEW_CHARACTER(9));
     set_list_elem(out,outn,tout,"nodetime",0);
     set_list_elem(out,outn,type,"nodetype",1);
     set_list_elem(out,outn,lin,"lineage",2);
@@ -288,10 +292,14 @@ public:
     set_list_elem(out,outn,index,"index",4);
     set_list_elem(out,outn,child,"child",5);
     set_list_elem(out,outn,anc,"ancestor",6);
+    set_list_elem(out,outn,ns,"nsample",7);
+    set_list_elem(out,outn,nn,"nnode",8);
     SET_NAMES(out,outn);
     gendat(REAL(tout),INTEGER(anc),INTEGER(lin),INTEGER(sat),
            INTEGER(type),INTEGER(index),INTEGER(child));
-    UNPROTECT(9);
+    *INTEGER(ns) = nsample();   // number of samples
+    *INTEGER(nn) = length();    // number of nodes
+    UNPROTECT(11);
     return out;
   };
 

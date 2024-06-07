@@ -84,6 +84,8 @@ seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
 }
 \value{
 \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
+
+\code{seirs_pomp} returns a \pkg{pomp} object.
 }
 \description{
 The population is structured by infection progression.

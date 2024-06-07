@@ -5,10 +5,9 @@
 ##' @name gendat
 ##' @include package.R
 ##' @param object a \sQuote{gpgen} object.
-##' @return A tibble.
-##' @importFrom tibble as_tibble
+##' @return A list of objects containing the information pertinent for filtering.
 ##' @rdname gendat
 ##' @export
 gendat <- function (object) {
-  .Call(P_gendat,geneal(object)) |> as_tibble()
+  .Call(P_gendat,geneal(object))
 }
