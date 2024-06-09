@@ -89,7 +89,9 @@ public:
     slate_t B[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
-    if (A[0] != magic) err("corrupted genealogy serialization.");
+    if (A[0] != magic)
+      err("in %s (%s line %d) corrupted genealogy serialization.",
+	  __func__,__FILE__,__LINE__);
     G._unique = A[1]; G._ndeme = size_t(A[2]);
     G._t0 = B[0]; G._time = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
@@ -112,7 +114,9 @@ public:
   };
   //! constructor from RAW SEXP (containing binary serialization)
   genealogy_t (SEXP o) {
-    if (LENGTH(o)==0) err("cannot deserialize a NULL.");
+    if (LENGTH(o)==0)
+      err("in %s (%s line %d): cannot deserialize a NULL.",
+	  __func__,__FILE__,__LINE__);
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);
@@ -534,7 +538,8 @@ private:
                      name_t *deme, slate_t *time) const {
     size_t n = s.size();
     if (n < 5)
-      err("in '%s': invalid Newick format: empty or invalid label.",__func__);
+      err("in '%s' (%s line %d): invalid Newick format: empty or invalid label.",
+	  __func__,__FILE__,__LINE__);
     switch (s[0]) {
     case 'o':
       *col = black;
@@ -546,7 +551,8 @@ private:
       *col = green;
       break;
     default:
-      err("in '%s': invalid Newick format: invalid label.",__func__);
+      err("in '%s' (%s line %d): invalid Newick format: invalid label.",
+	  __func__,__FILE__,__LINE__);
       break;
     }
     size_t i = 1;
@@ -555,13 +561,15 @@ private:
     if (i == n)
       err("in '%s': invalid Newick format: no deme specified.",__func__);
     if (s[i] == '(' || s[i] == ')' || s[i] == ',' || s[i] == ';')
-      err("in '%s': invalid Newick format: invalid deme.",__func__);
+      err("in '%s' (%s line %d): invalid Newick format: invalid deme.",
+	  __func__,__FILE__,__LINE__);
     try {
       *deme = name_t(stoi(s.substr(i),&sz));
       i += sz;
     }
     catch (const std::invalid_argument& e) {
-      err("in '%s': invalid Newick format: invalid deme.",__func__);
+      err("in '%s' (%s line %d): invalid Newick format: invalid deme.",
+	  __func__,__FILE__,__LINE__);
     }
     catch (const std::out_of_range& e) {
       err("in '%s': invalid Newick format: deme out of range.",__func__);
