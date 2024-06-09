@@ -39,7 +39,9 @@ G |>
 
 po |> rinit(nsim=5)
 
+po |> pfilter(Np=1) |> cond_logLik()
 po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
+pf[[1]] |> cond_logLik()
 pf |> logLik()
 pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
 

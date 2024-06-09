@@ -7,8 +7,6 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
-  Natural language support but running in an English locale
-
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -59,47 +57,59 @@ Error : in 'seirs_pomp': 'S0','E0','I0','R0' must be nonnegative integers.
 > 
 > po |> rinit(nsim=5)
        .id
-name      [,1]   [,2]   [,3]   [,4]   [,5]
-  S     100.00 100.00 100.00 100.00 100.00
-  E       3.00   3.00   3.00   3.00   3.00
-  I       5.00   5.00   5.00   5.00   5.00
-  R     100.00 100.00 100.00 100.00 100.00
-  ll      4.03   3.33   3.33   3.33   3.33
-  node    5.00   5.00   5.00   5.00   5.00
-  ellE    1.00   2.00   2.00   2.00   2.00
-  ellI    5.00   4.00   4.00   4.00   4.00
-  color   1.00   1.00   0.00   0.00   0.00
-          1.00   0.00   1.00   1.00   1.00
-          1.00   1.00   0.00   1.00   1.00
-            NA     NA     NA     NA     NA
-          0.00   0.00   1.00   1.00   1.00
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-            NA     NA     NA     NA     NA
-          1.00   1.00   1.00   0.00   0.00
-          1.00   1.00   1.00   1.00   1.00
+name    [,1] [,2] [,3] [,4] [,5]
+  S      100  100  100  100  100
+  E        3    3    3    3    3
+  I        5    5    5    5    5
+  R      100  100  100  100  100
+  ll       0    0    0    0    0
+  node     0    0    0    0    0
+  ellE     0    0    0    0    0
+  ellI     0    0    0    0    0
+  color   NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
 > 
+> po |> pfilter(Np=1) |> cond_logLik()
+ [1]  0.4700  0.8473  0.4055  0.9163  1.3863 -0.1717 -1.5208    -Inf -1.1688
+[10]    -Inf -2.7965  0.0362 -2.1279 -2.8974 -0.5341 -2.4754 -0.9432 -0.4969
+[19] -0.9961 -2.5295    -Inf -3.4129 -1.7504 -0.8427    -Inf -0.4058 -2.8705
+[28] -4.3717    -Inf    -Inf    -Inf -0.2195 -3.7279  2.0889    -Inf    -Inf
+[37]    -Inf
 > po |> pfilter(Np=1000) |> replicate(n=20) |> concat() -> pf
+> pf[[1]] |> cond_logLik()
+ [1]  0.6883  0.6801  0.6848  0.6191  0.5524  0.1313 -0.8176 -1.2669 -2.2199
+[10]  0.0114 -2.3487 -0.7804 -2.5436 -2.1143 -0.7066 -3.2491 -1.8492 -0.2606
+[19] -1.2850 -1.4912  0.3858 -2.0186 -1.6742 -0.2236  0.9968 -0.7108 -2.0855
+[28] -3.1059 -0.9060 -3.9732 -0.1787 -1.0421 -0.5869  0.9857  1.2883  0.9219
+[37]  1.2765
 > pf |> logLik()
- [1] -5.53 -6.20 -7.95 -7.13 -5.71 -6.44 -6.91 -4.81 -5.33 -5.96 -6.78 -6.47
-[13] -5.47 -5.11 -7.86 -4.03 -5.16 -4.70 -5.45 -6.15
+ [1] -28.2 -28.4 -27.2 -27.3 -29.2 -28.0 -29.4 -29.1 -28.4 -28.5 -30.2 -29.8
+[13] -27.5 -27.9 -28.4 -28.3 -29.0 -27.8 -27.9 -28.4
 > pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
-   est     se    ess 
--5.510  0.238 10.207 
+    est      se     ess 
+-28.168   0.163  13.475 
 > 
 > pf |> plot(type="s")
 > 

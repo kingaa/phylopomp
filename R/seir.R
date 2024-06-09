@@ -83,7 +83,7 @@ seirs_pomp <- function (
   pomp(
     data=NULL,
     t0=gi$nodetime[1L],
-    times=gi$nodetime,
+    times=gi$nodetime[-1L],
     params=c(
       Beta=Beta,sigma=sigma,gamma=gamma,psi=psi,omega=omega,
       ic,N=sum(ic)

@@ -114,16 +114,6 @@ void seirs_rinit
  const int *__covindex,
  const double *__covars
  ){
-  double *color = &COLOR;
-  const int *nodetype = get_userdata_int("nodetype");
-  const int *lineage = get_userdata_int("lineage");
-  const int *index = get_userdata_int("index");
-  const int *child = get_userdata_int("child");
-  int nnode = *get_userdata_int("nnode");
-#ifndef NDEBUG
-  const int *saturation = get_userdata_int("saturation");
-#endif
-
   double adj = N/(S0+E0+I0+R0);
   S = nearbyint(S0*adj);
   E = nearbyint(E0*adj);
@@ -132,30 +122,7 @@ void seirs_rinit
   ellE = 0;
   ellI = 0;
   ll = 0;
-
-  int parent = 0;
-  // for all roots:
-  while (parent < nnode && nodetype[parent] == 0) {
-    // color lineages by sampling without replacement
-    assert(saturation[parent]==1);
-    int c = child[index[parent]];
-    assert(lineage[parent]==lineage[c]);
-    double x = (E-ellE)/(E-ellE + I-ellI);
-    if (unif_rand() < x) {
-      // lineage is put into E deme      
-      color[lineage[c]] = 0;
-      ellE += 1;
-      ll -= log(x);
-    } else {
-      color[lineage[c]] = 1; // lineage is put into I deme
-      ellI += 1;
-      ll -= log(1-x);
-    }
-    parent++;
-  }
-  ellE = nearbyint(ellE);
-  ellI = nearbyint(ellI);
-  node = parent-1;
+  node = 0;
 }
 
 //! Simulator for the latent-state process (rprocess).
@@ -192,14 +159,31 @@ void seirs_gill
 
   int parlin = lineage[parent];
   assert(parlin >= 0 && parlin < nsample);
-  assert(!ISNA(color[parlin]));
 
   // singular portion of filter equation
   switch (nodetype[parent]) {
-  case 0: default:
+  default:			// non-genealogical event
+    break;
+  case 0:	     // root
+    ll = 0;
+    // color lineages by sampling without replacement
+    assert(saturation[parent]==1);
+    int c = child[index[parent]];
+    assert(lineage[parent]==lineage[c]);
+    double x = (E-ellE)/(E-ellE + I-ellI);
+    if (unif_rand() < x) {      // lineage is put into E deme      
+      color[lineage[c]] = 0;
+      ellE += 1;
+      ll -= log(x);
+    } else {			// lineage is put into I deme
+      color[lineage[c]] = 1;
+      ellI += 1;
+      ll -= log(1-x);
+    }
     break;
   case 1:                       // sample
     ll = 0;
+    assert(!ISNA(color[parlin]));
     // If parent is not in deme I, likelihood = 0.
     if (nearbyint(color[parlin]) != 1) {
       ll += R_NegInf;
@@ -219,6 +203,7 @@ void seirs_gill
     break;
   case 2:                       // branch point s=(1,1)
     ll = 0;
+    assert(!ISNA(color[parlin]));
     // If parent is not in deme I, likelihood = 0.
     if (nearbyint(color[parlin]) != 1) {
       ll += R_NegInf;
