@@ -9,12 +9,17 @@
 #define I0        (__p[__parindex[5]])
 #define R0        (__p[__parindex[6]])
 #define N         (__p[__parindex[7]])
-#define ell       (__covars[__covindex[0]])
-#define code      (__covars[__covindex[1]])
 #define S         (__x[__stateindex[0]])
 #define I         (__x[__stateindex[1]])
 #define R         (__x[__stateindex[2]])
 #define ll        (__x[__stateindex[3]])
+#define ellI      (__x[__stateindex[4]])
+#define node      (__x[__stateindex[5]])
+
+#define EVENT_RATES                                     \
+  event_rates(__x,__p,t,                                \
+              __stateindex,__parindex,__covindex,       \
+              __covars,rate,&penalty)                   \
 
 static double event_rates
 (
@@ -29,19 +34,19 @@ static double event_rates
  double *penalty
  ) {
   double event_rate = 0;
-  *penalty = 0;
   double alpha, disc;
-
-  assert(I >= ell);
-
+  *penalty = 0;
+  assert(I >= ellI);
+  assert(ellI >= 0);
+  assert(S >= 0);
   // transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
-  disc = (I > 0) ? ell*(ell-1)/I/(I+1) : 1;
+  disc = (I > 0) ? ellI*(ellI-1)/I/(I+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
   // recovery
   alpha = gamma*I;
-  if (I > ell) {
+  if (I > ellI) {
     event_rate += (*rate = alpha); rate++;
   } else {
     *rate = 0; rate++;
@@ -53,7 +58,7 @@ static double event_rates
   // sampling
   alpha = psi*I;
   *penalty += alpha;
-
+  assert(!ISNAN(event_rate));
   return event_rate;
 }
 
@@ -73,6 +78,8 @@ void sirs_rinit
   I = nearbyint(I0*m);
   R = nearbyint(R0*m);
   ll = 0;
+  ellI = 0;
+  node = 0;
 }
 
 //! Latent-state process simulator (rprocess).
@@ -90,29 +97,58 @@ void sirs_gill
  double dt
  ){
   double tstep = 0.0, tmax = t + dt;
-  // deal with event at start of interval:
-  ll = 0;
-  int ind = nearbyint(code);
-  if (ind == 1) {                // birth, s = 2
-    ll += (I > 0) ? log(Beta*S*I/N) : R_NegInf;
+  const int *nodetype = get_userdata_int("nodetype");
+  const int *saturation = get_userdata_int("saturation");
+
+  int parent = (int) nearbyint(node);
+
+#ifndef NDEBUG
+  int nnode = *get_userdata_int("nnode");
+  assert(parent>=0);
+  assert(parent<=nnode);
+#endif
+
+  // singular portion of filter equation
+  switch (nodetype[parent]) {
+  default:                      // non-genealogical event
+    break;
+  case 0:                       // root
+    ll = 0;
+    ellI += 1;
+    break;
+  case 1:                       // sample
+    ll = 0;
+    assert(I >= ellI);
+    assert(ellI >= 0);
+    if (saturation[parent] == 1) {
+      // s=(0,1)
+      ll += log(psi);
+    } else {
+      // s=(0,0)
+      ellI -= 1;
+      ll += log(psi*(I-ellI));
+    }
+    break;
+  case 2:                       // branch point s=(1,1)
+    ll = 0;
+    assert(S >= 0);
+    assert(I >= 0);
+    assert(ellI > 0);
+    assert(saturation[parent]==2);
+    ll += (I > 0 && I >= ellI) ? log(Beta*S*I/N) : R_NegInf;
     S -= 1; I += 1;
-    ll += (I >= ell && ell > 1) ? -log(I*(I-1)/2) : R_NegInf;
-  } else if (ind == 0) {         // sample, s = 1
-    ll += (I >= ell) ? log(psi) : R_NegInf;
-  } else if (ind == -1) {        // sample, s = 0
-    ll += (I > 0) ? log(psi*I) : R_NegInf;
-    ll += (I > ell) ? log(1-ell/I) : R_NegInf;
+    ellI += 1;
+    ll -= log(I*(I-1)/2);
+    S = (S > 0) ? S : 0;
+    break;
   }
-  assert(I>=ell);
 
   // take Gillespie steps to the end of the interval:
   int event;
   double penalty = 0;
   double rate[3];
 
-  double event_rate = event_rates(__x,__p,t,
-                                  __stateindex,__parindex,__covindex,
-                                  __covars,rate,&penalty);
+  double event_rate = EVENT_RATES;
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
@@ -133,13 +169,12 @@ void sirs_gill
       break;                    // #nocov
     }
     t += tstep;
-    event_rate = event_rates(__x,__p,t,
-                             __stateindex,__parindex,__covindex,
-                             __covars,rate,&penalty);
+    event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
   }
   tstep = tmax - t;
   ll -= penalty*tstep;
+  node += 1;
 }
 
 # define lik  (__lik[0])

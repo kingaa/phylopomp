@@ -821,9 +821,9 @@ Error : in 'geneal': unrecognized model 'bob'
 > raw(0) |> geneal()
 <phylopomp genealogy>
 > try(raw(0) |> newick())
-Error : cannot deserialize a NULL.
+Error : in genealogy_t (genealogy.h line 119): cannot deserialize a NULL.
 > try(raw(0) |> geneal() |> newick())
-Error : cannot deserialize a NULL.
+Error : in genealogy_t (genealogy.h line 119): cannot deserialize a NULL.
 > try(raw(10) |> newick())
-Error : corrupted genealogy serialization.
+Error : in operator>> (genealogy.h line 94) corrupted genealogy serialization.
 > 

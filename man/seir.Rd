@@ -85,13 +85,13 @@ seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
 \value{
 \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
 
-\code{seirs_pomp} returns a \pkg{pomp} object.
+\code{seirs_pomp} returns a \sQuote{pomp} object.
 }
 \description{
 The population is structured by infection progression.
 }
 \details{
-\code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
+\code{seirs_pomp} constructs a \sQuote{pomp} object containing a given set of data and an SEIRS model.
 }
 \examples{
 simulate("SEIR",Beta=2,sigma=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>

@@ -63,9 +63,9 @@ continueSEIRS <- continueSEIR
 ##' @include lbdp.R sir.R
 ##' @param x genealogy in \pkg{phylopomp} format.
 ##' @return
-##' \code{seirs_pomp} returns a \pkg{pomp} object.
+##' \code{seirs_pomp} returns a \sQuote{pomp} object.
 ##' @details
-##' \code{seirs_pomp} constructs a \pkg{pomp} object containing a given set of data and an SEIRS model.
+##' \code{seirs_pomp} constructs a \sQuote{pomp} object containing a given set of data and an SEIRS model.
 ##' @importFrom pomp pomp onestep
 ##' @export
 seirs_pomp <- function (

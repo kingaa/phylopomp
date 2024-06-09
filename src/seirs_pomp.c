@@ -38,6 +38,11 @@ static void change_color (double *color, int nsample,
 #define ellI      (__x[__stateindex[7]])
 #define COLOR     (__x[__stateindex[8]])
 
+#define EVENT_RATES                                     \
+  event_rates(__x,__p,t,                                \
+              __stateindex,__parindex,__covindex,       \
+              __covars,rate,logpi,&penalty)             \
+
 static double event_rates
 (
  double *__x,
@@ -162,20 +167,20 @@ void seirs_gill
 
   // singular portion of filter equation
   switch (nodetype[parent]) {
-  default:			// non-genealogical event
+  default:                      // non-genealogical event
     break;
-  case 0:	     // root
+  case 0:            // root
     ll = 0;
     // color lineages by sampling without replacement
     assert(saturation[parent]==1);
     int c = child[index[parent]];
     assert(lineage[parent]==lineage[c]);
     double x = (E-ellE)/(E-ellE + I-ellI);
-    if (unif_rand() < x) {      // lineage is put into E deme      
+    if (unif_rand() < x) {      // lineage is put into E deme
       color[lineage[c]] = 0;
       ellE += 1;
       ll -= log(x);
-    } else {			// lineage is put into I deme
+    } else {                    // lineage is put into I deme
       color[lineage[c]] = 1;
       ellI += 1;
       ll -= log(1-x);
@@ -240,9 +245,7 @@ void seirs_gill
   double event_rate = 0;
   double penalty = 0;
 
-  event_rate = event_rates(__x,__p,t,
-                           __stateindex,__parindex,__covindex,
-                           __covars,rate,logpi,&penalty);
+  event_rate = EVENT_RATES;
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
@@ -295,9 +298,7 @@ void seirs_gill
     ellI = nearbyint(ellI);
 
     t += tstep;
-    event_rate = event_rates(__x,__p,t,
-                             __stateindex,__parindex,__covindex,
-                             __covars,rate,logpi,&penalty);
+    event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
 
   }

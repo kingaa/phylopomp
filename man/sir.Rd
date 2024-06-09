@@ -78,12 +78,14 @@ sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
 }
 \value{
 \code{runSIR} and \code{continueSIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SIR}.
+
+\code{sir_pomp} and \code{sirs_pomp} return \sQuote{pomp} objects.
 }
 \description{
 A single, unstructured population of hosts.
 }
 \details{
-\code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
+\code{sir_pomp} constructs a \sQuote{pomp} object containing a given set of data and a SIR model.
 }
 \examples{
 simulate("SIR",Beta=2,gamma=1,psi=2,S0=1000,I0=5,time=5) |>

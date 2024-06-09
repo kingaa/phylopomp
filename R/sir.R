@@ -59,34 +59,33 @@ continueSIR <- function (
 ##' @include lbdp.R
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
 ##' @details
-##' \code{sir_pomp} constructs a \pkg{pomp} object containing a given set of data and a SIR model.
-##' @importFrom pomp pomp onestep covariate_table
+##' \code{sir_pomp} constructs a \sQuote{pomp} object containing a given set of data and a SIR model.
+##' @return
+##' \code{sir_pomp} and \code{sirs_pomp} return \sQuote{pomp} objects.
+##' @importFrom pomp pomp onestep
 ##' @export
 sir_pomp <- function (x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0=0)
 {
+  x |> gendat() -> gi
   ic <- as.integer(c(S0,I0,R0))
   names(ic) <- c("S0","I0","R0")
   if (any(ic < 0))
     pStop(paste(sQuote(names(ic)),collapse=","),
       " must be nonnegative integers.")
-  x |>
-    lineages(prune=TRUE,obscure=TRUE) |>
-    encode_data() -> dat
   pomp(
     data=NULL,
-    times=dat$time[-1L],t0=t0,
+    t0=gi$nodetime[1L],
+    times=gi$nodetime[-1L],
     params=c(Beta=Beta,gamma=gamma,psi=psi,omega=omega,ic,N=sum(ic)),
-    covar=covariate_table(
-      dat,
-      times="time",
-      order="constant"
-    ),
+    userdata=gi,
     rinit="sirs_rinit",
     rprocess=onestep("sirs_gill"),
     dmeasure="sirs_dmeas",
-    statenames=c("S","I","R","ll"),
-    paramnames=c("Beta","gamma","psi","omega","S0","I0","R0","N"),
-    covarnames=c("lineages","code"),
+    statenames=c("S","I","R","ll","ell","node"),
+    paramnames=c(
+      "Beta","gamma","psi","omega",
+      "S0","I0","R0","N"
+    ),
     PACKAGE="phylopomp"
   )
 }
