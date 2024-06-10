@@ -44,7 +44,7 @@ static double event_rates
   }
   // sampling
   *penalty += psi*n;
-  assert(!ISNAN(event_rate));
+  assert(R_FINITE(event_rate));
   return event_rate;
 }
 
@@ -81,7 +81,7 @@ void lbdp_gill
  ){
   double tstep = 0.0, tmax = t + dt;
   const int *nodetype = get_userdata_int("nodetype");
-  const int *saturation = get_userdata_int("saturation");
+  const int *sat = get_userdata_int("saturation");
   int parent = (int) nearbyint(node);
 
 #ifndef NDEBUG
@@ -102,21 +102,23 @@ void lbdp_gill
     ll = 0;
     assert(n >= ell);
     assert(ell >= 0);
-    if (saturation[parent] == 1) { // s=1
+    if (sat[parent] == 1) {     // s=1
       ll += log(psi);
-    } else {                    // s=0
+    } else if (sat[parent] == 0) { // s=0
       ell -= 1;
       ll += log(psi*(n-ell));
+    } else {
+      assert(0);                // #nocov
+      ll += R_NegInf;           // #nocov
     }
     break;
   case 2:                       // branch point s=2
     ll = 0;
     assert(n >= 0);
     assert(ell > 0);
-    assert(saturation[parent]==2);
-    n += 1;
+    assert(sat[parent]==2);
+    n += 1; ell += 1;
     ll += log(2*lambda/n);
-    ell += 1;
     break;
   }
 

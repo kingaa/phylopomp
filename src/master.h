@@ -52,7 +52,7 @@ public:
   }
 
 private:
-  
+
   void clean (void) { };
 
 public:
@@ -66,7 +66,9 @@ public:
   };
   //! constructor from RAW SEXP (containing binary serialization)
   master_t (SEXP o) {
-    if (LENGTH(o)==0) err("cannot deserialize a NULL.");
+    if (LENGTH(o)==0)
+      err("in %s (%s line %d): cannot deserialize a NULL.",
+          __func__,__FILE__,__LINE__);
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);

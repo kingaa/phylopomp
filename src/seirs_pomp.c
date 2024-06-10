@@ -99,7 +99,7 @@ static double event_rates
   *logpi = 0; logpi++;
   // 7: sampling (Q = 0)
   *penalty += psi*I;
-  assert(!ISNAN(event_rate));
+  assert(R_FINITE(event_rate));
   return event_rate;
 }
 
@@ -150,7 +150,7 @@ void seirs_gill
   const int nsample = *get_userdata_int("nsample");
   const int *nodetype = get_userdata_int("nodetype");
   const int *lineage = get_userdata_int("lineage");
-  const int *saturation = get_userdata_int("saturation");
+  const int *sat = get_userdata_int("saturation");
   const int *index = get_userdata_int("index");
   const int *child = get_userdata_int("child");
 
@@ -172,7 +172,7 @@ void seirs_gill
   case 0:            // root
     ll = 0;
     // color lineages by sampling without replacement
-    assert(saturation[parent]==1);
+    assert(sat[parent]==1);
     int c = child[index[parent]];
     assert(lineage[parent]==lineage[c]);
     double x = (E-ellE)/(E-ellE + I-ellI);
@@ -196,13 +196,16 @@ void seirs_gill
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
-    if (saturation[parent] == 1) { // s=(0,1)
+    if (sat[parent] == 1) {     // s=(0,1)
       int c = child[index[parent]];
       color[lineage[c]] = 1;
       ll += log(psi);
-    } else {                    // s=(0,0)
+    } else if (sat[parent] == 0) { // s=(0,0)
       ellI -= 1;
       ll += log(psi*(I-ellI));
+    } else {
+      assert(0);                // #nocov
+      ll += R_NegInf;           // #nocov
     }
     color[parlin] = R_NaReal;
     break;
@@ -216,7 +219,7 @@ void seirs_gill
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
-    assert(saturation[parent]==2);
+    assert(sat[parent]==2);
     ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
     S -= 1; E += 1;
     ellE += 1;

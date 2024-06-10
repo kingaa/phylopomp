@@ -92,7 +92,8 @@ public:
           b->owner() = p;
           ball_name->insert({b->uniq,b});
         } else {
-          err("in '%s': cannot find ball %zd",__func__,b->uniq); // #nocov
+          err("in '%s' (%s line %d): cannot find ball %zd", // #nocov
+              __func__,__FILE__,__LINE__,b->uniq);          // #nocov
         }
       }
     }
@@ -129,7 +130,8 @@ public:
     for (ball_it i = begin(); i != end(); i++) {
       if ((*i)->color == c) return *i;
     }
-    err("no ball of color %s",colores[c]); // # nocov
+    err("in '%s' (%s line %d): no ball of color %s", // # nocov
+        __func__,__FILE__,__LINE__,colores[c]);      // # nocov
     return 0;
   };
   //! return a pointer to another ball
@@ -137,7 +139,8 @@ public:
     for (ball_it i = begin(); i != end(); i++) {
       if (*i != b) return *i;
     }
-    err("error in '%s': there is no other.",__func__); // # nocov
+    err("error in '%s' (%s line %d): there is no other.", // # nocov
+        __func__,__FILE__,__LINE__);                      // # nocov
     return 0;
   };
   //! human-readable info

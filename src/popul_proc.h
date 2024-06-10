@@ -27,7 +27,7 @@ protected:
   static const size_t ndeme = NDEME;
 
 protected:
-  // MEMBER DATA  
+  // MEMBER DATA
   slate_t next;                 // time of next event
   size_t event;                 // mark of next event
   slate_t current;              // current time
@@ -39,7 +39,7 @@ private:
   void clean (void) {};         // memory cleanup
 
 public:
-  
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
@@ -60,7 +60,7 @@ public:
     X.clean();
     slate_t A[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
-    X.current = A[0]; X.next = A[1]; 
+    X.current = A[0]; X.next = A[1];
     memcpy(&X.event,o,sizeof(size_t)); o += sizeof(size_t);
     memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
@@ -106,7 +106,7 @@ public:
   };
 
 public:
-  
+
   // INFORMATION EXTRACTORS
   //! get current time.
   slate_t time (void) const {
@@ -118,8 +118,8 @@ public:
   virtual void valid (void) const {};
 
 public:
-  
-  //! set parameters 
+
+  //! set parameters
   void update_params (double*, int);
   //! set initial-value parameters
   void update_IVPs (double*, int);
@@ -147,7 +147,8 @@ public:
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-        err("in '%s': invalid negative rate[%zd]=%lg",__func__,event,rate[event]); // #nocov
+        err("in '%s' (%s line %d): invalid negative rate[%zd]=%lg", // #nocov
+            __func__,__FILE__,__LINE__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;
     }

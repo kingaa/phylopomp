@@ -58,7 +58,7 @@ static double event_rates
   // sampling
   alpha = psi*I;
   *penalty += alpha;
-  assert(!ISNAN(event_rate));
+  assert(R_FINITE(event_rate));
   return event_rate;
 }
 
@@ -98,7 +98,7 @@ void sirs_gill
  ){
   double tstep = 0.0, tmax = t + dt;
   const int *nodetype = get_userdata_int("nodetype");
-  const int *saturation = get_userdata_int("saturation");
+  const int *sat = get_userdata_int("saturation");
 
   int parent = (int) nearbyint(node);
 
@@ -120,13 +120,14 @@ void sirs_gill
     ll = 0;
     assert(I >= ellI);
     assert(ellI >= 0);
-    if (saturation[parent] == 1) {
-      // s=(0,1)
+    if (sat[parent] == 1) {
       ll += log(psi);
-    } else {
-      // s=(0,0)
+    } else if (sat[parent] == 0) {
       ellI -= 1;
       ll += log(psi*(I-ellI));
+    } else {
+      assert(0);                // #nocov
+      ll += R_NegInf;           // #nocov
     }
     break;
   case 2:                       // branch point s=(1,1)
@@ -134,7 +135,7 @@ void sirs_gill
     assert(S >= 0);
     assert(I >= 0);
     assert(ellI > 0);
-    assert(saturation[parent]==2);
+    assert(sat[parent]==2);
     ll += (I > 0 && I >= ellI) ? log(Beta*S*I/N) : R_NegInf;
     S -= 1; I += 1;
     ellI += 1;
