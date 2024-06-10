@@ -163,27 +163,21 @@ lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
 ##' @export
 lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
 {
+  x |> gendat() -> gi
   n0 <- round(n0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")
-  x |>
-    lineages(prune=TRUE,obscure=TRUE) |>
-    encode_data() -> data
   pomp(
     data=NULL,
-    times=data$time[-1L],t0=t0,
+    t0=gi$nodetime[1L],
+    times=gi$nodetime[-1L],
     params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+    userdata=gi,
     rinit="lbdp_rinit",
     dmeasure="lbdp_dmeas",
     rprocess=onestep("lbdp_gill"),
-    statenames=c("n","ll"),
+    statenames=c("n","ll","ell","node"),
     paramnames=c("lambda","mu","psi","n0"),
-    covarnames=c("lineages","code"),
-    covar=covariate_table(
-      data,
-      times="time",
-      order="constant"
-    ),
     PACKAGE="phylopomp"
   )
 }

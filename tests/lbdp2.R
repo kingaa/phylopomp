@@ -74,7 +74,7 @@ stopifnot(
 )
 
 try(
-  dat |> lbdp_pomp(n0=-10)
+  x |> lbdp_pomp(n0=-10)
 )
 
 dev.off()

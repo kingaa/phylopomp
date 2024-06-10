@@ -5,10 +5,14 @@
 #define mu      (__p[__parindex[1]])
 #define psi     (__p[__parindex[2]])
 #define n0      (__p[__parindex[3]])
-#define ell     (__covars[__covindex[0]])
-#define code    (__covars[__covindex[1]])
 #define n       (__x[__stateindex[0]])
 #define ll      (__x[__stateindex[1]])
+#define ell     (__x[__stateindex[2]])
+#define node    (__x[__stateindex[3]])
+
+#define EVENT_RATES                                     \
+  event_rates(__x,__p,t,                                \
+              __stateindex,__parindex,rate,&penalty)    \
 
 static double event_rates
 (
@@ -17,8 +21,6 @@ static double event_rates
  double t,
  const int *__stateindex,
  const int *__parindex,
- const int *__covindex,
- const double *__covars,
  double *rate,
  double *penalty
  ) {
@@ -26,6 +28,7 @@ static double event_rates
   double alpha, disc;
   *penalty = 0;
   assert(n >= ell);
+  assert(ell >= 0);
   // birth with saturation 0 or 1
   alpha = lambda*n;
   disc = (n > 0) ? ell*(ell-1)/n/(n+1) : 1;
@@ -41,6 +44,7 @@ static double event_rates
   }
   // sampling
   *penalty += psi*n;
+  assert(!ISNAN(event_rate));
   return event_rate;
 }
 
@@ -57,6 +61,8 @@ void lbdp_rinit
  ){
   n = nearbyint(n0);
   ll = 0;
+  ell = 0;
+  node = 0;
 }
 
 //! Latent-state process simulator (rprocess).
@@ -73,17 +79,45 @@ void lbdp_gill
  double t,
  double dt
  ){
-  double tstep = 0, tmax = t + dt;
-  int ind = nearbyint(code);
-  ll = 0;
+  double tstep = 0.0, tmax = t + dt;
+  const int *nodetype = get_userdata_int("nodetype");
+  const int *saturation = get_userdata_int("saturation");
+  int parent = (int) nearbyint(node);
 
-  if (ind == 1) {               // branch point with s = 2
+#ifndef NDEBUG
+  int nnode = *get_userdata_int("nnode");
+  assert(parent>=0);
+  assert(parent<=nnode);
+#endif
+
+  // singular portion of filter equation
+  switch (nodetype[parent]) {
+  default:                      // non-genealogical event
+    break;
+  case 0:                       // root
+    ll = 0;
+    ell += 1;
+    break;
+  case 1:                       // sample
+    ll = 0;
+    assert(n >= ell);
+    assert(ell >= 0);
+    if (saturation[parent] == 1) { // s=1
+      ll += log(psi);
+    } else {                    // s=0
+      ell -= 1;
+      ll += log(psi*(n-ell));
+    }
+    break;
+  case 2:                       // branch point s=2
+    ll = 0;
+    assert(n >= 0);
+    assert(ell > 0);
+    assert(saturation[parent]==2);
     n += 1;
     ll += log(2*lambda/n);
-  } else if (ind == 0) {        // sample with s = 1
-    ll += log(psi);
-  } else if (ind == -1) {       // sample with s = 0
-    ll += log(psi*(n-ell));
+    ell += 1;
+    break;
   }
 
   // Gillespie steps:
@@ -91,9 +125,7 @@ void lbdp_gill
   double penalty = 0;
   double rate[2];
 
-  double event_rate = event_rates(__x,__p,t,
-                                  __stateindex,__parindex,__covindex,
-                                  __covars,rate,&penalty);
+  double event_rate = EVENT_RATES;
   tstep = exp_rand()/event_rate;
 
   while (t + tstep < tmax) {
@@ -111,13 +143,12 @@ void lbdp_gill
       break;                    // #nocov
     }
     t += tstep;
-    event_rate = event_rates(__x,__p,t,
-                             __stateindex,__parindex,__covindex,
-                             __covars,rate,&penalty);
+    event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
   }
   tstep = tmax - t;
   ll -= penalty*tstep;
+  node += 1;
 }
 
 # define lik  (__lik[0])

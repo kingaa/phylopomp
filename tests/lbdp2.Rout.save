@@ -71,8 +71,8 @@ Type 'q()' to quit R.
 +     logLik()
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
-    est      se 
--5.1400  0.0101 
+     est       se 
+-5.14828  0.00824 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -83,7 +83,7 @@ Type 'q()' to quit R.
 > runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] -16.3
+[1] -25.5
 > 
 > replicate(
 +   n=10,
@@ -94,7 +94,7 @@ Type 'q()' to quit R.
 + ) |>
 +   logmeanexp(se=TRUE) -> llpf; llpf
      est       se 
--16.3073   0.0104 
+-25.5164   0.0212 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -102,7 +102,7 @@ Type 'q()' to quit R.
 + )
 > 
 > try(
-+   dat |> lbdp_pomp(n0=-10)
++   x |> lbdp_pomp(n0=-10)
 + )
 Error : in 'lbdp_pomp': 'n0' must be a nonnegative integer.
 > 
