@@ -2,7 +2,8 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.14}{
   \itemize{
-    \item Yet another refactoring of the SEIRS model.
+    \item Yet another refactoring.
+    The SEIRS, LBDP, and SIRS models have been refactored to streamline the filtering calculations in a generalizable fashion.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.13}{
