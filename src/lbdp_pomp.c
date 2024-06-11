@@ -122,34 +122,37 @@ void lbdp_gill
     break;
   }
 
-  // Gillespie steps:
-  int event;
-  double penalty = 0;
-  double rate[2];
+  if (tmax > t) {
 
-  double event_rate = EVENT_RATES;
-  tstep = exp_rand()/event_rate;
+    // Gillespie steps:
+    int event;
+    double penalty = 0;
+    double rate[2];
 
-  while (t + tstep < tmax) {
-    event = rcateg(event_rate,rate,2);
-    ll -= penalty*tstep;
-    switch (event) {
-    case 0:                     // birth
-      n += 1;
-      break;
-    case 1:                     // death
-      n -= 1;
-      break;
-    default:                    // #nocov
-      assert(0);                // #nocov
-      break;                    // #nocov
-    }
-    t += tstep;
-    event_rate = EVENT_RATES;
+    double event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
+
+    while (t + tstep < tmax) {
+      event = rcateg(event_rate,rate,2);
+      ll -= penalty*tstep;
+      switch (event) {
+      case 0:                     // birth
+        n += 1;
+        break;
+      case 1:                     // death
+        n -= 1;
+        break;
+      default:                    // #nocov
+        assert(0);                // #nocov
+        break;                    // #nocov
+      }
+      t += tstep;
+      event_rate = EVENT_RATES;
+      tstep = exp_rand()/event_rate;
+    }
+    tstep = tmax - t;
+    ll -= penalty*tstep;
   }
-  tstep = tmax - t;
-  ll -= penalty*tstep;
   node += 1;
 }
 

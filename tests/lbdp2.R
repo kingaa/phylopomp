@@ -6,11 +6,11 @@ suppressPackageStartupMessages({
   library(phylopomp)
 })
 theme_set(theme_bw())
-set.seed(442131820)
 options(digits=3)
 
 ## Example 1
-runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) -> x
+runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) |>
+  freeze(seed=302190821) -> x
 x |> plot()
 
 x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
@@ -20,7 +20,8 @@ x |>
   lbdp_pomp(lambda=6,mu=1,psi=1) |>
   pfilter(Np=10000) |>
   replicate(n=10) |>
-  concat() -> pfs
+  concat() |>
+  freeze(seed=590246054) -> pfs
 
 pfs |>
   plot(type="s")
@@ -36,18 +37,18 @@ stopifnot(
 )
 
 ## Example 2
-runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
+runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) |>
+  freeze(seed=813057496) -> x
 x |> plot(points=TRUE)
 x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
 
-replicate(
-  n=10,
-  x |>
-    lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
-    pfilter(Np=10000) |>
-    logLik()
-) |>
-  logmeanexp(se=TRUE) -> llpf; llpf
+x |>
+  lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
+  pfilter(Np=10000) |>
+  logLik() |>
+  replicate(n=10) |>
+  logmeanexp(se=TRUE) |>
+  freeze(seed=2122992313) -> llpf; llpf
 
 stopifnot(
   llex>llpf[1]-2*llpf[2],
@@ -55,18 +56,20 @@ stopifnot(
 )
 
 ## Example 3
-runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
+freeze(
+  seed=362430640,
+  runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10)
+) -> x
 x |> plot(points=TRUE)
 x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
 
-replicate(
-  n=10,
-  x |>
-    lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
-    pfilter(Np=10000) |>
-    logLik()
-) |>
-  logmeanexp(se=TRUE) -> llpf; llpf
+x |>
+  lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
+  pfilter(Np=10000) |>
+  logLik() |>
+  replicate(n=10) |>
+  logmeanexp(se=TRUE) |>
+  freeze(seed=1569852047) -> llpf; llpf
 
 stopifnot(
   llex>llpf[1]-2*llpf[2],

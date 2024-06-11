@@ -241,72 +241,75 @@ void seirs_gill
     break;
   }
 
-  // continuous portion of filter equation:
-  // take Gillespie steps to the end of the interval
-  double rate[7], logpi[7];
-  int event;
-  double event_rate = 0;
-  double penalty = 0;
+  if (tmax > t) {
 
-  event_rate = EVENT_RATES;
-  tstep = exp_rand()/event_rate;
+    // continuous portion of filter equation:
+    // take Gillespie steps to the end of the interval
+    double rate[7], logpi[7];
+    int event;
+    double event_rate = 0;
+    double penalty = 0;
 
-  while (t + tstep < tmax) {
-    event = rcateg(event_rate,rate,7);
-    ll -= penalty*tstep + logpi[event];
-    switch (event) {
-    case 0:                   // transmission, s=(0,0)
-      S -= 1; E += 1;
-      ll += log(1-ellI/I)+log(1-ellE/E);
-      assert(!ISNAN(ll));
-      break;
-    case 1:                   // transmission, s=(0,1)
-      S -= 1; E += 1;
-      ll += log(1-ellE/E)-log(I);
-      assert(!ISNAN(ll));
-      break;
-    case 2:                   // transmission, s=(1,0)
-      S -= 1; E += 1;
-      ll += log(1-ellI/I)-log(E);
-      change_color(color,nsample,random_choice(ellI),1,0);
-      ellE += 1; ellI -= 1;
-      assert(!ISNAN(ll));
-      break;
-    case 3:                   // progression, s=(0,0)
-      E -= 1; I += 1;
-      ll += log(1-ellI/I);
-      assert(!ISNAN(ll));
-      break;
-    case 4:                   // progression, s=(0,1)
-      E -= 1; I += 1;
-      ll -= log(I);
-      change_color(color,nsample,random_choice(ellE),0,1);
-      ellE -= 1; ellI += 1;
-      assert(!ISNAN(ll));
-      break;
-    case 5:                   // recovery
-      I -= 1; R += 1;
-      assert(!ISNAN(ll));
-      break;
-    case 6:                   // waning
-      R -= 1; S += 1;
-      assert(!ISNAN(ll));
-      break;
-    default:                  // #nocov
-      assert(0);              // #nocov
-      break;                  // #nocov
-    }
-
-    ellE = nearbyint(ellE);
-    ellI = nearbyint(ellI);
-
-    t += tstep;
     event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
 
+    while (t + tstep < tmax) {
+      event = rcateg(event_rate,rate,7);
+      ll -= penalty*tstep + logpi[event];
+      switch (event) {
+      case 0:                   // transmission, s=(0,0)
+        S -= 1; E += 1;
+        ll += log(1-ellI/I)+log(1-ellE/E);
+        assert(!ISNAN(ll));
+        break;
+      case 1:                   // transmission, s=(0,1)
+        S -= 1; E += 1;
+        ll += log(1-ellE/E)-log(I);
+        assert(!ISNAN(ll));
+        break;
+      case 2:                   // transmission, s=(1,0)
+        S -= 1; E += 1;
+        ll += log(1-ellI/I)-log(E);
+        change_color(color,nsample,random_choice(ellI),1,0);
+        ellE += 1; ellI -= 1;
+        assert(!ISNAN(ll));
+        break;
+      case 3:                   // progression, s=(0,0)
+        E -= 1; I += 1;
+        ll += log(1-ellI/I);
+        assert(!ISNAN(ll));
+        break;
+      case 4:                   // progression, s=(0,1)
+        E -= 1; I += 1;
+        ll -= log(I);
+        change_color(color,nsample,random_choice(ellE),0,1);
+        ellE -= 1; ellI += 1;
+        assert(!ISNAN(ll));
+        break;
+      case 5:                   // recovery
+        I -= 1; R += 1;
+        assert(!ISNAN(ll));
+        break;
+      case 6:                   // waning
+        R -= 1; S += 1;
+        assert(!ISNAN(ll));
+        break;
+      default:                  // #nocov
+        assert(0);              // #nocov
+        break;                  // #nocov
+      }
+
+      ellE = nearbyint(ellE);
+      ellI = nearbyint(ellI);
+
+      t += tstep;
+      event_rate = EVENT_RATES;
+      tstep = exp_rand()/event_rate;
+
+    }
+    tstep = tmax - t;
+    ll -= penalty*tstep;
   }
-  tstep = tmax - t;
-  ll -= penalty*tstep;
   node += 1;
 }
 

@@ -144,37 +144,40 @@ void sirs_gill
     break;
   }
 
-  // take Gillespie steps to the end of the interval:
-  int event;
-  double penalty = 0;
-  double rate[3];
+  if (tmax > t) {
 
-  double event_rate = EVENT_RATES;
-  tstep = exp_rand()/event_rate;
+    // take Gillespie steps to the end of the interval:
+    int event;
+    double penalty = 0;
+    double rate[3];
 
-  while (t + tstep < tmax) {
-    event = rcateg(event_rate,rate,3);
-    ll -= penalty*tstep;
-    switch (event) {
-    case 0:                     // transmission
-      S -= 1; I += 1;
-      break;
-    case 1:                     // recovery
-      I -= 1; R += 1;
-      break;
-    case 2:                     // loss of immunity
-      R -= 1; S += 1;
-      break;
-    default:                    // #nocov
-      assert(0);                // #nocov
-      break;                    // #nocov
-    }
-    t += tstep;
-    event_rate = EVENT_RATES;
+    double event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
+
+    while (t + tstep < tmax) {
+      event = rcateg(event_rate,rate,3);
+      ll -= penalty*tstep;
+      switch (event) {
+      case 0:                     // transmission
+        S -= 1; I += 1;
+        break;
+      case 1:                     // recovery
+        I -= 1; R += 1;
+        break;
+      case 2:                     // loss of immunity
+        R -= 1; S += 1;
+        break;
+      default:                    // #nocov
+        assert(0);                // #nocov
+        break;                    // #nocov
+      }
+      t += tstep;
+      event_rate = EVENT_RATES;
+      tstep = exp_rand()/event_rate;
+    }
+    tstep = tmax - t;
+    ll -= penalty*tstep;
   }
-  tstep = tmax - t;
-  ll -= penalty*tstep;
   node += 1;
 }
 

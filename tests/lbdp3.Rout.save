@@ -89,7 +89,7 @@ Using alpha for a discrete variable is not advised.
 +   logmeanexp(se=TRUE) -> llpf
 > llpf
    est     se 
-5.2354 0.0217 
+5.2235 0.0194 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],

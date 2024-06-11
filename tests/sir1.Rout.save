@@ -53,7 +53,7 @@ Type 'q()' to quit R.
 +   pfilter(Np=5000) -> pf
 > 
 > pf |> logLik()
-[1] -488
+[1] -487
 > pf |> plot()
 > 
 > try(runSIR(S0=-10,time=1))

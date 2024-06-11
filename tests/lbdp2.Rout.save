@@ -25,22 +25,23 @@ Type 'q()' to quit R.
 +   library(phylopomp)
 + })
 > theme_set(theme_bw())
-> set.seed(442131820)
 > options(digits=3)
 > 
 > ## Example 1
-> runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) -> x
+> runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) |>
++   freeze(seed=302190821) -> x
 > x |> plot()
 > 
 > x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
 > llex
-[1] 12.6
+[1] 9.85
 > 
 > x |>
 +   lbdp_pomp(lambda=6,mu=1,psi=1) |>
 +   pfilter(Np=10000) |>
 +   replicate(n=10) |>
-+   concat() -> pfs
++   concat() |>
++   freeze(seed=590246054) -> pfs
 > 
 > pfs |>
 +   plot(type="s")
@@ -49,8 +50,8 @@ Type 'q()' to quit R.
 +   logLik() |>
 +   logmeanexp(se=TRUE,ess=TRUE) -> llpf
 > llpf
-    est      se     ess 
-12.6521  0.0407  9.8536 
+   est     se    ess 
+9.8715 0.0196 9.9657 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -58,21 +59,21 @@ Type 'q()' to quit R.
 + )
 > 
 > ## Example 2
-> runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
+> runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) |>
++   freeze(seed=813057496) -> x
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
-[1] -5.15
+[1] -7.59
 > 
-> replicate(
-+   n=10,
-+   x |>
-+     lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
-+     pfilter(Np=10000) |>
-+     logLik()
-+ ) |>
-+   logmeanexp(se=TRUE) -> llpf; llpf
-     est       se 
--5.14828  0.00824 
+> x |>
++   lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
++   pfilter(Np=10000) |>
++   logLik() |>
++   replicate(n=10) |>
++   logmeanexp(se=TRUE) |>
++   freeze(seed=2122992313) -> llpf; llpf
+    est      se 
+-7.6052  0.0201 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -80,21 +81,23 @@ Type 'q()' to quit R.
 + )
 > 
 > ## Example 3
-> runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) -> x
+> freeze(
++   seed=362430640,
++   runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10)
++ ) -> x
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
-[1] -25.5
+[1] 2.2
 > 
-> replicate(
-+   n=10,
-+   x |>
-+     lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
-+     pfilter(Np=10000) |>
-+     logLik()
-+ ) |>
-+   logmeanexp(se=TRUE) -> llpf; llpf
-     est       se 
--25.5164   0.0212 
+> x |>
++   lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
++   pfilter(Np=10000) |>
++   logLik() |>
++   replicate(n=10) |>
++   logmeanexp(se=TRUE) |>
++   freeze(seed=1569852047) -> llpf; llpf
+   est     se 
+2.1928 0.0143 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
