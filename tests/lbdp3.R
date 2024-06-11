@@ -7,13 +7,10 @@ suppressPackageStartupMessages({
   library(phylopomp)
 })
 theme_set(theme_bw())
-set.seed(442131820)
 options(digits=3)
 
-freeze(
-  runLBDP(time=1,lambda=4,mu=1,psi=2,n0=2),
-  seed=162343023
-) -> x
+runLBDP(time=1,lambda=4,mu=1,psi=2,n0=2) |>
+  freeze(seed=162343023) -> x
 
 plot_grid(
   x |> plot(points=TRUE,obscure=FALSE),
@@ -64,7 +61,8 @@ x |>
   pfilter(Np=1000) |>
   logLik() |>
   replicate(n=10) |>
-  logmeanexp(se=TRUE) -> llpf
+  logmeanexp(se=TRUE) |>
+  freeze(seed=442131820) -> llpf
 llpf
 
 stopifnot(
