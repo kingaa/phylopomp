@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.14.2.3
-Date: 2024-06-11
+Version: 0.14.2.4
+Date: 2024-07-04
 Authors@R: c(person(given=c("Aaron","A."),family="King",role=c("aut","cre"),email="kingaa@umich.edu",comment=c(ORCID="0000-0001-6159-3207")),
 	  person(given=c("Qianying"),family="Lin",role=c("aut"),comment=c(ORCID="0000-0001-8620-9910"))
 	  )
@@ -17,7 +17,7 @@ LazyData: true
 Contact: kingaa at umich dot edu
 Encoding: UTF-8
 Roxygen: list(roclets = c("collate", "namespace", "rd"))
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Collate: 
     'package.R'
     'geneal.R'
