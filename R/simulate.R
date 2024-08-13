@@ -34,7 +34,8 @@ simulate.default <- function (object, ...) {
       "- SEIRS: synonymous with SEIR\n",
       "- SIIR: two-strain SIR model\n",
       "- SI2R: superspreading model\n",
-      "- S2I2R2: two-species model\n",
+      "- S2I2R2: two-species model with unidirectional spillover\n",
+      "- TwoSpecies: two-species model\n",
       "- Moran: Moran process\n",
       "- LBDP: linear birth-death-sampling process\n"
     )
@@ -58,6 +59,7 @@ simulate.character <- function (object, time, ...) {
     SEIR = runSEIR(time=time,...),
     SEIRS = runSEIRS(time=time,...),
     S2I2R2 = runS2I2R2(time=time,...),
+    TwoSpecies = runTwoSpecies(time=time,...),
     SIIR = runSIIR(time=time,...),
     SI2R = runSI2R(time=time,...),
     LBDP = runLBDP(time=time,...),
@@ -85,6 +87,7 @@ simulate.gpsim <- function (object, time, ...) {
     modelSEIR = continueSEIR(object,time=time,...),
     modelSEIRS = continueSEIRS(object,time=time,...),
     modelS2I2R2 = continueS2I2R2(object,time=time,...),
+    modelTwoSpecies = continueTwoSpecies(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelSI2R = continueSI2R(object,time=time,...),
     modelLBDP = continueLBDP(object,time=time,...),

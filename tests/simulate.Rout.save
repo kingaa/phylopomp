@@ -1,13 +1,11 @@
 
-R version 4.4.0 (2024-04-24) -- "Puppy Cup"
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
 Copyright (C) 2024 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
-
-  Natural language support but running in an English locale
 
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
@@ -34,7 +32,8 @@ Available phylopomp models:
 - SEIRS: synonymous with SEIR
 - SIIR: two-strain SIR model
 - SI2R: superspreading model
-- S2I2R2: two-species model
+- S2I2R2: two-species model with unidirectional spillover
+- TwoSpecies: two-species model
 - Moran: Moran process
 - LBDP: linear birth-death-sampling process
 
