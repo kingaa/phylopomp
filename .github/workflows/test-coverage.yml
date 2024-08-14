@@ -34,7 +34,7 @@ jobs:
             any::knitr
             any::subplex
             any::nloptr
-            YuLab-SMU/ggtree
+            any::ggtree
 
       - name: Test coverage
         run: covr::codecov()

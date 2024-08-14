@@ -21,7 +21,7 @@ jobs:
         config:
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-20.04,   r: '4.2.0'}
+          - {os: ubuntu-20.04,   r: '4.3.0'}
           - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
 
@@ -49,7 +49,7 @@ jobs:
             any::knitr
             any::subplex
             any::nloptr
-            YuLab-SMU/ggtree
+            any::ggtree
 
       - uses: r-lib/actions/check-r-package@v2
 
