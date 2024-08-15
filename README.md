@@ -31,11 +31,9 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 ### Checklist for adding a new model
 
 - [ ] create and edit `yaml/<model>.yml`
-- [ ] in `yaml/`, run `R < template.R`
-- [ ] `cp yaml/src/<model>.cc src`
-- [ ] `cp yaml/R/<model>.R R`
+- [ ] in `yaml/`, run `Rscript add_model.R`
+- [ ] `cp yaml/src/* src`
+- [ ] `cp yaml/R/* R`
 - [ ] optionally edit `R/<model>.R` and `src/<model>.cc` for style and documentation
-- [ ] edit `src/init.c`
-- [ ] edit `R/geneal.R`, `R/simulate.R`, `R/yaml.R`
 - [ ] add examples to `examples/<model.R>`
 - [ ] add tests to `tests/`
