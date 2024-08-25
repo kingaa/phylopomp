@@ -4,6 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
+static int deme = 0;
+
 //! Moran process state.
 typedef struct {
   int m;
@@ -61,7 +63,7 @@ double moran_proc_t::event_rates (double *rate, int n) const {
 template<>
 void moran_genealogy_t::rinit (void) {
   state.m = state.g = 0;
-graft(0,params.n);
+graft(deme,params.n);
 }
 
 template<>

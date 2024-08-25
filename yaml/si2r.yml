@@ -2,7 +2,9 @@ name: SI2R
 description: Two-deme model of superspreading
 details: |-
   Deme 1 consists of "ordinary infections" that transmit at rate \code{Beta}. Deme 2 consists of "superspreaders" who engender clusters of infection in "superspreading events".
-ndeme: 2
+demes:
+  - ordinary
+  - superspreader
 parameter:
   Beta:
     name: Beta
@@ -82,39 +84,41 @@ rinit: |-
     state.I2 = 0;
     state.R = params.R0;
     state.N = double(params.S0+params.I0+params.R0);
-    graft(0,params.I0);
+    graft(ordinary,params.I0);
 events:
   I1infect:
     rate: params.Beta * state.S * state.I1 / state.N
-    jump: state.S -= 1; state.I1 += 1; birth(0,0);
+    jump: state.S -= 1; state.I1 += 1; birth(ordinary,ordinary);
   I2infect:
     jump: |-
       {
         int n = 1+int(rgeom(1.0/params.mu));
         if (state.S >= n) {
-          state.S -= n; state.I1 += n; birth(1,0,n);
+          state.S -= n; state.I1 += n;
+          birth(superspreader,ordinary,n);
         } else {
-          birth(1,0,state.S); state.I1 += state.S; state.S = 0;
+          birth(superspreader,ordinary,state.S);
+          state.I1 += state.S; state.S = 0;
         }
       }
     rate: params.Beta * state.S * state.I2 / state.N
   I1recov:
-    jump: state.I1 -= 1; state.R += 1; death(0);
+    jump: state.I1 -= 1; state.R += 1; death(ordinary);
     rate: params.gamma * state.I1
   I2recov:
-    jump: state.I2 -= 1; state.R += 1; death(1);
+    jump: state.I2 -= 1; state.R += 1; death(superspreader);
     rate: params.gamma * state.I2
   sample1:
     rate: params.psi1 * state.I1
-    jump: sample(0);
+    jump: sample(ordinary);
   sample2:
     rate: params.psi2 * state.I2
-    jump: sample(1);
+    jump: sample(superspreader);
   move12:
-    jump: state.I1 -= 1; state.I2 += 1; migrate(0,1);
+    jump: state.I1 -= 1; state.I2 += 1; migrate(ordinary,superspreader);
     rate: params.sigma12 * state.I1
   move21:
-    jump: state.I1 += 1; state.I2 -= 1; migrate(1,0);
+    jump: state.I1 += 1; state.I2 -= 1; migrate(superspreader,ordinary);
     rate: params.sigma21 * state.I2
   waning:
     jump: state.R -= 1; state.S += 1;

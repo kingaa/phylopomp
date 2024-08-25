@@ -2,7 +2,9 @@ name: SIIR
 description: Two-strain SIR model
 details: |-
   Two distinct pathogen strains compete for susceptibles.
-ndeme: 2
+demes:
+  - strain1
+  - strain2
 parameter:
   Beta1:
     name: Beta1
@@ -87,32 +89,32 @@ rinit: |-
     state.I2 = params.I2_0;
     state.R = params.R0;
     state.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
-    graft(0,params.I1_0);
-    graft(1,params.I2_0);
+    graft(strain1,params.I1_0);
+    graft(strain2,params.I2_0);
 events:
   I1infect:
     rate: params.Beta1 * state.S * state.I1 / state.N
-    jump: state.S -= 1; state.I1 += 1; birth(0,0);
+    jump: state.S -= 1; state.I1 += 1; birth(strain1,strain1);
   I2infect:
     rate: params.Beta2 * state.S * state.I2 / state.N
-    jump: state.S -= 1; state.I2 += 1; birth(1,1);
+    jump: state.S -= 1; state.I2 += 1; birth(strain2,strain2);
   I1recov:
-    jump: state.I1 -= 1; state.R += 1; death(0);
+    jump: state.I1 -= 1; state.R += 1; death(strain1);
     rate: params.gamma * state.I1
   I2recov:
-    jump: state.I2 -= 1; state.R += 1; death(1);
+    jump: state.I2 -= 1; state.R += 1; death(strain2);
     rate: params.gamma * state.I2
   sample1:
     rate: params.psi1 * state.I1
-    jump: sample(0);
+    jump: sample(strain1);
   sample2:
     rate: params.psi2 * state.I2
-    jump: sample(1);
+    jump: sample(strain2);
   move12:
-    jump: state.I1 -= 1; state.I2 += 1; migrate(0,1);
+    jump: state.I1 -= 1; state.I2 += 1; migrate(strain1,strain2);
     rate: params.sigma12 * state.I1
   move21:
-    jump: state.I1 += 1; state.I2 -= 1; migrate(1,0);
+    jump: state.I1 += 1; state.I2 -= 1; migrate(strain2,strain1);
     rate: params.sigma21 * state.I2
   wane:
     jump: state.S += 1; state.R -= 1;

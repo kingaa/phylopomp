@@ -2,7 +2,7 @@ name: LBDP
 description: Linear birth-death-sampling model
 details: |-
   The genealogy process induced by a simple linear birth-death process with constant-rate sampling.
-ndeme: 1
+demes: deme
 parameter:
   lambda:
     name: lambda
@@ -31,7 +31,7 @@ state:
     type: int
 rinit: |-
     state.n = params.n0;
-    graft(0,params.n0);
+    graft(deme,params.n0);
 events:
   birth:
     rate: params.lambda * state.n

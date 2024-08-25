@@ -31,6 +31,8 @@ make_model <- function (model) {
 #include "generics.h"
 #include "internal.h"
 
+{%demenames%}
+
 //! {%name%} process state.
 typedef struct {
 {%state_decls%}
@@ -101,7 +103,21 @@ GENERICS({%name%},{%gen%})
     proc=paste0(tolower(model$name),"_proc_t"),
     param_type=paste0(tolower(model$name),"_parameters_t"),
     state_type=paste0(tolower(model$name),"_state_t"),
-    ndeme=model$ndeme,
+    ndeme=length(model$demes),
+    demenames=paste(
+      mapply(
+        \(d,n) {
+          render(
+            r"{static int {%name%} = {%number%};}",
+            name=d,
+            number=n-1L
+          )
+        },
+        d=model$demes,
+        n=seq_along(model$demes)
+      ),
+      collapse="\n"
+    ),
     nevent=length(model$events),
     param_decls=paste(
       lapply(

@@ -4,6 +4,10 @@
 #include "generics.h"
 #include "internal.h"
 
+static int host1 = 0;
+static int host2 = 1;
+static int outside = 2;
+
 //! S2I2R2 process state.
 typedef struct {
   int S1;
@@ -151,27 +155,27 @@ void s2i2r2_genealogy_t::rinit (void) {
   state.R2 = params.R2_0;
   state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
   state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
-  graft(0,params.I1_0);
-  graft(1,params.I2_0);
+  graft(host1,params.I1_0);
+  graft(host2,params.I2_0);
 }
 
 template<>
 void s2i2r2_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S1 -= 1; state.I1 += 1; birth(0,0);
+    state.S1 -= 1; state.I1 += 1; birth(host1,host1);
     break;
   case 1:
-    state.S2 -= 1; state.I2 += 1; birth(1,1);
+    state.S2 -= 1; state.I2 += 1; birth(host2,host2);
     break;
   case 2:
-    state.S1 -= 1; state.I1 += 1; birth(1,0);
+    state.S1 -= 1; state.I1 += 1; birth(host2,host1);
     break;
   case 3:
-    state.I1 -= 1; state.R1 += 1; death(0);
+    state.I1 -= 1; state.R1 += 1; death(host1);
     break;
   case 4:
-    state.I2 -= 1; state.R2 += 1; death(1);
+    state.I2 -= 1; state.R2 += 1; death(host2);
     break;
   case 5:
     state.R1 -= 1; state.S1 += 1;
@@ -180,16 +184,16 @@ void s2i2r2_genealogy_t::jump (int event) {
     state.R2 -= 1; state.S2 += 1;
     break;
   case 7:
-    sample(0);
+    sample(host1);
     break;
   case 8:
-    sample(1);
+    sample(host2);
     break;
   case 9:
-    state.S1 -= 1; state.I1 += 1; graft(2); migrate(2,0);
+    state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
     break;
   case 10:
-    state.S2 -= 1; state.I2 += 1; graft(2); migrate(2,1);
+    state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
     break;
   case 11:
     state.S1 -= 1; state.N1 -= 1;
@@ -198,10 +202,10 @@ void s2i2r2_genealogy_t::jump (int event) {
     state.S2 -= 1; state.N2 -= 1;
     break;
   case 13:
-    state.I1 -= 1; state.N1 -= 1; death(0);
+    state.I1 -= 1; state.N1 -= 1; death(host1);
     break;
   case 14:
-    state.I2 -= 1; state.N2 -= 1; death(1);
+    state.I2 -= 1; state.N2 -= 1; death(host2);
     break;
   case 15:
     state.R1 -= 1; state.N1 -= 1;

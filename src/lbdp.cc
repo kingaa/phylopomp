@@ -4,6 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
+static int deme = 0;
+
 //! LBDP process state.
 typedef struct {
   int n;
@@ -63,7 +65,7 @@ double lbdp_proc_t::event_rates (double *rate, int n) const {
 template<>
 void lbdp_genealogy_t::rinit (void) {
   state.n = params.n0;
-  graft(0,params.n0);
+  graft(deme,params.n0);
 }
 
 template<>

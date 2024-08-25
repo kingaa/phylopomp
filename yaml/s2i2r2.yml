@@ -2,7 +2,10 @@ name: S2I2R2
 description: Two-host infection model with waning, immigration, and demography.
 details: |-
   The population is structured by infection progression and host species.
-ndeme: 3
+demes:
+  - host1
+  - host2
+  - outside
 state:
   S1:
     name: S1
@@ -144,23 +147,23 @@ rinit: |-
     state.R2 = params.R2_0;
     state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
     state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
-    graft(0,params.I1_0);
-    graft(1,params.I2_0);
+    graft(host1,params.I1_0);
+    graft(host2,params.I2_0);
 events:
   infect_11:
     rate: params.Beta11 * state.I1 / state.N1 * state.S1
-    jump: state.S1 -= 1; state.I1 += 1; birth(0,0);
+    jump: state.S1 -= 1; state.I1 += 1; birth(host1,host1);
   infect_22:
     rate: params.Beta22 * state.I2 / state.N2 * state.S2
-    jump: state.S2 -= 1; state.I2 += 1; birth(1,1);
+    jump: state.S2 -= 1; state.I2 += 1; birth(host2,host2);
   infect_12:
     rate: params.Beta12 * state.I2 / state.N2 * state.S1
-    jump: state.S1 -= 1; state.I1 += 1; birth(1,0);
+    jump: state.S1 -= 1; state.I1 += 1; birth(host2,host1);
   recov1:
-    jump: state.I1 -= 1; state.R1 += 1; death(0);
+    jump: state.I1 -= 1; state.R1 += 1; death(host1);
     rate: params.gamma1 * state.I1
   recov2:
-    jump: state.I2 -= 1; state.R2 += 1; death(1);
+    jump: state.I2 -= 1; state.R2 += 1; death(host2);
     rate: params.gamma2 * state.I2
   waning1:
     jump: state.R1 -= 1; state.S1 += 1;
@@ -170,16 +173,16 @@ events:
     rate: params.omega2 * state.R2
   sample1:
     rate: params.psi1 * state.I1
-    jump: sample(0);
+    jump: sample(host1);
   sample2:
     rate: params.psi2 * state.I2
-    jump: sample(1);
+    jump: sample(host2);
   import1:
     rate: params.iota1 * state.S1
-    jump: state.S1 -= 1; state.I1 += 1; graft(2); migrate(2,0);
+    jump: state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
   import2:
     rate: params.iota2 * state.S2
-    jump: state.S2 -= 1; state.I2 += 1; graft(2); migrate(2,1);
+    jump: state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
   death_S1:
     rate: params.d1 * state.S1
     jump: state.S1 -= 1; state.N1 -= 1;
@@ -188,10 +191,10 @@ events:
     jump: state.S2 -= 1; state.N2 -= 1;
   death_I1:
     rate: params.d1 * state.I1
-    jump: state.I1 -= 1; state.N1 -= 1; death(0);
+    jump: state.I1 -= 1; state.N1 -= 1; death(host1);
   death_I2:
     rate: params.d2 * state.I2
-    jump: state.I2 -= 1; state.N2 -= 1; death(1);
+    jump: state.I2 -= 1; state.N2 -= 1; death(host2);
   death_R1:
     rate: params.d1 * state.R1
     jump: state.R1 -= 1; state.N1 -= 1;

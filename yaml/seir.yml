@@ -2,7 +2,9 @@ name: SEIR
 description: Classical susceptible-exposed-infected-recovered model
 details: |-
   The population is structured by infection progression.
-ndeme: 2
+demes:
+  - Exposed
+  - Infectious
 parameter:
   Beta:
     name: Beta
@@ -77,16 +79,16 @@ rinit: |-
 events:
   infect:
     rate: params.Beta * state.S * state.I / state.N
-    jump: state.S -= 1; state.E += 1; birth(1,0);
+    jump: state.S -= 1; state.E += 1; birth(Infectious,Exposed);
   progress:
-    jump: state.E -= 1; state.I += 1; migrate(0,1);
+    jump: state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
     rate: params.sigma * state.E
   recov:
-    jump: state.I -= 1; state.R += 1; death(1);
+    jump: state.I -= 1; state.R += 1; death(Infectious);
     rate: params.gamma * state.I
   sample:
     rate: params.psi * state.I
-    jump: sample(1);
+    jump: sample(Infectious);
   waning:
     jump: state.R -= 1; state.S += 1;
     rate: params.omega * state.R

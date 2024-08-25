@@ -2,7 +2,7 @@ name: Moran
 description: The classical Moran model
 details: |-
    The Markov genealogy process induced by the classical Moran process, in which birth/death events occur at a constant rate and the population size remains constant.
-ndeme: 1
+demes: deme
 parameter:
   mu:
     name: mu
@@ -29,7 +29,7 @@ state:
     type: int
 rinit: |-
     state.m = state.g = 0;
-    graft(0,params.n);
+    graft(deme,params.n);
 events:
   moran:
     rate: params.mu * params.n

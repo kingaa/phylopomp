@@ -4,6 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
+static int ordinary = 0;
+static int superspreader = 1;
+
 //! SI2R process state.
 typedef struct {
   int S;
@@ -102,42 +105,44 @@ state.I1 = params.I0;
 state.I2 = 0;
 state.R = params.R0;
 state.N = double(params.S0+params.I0+params.R0);
-graft(0,params.I0);
+graft(ordinary,params.I0);
 }
 
 template<>
 void si2r_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S -= 1; state.I1 += 1; birth(0,0);
+      state.S -= 1; state.I1 += 1; birth(ordinary,ordinary);
       break;
     case 1:
       {
   int n = 1+int(rgeom(1.0/params.mu));
   if (state.S >= n) {
-    state.S -= n; state.I1 += n; birth(1,0,n);
+    state.S -= n; state.I1 += n;
+    birth(superspreader,ordinary,n);
   } else {
-    birth(1,0,state.S); state.I1 += state.S; state.S = 0;
+    birth(superspreader,ordinary,state.S);
+    state.I1 += state.S; state.S = 0;
   }
 }
       break;
     case 2:
-      state.I1 -= 1; state.R += 1; death(0);
+      state.I1 -= 1; state.R += 1; death(ordinary);
       break;
     case 3:
-      state.I2 -= 1; state.R += 1; death(1);
+      state.I2 -= 1; state.R += 1; death(superspreader);
       break;
     case 4:
-      sample(0);
+      sample(ordinary);
       break;
     case 5:
-      sample(1);
+      sample(superspreader);
       break;
     case 6:
-      state.I1 -= 1; state.I2 += 1; migrate(0,1);
+      state.I1 -= 1; state.I2 += 1; migrate(ordinary,superspreader);
       break;
     case 7:
-      state.I1 += 1; state.I2 -= 1; migrate(1,0);
+      state.I1 += 1; state.I2 -= 1; migrate(superspreader,ordinary);
       break;
     case 8:
       state.R -= 1; state.S += 1;

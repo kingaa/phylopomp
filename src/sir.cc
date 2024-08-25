@@ -4,6 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
+static int Infected = 0;
+
 //! SIR process state.
 typedef struct {
   int S;
@@ -82,7 +84,7 @@ void sir_genealogy_t::rinit (void) {
   state.I = params.I0;
   state.R = params.R0;
   state.N = double(params.S0+params.I0+params.R0);
-  graft(0,params.I0);
+  graft(Infected,params.I0);
 }
 
 template<>

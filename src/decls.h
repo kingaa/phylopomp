@@ -12,3 +12,7 @@ extern void seirs_dmeas(double *, const double *, const double *, const double *
 extern void sirs_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
 extern void sirs_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
 extern void sirs_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);
+/* src/twospecies_pomp.c */
+extern void twospecies_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
+extern void twospecies_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
+extern void twospecies_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);

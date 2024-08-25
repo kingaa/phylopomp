@@ -2,7 +2,7 @@ name: SIR
 description: Classical susceptible-infected-recovered model
 details: |-
   A single, unstructured population of hosts.
-ndeme: 1
+demes: Infected
 parameter:
   Beta:
     name: Beta
@@ -58,7 +58,7 @@ rinit: |-
     state.I = params.I0;
     state.R = params.R0;
     state.N = double(params.S0+params.I0+params.R0);
-    graft(0,params.I0);
+    graft(Infected,params.I0);
 events:
   infect:
     rate: params.Beta * state.S * state.I / state.N

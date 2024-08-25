@@ -4,6 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
+static int strain1 = 0;
+static int strain2 = 1;
+
 //! SIIR process state.
 typedef struct {
   int S;
@@ -105,36 +108,36 @@ void siir_genealogy_t::rinit (void) {
   state.I2 = params.I2_0;
   state.R = params.R0;
   state.N = double(params.S0+params.I1_0+params.I2_0+params.R0);
-  graft(0,params.I1_0);
-  graft(1,params.I2_0);
+  graft(strain1,params.I1_0);
+  graft(strain2,params.I2_0);
 }
 
 template<>
 void siir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S -= 1; state.I1 += 1; birth(0,0);
+    state.S -= 1; state.I1 += 1; birth(strain1,strain1);
     break;
   case 1:
-    state.S -= 1; state.I2 += 1; birth(1,1);
+    state.S -= 1; state.I2 += 1; birth(strain2,strain2);
     break;
   case 2:
-    state.I1 -= 1; state.R += 1; death(0);
+    state.I1 -= 1; state.R += 1; death(strain1);
     break;
   case 3:
-    state.I2 -= 1; state.R += 1; death(1);
+    state.I2 -= 1; state.R += 1; death(strain2);
     break;
   case 4:
-    sample(0);
+    sample(strain1);
     break;
   case 5:
-    sample(1);
+    sample(strain2);
     break;
   case 6:
-    state.I1 -= 1; state.I2 += 1; migrate(0,1);
+    state.I1 -= 1; state.I2 += 1; migrate(strain1,strain2);
     break;
   case 7:
-    state.I1 += 1; state.I2 -= 1; migrate(1,0);
+    state.I1 += 1; state.I2 -= 1; migrate(strain2,strain1);
     break;
   case 8:
     state.S += 1; state.R -= 1;

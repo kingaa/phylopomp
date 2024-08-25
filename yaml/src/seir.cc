@@ -4,6 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
+static int Exposed = 0;
+static int Infectious = 1;
+
 //! SEIR process state.
 typedef struct {
   int S;
@@ -100,16 +103,16 @@ template<>
 void seir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S -= 1; state.E += 1; birth(1,0);
+      state.S -= 1; state.E += 1; birth(Infectious,Exposed);
       break;
     case 1:
-      state.E -= 1; state.I += 1; migrate(0,1);
+      state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
       break;
     case 2:
-      state.I -= 1; state.R += 1; death(1);
+      state.I -= 1; state.R += 1; death(Infectious);
       break;
     case 3:
-      sample(1);
+      sample(Infectious);
       break;
     case 4:
       state.R -= 1; state.S += 1;
