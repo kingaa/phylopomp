@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - '*'
+    paths:
+      - Rpkg/DESCRIPTION
+      - Rpkg/NAMESPACE
+      - Rpkg/R/**
+      - Rpkg/src/**
+      - Rpkg/tests/**
+      - Rpkg/man/**
+      - Rpkg/data/**
   pull_request:
   workflow_dispatch:
 
@@ -37,6 +45,8 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+          extra-repositories: |
+            https://kingaa.github.io/
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
