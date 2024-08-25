@@ -8,7 +8,7 @@
 \alias{moran_exact}
 \title{The classical Moran model}
 \usage{
-runMoran(time, t0 = 0, n = 100, mu = 1, psi = 1)
+runMoran(time, t0 = 0, mu = 1, psi = 1, n = 100)
 
 continueMoran(object, time, mu = NA, psi = NA)
 
@@ -19,11 +19,11 @@ moran_exact(x, n = 100, mu = 1, psi = 1)
 
 \item{t0}{initial time}
 
+\item{mu}{per capita event rate}
+
+\item{psi}{per capita sampling rate}
+
 \item{n}{population size}
-
-\item{mu}{event rate}
-
-\item{psi}{sampling rate.}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

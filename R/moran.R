@@ -8,11 +8,11 @@
 ##' @aliases Moran
 ##' @include getinfo.R
 ##' @family Genealogy processes
-##' @param mu event rate
-##' @param psi sampling rate.
+##' @aliases Moran
+##' @param mu per capita event rate
+##' @param psi per capita sampling rate
 ##' @param n population size
-##' @param time final time
-##' @param t0 initial time
+##' @inheritParams sir
 ##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
 ##' @references
 ##' \Moran1958
@@ -21,8 +21,8 @@ NULL
 ##' @rdname moran
 ##' @export
 runMoran <- function (
-  time,  t0 = 0, n = 100,
-  mu = 1, psi = 1
+  time, t0 = 0,
+  mu = 1, psi = 1, n = 100
 ) {
   params <- c(mu=mu,psi=psi)
   ivps <- c(n=n)

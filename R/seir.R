@@ -3,16 +3,15 @@
 ##' The population is structured by infection progression.
 ##'
 ##' @name seir
-##' @aliases SEIR
 ##' @family Genealogy processes
-##' @include sir.R
+##' @aliases SEIR
 ##' @param Beta transmission rate
 ##' @param sigma progression rate
 ##' @param gamma recovery rate
 ##' @param psi per capita sampling rate
 ##' @param omega rate of waning of immunity
 ##' @param S0,E0,I0,R0 initial sizes of S, E, I, R compartments, respectively.
-##' @inheritParams runSIR
+##' @inheritParams sir
 ##' @return \code{runSEIR} and \code{continueSEIR} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SEIR}.
 ##' @references
 ##' \King2024

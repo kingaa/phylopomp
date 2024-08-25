@@ -5,33 +5,34 @@
 \alias{TwoSpecies}
 \alias{runTwoSpecies}
 \alias{continueTwoSpecies}
+\alias{twospecies_pomp}
 \title{Two-host infection model with waning, immigration, demography, and spillover.}
 \usage{
 runTwoSpecies(
   time,
   t0 = 0,
-  Beta11 = 4,
-  Beta12 = 0,
-  Beta21 = 0,
-  Beta22 = 4,
-  gamma1 = 1,
-  gamma2 = 1,
-  psi1 = 1,
+  Beta11 = 0.5,
+  Beta12 = 0.5,
+  Beta21 = 0.06,
+  Beta22 = 1.5,
+  gamma1 = 0.5,
+  gamma2 = 0.5,
+  psi1 = 2,
   psi2 = 0,
   omega1 = 0,
   omega2 = 0,
-  b1 = 0,
-  b2 = 0,
-  d1 = 0,
-  d2 = 0,
+  b1 = 0.2,
+  b2 = 0.5,
+  d1 = 0.2,
+  d2 = 0.5,
   iota1 = 0,
-  iota2 = 0,
-  S1_0 = 100,
-  S2_0 = 100,
+  iota2 = 0.001,
+  S1_0 = 1000,
+  S2_0 = 300,
   I1_0 = 0,
-  I2_0 = 10,
+  I2_0 = 0,
   R1_0 = 0,
-  R2_0 = 0
+  R2_0 = 700
 )
 
 continueTwoSpecies(
@@ -53,6 +54,32 @@ continueTwoSpecies(
   d2 = NA,
   iota1 = NA,
   iota2 = NA
+)
+
+twospecies_pomp(
+  x,
+  Beta11,
+  Beta12,
+  Beta21,
+  Beta22,
+  gamma1,
+  gamma2,
+  psi1,
+  psi2,
+  omega1,
+  omega2,
+  b1,
+  b2,
+  d1,
+  d2,
+  iota1,
+  iota2,
+  S1_0,
+  S2_0,
+  I1_0,
+  I2_0,
+  R1_0,
+  R2_0
 )
 }
 \arguments{
@@ -86,12 +113,19 @@ continueTwoSpecies(
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
+
+\item{x}{genealogy in \pkg{phylopomp} format.}
 }
 \value{
 \code{runTwoSpecies} and \code{continueTwoSpecies} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{TwoSpecies}.
+
+\code{twospecies_pomp} returns a \sQuote{pomp} object.
 }
 \description{
 The population is structured by infection progression and host species.
+}
+\details{
+\code{twospecies_pomp} constructs a \sQuote{pomp} object containing a given set of data and a TwoSpecies model.
 }
 \seealso{
 More example genealogy processes: 
