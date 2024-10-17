@@ -532,14 +532,17 @@ public:
 
 private:
 
+  size_t scan_color (const std::string& s, color_t* col) const {
+    return 1;
+  };
   //! Scan the Newick-format label string.
   //! This has format %c_%d_%d:%f
   size_t scan_label (const std::string& s, color_t* col,
                      name_t *deme, slate_t *time) const {
     size_t n = s.size();
-    if (n < 5)
-      err("in '%s' (%s line %d): invalid Newick format: empty or invalid label.",
-          __func__,__FILE__,__LINE__);
+    if (n < 1)
+      err("in '%s' (%s line %d): invalid Newick format: empty label.",__func__,__FILE__,__LINE__);
+    size_t sz, i = 1;
     switch (s[0]) {
     case 'o':
       *col = black;
@@ -551,34 +554,35 @@ private:
       *col = green;
       break;
     default:
-      err("in '%s' (%s line %d): invalid Newick format: invalid label.",
-          __func__,__FILE__,__LINE__);
+      err("in '%s' (%s line %d): invalid Newick label: expected one of 'b','g','m', or 'o', got '%c'.",
+          __func__,__FILE__,__LINE__,s[0]);
       break;
     }
-    size_t i = 1;
-    size_t sz;
     while (i < n && s[i] == '_') i++;
     if (i == n)
-      err("in '%s': invalid Newick format: no deme specified.",__func__);
+      err("in '%s': invalid Newick format: premature termination.",__func__);
     if (s[i] == '(' || s[i] == ')' || s[i] == ',' || s[i] == ';')
-      err("in '%s' (%s line %d): invalid Newick format: invalid deme.",
-          __func__,__FILE__,__LINE__);
-    try {
-      *deme = name_t(stoi(s.substr(i),&sz));
-      i += sz;
-    }
-    catch (const std::invalid_argument& e) {
-      err("in '%s' (%s line %d): invalid Newick format: invalid deme.",
-          __func__,__FILE__,__LINE__);
-    }
-    catch (const std::out_of_range& e) {
-      err("in '%s': invalid Newick format: deme out of range.",__func__);
-    }
-    catch (const std::exception& e) {
-      err("in '%s': parsing deme label: %s.",__func__,e.what());
-    }
-    catch (...) {
-      err("in '%s': other deme-parsing error.",__func__);
+      err("in '%s' (%s line %d): invalid Newick format.",__func__,__FILE__,__LINE__);
+    if (s[i] == ':') {
+      *deme = 0;
+    } else {
+      try {
+        *deme = name_t(stoi(s.substr(i),&sz));
+        i += sz;
+      }
+      catch (const std::invalid_argument& e) {
+        err("in '%s' (%s line %d): invalid Newick format: deme should be indicated with an integer.",
+            __func__,__FILE__,__LINE__);
+      }
+      catch (const std::out_of_range& e) {
+        err("in '%s': invalid Newick format: deme out of range.",__func__);
+      }
+      catch (const std::exception& e) {
+        err("in '%s': parsing deme label: %s.",__func__,e.what());
+      }
+      catch (...) {
+        err("in '%s': other deme-parsing error.",__func__);
+      }
     }
     // skip to branch length
     while (i < n && s[i] != ':' &&
@@ -590,7 +594,7 @@ private:
       *time = slate_t(stod(s.substr(i),&sz));
     }
     catch (const std::invalid_argument& e) {
-      err("in '%s': invalid Newick format: invalid branch length.",__func__);
+      err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
     }
     catch (const std::out_of_range& e) {
       err("in '%s': invalid Newick format: branch length out of range.",__func__);

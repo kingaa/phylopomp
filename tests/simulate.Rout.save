@@ -7,6 +7,8 @@ R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
 Type 'license()' or 'licence()' for distribution details.
 
+  Natural language support but running in an English locale
+
 R is a collaborative project with many contributors.
 Type 'contributors()' for more information and
 'citation()' on how to cite R or R packages in publications.
@@ -25,17 +27,17 @@ The following object is masked from 'package:stats':
 
 > simulate()
 Available phylopomp models:
-- SIR: standard susceptible-infected-recovered model
-    with optional waning of immunity
+- LBDP: Linear birth-death-sampling model
+- Moran: The classical Moran model
+- S2I2R2: Two-host infection model with waning, immigration, and demography.
+- SEIR: Classical susceptible-exposed-infected-recovered model
+- SI2R: Two-deme model of superspreading
+- SIIR: Two-strain SIR model
+- SIR: Classical susceptible-infected-recovered model
+- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover.
 - SIRS: synonymous with SIR
-- SEIR: standard susceptible-exposed-infected-recovered model
 - SEIRS: synonymous with SEIR
-- SIIR: two-strain SIR model
-- SI2R: superspreading model
-- S2I2R2: two-species model with unidirectional spillover
-- TwoSpecies: two-species model
-- Moran: Moran process
-- LBDP: linear birth-death-sampling process
+
 
 > try(simulate(22))
 Error : in 'simulate.default': 'object' must be specified as either the name of a model or the result of a previous simulation.

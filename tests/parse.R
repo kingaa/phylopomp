@@ -73,7 +73,7 @@ plot_grid(
     parse_newick() |>
     getInfo(prune=TRUE,obscure=FALSE,lineages=TRUE,description=TRUE,
       time=TRUE,yaml=TRUE,structure=TRUE) |>
-    getElement("lineages") |>  
+    getElement("lineages") |>
     plot(legend.position="none")+
     expand_limits(x=5),
   align="hv",axis="tblr",
@@ -105,7 +105,7 @@ plot_grid(
     plot()+expand_limits(x=7),
   align="hv",axis="tblr",
   ncol=1,rel_heights=c(1,1,1)
-  )
+)
 
 try(
   r"{(((p_9_0:1.0000,b_3_5:0.999,o_1_8:0.5555)g_0_88:0.5;}" |>
@@ -133,11 +133,16 @@ r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
 
 try(
   r"{(o_9_1:1.000000,m_1_3:1.000000)m_0_0:0.000000;}" |>
-  parse_newick()
+     parse_newick()
 )
 
 try(
   r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
+     parse_newick()
+)
+
+try(
+  r"{(o_9_1:1.000000)z_1_3:1.000000)m_0_0:0.000000;}" |>
      parse_newick()
 )
 
@@ -146,6 +151,10 @@ r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_1:1.000000,b_0_0:3,,)m_0_0:0.000000;}" |>
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+
+r"{((,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000;}" |>
    parse_newick() |>
    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
@@ -246,5 +255,23 @@ try(
 )
 
 try(r"{((o_9:20,b_9:20)g_9:10,b_9:10)m______}" |> parse_newick())
+
+r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b:17;}" |>
+   parse_newick() |>
+   newick(prune=FALSE,obscure=FALSE)
+
+r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b:1;}" |>
+   parse_newick() |>
+   newick(prune=FALSE,obscure=FALSE)
+
+r"{(o_9:1.000000,b_:3)m_0_0:0.000000,b:1;}" |>
+   parse_newick() |>
+   newick(prune=FALSE,obscure=FALSE)
+
+try(
+  r"{(o_9_1;,b_0_0:3)m_0_0:0.000000,b:1;}" |>
+     parse_newick() |>
+     newick(prune=FALSE,obscure=FALSE)
+)
 
 dev.off()
