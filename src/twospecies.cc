@@ -1,4 +1,4 @@
-// TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. (C++)
+// TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability. (C++)
 #include "master.h"
 #include "popul_proc.h"
 #include "generics.h"
@@ -30,6 +30,8 @@ typedef struct {
   double gamma2;
   double psi1;
   double psi2;
+  double c1;
+  double c2;
   double omega1;
   double omega2;
   double b1;
@@ -46,7 +48,7 @@ typedef struct {
   int R2_0;
 } twospecies_parameters_t;
 
-using twospecies_proc_t = popul_proc_t<twospecies_state_t,twospecies_parameters_t,20>;
+using twospecies_proc_t = popul_proc_t<twospecies_state_t,twospecies_parameters_t,22>;
 using twospecies_genealogy_t = master_t<twospecies_proc_t,3>;
 
 template<>
@@ -61,6 +63,8 @@ std::string twospecies_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(gamma2)
     + YAML_PARAM(psi1)
     + YAML_PARAM(psi2)
+    + YAML_PARAM(c1)
+    + YAML_PARAM(c2)
     + YAML_PARAM(omega1)
     + YAML_PARAM(omega2)
     + YAML_PARAM(b1)
@@ -98,6 +102,8 @@ void twospecies_proc_t::update_params (double *p, int n) {
   PARAM_SET(gamma2);
   PARAM_SET(psi1);
   PARAM_SET(psi2);
+  PARAM_SET(c1);
+  PARAM_SET(c2);
   PARAM_SET(omega1);
   PARAM_SET(omega2);
   PARAM_SET(b1);
@@ -133,8 +139,10 @@ double twospecies_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.gamma2 * state.I2);
   RATE_CALC(params.omega1 * state.R1);
   RATE_CALC(params.omega2 * state.R2);
-  RATE_CALC(params.psi1 * state.I1);
-  RATE_CALC(params.psi2 * state.I2);
+  RATE_CALC(params.psi1 * params.c1 * state.I1);
+  RATE_CALC(params.psi2 * params.c2* state.I2);
+  RATE_CALC(params.psi1 * (1-params.c1) * state.I1);
+  RATE_CALC(params.psi2 * (1-params.c2) * state.I2);
   RATE_CALC(params.iota1 * state.S1);
   RATE_CALC(params.iota2 * state.S2);
   RATE_CALC(params.d1 * state.S1);
@@ -191,39 +199,45 @@ void twospecies_genealogy_t::jump (int event) {
     state.R2 -= 1; state.S2 += 1;
     break;
   case 8:
-    sample(host1);
+    state.I1 -= 1; sample_death(host1);
     break;
   case 9:
-    sample(host2);
+    state.I2 -= 1; sample_death(host2);
     break;
   case 10:
-    state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
+    sample(host1);
     break;
   case 11:
-    state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
+    sample(host2);
     break;
   case 12:
-    state.S1 -= 1; state.N1 -= 1;
+    state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
     break;
   case 13:
-    state.S2 -= 1; state.N2 -= 1;
+    state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
     break;
   case 14:
-    state.I1 -= 1; state.N1 -= 1; death(host1);
+    state.S1 -= 1; state.N1 -= 1;
     break;
   case 15:
-    state.I2 -= 1; state.N2 -= 1; death(host1);
+    state.S2 -= 1; state.N2 -= 1;
     break;
   case 16:
-    state.R1 -= 1; state.N1 -= 1;
+    state.I1 -= 1; state.N1 -= 1; death(host1);
     break;
   case 17:
-    state.R2 -= 1; state.N2 -= 1;
+    state.I2 -= 1; state.N2 -= 1; death(host1);
     break;
   case 18:
-    state.S1 += 1; state.N1 += 1;
+    state.R1 -= 1; state.N1 -= 1;
     break;
   case 19:
+    state.R2 -= 1; state.N2 -= 1;
+    break;
+  case 20:
+    state.S1 += 1; state.N1 += 1;
+    break;
+  case 21:
     state.S2 += 1; state.N2 += 1;
     break;
   default:                      // #nocov

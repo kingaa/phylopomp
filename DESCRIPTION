@@ -41,4 +41,5 @@ Collate:
     'simulate.R'
     'treeplot.R'
     'twospecies.R'
+    'twospecies_pomp.R'
     'yaml.R'

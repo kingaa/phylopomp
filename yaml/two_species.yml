@@ -1,5 +1,6 @@
 name: TwoSpecies
-description: Two-host infection model with waning, immigration, demography, and spillover.
+description: |-
+  Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.
 details: |-
   The population is structured by infection progression and host species.
 demes:
@@ -71,6 +72,16 @@ parameter:
     name: psi2
     description: per capita sampling rate for species 2
     default: 0
+    type: double
+  c1:
+    name: c1
+    description: probability that a sampled (positive) host of species 1 is culled
+    default: 1
+    type: double
+  c2:
+    name: c2
+    description: probability that a sampled (positive) host of species 2 is culled
+    default: 1
     type: double
   omega1:
     name: omega1
@@ -179,11 +190,17 @@ events:
   waning2:
     jump: state.R2 -= 1; state.S2 += 1;
     rate: params.omega2 * state.R2
-  sample1:
-    rate: params.psi1 * state.I1
+  sample1C:
+    rate: params.psi1 * params.c1 * state.I1
+    jump: state.I1 -= 1; sample_death(host1);
+  sample2C:
+    rate: params.psi2 * params.c2* state.I2
+    jump: state.I2 -= 1; sample_death(host2);
+  sample1N:
+    rate: params.psi1 * (1-params.c1) * state.I1
     jump: sample(host1);
-  sample2:
-    rate: params.psi2 * state.I2
+  sample2N:
+    rate: params.psi2 * (1-params.c2) * state.I2
     jump: sample(host2);
   import1:
     rate: params.iota1 * state.S1

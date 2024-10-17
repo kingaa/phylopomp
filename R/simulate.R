@@ -35,7 +35,7 @@ simulate.default <- function (object, ...) {
       "- SI2R: Two-deme model of superspreading\n",
       "- SIIR: Two-strain SIR model\n",
       "- SIR: Classical susceptible-infected-recovered model\n",
-      "- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover.\n",
+      "- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.\n",
       "- SIRS: synonymous with SIR\n",
       "- SEIRS: synonymous with SEIR\n",
       "\n"
