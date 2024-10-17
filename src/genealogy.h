@@ -437,6 +437,16 @@ public:
     p->slate = time();
     add(p,a);
   };
+  //! insert a sample node and simultaneously terminate the lineage
+  void sample_death (ball_t* a, slate_t t) {
+    time() = t;
+    node_t *p = make_node(a->deme());
+    ball_t *b = new ball_t (p,p->uniq,blue,a->deme());
+    p->insert(b);
+    p->slate = time();
+    add(p,a);
+    drop(a);
+  };
   //! movement into deme d
   ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;

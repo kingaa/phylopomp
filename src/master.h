@@ -167,6 +167,12 @@ public:
     ball_t *a = inventory.random_ball(i);
     geneal.sample(a,time());
   };
+  //! sample_death in deme i
+  void sample_death (name_t i = 0) {
+    ball_t *a = inventory.random_ball(i);
+    inventory.erase(a);
+    geneal.sample_death(a,time());
+  };
   //! migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
     ball_t *a = inventory.random_ball(i);
