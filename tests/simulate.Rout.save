@@ -34,7 +34,7 @@ Available phylopomp models:
 - SI2R: Two-deme model of superspreading
 - SIIR: Two-strain SIR model
 - SIR: Classical susceptible-infected-recovered model
-- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover.
+- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.
 - SIRS: synonymous with SIR
 - SEIRS: synonymous with SEIR
 

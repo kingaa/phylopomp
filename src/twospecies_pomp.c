@@ -1,6 +1,8 @@
 #include "pomplink.h"
 #include "internal.h"
 
+static const int nrate = 18;
+
 static inline int random_choice (double n) {
   return floor(R_unif_index(n));
 }
@@ -32,8 +34,8 @@ static void change_color (double *color, int nsample,
 #define b2         (__p[__parindex[11]])
 #define d1         (__p[__parindex[12]])
 #define d2         (__p[__parindex[13]])
-#define iota1      (__p[__parindex[14]])
-#define iota2      (__p[__parindex[15]])
+#define C1         (__p[__parindex[14]])
+#define C2         (__p[__parindex[15]])
 #define S1_0       (__p[__parindex[16]])
 #define S2_0       (__p[__parindex[17]])
 #define I1_0       (__p[__parindex[18]])
@@ -59,6 +61,8 @@ static void change_color (double *color, int nsample,
               __stateindex,__parindex,__covindex,       \
               __covars,rate,logpi,&penalty)             \
 
+// FIXME: At the moment, the following codes exclude the possibility of
+// importation of infection.
 static double event_rates
 (
  double *__x,
@@ -169,9 +173,9 @@ static double event_rates
   alpha = d2*R2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
-  // 18: Sample_1 (Q = 0)
+  // Sample_1 (Q = 0) // NB: (1-C1)*psi1+C1*psi1 = psi1
   *penalty += psi1*I1;
-  // 19: Sample_2 (Q = 0)
+  // Sample_2 (Q = 0) // NB: (1-C2)*psi2+C2*psi2 = psi2
   *penalty += psi2*I2;
   assert(R_FINITE(event_rate));
   return event_rate;
@@ -214,6 +218,9 @@ void twospecies_rinit
 //!
 //! This is the Gillespie algorithm applied to the solution of the
 //! filter equation for the TwoSpecies model.
+//!
+//! FIXME: At the moment, the following codes exclude the possibility of
+//! importation of infection.
 void twospecies_gill
 (
  double *__x,
@@ -272,11 +279,21 @@ void twospecies_gill
     ll = 0;
     if (sat[parent] == 0) {     // s=(0,0)
       if (parcol == 0) {
-        ell1 -= 1;
-        ll += log(psi1*(I1-ell1));
+        if (unif_rand() < C1) {
+          ell1 -= 1; I1 -= 1;
+          ll += log(psi1);
+        } else {
+          ell1 -= 1;
+          ll += log(psi1*(I1-ell1));
+        }
       } else {
-        ell2 -= 1;
-        ll += log(psi2*(I2-ell2));
+        if (unif_rand() < C2) {
+          ell2 -= 1; I2 -= 1;
+          ll += log(psi2);
+        } else {
+          ell2 -= 1;
+          ll += log(psi2*(I2-ell2));
+        }
       }
     } else if (sat[parent] == 1) {
       int c = child[index[parent]];
@@ -375,7 +392,7 @@ void twospecies_gill
 
     // continuous portion of filter equation:
     // take Gillespie steps to the end of the interval
-    double rate[18], logpi[18];
+    double rate[nrate], logpi[nrate];
     int event;
     double event_rate = 0;
     double penalty = 0;
@@ -384,7 +401,7 @@ void twospecies_gill
     tstep = exp_rand()/event_rate;
 
     while (t + tstep < tmax) {
-      event = rcateg(event_rate,rate,18);
+      event = rcateg(event_rate,rate,nrate);
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                   // 0: Trans_11, s = (0,0),(1,0)

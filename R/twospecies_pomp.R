@@ -11,8 +11,8 @@
 twospecies_pomp <- function (
   x,
   Beta11, Beta12, Beta21, Beta22,
-  gamma1, gamma2, psi1, psi2, omega1, omega2,
-  b1, b2, d1, d2, iota1, iota2,
+  gamma1, gamma2, psi1, psi2, c1, c2,
+  omega1, omega2, b1, b2, d1, d2,
   S1_0, S2_0, I1_0, I2_0, R1_0, R2_0
 )
 {
@@ -30,8 +30,7 @@ twospecies_pomp <- function (
       Beta11=Beta11,Beta12=Beta12,Beta21=Beta21,Beta22=Beta22,
       gamma1=gamma1,gamma2=gamma2,psi1=psi1,psi2=psi2,
       omega1=omega1,omega2=omega2,
-      b1=b1,b2=b2,d1=d1,d2=d2,
-      iota1=iota1,iota2=iota2,
+      b1=b1,b2=b2,d1=d1,d2=d2,c1=c1,c2=c2,
       S1_0=S1_0,S2_0=S2_0,I1_0=I1_0,I2_0=I2_0,R1_0=R1_0,R2_0=R2_0
     ),
     userdata=gi,
@@ -46,7 +45,7 @@ twospecies_pomp <- function (
     paramnames=c(
       "Beta11","Beta12","Beta21","Beta22",
       "gamma1","gamma2","psi1","psi2","omega1","omega2",
-      "b1","b2","d1","d2","iota1","iota2",
+      "b1","b2","d1","d2","c1","c2",
       "S1_0","S2_0","I1_0","I2_0","R1_0","R2_0"
     ),
     PACKAGE="phylopomp"

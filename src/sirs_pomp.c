@@ -1,6 +1,8 @@
 #include "pomplink.h"
 #include "internal.h"
 
+static const int nrate = 3;
+
 #define Beta      (__p[__parindex[0]])
 #define gamma     (__p[__parindex[1]])
 #define psi       (__p[__parindex[2]])
@@ -39,12 +41,12 @@ static double event_rates
   assert(I >= ellI);
   assert(ellI >= 0);
   assert(S >= 0);
-  // transmission with saturation 0 or 1
+  // 0: transmission with saturation 0 or 1
   alpha = Beta*S*I/N;
   disc = (I > 0) ? ellI*(ellI-1)/I/(I+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
-  // recovery
+  // 1: recovery
   alpha = gamma*I;
   if (I > ellI) {
     event_rate += (*rate = alpha); rate++;
@@ -52,7 +54,7 @@ static double event_rates
     *rate = 0; rate++;
     *penalty += alpha;
   }
-  // loss of immunity
+  // 2: loss of immunity
   alpha = omega*R;
   event_rate += (*rate = alpha); rate++;
   // sampling
@@ -149,13 +151,13 @@ void sirs_gill
     // take Gillespie steps to the end of the interval:
     int event;
     double penalty = 0;
-    double rate[3];
+    double rate[nrate];
 
     double event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
 
     while (t + tstep < tmax) {
-      event = rcateg(event_rate,rate,3);
+      event = rcateg(event_rate,rate,nrate);
       ll -= penalty*tstep;
       switch (event) {
       case 0:                     // transmission
