@@ -1,0 +1,94 @@
+
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(tidyverse)
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+> library(pomp)
+
+Attaching package: 'pomp'
+
+The following object is masked from 'package:purrr':
+
+    map
+
+> library(phylopomp)
+
+Attaching package: 'phylopomp'
+
+The following object is masked from 'package:pomp':
+
+    simulate
+
+The following object is masked from 'package:stats':
+
+    simulate
+
+> 
+> simulate(
++   "TwoSpecies",
++   t0=0,time=5,
++   iota1=0,iota2=0,
++   Beta11=4,Beta12=1,
++   Beta21=0,Beta22=4,
++   gamma1=1,gamma2=1,
++   c1=1,c2=1,
++   psi1=1,psi2=1,
++   S1_0=100,I1_0=2,R1_0=0,
++   S2_0=100,I2_0=2,R2_0=0,
++   b1=0,b2=0,
++   d1=0,d2=0,
++   omega1=0,omega2=0
++ ) |>
++   freeze(seed=747318644) -> s
+> 
+> s |>
++   twospecies_pomp(
++     Beta11=4,Beta12=1,
++     Beta21=0,Beta22=4,
++     gamma1=1,gamma2=1,
++     c1=1,c2=1,
++     psi1=1,psi2=1,
++     S1_0=100,I1_0=2,R1_0=0,
++     S2_0=100,I2_0=2,R2_0=0,
++     b1=0,b2=0,
++     d1=0,d2=0,
++     omega1=0,omega2=0
++   ) -> p
+> 
+> p |>
++   pfilter(Np=1000) |>
++   replicate(n=5) |>
++   concat() |>
++   freeze(seed=468314464) -> pf
+> 
+> pf |>
++   logLik() |>
++   logmeanexp(se=TRUE,ess=TRUE)
+        est          se         ess 
+-12.8017109   0.4171115   3.0557298 
+> 

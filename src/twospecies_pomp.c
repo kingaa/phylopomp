@@ -2,6 +2,8 @@
 #include "internal.h"
 
 static const int nrate = 18;
+#define host1 0
+#define host2 1
 
 static inline int random_choice (double n) {
   return floor(R_unif_index(n));
@@ -19,6 +21,22 @@ static void change_color (double *color, int nsample,
   assert(nearbyint(color[i]) == from);
   color[i] = to;
 }
+
+#ifndef NDEBUG
+static int check_color (double *color, int nsample,
+                        double size1, double size2) {
+  int n1 = 0, n2 = 0;
+  int s1 = (int) size1;
+  int s2 = (int) size2;
+  for (int i = 0; i < nsample; i++) {
+    if (!ISNA(color[i])) {
+      if (nearbyint(color[i]) == host1) n1++;
+      if (nearbyint(color[i]) == host2) n2++;
+    }
+  }
+  return (n1==s1) && (n2==s2);
+}
+#endif
 
 #define Beta11      (__p[__parindex[0]])
 #define Beta12      (__p[__parindex[1]])
@@ -86,6 +104,7 @@ static double event_rates
   *penalty += alpha*disc;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 1: Trans_22, s = (0,0),(0,1)
   assert(S2>=0 && I2>=0 && I2>=ell2 && ell2>=0 && N2>0);
   alpha = Beta22*S2*I2/N2;
@@ -93,26 +112,31 @@ static double event_rates
   *penalty += alpha*disc;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 2: Trans_21, s = (0,0),(1,0)
   assert(S2>=0 && I1>=0 && I1>=ell1 && ell1>=0 && N1>0);
   alpha = Beta21*S2*I1/N1;
-  pi = (I1-0.5*ell1)/I1;
+  pi = (I1 > 0) ? (I1-0.5*ell1)/I1 : 0;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
+  assert(R_FINITE(event_rate));
   // 3: Trans_21, s = (0,1)
   pi = 1-pi;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ell1); logpi++;
+  assert(R_FINITE(event_rate));
   // 4: Trans_12, s = (0,0),(0,1)
   assert(S1>=0 && I2>=0 && I2>=ell2 && ell2>=0 && N2>0);
   alpha = Beta12*S1*I2/N2;
-  pi = (I2-ell2*0.5)/I2;
+  pi = (I2 > 0) ? (I2-ell2*0.5)/I2 : 0;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
+  assert(R_FINITE(event_rate));
   // 5: Trans_12, s = (1,0)
   pi = 1-pi;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ell2); logpi++;
+  assert(R_FINITE(event_rate));
   // 6: Recov_1
   assert(I1>=0 && ell1>=0);
   alpha = gamma1*I1;
@@ -123,6 +147,7 @@ static double event_rates
     *penalty += alpha;
   }
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 7: Recov_2
   assert(I2>=0 && ell2>=0);
   alpha = gamma2*I2;
@@ -133,51 +158,71 @@ static double event_rates
     *penalty += alpha;
   }
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 8: Wane_1
   alpha = omega1*R1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 9: Wane_2
   alpha = omega2*R2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 10: Birth_1
   alpha = b1*N1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 11: Birth_2
   alpha = b2*N2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 12: Death_S1
   alpha = d1*S1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 13: Death_I1
   alpha = d1*I1;
-  event_rate += (*rate = alpha); rate++;
+  if (I1 > ell1) {
+    event_rate += (*rate = alpha); rate++;
+  } else {
+    *rate = 0; rate++;
+    *penalty += alpha;
+  }
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 14: Death_R1
   alpha = d1*R1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 15: Death_S2
   alpha = d2*S2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 16: Death_I2
   alpha = d2*I2;
-  event_rate += (*rate = alpha); rate++;
+  if (I2 > ell2) {
+    event_rate += (*rate = alpha); rate++;
+  } else {
+    *rate = 0; rate++;
+    *penalty += alpha;
+  }
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // 17: Death_R2
   alpha = d2*R2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
+  assert(R_FINITE(event_rate));
   // Sample_1 (Q = 0) // NB: (1-C1)*psi1+C1*psi1 = psi1
   *penalty += psi1*I1;
   // Sample_2 (Q = 0) // NB: (1-C2)*psi2+C2*psi2 = psi2
   *penalty += psi2*I2;
-  assert(R_FINITE(event_rate));
   return event_rate;
 }
 
@@ -203,11 +248,11 @@ void twospecies_rinit
   adj = N1/(S1_0+I1_0+R1_0);
   S1 = nearbyint(S1_0*adj);
   I1 = nearbyint(I1_0*adj);
-  R1 = nearbyint(R1_0*adj);
+  R1 = N1-S1-I1;
   adj = N2/(S2_0+I2_0+R2_0);
   S2 = nearbyint(S2_0*adj);
   I2 = nearbyint(I2_0*adj);
-  R2 = nearbyint(R2_0*adj);
+  R2 = N2-S2-I2;
   ell1 = 0;
   ell2 = 0;
   ll = 0;
@@ -266,53 +311,55 @@ void twospecies_gill
     assert(parlin==lineage[c]);
     double x = (I1-ell1)/(I1-ell1 + I2-ell2);
     if (unif_rand() < x) {      // lineage is put into I1 deme
-      color[lineage[c]] = 0;
+      color[lineage[c]] = host1;
       ell1 += 1;
       ll -= log(x);
     } else {                    // lineage is put into I2 deme
-      color[lineage[c]] = 1;
+      color[lineage[c]] = host2;
       ell2 += 1;
       ll -= log(1-x);
     }
+    assert(check_color(color,nsample,ell1,ell2));
     break;
   case 1:                       // sample
     ll = 0;
     if (sat[parent] == 0) {     // s=(0,0)
-      if (parcol == 0) {
-        if (unif_rand() < C1) {
-          ell1 -= 1; I1 -= 1;
-          ll += log(psi1);
-        } else {
+      if (parcol == host1) {
+        if (C1 < 1 && unif_rand() > C1) {
           ell1 -= 1;
           ll += log(psi1*(I1-ell1));
+        } else {
+          ll += log(psi1*I1);
+          ell1 -= 1; I1 -= 1; N1 -= 1;
         }
       } else {
-        if (unif_rand() < C2) {
-          ell2 -= 1; I2 -= 1;
-          ll += log(psi2);
-        } else {
+        if (C2 < 1 && unif_rand() > C2) {
           ell2 -= 1;
           ll += log(psi2*(I2-ell2));
+        } else {
+          ll += log(psi2*I2);
+          ell2 -= 1; I2 -= 1; N2 -= 1;
         }
       }
     } else if (sat[parent] == 1) {
       int c = child[index[parent]];
       color[lineage[c]] = parcol;
-      if (color[lineage[c]]==0) { // s=(1,0)
-        ll += log(psi1);
-      } else {                  // s=(0,1)
-        ll += log(psi2);
+      if (color[lineage[c]]==host1) {
+        ll += log(psi1*(1-C1)); // s=(1,0)
+      } else {
+        ll += log(psi2*(1-C2)); // s=(0,1)
       }
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov
     }
     color[parlin] = R_NaReal;
+    assert(check_color(color,nsample,ell1,ell2));
     break;
   case 2:                       // branch point
     ll = 0;
     assert(sat[parent]==2);
-    if (parcol == 0) {          // parent is in I1
+    if (parcol == host1) {      // parent is in I1
       assert(S1>=0 && S2 >=0 && I1>=0 && N1>=0);
       double lambda11 = Beta11*S1*I1/N1;
       double lambda21 = Beta21*S2*I1/N1;
@@ -326,9 +373,9 @@ void twospecies_gill
         assert(lineage[c1] != lineage[c2]);
         assert(lineage[c1] != parlin || lineage[c2] != parlin);
         assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        color[lineage[c1]] = 0;
-        color[lineage[c2]] = 0;
-        S1 -= 1; I1 += 1;
+        color[lineage[c1]] = host1;
+        color[lineage[c2]] = host1;
+        S1 -= 1; I1 += 1; ell1 += 1;
         ll += log(lambda11+lambda21)-log(I1*(I1-1)/2);
       } else {                  // s = (1,1)
         int c1 = child[index[parent]];
@@ -338,17 +385,17 @@ void twospecies_gill
         assert(lineage[c1] != parlin || lineage[c2] != parlin);
         assert(lineage[c1] == parlin || lineage[c2] == parlin);
         if (unif_rand() < 0.5) {
-          color[lineage[c1]] = 0;
-          color[lineage[c2]] = 1;
+          color[lineage[c1]] = host1;
+          color[lineage[c2]] = host2;
         } else {
-          color[lineage[c1]] = 1;
-          color[lineage[c2]] = 0;
+          color[lineage[c1]] = host2;
+          color[lineage[c2]] = host1;
         }
         ll -= log(0.5);
-        S2 -= 1; I2 += 1;
+        S2 -= 1; I2 += 1; ell2 += 1;
         ll += log(lambda11+lambda21)-log(I1*I2);
       }
-    } else if (parcol == 1) {          // parent is in I2
+    } else if (parcol == host2) { // parent is in I2
       assert(S1>=0 && S2 >=0 && I2>=0 && N2>=0);
       double lambda12 = Beta12*S1*I2/N2;
       double lambda22 = Beta22*S2*I2/N2;
@@ -362,9 +409,9 @@ void twospecies_gill
         assert(lineage[c1] != lineage[c2]);
         assert(lineage[c1] != parlin || lineage[c2] != parlin);
         assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        color[lineage[c1]] = 1;
-        color[lineage[c2]] = 1;
-        S2 -= 1; I2 += 1;
+        color[lineage[c1]] = host2;
+        color[lineage[c2]] = host2;
+        S2 -= 1; I2 += 1; ell2 += 1;
         ll += log(lambda12+lambda22)-log(I2*(I2-1)/2);
       } else {                  // s = (1,1)
         int c1 = child[index[parent]];
@@ -374,17 +421,18 @@ void twospecies_gill
         assert(lineage[c1] != parlin || lineage[c2] != parlin);
         assert(lineage[c1] == parlin || lineage[c2] == parlin);
         if (unif_rand() < 0.5) {
-          color[lineage[c1]] = 0;
-          color[lineage[c2]] = 1;
+          color[lineage[c1]] = host1;
+          color[lineage[c2]] = host2;
         } else {
-          color[lineage[c1]] = 1;
-          color[lineage[c2]] = 0;
+          color[lineage[c1]] = host2;
+          color[lineage[c2]] = host1;
         }
         ll -= log(0.5);
-        S1 -= 1; I1 += 1;
+        S1 -= 1; I1 += 1; ell1 += 1;
         ll += log(lambda12+lambda22)-log(I1*I2);
       }
     }
+    assert(check_color(color,nsample,ell1,ell2));
     break;
   }
 
@@ -418,7 +466,8 @@ void twospecies_gill
       case 3:                   // 3: Trans_21, s = (0,1)
         S2 -= 1; I2 += 1;
         ll += log(1-ell1/I1)-log(I2);
-        change_color(color,nsample,random_choice(ell1),0,1);
+        change_color(color,nsample,random_choice(ell1),host1,host2);
+        ell1 -= 1; ell2 += 1;
         assert(!ISNAN(ll));
         break;
       case 4:                   // 4: Trans_12, s = (0,0),(0,1)
@@ -429,7 +478,8 @@ void twospecies_gill
       case 5:                   // 5: Trans_12, s = (1,0)
         S1 -= 1; I1 += 1;
         ll += log(1-ell2/I2)-log(I1);
-        change_color(color,nsample,random_choice(ell2),1,0);
+        change_color(color,nsample,random_choice(ell2),host2,host1);
+        ell2 -= 1; ell1 += 1;
         assert(!ISNAN(ll));
         break;
       case 6:                   // 6: Recov_1
@@ -472,6 +522,8 @@ void twospecies_gill
         assert(0);              // #nocov
         break;                  // #nocov
       }
+
+      assert(check_color(color,nsample,ell1,ell2));
 
       ell1 = nearbyint(ell1);
       ell2 = nearbyint(ell2);

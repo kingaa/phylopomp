@@ -6,6 +6,7 @@
 ##' \code{twospecies_pomp} returns a \sQuote{pomp} object.
 ##' @details
 ##' \code{twospecies_pomp} constructs a \sQuote{pomp} object containing a given set of data and a TwoSpecies model.
+##' Note that, for the moment, \code{twospecies_pomp} assumes that there is no importation of infection into the populations (i.e., \code{iota1 = iota2 = 0}).
 ##' @importFrom pomp pomp onestep
 ##' @export
 twospecies_pomp <- function (
