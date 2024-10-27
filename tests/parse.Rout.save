@@ -274,7 +274,7 @@ Error : in 'scan_label' (genealogy.h line 575): invalid Newick format.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
-+      parse_newick()
++   parse_newick()
 + )
 Error : in 'scan_label': invalid Newick format: branch length should be a non-negative decimal number.
 > 
@@ -353,6 +353,13 @@ Error : in 'scan_label': invalid Newick format: premature termination.
 +      newick(prune=FALSE,obscure=FALSE)
 + )
 Error : in 'scan_label': invalid Newick format: missing or invalid branch length.
+> 
+> try(
++   r"{(o_9:1.000000,b_:3)}" |>
++      parse_newick() |>
++      newick(prune=FALSE,obscure=FALSE)
++ )
+Error : in 'scan_label' (genealogy.h line 554): invalid Newick format: empty label.
 > 
 > dev.off()
 null device 

@@ -226,7 +226,7 @@ void twospecies_genealogy_t::jump (int event) {
     state.I1 -= 1; state.N1 -= 1; death(host1);
     break;
   case 17:
-    state.I2 -= 1; state.N2 -= 1; death(host1);
+    state.I2 -= 1; state.N2 -= 1; death(host2);
     break;
   case 18:
     state.R1 -= 1; state.N1 -= 1;

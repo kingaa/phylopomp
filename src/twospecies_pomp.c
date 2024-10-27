@@ -263,6 +263,7 @@ void twospecies_rinit
 //!
 //! This is the Gillespie algorithm applied to the solution of the
 //! filter equation for the TwoSpecies model.
+//! It advances the state from time `t` to time `t+dt`.
 //!
 //! FIXME: At the moment, the following codes exclude the possibility of
 //! importation of infection.
@@ -309,15 +310,29 @@ void twospecies_gill
     assert(sat[parent]==1);
     int c = child[index[parent]];
     assert(parlin==lineage[c]);
-    double x = (I1-ell1)/(I1-ell1 + I2-ell2);
-    if (unif_rand() < x) {      // lineage is put into I1 deme
-      color[lineage[c]] = host1;
-      ell1 += 1;
-      ll -= log(x);
-    } else {                    // lineage is put into I2 deme
-      color[lineage[c]] = host2;
-      ell2 += 1;
-      ll -= log(1-x);
+    if (I1-ell1+I2-ell2 > 0) {
+      double x = (I1-ell1)/(I1-ell1 + I2-ell2);
+      if (unif_rand() < x) {	// lineage is put into I1 deme
+        color[lineage[c]] = host1;
+        ell1 += 1;
+        ll -= log(x);
+      } else {			// lineage is put into I2 deme
+        color[lineage[c]] = host2;
+        ell2 += 1;
+        ll -= log(1-x);
+      }
+    } else {                    // more roots than infectives
+      ll += R_NegInf;
+      double x = I1/(I1+I2);
+      if (unif_rand() < x) {    // lineage is put into I1 deme
+        color[lineage[c]] = host1;
+        ell1 += 1; I1 += 1; N1 += 1;
+        //        ll -= log(x);
+      } else {                  // lineage is put into I2 deme
+        color[lineage[c]] = host2;
+        ell2 += 1; I2 += 1; N2 += 1;
+        //        ll -= log(1-x);
+      }
     }
     assert(check_color(color,nsample,ell1,ell2));
     break;
@@ -363,73 +378,77 @@ void twospecies_gill
       assert(S1>=0 && S2 >=0 && I1>=0 && N1>=0);
       double lambda11 = Beta11*S1*I1/N1;
       double lambda21 = Beta21*S2*I1/N1;
-      double x = lambda11/(lambda11+lambda21);
-      if (ISNAN(x)) {
-        ll += R_NegInf;
-      } else if (unif_rand() < x) { // s = (2,0)
-        int c1 = child[index[parent]];
-        int c2 = child[index[parent]+1];
-        assert(c1 != c2);
-        assert(lineage[c1] != lineage[c2]);
-        assert(lineage[c1] != parlin || lineage[c2] != parlin);
-        assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        color[lineage[c1]] = host1;
-        color[lineage[c2]] = host1;
-        S1 -= 1; I1 += 1; ell1 += 1;
-        ll += log(lambda11+lambda21)-log(I1*(I1-1)/2);
-      } else {                  // s = (1,1)
-        int c1 = child[index[parent]];
-        int c2 = child[index[parent]+1];
-        assert(c1 != c2);
-        assert(lineage[c1] != lineage[c2]);
-        assert(lineage[c1] != parlin || lineage[c2] != parlin);
-        assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        if (unif_rand() < 0.5) {
+      if (lambda11+lambda21 > 0) {
+        double x = lambda11/(lambda11+lambda21);
+        if (unif_rand() < x) { // s = (2,0)
+          int c1 = child[index[parent]];
+          int c2 = child[index[parent]+1];
+          assert(c1 != c2);
+          assert(lineage[c1] != lineage[c2]);
+          assert(lineage[c1] != parlin || lineage[c2] != parlin);
+          assert(lineage[c1] == parlin || lineage[c2] == parlin);
           color[lineage[c1]] = host1;
-          color[lineage[c2]] = host2;
-        } else {
-          color[lineage[c1]] = host2;
           color[lineage[c2]] = host1;
+          S1 -= 1; I1 += 1; ell1 += 1;
+          ll += log(lambda11+lambda21)-log(I1*(I1-1)/2);
+        } else {                  // s = (1,1)
+          int c1 = child[index[parent]];
+          int c2 = child[index[parent]+1];
+          assert(c1 != c2);
+          assert(lineage[c1] != lineage[c2]);
+          assert(lineage[c1] != parlin || lineage[c2] != parlin);
+          assert(lineage[c1] == parlin || lineage[c2] == parlin);
+          if (unif_rand() < 0.5) {
+            color[lineage[c1]] = host1;
+            color[lineage[c2]] = host2;
+          } else {
+            color[lineage[c1]] = host2;
+            color[lineage[c2]] = host1;
+          }
+          ll -= log(0.5);
+          S2 -= 1; I2 += 1; ell2 += 1;
+          ll += log(lambda11+lambda21)-log(I1*I2);
         }
-        ll -= log(0.5);
-        S2 -= 1; I2 += 1; ell2 += 1;
-        ll += log(lambda11+lambda21)-log(I1*I2);
+      } else {
+        ll += R_NegInf;
       }
     } else if (parcol == host2) { // parent is in I2
       assert(S1>=0 && S2 >=0 && I2>=0 && N2>=0);
       double lambda12 = Beta12*S1*I2/N2;
       double lambda22 = Beta22*S2*I2/N2;
-      double x = lambda22/(lambda12+lambda22);
-      if (ISNAN(x)) {
-        ll += R_NegInf;
-      } else if (unif_rand() < x) { // s = (0,2)
-        int c1 = child[index[parent]];
-        int c2 = child[index[parent]+1];
-        assert(c1 != c2);
-        assert(lineage[c1] != lineage[c2]);
-        assert(lineage[c1] != parlin || lineage[c2] != parlin);
-        assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        color[lineage[c1]] = host2;
-        color[lineage[c2]] = host2;
-        S2 -= 1; I2 += 1; ell2 += 1;
-        ll += log(lambda12+lambda22)-log(I2*(I2-1)/2);
-      } else {                  // s = (1,1)
-        int c1 = child[index[parent]];
-        int c2 = child[index[parent]+1];
-        assert(c1 != c2);
-        assert(lineage[c1] != lineage[c2]);
-        assert(lineage[c1] != parlin || lineage[c2] != parlin);
-        assert(lineage[c1] == parlin || lineage[c2] == parlin);
-        if (unif_rand() < 0.5) {
-          color[lineage[c1]] = host1;
-          color[lineage[c2]] = host2;
-        } else {
+      if (lambda12+lambda22 > 0) {
+        double x = lambda22/(lambda12+lambda22);
+        if (unif_rand() < x) { // s = (0,2)
+          int c1 = child[index[parent]];
+          int c2 = child[index[parent]+1];
+          assert(c1 != c2);
+          assert(lineage[c1] != lineage[c2]);
+          assert(lineage[c1] != parlin || lineage[c2] != parlin);
+          assert(lineage[c1] == parlin || lineage[c2] == parlin);
           color[lineage[c1]] = host2;
-          color[lineage[c2]] = host1;
+          color[lineage[c2]] = host2;
+          S2 -= 1; I2 += 1; ell2 += 1;
+          ll += log(lambda12+lambda22)-log(I2*(I2-1)/2);
+        } else {                  // s = (1,1)
+          int c1 = child[index[parent]];
+          int c2 = child[index[parent]+1];
+          assert(c1 != c2);
+          assert(lineage[c1] != lineage[c2]);
+          assert(lineage[c1] != parlin || lineage[c2] != parlin);
+          assert(lineage[c1] == parlin || lineage[c2] == parlin);
+          if (unif_rand() < 0.5) {
+            color[lineage[c1]] = host1;
+            color[lineage[c2]] = host2;
+          } else {
+            color[lineage[c1]] = host2;
+            color[lineage[c2]] = host1;
+          }
+          ll -= log(0.5);
+          S1 -= 1; I1 += 1; ell1 += 1;
+          ll += log(lambda12+lambda22)-log(I1*I2);
         }
-        ll -= log(0.5);
-        S1 -= 1; I1 += 1; ell1 += 1;
-        ll += log(lambda12+lambda22)-log(I1*I2);
+      } else {
+        ll += R_NegInf;
       }
     }
     assert(check_color(color,nsample,ell1,ell2));

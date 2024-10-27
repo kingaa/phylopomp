@@ -219,7 +219,7 @@ events:
     jump: state.I1 -= 1; state.N1 -= 1; death(host1);
   death_I2:
     rate: params.d2 * state.I2
-    jump: state.I2 -= 1; state.N2 -= 1; death(host1);
+    jump: state.I2 -= 1; state.N2 -= 1; death(host2);
   death_R1:
     rate: params.d1 * state.R1
     jump: state.R1 -= 1; state.N1 -= 1;
