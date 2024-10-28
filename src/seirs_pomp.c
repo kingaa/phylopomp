@@ -1,6 +1,8 @@
 #include "pomplink.h"
 #include "internal.h"
 
+static const int nrate = 7;
+
 static inline int random_choice (double n) {
   return floor(R_unif_index(n));
 }
@@ -245,7 +247,7 @@ void seirs_gill
 
     // continuous portion of filter equation:
     // take Gillespie steps to the end of the interval
-    double rate[7], logpi[7];
+    double rate[nrate], logpi[nrate];
     int event;
     double event_rate = 0;
     double penalty = 0;
@@ -254,7 +256,7 @@ void seirs_gill
     tstep = exp_rand()/event_rate;
 
     while (t + tstep < tmax) {
-      event = rcateg(event_rate,rate,7);
+      event = rcateg(event_rate,rate,nrate);
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                   // transmission, s=(0,0)
