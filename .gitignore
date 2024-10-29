@@ -20,12 +20,10 @@ rchk\.out
 *.gcno
 *.pdf
 *.sif
-/scripts
 check
 lib
 library
 rchk
-repo
 wiki
 tmp
 covr.html
