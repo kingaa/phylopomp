@@ -26,8 +26,8 @@ static void change_color (double *color, int nsample,
 static int check_color (double *color, int nsample,
                         double size1, double size2) {
   int n1 = 0, n2 = 0;
-  int s1 = (int) size1;
-  int s2 = (int) size2;
+  int s1 = (int) nearbyint(size1);
+  int s2 = (int) nearbyint(size2);
   for (int i = 0; i < nsample; i++) {
     if (!ISNA(color[i])) {
       if (nearbyint(color[i]) == host1) n1++;
@@ -98,24 +98,24 @@ static double event_rates
   double alpha, pi, disc;
   *penalty = 0;
   // 0: Trans_11, s = (0,0),(1,0)
-  assert(S1>=0 && I1>=0 && I1>=ell1 && ell1>=0 && N1>0);
-  alpha = Beta11*S1*I1/N1;
+  assert(S1>=0 && I1>=ell1 && ell1>=0);
+  alpha = (N1 > 0) ? Beta11*S1*I1/N1 : 0;
   disc = (I1 > 0) ? ell1*(ell1-1)/I1/(I1+1) : 1;
   *penalty += alpha*disc;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 1: Trans_22, s = (0,0),(0,1)
-  assert(S2>=0 && I2>=0 && I2>=ell2 && ell2>=0 && N2>0);
-  alpha = Beta22*S2*I2/N2;
+  assert(S2>=0 && I2>=ell2 && ell2>=0);
+  alpha = (N2 > 0) ? Beta22*S2*I2/N2 : 0;
   disc = (I2 > 0) ? ell2*(ell2-1)/I2/(I2+1) : 1;
   *penalty += alpha*disc;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 2: Trans_21, s = (0,0),(1,0)
-  assert(S2>=0 && I1>=0 && I1>=ell1 && ell1>=0 && N1>0);
-  alpha = Beta21*S2*I1/N1;
+  assert(S2>=0 && I1>=ell1 && ell1>=0);
+  alpha = (N1 > 0) ? Beta21*S2*I1/N1 : 0;
   pi = (I1 > 0) ? (I1-0.5*ell1)/I1 : 0;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
@@ -126,8 +126,8 @@ static double event_rates
   *logpi = log(pi)-log(ell1); logpi++;
   assert(R_FINITE(event_rate));
   // 4: Trans_12, s = (0,0),(0,1)
-  assert(S1>=0 && I2>=0 && I2>=ell2 && ell2>=0 && N2>0);
-  alpha = Beta12*S1*I2/N2;
+  assert(S1>=0 && I2>=ell2 && ell2>=0);
+  alpha = (N2 > 0) ? Beta12*S1*I2/N2 : 0;
   pi = (I2 > 0) ? (I2-ell2*0.5)/I2 : 0;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
@@ -160,31 +160,37 @@ static double event_rates
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 8: Wane_1
+  assert(R1>=0);
   alpha = omega1*R1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 9: Wane_2
+  assert(R2>=0);
   alpha = omega2*R2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 10: Birth_1
+  assert(N1>=0);
   alpha = b1*N1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 11: Birth_2
+  assert(N2>=0);
   alpha = b2*N2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 12: Death_S1
+  assert(S1>=0);
   alpha = d1*S1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 13: Death_I1
+  assert(I1>=0);
   alpha = d1*I1;
   if (I1 > ell1) {
     event_rate += (*rate = alpha); rate++;
@@ -195,16 +201,19 @@ static double event_rates
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 14: Death_R1
+  assert(R1>=0);
   alpha = d1*R1;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 15: Death_S2
+  assert(S2>=0);
   alpha = d2*S2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 16: Death_I2
+  assert(I2>=0);
   alpha = d2*I2;
   if (I2 > ell2) {
     event_rate += (*rate = alpha); rate++;
@@ -215,6 +224,7 @@ static double event_rates
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 17: Death_R2
+  assert(R2>=0);
   alpha = d2*R2;
   event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
@@ -265,6 +275,12 @@ void twospecies_rinit
 //! filter equation for the TwoSpecies model.
 //! It advances the state from time `t` to time `t+dt`.
 //!
+//! A tricky aspect of this function is that it must return a "valid"
+//! state even when the state is incompatible with the genealogy.
+//! In such a case, we set the log likelihood (`ll`) to `R_NegInf`,
+//! but the state must remain valid.  Hence insertion of extra infectives,
+//! etc.
+//!
 //! FIXME: At the moment, the following codes exclude the possibility of
 //! importation of infection.
 void twospecies_gill
@@ -298,7 +314,9 @@ void twospecies_gill
   int parlin = lineage[parent];
   int parcol = color[parlin];
   assert(parlin >= 0 && parlin < nsample);
-  assert(!ISNA(parcol));
+  assert(nearbyint(N1)==nearbyint(S1+I1+R1));
+  assert(nearbyint(N2)==nearbyint(S2+I2+R2));
+  assert(check_color(color,nsample,ell1,ell2));
 
   // singular portion of filter equation
   switch (nodetype[parent]) {
@@ -312,153 +330,182 @@ void twospecies_gill
     assert(parlin==lineage[c]);
     if (I1-ell1+I2-ell2 > 0) {
       double x = (I1-ell1)/(I1-ell1 + I2-ell2);
-      if (unif_rand() < x) {	// lineage is put into I1 deme
+      if (unif_rand() < x) {    // lineage is put into I1 deme
         color[lineage[c]] = host1;
         ell1 += 1;
         ll -= log(x);
-      } else {			// lineage is put into I2 deme
+      } else {                  // lineage is put into I2 deme
         color[lineage[c]] = host2;
         ell2 += 1;
         ll -= log(1-x);
       }
-    } else {                    // more roots than infectives
-      ll += R_NegInf;
-      double x = I1/(I1+I2);
-      if (unif_rand() < x) {    // lineage is put into I1 deme
+    } else {                // more roots than infectives
+      ll += R_NegInf;       // this is incompatible with the genealogy
+      // the following keeps the state valid
+      if (unif_rand() < 0.5) {  // lineage is put into I1 deme
         color[lineage[c]] = host1;
         ell1 += 1; I1 += 1; N1 += 1;
-        //        ll -= log(x);
+        //        ll -= log(0.5);
       } else {                  // lineage is put into I2 deme
         color[lineage[c]] = host2;
         ell2 += 1; I2 += 1; N2 += 1;
-        //        ll -= log(1-x);
+        //        ll -= log(0.5);
       }
     }
+    assert(nearbyint(N1)==nearbyint(S1+I1+R1));
+    assert(nearbyint(N2)==nearbyint(S2+I2+R2));
     assert(check_color(color,nsample,ell1,ell2));
     break;
   case 1:                       // sample
     ll = 0;
     if (sat[parent] == 0) {     // s=(0,0)
       if (parcol == host1) {
+        ell1 -= 1;
         if (C1 < 1 && unif_rand() > C1) {
-          ell1 -= 1;
           ll += log(psi1*(I1-ell1));
         } else {
           ll += log(psi1*I1);
-          ell1 -= 1; I1 -= 1; N1 -= 1;
+          I1 -= 1; N1 -= 1;
         }
-      } else {
+      } else if (parcol == host2) {
+        ell2 -= 1;
         if (C2 < 1 && unif_rand() > C2) {
-          ell2 -= 1;
           ll += log(psi2*(I2-ell2));
         } else {
           ll += log(psi2*I2);
-          ell2 -= 1; I2 -= 1; N2 -= 1;
+          I2 -= 1; N2 -= 1;
         }
+      } else {
+        assert(0);              // #nocov
+        ll += R_NegInf;         // #nocov
       }
     } else if (sat[parent] == 1) {
       int c = child[index[parent]];
       color[lineage[c]] = parcol;
-      if (color[lineage[c]]==host1) {
+      if (parcol==host1) {
         ll += log(psi1*(1-C1)); // s=(1,0)
-      } else {
+      } else if (parcol==host2) {
         ll += log(psi2*(1-C2)); // s=(0,1)
+      } else {
+        assert(0);              // #nocov
+        ll += R_NegInf;         // #nocov
       }
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov
     }
     color[parlin] = R_NaReal;
+    assert(nearbyint(N1)==nearbyint(S1+I1+R1));
+    assert(nearbyint(N2)==nearbyint(S2+I2+R2));
     assert(check_color(color,nsample,ell1,ell2));
     break;
   case 2:                       // branch point
     ll = 0;
     assert(sat[parent]==2);
     if (parcol == host1) {      // parent is in I1
-      assert(S1>=0 && S2 >=0 && I1>=0 && N1>=0);
+      assert(S1>=0 && S2 >=0 && I1>=ell1 && ell1>=0);
       double lambda11 = Beta11*S1*I1/N1;
       double lambda21 = Beta21*S2*I1/N1;
-      if (lambda11+lambda21 > 0) {
-        double x = lambda11/(lambda11+lambda21);
-        if (unif_rand() < x) { // s = (2,0)
-          int c1 = child[index[parent]];
-          int c2 = child[index[parent]+1];
-          assert(c1 != c2);
-          assert(lineage[c1] != lineage[c2]);
-          assert(lineage[c1] != parlin || lineage[c2] != parlin);
-          assert(lineage[c1] == parlin || lineage[c2] == parlin);
-          color[lineage[c1]] = host1;
-          color[lineage[c2]] = host1;
+      double lambda = lambda11+lambda21;
+      double x = (lambda > 0) ? lambda11/lambda : 0;
+      int c1 = child[index[parent]];
+      int c2 = child[index[parent]+1];
+      assert(c1 != c2);
+      assert(lineage[c1] != lineage[c2]);
+      assert(lineage[c1] != parlin || lineage[c2] != parlin);
+      assert(lineage[c1] == parlin || lineage[c2] == parlin);
+      if (unif_rand() < x) {    // s = (2,0)
+        color[lineage[c1]] = host1;
+        color[lineage[c2]] = host1;
+        ll -= log(x);
+        if (S1 > 0) {
           S1 -= 1; I1 += 1; ell1 += 1;
-          ll += log(lambda11+lambda21)-log(I1*(I1-1)/2);
-        } else {                  // s = (1,1)
-          int c1 = child[index[parent]];
-          int c2 = child[index[parent]+1];
-          assert(c1 != c2);
-          assert(lineage[c1] != lineage[c2]);
-          assert(lineage[c1] != parlin || lineage[c2] != parlin);
-          assert(lineage[c1] == parlin || lineage[c2] == parlin);
-          if (unif_rand() < 0.5) {
-            color[lineage[c1]] = host1;
-            color[lineage[c2]] = host2;
-          } else {
-            color[lineage[c1]] = host2;
-            color[lineage[c2]] = host1;
-          }
-          ll -= log(0.5);
-          S2 -= 1; I2 += 1; ell2 += 1;
-          ll += log(lambda11+lambda21)-log(I1*I2);
+          ll += log(lambda)-log(I1*(I1-1)/2);
+        } else {
+          // the genealogy is incompatible with the state.
+          // nevertheless, the state remains valid.
+          I1 += 1; N1 += 1; ell1 += 1;
+          ll += R_NegInf;
         }
-      } else {
-        ll += R_NegInf;
+      } else {                  // s = (1,1)
+        if (unif_rand() < 0.5) {
+          color[lineage[c1]] = host1;
+          color[lineage[c2]] = host2;
+        } else {
+          color[lineage[c1]] = host2;
+          color[lineage[c2]] = host1;
+        }
+        ll -= log(0.5*(1-x));
+        if (S2 > 0) {
+          S2 -= 1; I2 += 1; ell2 += 1;
+          ll += log(lambda)-log(I1*I2);
+        } else {
+          // the genealogy is incompatible with the state.
+          // nevertheless, the state remains valid.
+          I2 += 1; N2 += 1; ell2 += 1;
+          ll += R_NegInf;
+        }
       }
     } else if (parcol == host2) { // parent is in I2
-      assert(S1>=0 && S2 >=0 && I2>=0 && N2>=0);
+      assert(S1>=0 && S2 >=0 && I2>=ell2);
       double lambda12 = Beta12*S1*I2/N2;
       double lambda22 = Beta22*S2*I2/N2;
-      if (lambda12+lambda22 > 0) {
-        double x = lambda22/(lambda12+lambda22);
-        if (unif_rand() < x) { // s = (0,2)
-          int c1 = child[index[parent]];
-          int c2 = child[index[parent]+1];
-          assert(c1 != c2);
-          assert(lineage[c1] != lineage[c2]);
-          assert(lineage[c1] != parlin || lineage[c2] != parlin);
-          assert(lineage[c1] == parlin || lineage[c2] == parlin);
-          color[lineage[c1]] = host2;
-          color[lineage[c2]] = host2;
+      double lambda = lambda12+lambda22;
+      double x = (lambda > 0) ? lambda22/lambda : 0;
+      int c1 = child[index[parent]];
+      int c2 = child[index[parent]+1];
+      assert(c1 != c2);
+      assert(lineage[c1] != lineage[c2]);
+      assert(lineage[c1] != parlin || lineage[c2] != parlin);
+      assert(lineage[c1] == parlin || lineage[c2] == parlin);
+      if (unif_rand() < x) { // s = (0,2)
+        color[lineage[c1]] = host2;
+        color[lineage[c2]] = host2;
+        ll -= log(x);
+        if (S2 > 0) {
           S2 -= 1; I2 += 1; ell2 += 1;
-          ll += log(lambda12+lambda22)-log(I2*(I2-1)/2);
-        } else {                  // s = (1,1)
-          int c1 = child[index[parent]];
-          int c2 = child[index[parent]+1];
-          assert(c1 != c2);
-          assert(lineage[c1] != lineage[c2]);
-          assert(lineage[c1] != parlin || lineage[c2] != parlin);
-          assert(lineage[c1] == parlin || lineage[c2] == parlin);
-          if (unif_rand() < 0.5) {
-            color[lineage[c1]] = host1;
-            color[lineage[c2]] = host2;
-          } else {
-            color[lineage[c1]] = host2;
-            color[lineage[c2]] = host1;
-          }
-          ll -= log(0.5);
-          S1 -= 1; I1 += 1; ell1 += 1;
-          ll += log(lambda12+lambda22)-log(I1*I2);
+          ll += log(lambda)-log(I2*(I2-1)/2);
+        } else {
+          // the genealogy is incompatible with the state.
+          // nevertheless, the state remains valid.
+          I2 += 1; N2 += 1; ell2 += 1;
+          ll += R_NegInf;
         }
-      } else {
-        ll += R_NegInf;
+      } else {                  // s = (1,1)
+        if (unif_rand() < 0.5) {
+          color[lineage[c1]] = host1;
+          color[lineage[c2]] = host2;
+        } else {
+          color[lineage[c1]] = host2;
+          color[lineage[c2]] = host1;
+        }
+        ll -= log(0.5*(1-x));
+        if (S1 > 0) {
+          S1 -= 1; I1 += 1; ell1 += 1;
+          ll += log(lambda)-log(I1*I2);
+        } else {
+          // the genealogy is incompatible with the state.
+          // nevertheless, the state remains valid.
+          I1 += 1; N1 += 1; ell1 += 1;
+          ll += R_NegInf;
+        }
       }
+    } else {
+      assert(0);                // #nocov
+      ll += R_NegInf;           // #nocov
     }
+    assert(nearbyint(N1)==nearbyint(S1+I1+R1));
+    assert(nearbyint(N2)==nearbyint(S2+I2+R2));
     assert(check_color(color,nsample,ell1,ell2));
     break;
   }
 
-  if (tmax > t) {
+  // continuous portion of filter equation:
+  // take Gillespie steps to the end of the interval.
+  // if the state is already incompatible, there is no need for
+  // this, so the state is "frozen".
+  if (tmax > t && R_FINITE(ll)) {
 
-    // continuous portion of filter equation:
-    // take Gillespie steps to the end of the interval
     double rate[nrate], logpi[nrate];
     int event;
     double event_rate = 0;
@@ -472,80 +519,103 @@ void twospecies_gill
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                   // 0: Trans_11, s = (0,0),(1,0)
+        assert(S1>=1 && I1>=0);
         S1 -= 1; I1 += 1;
         break;
       case 1:                   // 1: Trans_22, s = (0,0),(0,1)
+        assert(S2>=1 && I2>=0);
         S2 -= 1; I2 += 1;
         break;
       case 2:                   // 2: Trans_21, s = (0,0),(1,0)
+        assert(S2>=1 && I1>=0);
         S2 -= 1; I2 += 1;
         ll += log(1-ell2/I2);
         assert(!ISNAN(ll));
         break;
       case 3:                   // 3: Trans_21, s = (0,1)
+        assert(S2>=1 && I1>=0);
         S2 -= 1; I2 += 1;
         ll += log(1-ell1/I1)-log(I2);
         change_color(color,nsample,random_choice(ell1),host1,host2);
         ell1 -= 1; ell2 += 1;
+        assert(check_color(color,nsample,ell1,ell2));
         assert(!ISNAN(ll));
         break;
       case 4:                   // 4: Trans_12, s = (0,0),(0,1)
+        assert(S1>=1 && I2>=0);
         S1 -= 1; I1 += 1;
         ll += log(1-ell1/I1);
         assert(!ISNAN(ll));
         break;
       case 5:                   // 5: Trans_12, s = (1,0)
+        assert(S1>=1 && I2>=0);
         S1 -= 1; I1 += 1;
         ll += log(1-ell2/I2)-log(I1);
         change_color(color,nsample,random_choice(ell2),host2,host1);
         ell2 -= 1; ell1 += 1;
+        assert(check_color(color,nsample,ell1,ell2));
         assert(!ISNAN(ll));
         break;
       case 6:                   // 6: Recov_1
+        assert(I1>=1);
         I1 -= 1; R1 += 1;
         break;
       case 7:                   // 7: Recov_2
+        assert(I2>=1);
         I2 -= 1; R2 += 1;
         break;
       case 8:                   // 8: Wane_1
+        assert(R1>=1);
         R1 -= 1; S1 += 1;
         break;
       case 9:                   // 9: Wane_2
+        assert(R2>=1);
         R2 -= 1; S2 += 1;
         break;
       case 10:                  // 10: Birth_1
+        assert(N1>=1);
         S1 += 1; N1 += 1;
         break;
       case 11:                  // 11: Birth_2
+        assert(N2>=1);
         S2 += 1; N2 += 1;
         break;
       case 12:                  // 12: Death_S1
+        assert(S1>=1 && N1>=1);
         S1 -= 1; N1 -= 1;
         break;
       case 13:                  // 13: Death_I1
+        assert(I1>=1 && N1>=1);
         I1 -= 1; N1 -= 1;
         break;
       case 14:                  // 14: Death_R1
+        assert(R1>=1 && N1>=1);
         R1 -= 1; N1 -= 1;
         break;
       case 15:                  // 15: Death_S2
+        assert(S2>=1 && N2>=1);
         S2 -= 1; N2 -= 1;
         break;
       case 16:                  // 16: Death_I2
+        assert(I2>=1 && N2>=1);
         I2 -= 1; N2 -= 1;
         break;
       case 17:                  // 17: Death_R2
+        assert(R2>=1 && N2>=1);
         R2 -= 1; N2 -= 1;
         break;
       default:                  // #nocov
         assert(0);              // #nocov
+        ll += R_NegInf;         // #nocov
         break;                  // #nocov
       }
 
-      assert(check_color(color,nsample,ell1,ell2));
-
       ell1 = nearbyint(ell1);
       ell2 = nearbyint(ell2);
+
+      assert(nearbyint(N1)==nearbyint(S1+I1+R1));
+      assert(nearbyint(N2)==nearbyint(S2+I2+R2));
+      assert(check_color(color,nsample,ell1,ell2));
 
       t += tstep;
       event_rate = EVENT_RATES;

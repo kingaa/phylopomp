@@ -68,3 +68,30 @@ p |>
 pf |>
   logLik() |>
   logmeanexp(se=TRUE,ess=TRUE)
+
+try(
+  s |>
+    twospecies_pomp(
+      S1_0=20,I1_0=-5,R1_0=0,
+      S2_0=20,I2_0=5,R2_0=0
+    )
+)
+
+stopifnot(
+  s |>
+    twospecies_pomp(
+      Beta11=4,Beta12=1,
+      Beta21=1,Beta22=4,
+      gamma1=1,gamma2=1,
+      c1=0.9,c2=0.9,
+      psi1=1,psi2=1,
+      S1_0=20,I1_0=5,R1_0=0,
+      S2_0=20,I2_0=5,R2_0=0,
+      b1=0.1,b2=0.1,
+      d1=0.1,d2=0.1,
+      omega1=0.5,omega2=0.5
+    ) |>
+    pfilter(Np=1000) |>
+    freeze(seed=407324464) |>
+    logLik()==-Inf
+)

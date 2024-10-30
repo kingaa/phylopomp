@@ -63,7 +63,7 @@ static double event_rates
   *penalty = 0;
   // 0: transmission, s=(0,0)
   assert(S>=0 && I>=0);
-  alpha = Beta*S*I/N;
+  alpha = (N > 0) ? Beta*S*I/N : 0;
   pi = (I > 0) ? 1-ellI/I : 0;
   assert(I >= ellI);
   event_rate += (*rate = alpha*pi); rate++;
@@ -165,6 +165,7 @@ void seirs_gill
 #endif
 
   int parlin = lineage[parent];
+  int parcol = color[parlin];
   assert(parlin >= 0 && parlin < nsample);
 
   // singular portion of filter equation
@@ -177,24 +178,38 @@ void seirs_gill
     assert(sat[parent]==1);
     int c = child[index[parent]];
     assert(lineage[parent]==lineage[c]);
-    double x = (E-ellE)/(E-ellE + I-ellI);
-    if (unif_rand() < x) {      // lineage is put into E deme
-      color[lineage[c]] = 0;
-      ellE += 1;
-      ll -= log(x);
-    } else {                    // lineage is put into I deme
-      color[lineage[c]] = 1;
-      ellI += 1;
-      ll -= log(1-x);
+    if (E-ellE + I-ellI > 0) {
+      double x = (E-ellE)/(E-ellE + I-ellI);
+      if (unif_rand() < x) {      // lineage is put into E deme
+        color[lineage[c]] = 0;
+        ellE += 1;
+        ll -= log(x);
+      } else {                    // lineage is put into I deme
+        color[lineage[c]] = 1;
+        ellI += 1;
+        ll -= log(1-x);
+      }
+    } else {                // more roots than infectives
+      ll += R_NegInf;       // this is incompatible with the genealogy
+      // the following keeps the state valid
+      if (unif_rand() < 0.5) {  // lineage is put into E deme
+        color[lineage[c]] = 0;
+        ellE += 1; E += 1;
+        //        ll -= log(0.5);
+      } else {                  // lineage is put into I deme
+        color[lineage[c]] = 1;
+        ellI += 1; I += 1;
+        //        ll -= log(0.5);
+      }
     }
     break;
   case 1:                       // sample
     ll = 0;
-    assert(!ISNA(color[parlin]));
     // If parent is not in deme I, likelihood = 0.
-    if (nearbyint(color[parlin]) != 1) {
+    if (parcol != 1) {
       ll += R_NegInf;
       color[parlin] = 1;
+      // the following keeps the state valid
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
@@ -213,11 +228,11 @@ void seirs_gill
     break;
   case 2:                       // branch point s=(1,1)
     ll = 0;
-    assert(!ISNA(color[parlin]));
     // If parent is not in deme I, likelihood = 0.
-    if (nearbyint(color[parlin]) != 1) {
+    if (parcol != 1) {
       ll += R_NegInf;
       color[parlin] = 1;
+      // the following keeps the state valid
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
@@ -243,10 +258,12 @@ void seirs_gill
     break;
   }
 
-  if (tmax > t) {
+  // continuous portion of filter equation:
+  // take Gillespie steps to the end of the interval
+  // if the state is already incompatible, there is no need for
+  // this, so the state is "frozen".
+  if (tmax > t && R_FINITE(ll)) {
 
-    // continuous portion of filter equation:
-    // take Gillespie steps to the end of the interval
     double rate[nrate], logpi[nrate];
     int event;
     double event_rate = 0;
@@ -260,16 +277,19 @@ void seirs_gill
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                   // transmission, s=(0,0)
+        assert(S>=1);
         S -= 1; E += 1;
         ll += log(1-ellI/I)+log(1-ellE/E);
         assert(!ISNAN(ll));
         break;
       case 1:                   // transmission, s=(0,1)
+        assert(S>=1);
         S -= 1; E += 1;
         ll += log(1-ellE/E)-log(I);
         assert(!ISNAN(ll));
         break;
       case 2:                   // transmission, s=(1,0)
+        assert(S>=1);
         S -= 1; E += 1;
         ll += log(1-ellI/I)-log(E);
         change_color(color,nsample,random_choice(ellI),1,0);
@@ -277,11 +297,13 @@ void seirs_gill
         assert(!ISNAN(ll));
         break;
       case 3:                   // progression, s=(0,0)
+        assert(E>=1);
         E -= 1; I += 1;
         ll += log(1-ellI/I);
         assert(!ISNAN(ll));
         break;
       case 4:                   // progression, s=(0,1)
+        assert(E>=1);
         E -= 1; I += 1;
         ll -= log(I);
         change_color(color,nsample,random_choice(ellE),0,1);
@@ -289,15 +311,18 @@ void seirs_gill
         assert(!ISNAN(ll));
         break;
       case 5:                   // recovery
+        assert(I>=1);
         I -= 1; R += 1;
         assert(!ISNAN(ll));
         break;
       case 6:                   // waning
+        assert(R>=1);
         R -= 1; S += 1;
         assert(!ISNAN(ll));
         break;
       default:                  // #nocov
         assert(0);              // #nocov
+        ll += R_NegInf;         // #nocov
         break;                  // #nocov
       }
 
