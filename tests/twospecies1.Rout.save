@@ -117,7 +117,7 @@ The following object is masked from 'package:stats':
 +   logLik() |>
 +   logmeanexp(se=TRUE,ess=TRUE)
          est           se          ess 
--119.8921708    0.9266098    1.8998700 
+-203.9170186    0.3959315    3.3136507 
 > 
 > try(
 +   s |>

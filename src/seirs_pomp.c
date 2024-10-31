@@ -260,9 +260,7 @@ void seirs_gill
 
   // continuous portion of filter equation:
   // take Gillespie steps to the end of the interval
-  // if the state is already incompatible, there is no need for
-  // this, so the state is "frozen".
-  if (tmax > t && R_FINITE(ll)) {
+  if (tmax > t) {
 
     double rate[nrate], logpi[nrate];
     int event;

@@ -417,7 +417,6 @@ void twospecies_gill
       if (unif_rand() < x) {    // s = (2,0)
         color[lineage[c1]] = host1;
         color[lineage[c2]] = host1;
-        ll -= log(x);
         if (S1 > 0) {
           S1 -= 1; I1 += 1; ell1 += 1;
           ll += log(lambda)-log(I1*(I1-1)/2);
@@ -435,7 +434,7 @@ void twospecies_gill
           color[lineage[c1]] = host2;
           color[lineage[c2]] = host1;
         }
-        ll -= log(0.5*(1-x));
+        ll -= log(0.5);
         if (S2 > 0) {
           S2 -= 1; I2 += 1; ell2 += 1;
           ll += log(lambda)-log(I1*I2);
@@ -461,7 +460,6 @@ void twospecies_gill
       if (unif_rand() < x) { // s = (0,2)
         color[lineage[c1]] = host2;
         color[lineage[c2]] = host2;
-        ll -= log(x);
         if (S2 > 0) {
           S2 -= 1; I2 += 1; ell2 += 1;
           ll += log(lambda)-log(I2*(I2-1)/2);
@@ -479,7 +477,7 @@ void twospecies_gill
           color[lineage[c1]] = host2;
           color[lineage[c2]] = host1;
         }
-        ll -= log(0.5*(1-x));
+        ll -= log(0.5);
         if (S1 > 0) {
           S1 -= 1; I1 += 1; ell1 += 1;
           ll += log(lambda)-log(I1*I2);
@@ -502,9 +500,7 @@ void twospecies_gill
 
   // continuous portion of filter equation:
   // take Gillespie steps to the end of the interval.
-  // if the state is already incompatible, there is no need for
-  // this, so the state is "frozen".
-  if (tmax > t && R_FINITE(ll)) {
+  if (tmax > t) {
 
     double rate[nrate], logpi[nrate];
     int event;
