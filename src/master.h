@@ -163,15 +163,23 @@ public:
     }
   };
   //! sample in deme i
-  void sample (name_t i = 0) {
-    ball_t *a = inventory.random_ball(i);
-    geneal.sample(a,time());
+  void sample (name_t i = 0, int n = 1) {
+    pocket_t *p = inventory.random_balls(i,n);
+    for (ball_it a = p->begin(); a != p->end(); a++) {
+      geneal.sample(*a,time());
+    }
+    p->clear();
+    delete p;
   };
   //! sample_death in deme i
-  void sample_death (name_t i = 0) {
-    ball_t *a = inventory.random_ball(i);
-    inventory.erase(a);
-    geneal.sample_death(a,time());
+  void sample_death (name_t i = 0, int n = 1) {
+    pocket_t *p = inventory.random_balls(i,n);
+    for (ball_it a = p->begin(); a != p->end(); a++) {
+      inventory.erase(*a);
+      geneal.sample_death(*a,time());
+    }
+    p->clear();
+    delete p;
   };
   //! migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {

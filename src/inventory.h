@@ -69,14 +69,14 @@ public:
   };
   //! memory cleanup
   void clear (void) {
-    for (size_t i = 0; i < ndeme; i++)    
+    for (size_t i = 0; i < ndeme; i++)
       _inven[i].clear();
   };
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
     size_t s = 0;
-    for (size_t i = 0; i < ndeme; i++) 
+    for (size_t i = 0; i < ndeme; i++)
       s += _inven[i].bytesize();
     return s;
   };
@@ -120,7 +120,7 @@ public:
     }
     return q;
   };
-  //! choose a random ball from deme `i`
+  //! choose one random ball from deme `i`
   ball_t* random_ball (name_t i = 0) const {
     name_t n = _inven[i].size();
     assert(n > 0);
@@ -131,10 +131,10 @@ public:
   };
   //! choose a random pair of balls, one from each deme.
   //! the demes can be the same.
-  void random_pair (ball_t* ballI, ball_t* ballJ, name_t i = 0, name_t j = 0) const {
+  void random_pair (ball_t** ballI, ball_t** ballJ, name_t i = 0, name_t j = 0) const {
     if (i != j) {
-      ballI = random_ball(i);
-      ballJ = random_ball(j);
+      *ballI = random_ball(i);
+      *ballJ = random_ball(j);
     } else {
       name_t n = _inven[i].size();
       assert(n > 1);
@@ -150,14 +150,39 @@ public:
       while (d1 > 0) {
         d1--; d2--; k++;
       }
-      if (toggle) ballJ = *k;
-      else ballI = *k;
+      if (toggle) *ballJ = *k;
+      else *ballI = *k;
       while (d2 > 0) {
         d2--; k++;
       }
-      if (toggle) ballI = *k;
-      else ballJ = *k;
+      if (toggle) *ballI = *k;
+      else *ballJ = *k;
     }
+  };
+  //! choose a random set of `n` balls from deme `i`
+  pocket_t* random_balls (name_t i = 0, int n = 1) const {
+    pocket_t *p = new pocket_t();
+    if (n == 1) {
+      ball_t *b = random_ball(i);
+      p->insert(b);
+    } else if (n > 1) {
+      int N = _inven[i].size();
+      assert(N > 0);
+      assert(n <= N);
+      ball_it j = _inven[i].begin();
+      int k = 0, m = 0;
+      while (m < n && k < N) {
+        int u = random_integer(N-k);
+        if (u < n-m) {
+          p->insert(*j);
+          m++;
+        }
+        k++; j++;
+      }
+    } else {
+      assert(0);		// #nocov
+    }
+    return p;
   };
   //! add a black ball to a deme.
   //! this checks the color of the ball.
@@ -177,5 +202,5 @@ public:
     }
   };
 };
-  
+
 #endif

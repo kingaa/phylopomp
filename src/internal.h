@@ -49,6 +49,19 @@ static inline int random_integer (int n) {
   return (int) floor(R_unif_index((double) n));
 }
 
+// select n of the first N integers at random
+static inline void random_sample_wo_repl (int *samples, int N, int n) {
+  int k = 0; // total input records dealt with
+  int m = 0; // number of items selected so far
+  while (m < n && k < N) {
+    int u = random_integer(N-k);
+    if (u < n-m) {
+      samples[m++] = k;
+    }
+    k++;
+  }
+}
+
 // helper function for filling a return list
 static inline int set_list_elem
 (
