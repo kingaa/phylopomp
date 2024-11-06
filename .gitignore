@@ -10,7 +10,6 @@
 \.tests
 \.Rhistory
 \.Rproj.user
-rchk\.out
 *.tar.gz
 *.tgz
 *.zip
