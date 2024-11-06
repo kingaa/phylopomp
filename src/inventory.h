@@ -129,36 +129,6 @@ public:
     while (draw-- > 0) k++;
     return *k;
   };
-  //! choose a random pair of balls, one from each deme.
-  //! the demes can be the same.
-  void random_pair (ball_t** ballI, ball_t** ballJ, name_t i = 0, name_t j = 0) const {
-    if (i != j) {
-      *ballI = random_ball(i);
-      *ballJ = random_ball(j);
-    } else {
-      name_t n = _inven[i].size();
-      assert(n > 1);
-      name_t d1 = random_integer(n-1);
-      name_t d2 = random_integer(n);
-      bool toggle = false;
-      if (d1 >= d2) {
-        toggle = true;
-        d1++;
-        n = d1; d1 = d2; d2 = n;
-      }
-      ball_it k = _inven[i].begin();
-      while (d1 > 0) {
-        d1--; d2--; k++;
-      }
-      if (toggle) *ballJ = *k;
-      else *ballI = *k;
-      while (d2 > 0) {
-        d2--; k++;
-      }
-      if (toggle) *ballI = *k;
-      else *ballJ = *k;
-    }
-  };
   //! choose a random set of `n` balls from deme `i`
   pocket_t* random_balls (name_t i = 0, int n = 1) const {
     pocket_t *p = new pocket_t();
