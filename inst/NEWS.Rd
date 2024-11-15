@@ -1,13 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
-\section{Changes in \pkg{phylopomp} version 0.16}{
+\section{Changes in \pkg{phylopomp} version 0.14}{
   \itemize{
     \item The filtering codes for the two-species model are now working.
     \item A new sample/death event-type has been introduced into the \code{genealogy_t} type.
-  }
-}
-\section{Changes in \pkg{phylopomp} version 0.14}{
-  \itemize{
+    \item Corrections of filtering equations for the SEIR and Two-species models.
     \item Yet another refactoring.
     The SEIRS, LBDP, and SIRS models have been refactored to streamline the filtering calculations in a generalizable fashion.
   }

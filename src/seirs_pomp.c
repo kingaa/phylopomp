@@ -288,10 +288,10 @@ void seirs_gill
         break;
       case 2:                   // transmission, s=(1,0)
         assert(S>=1);
-        S -= 1; E += 1;
-        ll += log(1-ellI/I)-log(E);
         change_color(color,nsample,random_choice(ellI),1,0);
         ellE += 1; ellI -= 1;
+        S -= 1; E += 1;
+        ll += log(1-ellI/I)-log(E);
         assert(!ISNAN(ll));
         break;
       case 3:                   // progression, s=(0,0)
@@ -302,10 +302,10 @@ void seirs_gill
         break;
       case 4:                   // progression, s=(0,1)
         assert(E>=1);
-        E -= 1; I += 1;
-        ll -= log(I);
         change_color(color,nsample,random_choice(ellE),0,1);
         ellE -= 1; ellI += 1;
+        E -= 1; I += 1;
+        ll -= log(I);
         assert(!ISNAN(ll));
         break;
       case 5:                   // recovery

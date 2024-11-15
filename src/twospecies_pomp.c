@@ -114,6 +114,9 @@ static double event_rates
   *logpi = 0; logpi++;
   assert(R_FINITE(event_rate));
   // 2: Trans_21, s = (0,0),(1,0)
+  // s = (0,0): pi = (I1-ell1)/I1, m = 1,
+  // s = (1,0): pi = 1/(2*I1), m = ell1
+  // total pi = (I1-0.5*ell1)/I1
   assert(S2>=0 && I1>=ell1 && ell1>=0);
   alpha = (N1 > 0) ? Beta21*S2*I1/N1 : 0;
   pi = (I1 > 0) ? (I1-0.5*ell1)/I1 : 0;
@@ -121,6 +124,7 @@ static double event_rates
   *logpi = log(pi); logpi++;
   assert(R_FINITE(event_rate));
   // 3: Trans_21, s = (0,1)
+  // s = (0,1): pi = 1/(2*I1), m = ell1
   pi = 1-pi;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ell1); logpi++;
@@ -531,9 +535,9 @@ void twospecies_gill
       case 3:                   // 3: Trans_21, s = (0,1)
         assert(S2>=1 && I1>=0);
         S2 -= 1; I2 += 1;
-        ll += log(1-ell1/I1)-log(I2);
         change_color(color,nsample,random_choice(ell1),host1,host2);
         ell1 -= 1; ell2 += 1;
+        ll += log(1-ell1/I1)-log(I2);
         assert(check_color(color,nsample,ell1,ell2));
         assert(!ISNAN(ll));
         break;
@@ -546,9 +550,9 @@ void twospecies_gill
       case 5:                   // 5: Trans_12, s = (1,0)
         assert(S1>=1 && I2>=0);
         S1 -= 1; I1 += 1;
-        ll += log(1-ell2/I2)-log(I1);
         change_color(color,nsample,random_choice(ell2),host2,host1);
         ell2 -= 1; ell1 += 1;
+        ll += log(1-ell2/I2)-log(I1);
         assert(check_color(color,nsample,ell1,ell2));
         assert(!ISNAN(ll));
         break;
