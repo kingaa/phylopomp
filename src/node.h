@@ -130,8 +130,8 @@ public:
   //! number of descendants
   int nchildren (void) const {
     int n = 0;
-    for (ball_it i = begin(); i != end(); i++) {
-      switch ((*i)->color) {
+    for (ball_t *b : *this) {
+      switch (b->color) {
       case green: case black:
         n++;
         break;
@@ -151,8 +151,7 @@ public:
   void lineage_incr (int *incr, int *sat, int *etype) const {
     const name_t d = deme();
     incr[d]--;
-    for (ball_it i = cbegin(); i != cend(); i++) {
-      ball_t *b = *i;
+    for (ball_t *b : *this) {
       switch (b->color) {
       case green: case black:
         incr[b->deme()]++;
@@ -226,8 +225,7 @@ public:
       o3 += "g_";
     }
     n = 0;
-    for (ball_it i = begin(); i != end(); i++) {
-      ball_t *b = *i;
+    for (ball_t *b : *this) {
       node_t *p = 0;
       switch (b->color) {
       case green:

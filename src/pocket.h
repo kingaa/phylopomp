@@ -35,7 +35,7 @@ private:
 
   //! delete balls and clear pocket
   void clean (void) {
-    for (ball_it i = begin(); i != end(); i++) delete *i;
+    for (ball_t *b : *this) delete b;
     clear();
   };
 
@@ -50,8 +50,8 @@ public:
   friend raw_t* operator>> (const pocket_t &p, raw_t *o) {
     size_t psize = p.size();
     memcpy(o,&psize,sizeof(size_t)); o += sizeof(size_t);
-    for (ball_it i = p.begin(); i != p.end(); i++)
-      o = (**i >> o);
+    for (ball_t *i : p)
+      o = (*i >> o);
     return o;
   };
   //! binary deserialization.
@@ -72,8 +72,8 @@ protected:
   //! Needed in deserialization.
   //! Inform all balls as to their holder.
   void repair_holder (node_t* p) {
-    for (ball_it i = begin(); i != end(); i++) {
-      (*i)->holder() = p;
+    for (ball_t *b : *this) {
+      b->holder() = p;
     }
   };
 
@@ -83,8 +83,7 @@ public:
   void repair_owners (const std::unordered_map<name_t,node_t*>& node_name,
                       std::unordered_map<name_t,ball_t*> *ball_name) {
     std::unordered_map<name_t,node_t*>::const_iterator n;
-    for (ball_it i = begin(); i != end(); i++) {
-      ball_t *b = *i;
+    for (ball_t *b : *this) {
       if (b->is(green)) {
         n = node_name.find(b->uniq);
         if (n != node_name.end()) {
@@ -127,8 +126,8 @@ public:
   };
   //! retrieve the first ball of the specified color.
   ball_t* ball (const color_t c) const {
-    for (ball_it i = begin(); i != end(); i++) {
-      if ((*i)->color == c) return *i;
+    for (ball_t *b : *this) {
+      if (b->color == c) return b;
     }
     err("in '%s' (%s line %d): no ball of color %s", // # nocov
         __func__,__FILE__,__LINE__,colores[c]);      // # nocov
@@ -136,8 +135,8 @@ public:
   };
   //! return a pointer to another ball
   ball_t* other (const ball_t *b) const {
-    for (ball_it i = begin(); i != end(); i++) {
-      if (*i != b) return *i;
+    for (ball_t *a : *this) {
+      if (a != b) return a;
     }
     err("error in '%s' (%s line %d): there is no other.", // # nocov
         __func__,__FILE__,__LINE__);                      // # nocov
@@ -169,8 +168,8 @@ public:
   std::string yaml (std::string tab = "") const {
     std::string o = "";
     std::string t = tab + "  ";
-    for (ball_it i = begin(); i != end(); i++) {
-      o += tab + "- " + (*i)->yaml(t);
+    for (ball_t *b : *this) {
+      o += tab + "- " + b->yaml(t);
     }
     return o;
   };

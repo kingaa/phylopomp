@@ -165,8 +165,8 @@ public:
   //! sample in deme i
   void sample (name_t i = 0, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
-    for (ball_it a = p->begin(); a != p->end(); a++) {
-      geneal.sample(*a,time());
+    for (ball_t *a : *p) {
+      geneal.sample(a,time());
     }
     p->clear();
     delete p;
@@ -174,9 +174,9 @@ public:
   //! sample_death in deme i
   void sample_death (name_t i = 0, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
-    for (ball_it a = p->begin(); a != p->end(); a++) {
-      inventory.erase(*a);
-      geneal.sample_death(*a,time());
+    for (ball_t *a : *p) {
+      inventory.erase(a);
+      geneal.sample_death(a,time());
     }
     p->clear();
     delete p;

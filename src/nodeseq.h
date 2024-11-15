@@ -22,7 +22,7 @@ private:
 
   //! clean up: delete all nodes, reset globals
   void clean (void) {
-    for (node_it i = begin(); i != end(); i++) delete *i;
+    for (node_t *p : *this) delete p;
     clear();
   };
 
@@ -39,16 +39,16 @@ public:
   //! size of serialized binary form
   size_t bytesize (void) const {
     size_t s = sizeof(size_t);
-    for (node_it i = begin(); i != end(); i++)
-      s += (*i)->bytesize();
+    for (node_t *p : *this)
+      s += p->bytesize();
     return s;
   };
   //! binary serialization
   friend raw_t* operator>> (const nodeseq_t& G, raw_t* o) {
     size_t nnode = G.size();
     memcpy(o,&nnode,sizeof(size_t)); o += sizeof(size_t);
-    for (node_it i = G.begin(); i != G.end(); i++) {
-      o = (**i >> o);
+    for (node_t *p : G) {
+      o = (*p >> o);
     }
     return o;
   };
@@ -67,8 +67,8 @@ public:
       G.push_back(p);
       node_names.insert({p->uniq,p});
     }
-    for (node_it i = G.begin(); i != G.end(); i++) {
-      (*i)->repair_owners(node_names,&ball_names);
+    for (node_t *q : G) {
+      q->repair_owners(node_names,&ball_names);
     }
     G.repair_owners(ball_names);
     G.trace_lineages();
@@ -81,8 +81,7 @@ private:
   //! This function repairs the links green balls and their names.
   void repair_owners (std::unordered_map<name_t,ball_t*>& names) {
     std::unordered_map<name_t,ball_t*>::const_iterator n;
-    for (node_it i = begin(); i != end(); i++) {
-      node_t *p = *i;
+    for (node_t *p : *this) {
       n = names.find(p->uniq);
       assert(n != names.end());
       ball_t *b = n->second;
@@ -128,9 +127,9 @@ public:
   //! Get all balls of a color.
   pocket_t* colored (color_t col) const {
     pocket_t *p = new pocket_t;
-    for (node_it i = begin(); i != end(); i++) {
-      for (ball_it j = (*i)->begin(); j != (*i)->end(); j++) {
-        if ((*j)->is(col)) p->insert(*j);
+    for (node_t *q : *this) {
+      for (ball_t *b : *q ) {
+        if (b->is(col)) p->insert(b);
       }
     }
     return p;
@@ -138,9 +137,9 @@ public:
   //! Number of distinct timepoints.
   size_t ntime (slate_t t) const {
     size_t count = 1;
-    for (node_it i = begin(); i != end(); i++) {
-      if (t < (*i)->slate) {
-        t = (*i)->slate;
+    for (node_t *p : *this) {
+      if (t < p->slate) {
+        t = p->slate;
         count++;
       }
     }
@@ -148,9 +147,7 @@ public:
   };
   //! Number of nodes in the sequence.
   size_t length (void) const {
-    size_t count = 0;
-    for (node_it i = begin(); i != end(); i++) count++;
-    return count;
+    return this->size();
   };
   //! traverse to nth node, retrieve pointer
   node_t *position (int n) {
@@ -246,10 +243,8 @@ public:
     // because we move from early to late,
     // the order is guaranteed to be valid.
     name_t u = 0;
-    for (node_it i = begin(); i != end(); i++) {
-      node_t *p = *i;
-      for (ball_it j = p->begin(); j != p->end(); j++) {
-        ball_t *b = *j;
+    for (node_t *p : *this ) {
+      for (ball_t *b : *p) {
         if (b->color==blue) {
           trace_lineage(b,u);
           u++;
@@ -263,8 +258,8 @@ public:
   //! human-readable info
   std::string describe (void) const {
     std::string o = "";
-    for (node_it p = begin(); p != end(); p++) {
-      o += (*p)->describe();
+    for (node_t *p : *this) {
+      o += p->describe();
     }
     return o;
   };
@@ -272,8 +267,8 @@ public:
   virtual std::string yaml (std::string tab = "") const {
     std::string o = "";
     std::string t = tab + "  ";
-    for (node_it p = begin(); p != end(); p++) {
-      o += tab + "- " + (*p)->yaml(t);
+    for (node_t *p : *this) {
+      o += tab + "- " + p->yaml(t);
     }
     return o;
   };
@@ -282,8 +277,8 @@ public:
     SEXP Nodes;
     PROTECT(Nodes = NEW_LIST(size()));
     int k = 0;
-    for (node_it i = begin(); i != end(); i++) {
-      SET_ELEMENT(Nodes,k++,(*i)->structure());
+    for (node_t *p : *this) {
+      SET_ELEMENT(Nodes,k++,p->structure());
     }
     UNPROTECT(1);
     return Nodes;
@@ -292,9 +287,9 @@ public:
   std::string newick (slate_t t) const {
     slate_t te = dawn();
     std::string o = "";
-    for (node_it i = begin(); i != end(); i++) {
-      if ((*i)->is_root()) {
-        o += (*i)->newick(t,te) + ";";
+    for (node_t *p : *this) {
+      if (p->is_root()) {
+        o += p->newick(t,te) + ";";
       }
     }
     return o;

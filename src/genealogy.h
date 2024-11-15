@@ -177,8 +177,7 @@ public:
       sat[j] = ell[j] = 0;
       etype[j] = 0;
     }
-    for (node_it i = begin(); i != end(); i++) {
-      node_t *p = *i;
+    for (const node_t *p : *this) {
       if (tcur < p->slate) {
         tout += _ndeme; ell += _ndeme; sat += _ndeme;
         deme += _ndeme; etype += _ndeme;
@@ -310,8 +309,8 @@ public:
   //! number of samples
   size_t nsample (void) const {
     size_t n = 0;
-    for (node_it k = cbegin(); k != cend(); k++) {
-      if ((*k)->holds(blue)) n++;
+    for (const node_t *p : *this) {
+      if (p->holds(blue)) n++;
     }
     return n;
   };
@@ -483,8 +482,8 @@ public:
     }
     delete blacks;
     // erase deme information from nodes.
-    for (node_it i = begin(); i != end(); i++) {
-      (*i)->deme() = 0;
+    for (node_t *p : *this) {
+      p->deme() = 0;
     }
     // drop superfluous nodes (holding just one ball).
     comb();
