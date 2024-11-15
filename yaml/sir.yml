@@ -24,6 +24,11 @@ parameter:
     description: rate of waning of immunity
     default: 0
     type: double
+  dt:
+    name: dt
+    description: time step for state recording
+    default: 0.1
+    type: double
 ivp:
   S0:
     name: S0

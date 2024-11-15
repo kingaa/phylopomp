@@ -35,6 +35,7 @@ simulate.default <- function (object, ...) {
       "- SI2R: Two-deme model of superspreading\n",
       "- SIIR: Two-strain SIR model\n",
       "- SIR: Classical susceptible-infected-recovered model\n",
+      "- TIMVA: Within-host viral dynamic model with ALT\n",
       "- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.\n",
       "- SIRS: synonymous with SIR\n",
       "- SEIRS: synonymous with SEIR\n",
@@ -62,6 +63,7 @@ simulate.character <- function (object, time, ...) {
     modelSI2R = runSI2R(time=time,...),
     modelSIIR = runSIIR(time=time,...),
     modelSIR = runSIR(time=time,...),
+    modelTIMVA = runTIMVA(time=time,...),
     modelTwoSpecies = runTwoSpecies(time=time,...),
     modelSIRS = runSIR(time=time,...),
     modelSEIRS = runSEIR(time=time,...),
@@ -89,6 +91,7 @@ simulate.gpsim <- function (object, time, ...) {
     modelSI2R = continueSI2R(object,time=time,...),
     modelSIIR = continueSIIR(object,time=time,...),
     modelSIR = continueSIR(object,time=time,...),
+    modelTIMVA = continueTIMVA(object,time=time,...),
     modelTwoSpecies = continueTwoSpecies(object,time=time,...),
     model = pStop_("no model attribute detected."),
     pStop_("unrecognized model ",sQuote(model),".")

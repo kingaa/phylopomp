@@ -14,6 +14,11 @@ parameter:
     description: per capita sampling rate
     default: 1.0
     type: double
+  dt:
+    name: dt
+    description: time step for state recording
+    default: 0.1
+    type: double
 ivp:
   'n':
     name: 'n'

@@ -26,6 +26,28 @@ public:
   typedef POPN popul_t;
   const static size_t ndeme = NDEME;
 
+protected:
+  // Forward virtual functions to the population process
+  void get_state_elements(size_t i, double *time, int *intg, double *dbl) const override {
+    popul_t::get_state_elements(i, time, intg, dbl);
+  }
+
+  size_t n_integer_elements() const override {
+    return popul_t::n_integer_elements();
+  }
+
+  size_t n_double_elements() const override {
+    return popul_t::n_double_elements();
+  }
+
+  const char** integer_names() const override {
+    return popul_t::integer_names();
+  }
+
+  const char** double_names() const override {
+    return popul_t::double_names();
+  }
+
 public:
   // DATA MEMBERS
   genealogy_t geneal;
@@ -136,6 +158,10 @@ public:
   SEXP structure (void) const {
     return geneal.structure();
   };
+  //! get states
+  SEXP get_states() const {
+    return popul_t::format_states();
+  }
 
 public:
   //! n births into deme j with parent in deme i
@@ -164,22 +190,26 @@ public:
   };
   //! sample in deme i
   void sample (name_t i = 0, int n = 1) {
-    pocket_t *p = inventory.random_balls(i,n);
-    for (ball_it a = p->begin(); a != p->end(); a++) {
-      geneal.sample(*a,time());
+    if (n > 0) {
+      pocket_t *p = inventory.random_balls(i,n);
+      for (ball_it a = p->begin(); a != p->end(); a++) {
+        geneal.sample(*a,time());
+      }
+      p->clear();
+      delete p;
     }
-    p->clear();
-    delete p;
   };
   //! sample_death in deme i
   void sample_death (name_t i = 0, int n = 1) {
-    pocket_t *p = inventory.random_balls(i,n);
-    for (ball_it a = p->begin(); a != p->end(); a++) {
-      inventory.erase(*a);
-      geneal.sample_death(*a,time());
+    if (n > 0) {
+      pocket_t *p = inventory.random_balls(i,n);
+      for (ball_it a = p->begin(); a != p->end(); a++) {
+        inventory.erase(*a);
+        geneal.sample_death(*a,time());
+      }
+      p->clear();
+      delete p;
     }
-    p->clear();
-    delete p;
   };
   //! migration from deme i to deme j
   void migrate (name_t i = 0, name_t j = 0) {
@@ -189,10 +219,8 @@ public:
     a->deme() = j;
     inventory.insert(a);
   };
-  //! initialize the state
-  void rinit (void);
-  //! makes a jump
-  void jump (int e);
+  void rinit (void) override;  // Add override
+  void jump (int e) override;  // Add override
 };
 
 #endif

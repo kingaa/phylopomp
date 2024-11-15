@@ -94,6 +94,44 @@ void {%gen%}::jump (int event) {
   }
 }
 
+template<>
+size_t {%proc%}::n_integer_elements() const {
+  return {%n_int%};  // Number of integer state variables
+}
+
+template<>
+size_t {%proc%}::n_double_elements() const {
+  return {%n_dbl%};  // Number of double state variables
+}
+
+static const char* {%name%}_int_names[] = {%int_names%};
+static const char* {%name%}_dbl_names[] = {%dbl_names%};
+
+template<>
+const char** {%proc%}::integer_names() const {
+  return {%name%}_int_names;
+}
+
+template<>
+const char** {%proc%}::double_names() const {
+  return {%name%}_dbl_names;
+}
+
+template<>
+void {%proc%}::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const {%state_type%}& s = state_history[i];
+  {%int_assignments%}
+  {%dbl_assignments%}
+}
+
+extern "C" {
+  SEXP get_states_{%name%} (SEXP State) {
+    {%gen%} x(State);
+    return x.get_states();
+  }
+}
+
 GENERICS({%name%},{%gen%})
 }" |>
   render(
@@ -104,6 +142,28 @@ GENERICS({%name%},{%gen%})
     param_type=paste0(tolower(model$name),"_parameters_t"),
     state_type=paste0(tolower(model$name),"_state_t"),
     ndeme=length(model$demes),
+    n_int=sum(sapply(model$state, function(x) x$type == "int")),  # New: Number of integer states
+    n_dbl=sum(sapply(model$state, function(x) x$type == "double")), # New: Number of double states
+    int_names=sprintf('{"' %>% paste0(
+      paste(sapply(model$state[sapply(model$state, function(x) x$type == "int")],
+                   function(x) x$name), collapse='", "'),
+      '"}')
+    ),
+    dbl_names=sprintf('{"' %>% paste0(
+      paste(sapply(model$state[sapply(model$state, function(x) x$type == "double")],
+                   function(x) x$name), collapse='", "'),
+      '"}')
+    ),
+    int_assignments=paste(mapply(
+      function(idx, name) sprintf("  intg[%d] = s.%s;", idx-1, name),
+      seq_along(model$state[sapply(model$state, function(x) x$type == "int")]),
+      sapply(model$state[sapply(model$state, function(x) x$type == "int")], function(x) x$name)
+    ), collapse="\n"),
+    dbl_assignments=paste(mapply(
+      function(idx, name) sprintf("  dbl[%d] = s.%s;", idx-1, name),
+      seq_along(model$state[sapply(model$state, function(x) x$type == "double")]),
+      sapply(model$state[sapply(model$state, function(x) x$type == "double")], function(x) x$name)
+    ), collapse="\n"),
     demenames=paste(
       mapply(
         \(d,n) {
@@ -541,6 +601,47 @@ simulate.gpsim <- function (object, time, ...) {
   invisible(NULL)
 }
 
+# Add render_get_states_R_file function
+render_get_states_R_file <- function (models) {
+  models <- sapply(models,getElement,"name")
+  lapply(
+    models,
+    \(y) render(
+      r"[    model{%model%} = .Call(P_get_states_{%model%},object),]",
+      model=y
+    )
+  ) |>
+    paste(collapse="\n") -> get_states_calls
+
+  r"{##' Get population state history
+##'
+##' Retrieves the history of population states (compartment sizes over time)
+##' from a Markov genealogy process simulation
+##'
+##' @name get_states
+##' @param object A \sQuote{gpsim} object
+##' @return A \code{\link[tibble]{tibble}} containing the population state history
+##' @export
+get_states <- function(object) {
+  if (!inherits(object, "gpsim")) {
+    stop("object must be a gpsim object")
+  }
+
+  switch(
+    paste0("model", as.character(attr(object, "model"))),
+{%calls%}
+    stop("unrecognized model ", sQuote(attr(object, "model")))
+  ) |>
+    tibble::as_tibble()
+}
+}" |>
+  render(
+    calls=get_states_calls
+  ) |>
+  cat(file="R/get_states.R")
+invisible(NULL)
+}
+
 files <- list.files(pattern=r"{.*\.yml$}")
 models <- list()
 for (f in files) {
@@ -553,3 +654,4 @@ render_init_c_file(models)
 render_yaml_R_file(models)
 render_geneal_R_file(models)
 render_simulate_R_file(models)
+render_get_states_R_file(models)

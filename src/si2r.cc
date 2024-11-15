@@ -26,6 +26,7 @@ typedef struct {
   double psi2;
   double sigma12;
   double sigma21;
+  double dt;
   int S0;
   int I0;
   int R0;
@@ -46,6 +47,7 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(psi2)
     + YAML_PARAM(sigma12)
     + YAML_PARAM(sigma21)
+    + YAML_PARAM(dt)
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
@@ -69,6 +71,7 @@ void si2r_proc_t::update_params (double *p, int n) {
   PARAM_SET(psi2);
   PARAM_SET(sigma12);
   PARAM_SET(sigma21);
+  PARAM_SET(dt);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -101,55 +104,96 @@ double si2r_proc_t::event_rates (double *rate, int n) const {
 template<>
 void si2r_genealogy_t::rinit (void) {
   state.S = params.S0;
-  state.I1 = params.I0;
-  state.I2 = 0;
-  state.R = params.R0;
-  state.N = double(params.S0+params.I0+params.R0);
-  graft(ordinary,params.I0);
+state.I1 = params.I0;
+state.I2 = 0;
+state.R = params.R0;
+state.N = double(params.S0+params.I0+params.R0);
+graft(ordinary,params.I0);
 }
 
 template<>
 void si2r_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S -= 1; state.I1 += 1; birth(ordinary,ordinary);
-    break;
-  case 1:
-    {
-      int n = 1+int(rgeom(1.0/params.mu));
-      if (state.S >= n) {
-        state.S -= n; state.I1 += n;
-        birth(superspreader,ordinary,n);
-      } else {
-        birth(superspreader,ordinary,state.S);
-        state.I1 += state.S; state.S = 0;
-      }
-    }
-    break;
-  case 2:
-    state.I1 -= 1; state.R += 1; death(ordinary);
-    break;
-  case 3:
-    state.I2 -= 1; state.R += 1; death(superspreader);
-    break;
-  case 4:
-    sample(ordinary);
-    break;
-  case 5:
-    sample(superspreader);
-    break;
-  case 6:
-    state.I1 -= 1; state.I2 += 1; migrate(ordinary,superspreader);
-    break;
-  case 7:
-    state.I1 += 1; state.I2 -= 1; migrate(superspreader,ordinary);
-    break;
-  case 8:
-    state.R -= 1; state.S += 1;
-    break;
+      state.S -= 1; state.I1 += 1; birth(ordinary,ordinary);
+      break;
+    case 1:
+      {
+  int n = 1+int(rgeom(1.0/params.mu));
+  if (state.S >= n) {
+    state.S -= n; state.I1 += n;
+    birth(superspreader,ordinary,n);
+  } else {
+    birth(superspreader,ordinary,state.S);
+    state.I1 += state.S; state.S = 0;
+  }
+}
+      break;
+    case 2:
+      state.I1 -= 1; state.R += 1; death(ordinary);
+      break;
+    case 3:
+      state.I2 -= 1; state.R += 1; death(superspreader);
+      break;
+    case 4:
+      sample(ordinary);
+      break;
+    case 5:
+      sample(superspreader);
+      break;
+    case 6:
+      state.I1 -= 1; state.I2 += 1; migrate(ordinary,superspreader);
+      break;
+    case 7:
+      state.I1 += 1; state.I2 -= 1; migrate(superspreader,ordinary);
+      break;
+    case 8:
+      state.R -= 1; state.S += 1;
+      break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov
+  }
+}
+
+template<>
+size_t si2r_proc_t::n_integer_elements() const {
+  return 4;  // Number of integer state variables
+}
+
+template<>
+size_t si2r_proc_t::n_double_elements() const {
+  return 1;  // Number of double state variables
+}
+
+static const char* SI2R_int_names[] = {"S", "I1", "I2", "R"};
+static const char* SI2R_dbl_names[] = {"N"};
+
+template<>
+const char** si2r_proc_t::integer_names() const {
+  return SI2R_int_names;
+}
+
+template<>
+const char** si2r_proc_t::double_names() const {
+  return SI2R_dbl_names;
+}
+
+template<>
+void si2r_proc_t::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const si2r_state_t& s = state_history[i];
+    intg[0] = s.S;
+  intg[1] = s.I1;
+  intg[2] = s.I2;
+  intg[3] = s.R;
+    dbl[0] = s.N;
+}
+
+extern "C" {
+  SEXP get_states_SI2R (SEXP State) {
+    si2r_genealogy_t x(State);
+    return x.get_states();
   }
 }
 

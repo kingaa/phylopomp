@@ -26,6 +26,7 @@ typedef struct {
   double sigma12;
   double sigma21;
   double omega;
+  double dt;
   int S0;
   int I1_0;
   int I2_0;
@@ -47,6 +48,7 @@ std::string siir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(sigma12)
     + YAML_PARAM(sigma21)
     + YAML_PARAM(omega)
+    + YAML_PARAM(dt)
     + YAML_PARAM(S0)
     + YAML_PARAM(I1_0)
     + YAML_PARAM(I2_0)
@@ -71,6 +73,7 @@ void siir_proc_t::update_params (double *p, int n) {
   PARAM_SET(sigma12);
   PARAM_SET(sigma21);
   PARAM_SET(omega);
+  PARAM_SET(dt);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -145,6 +148,47 @@ void siir_genealogy_t::jump (int event) {
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov
+  }
+}
+
+template<>
+size_t siir_proc_t::n_integer_elements() const {
+  return 4;  // Number of integer state variables
+}
+
+template<>
+size_t siir_proc_t::n_double_elements() const {
+  return 1;  // Number of double state variables
+}
+
+static const char* SIIR_int_names[] = {"S", "I1", "I2", "R"};
+static const char* SIIR_dbl_names[] = {"N"};
+
+template<>
+const char** siir_proc_t::integer_names() const {
+  return SIIR_int_names;
+}
+
+template<>
+const char** siir_proc_t::double_names() const {
+  return SIIR_dbl_names;
+}
+
+template<>
+void siir_proc_t::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const siir_state_t& s = state_history[i];
+    intg[0] = s.S;
+  intg[1] = s.I1;
+  intg[2] = s.I2;
+  intg[3] = s.R;
+    dbl[0] = s.N;
+}
+
+extern "C" {
+  SEXP get_states_SIIR (SEXP State) {
+    siir_genealogy_t x(State);
+    return x.get_states();
   }
 }
 

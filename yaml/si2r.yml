@@ -46,6 +46,11 @@ parameter:
     description: rate of movement from deme 2 to deme 1
     default: 3
     type: double
+  dt:
+    name: dt
+    description: time step for state recording
+    default: 0.1
+    type: double
 ivp:
   S0:
     name: S0

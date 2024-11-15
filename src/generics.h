@@ -63,7 +63,7 @@ SEXP lineage_count (const TYPE& G) {
   return G.lineage_count();
 }
 
-//! data-frame format 
+//! data-frame format
 template <class TYPE>
 SEXP gendat (const TYPE& G) {
   return G.gendat();
@@ -145,6 +145,11 @@ SEXP genealogy (SEXP State) {
 #define YAMLFN(X,TYPE) SEXP yaml ## X (SEXP State) {    \
     return yaml<TYPE>(State);                           \
   }                                                     \
+
+#define GET_STATES_FN(X,TYPE) SEXP get_states_ ## X (SEXP State) {   \
+    const TYPE &X = State;                                           \
+    return X.format_states();                                        \
+  }                                                                  \
 
 #define GENERICS(X,TYPE)                        \
   extern "C" {                                  \

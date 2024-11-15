@@ -16,6 +16,7 @@ typedef struct {
 typedef struct {
   double mu;
   double psi;
+  double dt;
   int n;
 } moran_parameters_t;
 
@@ -28,6 +29,7 @@ std::string moran_proc_t::yaml (std::string tab) const {
   std::string p = tab + "parameter:\n"
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
+    + YAML_PARAM(dt)
     + YAML_PARAM(n);
   std::string s = tab + "state:\n"
     + YAML_STATE(m)
@@ -40,6 +42,7 @@ void moran_proc_t::update_params (double *p, int n) {
   int m = 0;
   PARAM_SET(mu);
   PARAM_SET(psi);
+  PARAM_SET(dt);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -63,21 +66,60 @@ double moran_proc_t::event_rates (double *rate, int n) const {
 template<>
 void moran_genealogy_t::rinit (void) {
   state.m = state.g = 0;
-  graft(deme,params.n);
+graft(deme,params.n);
 }
 
 template<>
 void moran_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.m += 1; birth(); death();
-    break;
-  case 1:
-    state.g += 1; sample();
-    break;
+      state.m += 1; birth(); death();
+      break;
+    case 1:
+      state.g += 1; sample();
+      break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov
+  }
+}
+
+template<>
+size_t moran_proc_t::n_integer_elements() const {
+  return 2;  // Number of integer state variables
+}
+
+template<>
+size_t moran_proc_t::n_double_elements() const {
+  return 0;  // Number of double state variables
+}
+
+static const char* Moran_int_names[] = {"m", "g"};
+static const char* Moran_dbl_names[] = {""};
+
+template<>
+const char** moran_proc_t::integer_names() const {
+  return Moran_int_names;
+}
+
+template<>
+const char** moran_proc_t::double_names() const {
+  return Moran_dbl_names;
+}
+
+template<>
+void moran_proc_t::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const moran_state_t& s = state_history[i];
+    intg[0] = s.m;
+  intg[1] = s.g;
+  
+}
+
+extern "C" {
+  SEXP get_states_Moran (SEXP State) {
+    moran_genealogy_t x(State);
+    return x.get_states();
   }
 }
 

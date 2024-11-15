@@ -20,6 +20,7 @@
 ##' @param d2 per capita death rate for species 2
 ##' @param iota1 imported infections for species 1
 ##' @param iota2 imported infections for species 2
+##' @param dt time step for state recording
 ##' @param S1_0 initial size of species 1 susceptible population
 ##' @param S2_0 initial size of species 2 susceptible population
 ##' @param I1_0 initial size of species 1 infected population
@@ -35,9 +36,9 @@ NULL
 ##' @export
 runS2I2R2 <- function (
   time, t0 = 0,
-  Beta11 = 4, Beta12 = 0, Beta22 = 4, gamma1 = 1, gamma2 = 1, psi1 = 1, psi2 = 0, omega1 = 0, omega2 = 0, b1 = 0, b2 = 0, d1 = 0, d2 = 0, iota1 = 0, iota2 = 0, S1_0 = 100, S2_0 = 100, I1_0 = 0, I2_0 = 10, R1_0 = 0, R2_0 = 0
+  Beta11 = 4, Beta12 = 0, Beta22 = 4, gamma1 = 1, gamma2 = 1, psi1 = 1, psi2 = 0, omega1 = 0, omega2 = 0, b1 = 0, b2 = 0, d1 = 0, d2 = 0, iota1 = 0, iota2 = 0, dt = 0.1, S1_0 = 100, S2_0 = 100, I1_0 = 0, I2_0 = 10, R1_0 = 0, R2_0 = 0
 ) {
-  params <- c(Beta11=Beta11,Beta12=Beta12,Beta22=Beta22,gamma1=gamma1,gamma2=gamma2,psi1=psi1,psi2=psi2,omega1=omega1,omega2=omega2,b1=b1,b2=b2,d1=d1,d2=d2,iota1=iota1,iota2=iota2)
+  params <- c(Beta11=Beta11,Beta12=Beta12,Beta22=Beta22,gamma1=gamma1,gamma2=gamma2,psi1=psi1,psi2=psi2,omega1=omega1,omega2=omega2,b1=b1,b2=b2,d1=d1,d2=d2,iota1=iota1,iota2=iota2,dt=dt)
   ivps <- c(S1_0=S1_0,S2_0=S2_0,I1_0=I1_0,I2_0=I2_0,R1_0=R1_0,R2_0=R2_0)
   x <- .Call(P_makeS2I2R2,params,ivps,t0)
   .Call(P_runS2I2R2,x,time) |>
@@ -48,10 +49,10 @@ runS2I2R2 <- function (
 ##' @export
 continueS2I2R2 <- function (
   object, time,
-  Beta11 = NA, Beta12 = NA, Beta22 = NA, gamma1 = NA, gamma2 = NA, psi1 = NA, psi2 = NA, omega1 = NA, omega2 = NA, b1 = NA, b2 = NA, d1 = NA, d2 = NA, iota1 = NA, iota2 = NA
+  Beta11 = NA, Beta12 = NA, Beta22 = NA, gamma1 = NA, gamma2 = NA, psi1 = NA, psi2 = NA, omega1 = NA, omega2 = NA, b1 = NA, b2 = NA, d1 = NA, d2 = NA, iota1 = NA, iota2 = NA, dt = NA
 ) {
   params <- c(
-    Beta11=Beta11,Beta12=Beta12,Beta22=Beta22,gamma1=gamma1,gamma2=gamma2,psi1=psi1,psi2=psi2,omega1=omega1,omega2=omega2,b1=b1,b2=b2,d1=d1,d2=d2,iota1=iota1,iota2=iota2
+    Beta11=Beta11,Beta12=Beta12,Beta22=Beta22,gamma1=gamma1,gamma2=gamma2,psi1=psi1,psi2=psi2,omega1=omega1,omega2=omega2,b1=b1,b2=b2,d1=d1,d2=d2,iota1=iota1,iota2=iota2,dt=dt
   )
   x <- .Call(P_reviveS2I2R2,object,params)
   .Call(P_runS2I2R2,x,time) |>

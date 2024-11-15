@@ -7,6 +7,7 @@
 ##' @aliases Moran
 ##' @param mu per capita event rate
 ##' @param psi per capita sampling rate
+##' @param dt time step for state recording
 ##' @param n population size
 ##' @inheritParams sir
 ##' @return \code{runMoran} and \code{continueMoran} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{Moran}.
@@ -17,9 +18,9 @@ NULL
 ##' @export
 runMoran <- function (
   time, t0 = 0,
-  mu = 1, psi = 1, n = 100
+  mu = 1, psi = 1, dt = 0.1, n = 100
 ) {
-  params <- c(mu=mu,psi=psi)
+  params <- c(mu=mu,psi=psi,dt=dt)
   ivps <- c(n=n)
   x <- .Call(P_makeMoran,params,ivps,t0)
   .Call(P_runMoran,x,time) |>
@@ -30,10 +31,10 @@ runMoran <- function (
 ##' @export
 continueMoran <- function (
   object, time,
-  mu = NA, psi = NA
+  mu = NA, psi = NA, dt = NA
 ) {
   params <- c(
-    mu=mu,psi=psi
+    mu=mu,psi=psi,dt=dt
   )
   x <- .Call(P_reviveMoran,object,params)
   .Call(P_runMoran,x,time) |>

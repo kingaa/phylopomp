@@ -37,6 +37,7 @@ typedef struct {
   double d2;
   double iota1;
   double iota2;
+  double dt;
   int S1_0;
   int S2_0;
   int I1_0;
@@ -67,6 +68,7 @@ std::string s2i2r2_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(d2)
     + YAML_PARAM(iota1)
     + YAML_PARAM(iota2)
+    + YAML_PARAM(dt)
     + YAML_PARAM(S1_0)
     + YAML_PARAM(S2_0)
     + YAML_PARAM(I1_0)
@@ -103,6 +105,7 @@ void s2i2r2_proc_t::update_params (double *p, int n) {
   PARAM_SET(d2);
   PARAM_SET(iota1);
   PARAM_SET(iota2);
+  PARAM_SET(dt);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -148,80 +151,124 @@ double s2i2r2_proc_t::event_rates (double *rate, int n) const {
 template<>
 void s2i2r2_genealogy_t::rinit (void) {
   state.S1 = params.S1_0;
-  state.I1 = params.I1_0;
-  state.R1 = params.R1_0;
-  state.S2 = params.S2_0;
-  state.I2 = params.I2_0;
-  state.R2 = params.R2_0;
-  state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
-  state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
-  graft(host1,params.I1_0);
-  graft(host2,params.I2_0);
+state.I1 = params.I1_0;
+state.R1 = params.R1_0;
+state.S2 = params.S2_0;
+state.I2 = params.I2_0;
+state.R2 = params.R2_0;
+state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
+state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
+graft(host1,params.I1_0);
+graft(host2,params.I2_0);
 }
 
 template<>
 void s2i2r2_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S1 -= 1; state.I1 += 1; birth(host1,host1);
-    break;
-  case 1:
-    state.S2 -= 1; state.I2 += 1; birth(host2,host2);
-    break;
-  case 2:
-    state.S1 -= 1; state.I1 += 1; birth(host2,host1);
-    break;
-  case 3:
-    state.I1 -= 1; state.R1 += 1; death(host1);
-    break;
-  case 4:
-    state.I2 -= 1; state.R2 += 1; death(host2);
-    break;
-  case 5:
-    state.R1 -= 1; state.S1 += 1;
-    break;
-  case 6:
-    state.R2 -= 1; state.S2 += 1;
-    break;
-  case 7:
-    sample(host1);
-    break;
-  case 8:
-    sample(host2);
-    break;
-  case 9:
-    state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
-    break;
-  case 10:
-    state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
-    break;
-  case 11:
-    state.S1 -= 1; state.N1 -= 1;
-    break;
-  case 12:
-    state.S2 -= 1; state.N2 -= 1;
-    break;
-  case 13:
-    state.I1 -= 1; state.N1 -= 1; death(host1);
-    break;
-  case 14:
-    state.I2 -= 1; state.N2 -= 1; death(host2);
-    break;
-  case 15:
-    state.R1 -= 1; state.N1 -= 1;
-    break;
-  case 16:
-    state.R2 -= 1; state.N2 -= 1;
-    break;
-  case 17:
-    state.S1 += 1; state.N1 += 1;
-    break;
-  case 18:
-    state.S2 += 1; state.N2 += 1;
-    break;
+      state.S1 -= 1; state.I1 += 1; birth(host1,host1);
+      break;
+    case 1:
+      state.S2 -= 1; state.I2 += 1; birth(host2,host2);
+      break;
+    case 2:
+      state.S1 -= 1; state.I1 += 1; birth(host2,host1);
+      break;
+    case 3:
+      state.I1 -= 1; state.R1 += 1; death(host1);
+      break;
+    case 4:
+      state.I2 -= 1; state.R2 += 1; death(host2);
+      break;
+    case 5:
+      state.R1 -= 1; state.S1 += 1;
+      break;
+    case 6:
+      state.R2 -= 1; state.S2 += 1;
+      break;
+    case 7:
+      sample(host1);
+      break;
+    case 8:
+      sample(host2);
+      break;
+    case 9:
+      state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
+      break;
+    case 10:
+      state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
+      break;
+    case 11:
+      state.S1 -= 1; state.N1 -= 1;
+      break;
+    case 12:
+      state.S2 -= 1; state.N2 -= 1;
+      break;
+    case 13:
+      state.I1 -= 1; state.N1 -= 1; death(host1);
+      break;
+    case 14:
+      state.I2 -= 1; state.N2 -= 1; death(host2);
+      break;
+    case 15:
+      state.R1 -= 1; state.N1 -= 1;
+      break;
+    case 16:
+      state.R2 -= 1; state.N2 -= 1;
+      break;
+    case 17:
+      state.S1 += 1; state.N1 += 1;
+      break;
+    case 18:
+      state.S2 += 1; state.N2 += 1;
+      break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov
+  }
+}
+
+template<>
+size_t s2i2r2_proc_t::n_integer_elements() const {
+  return 6;  // Number of integer state variables
+}
+
+template<>
+size_t s2i2r2_proc_t::n_double_elements() const {
+  return 2;  // Number of double state variables
+}
+
+static const char* S2I2R2_int_names[] = {"S1", "I1", "R1", "S2", "I2", "R2"};
+static const char* S2I2R2_dbl_names[] = {"N1", "N2"};
+
+template<>
+const char** s2i2r2_proc_t::integer_names() const {
+  return S2I2R2_int_names;
+}
+
+template<>
+const char** s2i2r2_proc_t::double_names() const {
+  return S2I2R2_dbl_names;
+}
+
+template<>
+void s2i2r2_proc_t::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const s2i2r2_state_t& s = state_history[i];
+    intg[0] = s.S1;
+  intg[1] = s.I1;
+  intg[2] = s.R1;
+  intg[3] = s.S2;
+  intg[4] = s.I2;
+  intg[5] = s.R2;
+    dbl[0] = s.N1;
+  dbl[1] = s.N2;
+}
+
+extern "C" {
+  SEXP get_states_S2I2R2 (SEXP State) {
+    s2i2r2_genealogy_t x(State);
+    return x.get_states();
   }
 }
 

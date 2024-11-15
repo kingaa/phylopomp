@@ -15,14 +15,15 @@ SEXP gendat (SEXP);
 // for each model, there must be
 // one DECLARATIONS line and one METHODS line.
 
-DECLARATIONS(LBDP);
-DECLARATIONS(Moran);
-DECLARATIONS(S2I2R2);
-DECLARATIONS(SEIR);
-DECLARATIONS(SI2R);
-DECLARATIONS(SIIR);
-DECLARATIONS(SIR);
-DECLARATIONS(TwoSpecies);
+DECLARATIONS(LBDP)
+DECLARATIONS(Moran)
+DECLARATIONS(S2I2R2)
+DECLARATIONS(SEIR)
+DECLARATIONS(SI2R)
+DECLARATIONS(SIIR)
+DECLARATIONS(SIR)
+DECLARATIONS(TIMVA)
+DECLARATIONS(TwoSpecies)
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
@@ -32,6 +33,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SI2R),
   METHODS(SIIR),
   METHODS(SIR),
+  METHODS(TIMVA),
   METHODS(TwoSpecies),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 2},
@@ -49,8 +51,8 @@ void R_init_phylopomp (DllInfo *info) {
   // Register routines
   R_registerRoutines(info,NULL,callMethods,NULL,extMethods);
   R_useDynamicSymbols(info,TRUE);
-  // R_useDynamicSymbols(info,FALSE);
-  // R_forceSymbols(info,TRUE);
+  //  R_useDynamicSymbols(info,FALSE);
+  //  R_forceSymbols(info,TRUE);
   get_userdata = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
   get_userdata_double = (get_userdata_double_t*) R_GetCCallable("pomp","get_userdata_double");
   get_userdata_int = (get_userdata_int_t*) R_GetCCallable("pomp","get_userdata_int");

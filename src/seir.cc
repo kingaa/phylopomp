@@ -23,6 +23,7 @@ typedef struct {
   double gamma;
   double psi;
   double omega;
+  double dt;
   int S0;
   int E0;
   int I0;
@@ -41,6 +42,7 @@ std::string seir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
     + YAML_PARAM(omega)
+    + YAML_PARAM(dt)
     + YAML_PARAM(S0)
     + YAML_PARAM(E0)
     + YAML_PARAM(I0)
@@ -62,6 +64,7 @@ void seir_proc_t::update_params (double *p, int n) {
   PARAM_SET(gamma);
   PARAM_SET(psi);
   PARAM_SET(omega);
+  PARAM_SET(dt);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -91,35 +94,76 @@ double seir_proc_t::event_rates (double *rate, int n) const {
 template<>
 void seir_genealogy_t::rinit (void) {
   state.S = params.S0;
-  state.E = params.E0;
-  state.I = params.I0;
-  state.R = params.R0;
-  state.N = double(params.S0+params.E0+params.I0+params.R0);
-  graft(0,params.E0);
-  graft(1,params.I0);
+state.E = params.E0;
+state.I = params.I0;
+state.R = params.R0;
+state.N = double(params.S0+params.E0+params.I0+params.R0);
+graft(0,params.E0);
+graft(1,params.I0);
 }
 
 template<>
 void seir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-    state.S -= 1; state.E += 1; birth(Infectious,Exposed);
-    break;
-  case 1:
-    state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
-    break;
-  case 2:
-    state.I -= 1; state.R += 1; death(Infectious);
-    break;
-  case 3:
-    sample(Infectious);
-    break;
-  case 4:
-    state.R -= 1; state.S += 1;
-    break;
+      state.S -= 1; state.E += 1; birth(Infectious,Exposed);
+      break;
+    case 1:
+      state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
+      break;
+    case 2:
+      state.I -= 1; state.R += 1; death(Infectious);
+      break;
+    case 3:
+      sample(Infectious);
+      break;
+    case 4:
+      state.R -= 1; state.S += 1;
+      break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov
+  }
+}
+
+template<>
+size_t seir_proc_t::n_integer_elements() const {
+  return 4;  // Number of integer state variables
+}
+
+template<>
+size_t seir_proc_t::n_double_elements() const {
+  return 1;  // Number of double state variables
+}
+
+static const char* SEIR_int_names[] = {"S", "E", "I", "R"};
+static const char* SEIR_dbl_names[] = {"N"};
+
+template<>
+const char** seir_proc_t::integer_names() const {
+  return SEIR_int_names;
+}
+
+template<>
+const char** seir_proc_t::double_names() const {
+  return SEIR_dbl_names;
+}
+
+template<>
+void seir_proc_t::get_state_elements(size_t i, double *time, int *intg, double *dbl) const {
+  *time = time_history[i];
+  const seir_state_t& s = state_history[i];
+    intg[0] = s.S;
+  intg[1] = s.E;
+  intg[2] = s.I;
+  intg[3] = s.R;
+    dbl[0] = s.N;
+}
+
+extern "C" {
+  SEXP get_states_SEIR (SEXP State) {
+    seir_genealogy_t x(State);
+    return x.get_states();
   }
 }
 

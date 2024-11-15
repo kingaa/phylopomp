@@ -107,6 +107,11 @@ parameter:
     description: imported infections for species 2
     default: 0
     type: double
+  dt:
+    name: dt
+    description: time step for state recording
+    default: 0.1
+    type: double
 ivp:
   S1_0:
     name: S1_0
