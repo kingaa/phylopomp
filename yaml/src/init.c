@@ -22,6 +22,7 @@ DECLARATIONS(SEIR)
 DECLARATIONS(SI2R)
 DECLARATIONS(SIIR)
 DECLARATIONS(SIR)
+DECLARATIONS(TIMVA)
 DECLARATIONS(TwoSpecies)
 
 static const R_CallMethodDef callMethods[] = {
@@ -32,6 +33,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SI2R),
   METHODS(SIIR),
   METHODS(SIR),
+  METHODS(TIMVA),
   METHODS(TwoSpecies),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 2},

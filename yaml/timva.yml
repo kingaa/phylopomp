@@ -1,0 +1,176 @@
+name: TIMVA
+description: Within-host viral dynamic model with ALT
+details: |-
+  Within-host viral dynamics of four types of cells and the released ALT.
+demes:
+  - virus
+  - infected
+parameter:
+  lambda:
+    name: lambda
+    description: target cell replenishment rate
+    type: double
+    default: 10
+  d:
+    name: d
+    description: target cell death rate
+    type: double
+    default: 0
+  Beta:
+    name: Beta
+    description: transmission rate
+    type: double
+    default: 1e-4
+  delta:
+    name: delta
+    description: infected cell death rate
+    type: double
+    default: 0.01
+  p:
+    name: p
+    description: free virus particle production rate per infected cell
+    type: double
+    default: 10
+  a:
+    name: a
+    description: immune cell activation rate per infected cell
+    type: double
+    default: 0.1
+  kappa:
+    name: kappa
+    description: infected cell killing rate
+    type: double
+    default: 0.005
+  c:
+    name: c
+    description: free virus particle clearance rate
+    type: double
+    default: 3
+  mu:
+    name: mu
+    description: immune cell death rate
+    type: double
+    default: 0.05
+  omega:
+    name: omega
+    description: proportion of ALT release per dead infected cell
+    type: double
+    default: .1
+  s:
+    name: s
+    description: ALT replenishment rate
+    type: double
+    default: 3
+  sigma:
+    name: sigma
+    description: ALT decay rate
+    type: double
+    default: 0.3
+  psi:
+    name: psi
+    description: free virus particle sampling rate
+    type: double
+    default: 0.1
+  f:
+    name: f
+    description: probability of getting sampled
+    type: double
+    default: 0.1
+  dt:
+    name: dt
+    description: time step for state recording
+    default: 0.1
+    type: double
+ivp:
+  T0:
+    name: T0
+    description: initial size of target cells
+    type: int
+    default: 1000
+  I0:
+    name: I0
+    description: initial size of infected cells
+    type: int
+    default: 0
+  M0:
+    name: M0
+    description: initial size of immune cells
+    type: int
+    default: 0
+  V0:
+    name: V0
+    description: initial size of free virus particles
+    type: double
+    default: 1.0
+  A0:
+    name: A0
+    description: initial value of ALT
+    type: double
+    default: 0.0
+state:
+  T:
+    name: T
+    type: int
+  I:
+    name: I
+    type: int
+  M:
+    name: M
+    type: int
+  V:
+    name: V
+    type: double
+  A:
+    name: A
+    type: double
+rinit: |-
+    state.T = params.T0;
+    state.I = params.I0;
+    state.M = params.M0;
+    state.V = params.V0;
+    state.A = params.A0;
+    graft(virus,params.V0);
+events:
+  # replenishT:
+  #   rate: params.lambda
+  #   jump: state.T += 1;
+  # deathT:
+  #   rate: params.d * state.T
+  #   jump: state.T -= 1;
+  infect:
+    rate: params.Beta * state.T * state.V
+    jump: state.V -= 1; state.I += 1; migrate(virus,infected);
+    # jump: state.T -= 1; state.V -= 1; state.I += 1; migrate(virus,infected);
+  deathI:
+    rate: params.delta * state.I + params.kappa * state.I * state.M
+    jump: state.I -= 1; state.A += params.omega;
+  production:
+    rate: params.p * state.I
+    jump: |-
+      {
+        state.V += 1;
+        birth(infected,virus);
+      }
+  clearV:
+    rate: params.c * state.V
+    jump: state.V -= 1;
+  activate:
+    rate: params.a * state.I
+    jump: state.M += 1;
+  decay:
+    rate: params.mu * state.M
+    jump: state.M -= 1;
+  replenishA:
+    rate: params.s
+    jump: state.A += 1;
+  clearA:
+    rate: params.sigma * state.A
+    jump: state.A -= 1;
+  sample:
+    rate: params.psi * state.V
+    jump: |-
+      {
+        double n = rbinom(state.V,params.f);
+        sample_death(virus, (int)n);
+        state.V -= (int)n;
+      }

@@ -21,6 +21,7 @@ get_states <- function(object) {
     modelSI2R = .Call(P_get_states_SI2R,object),
     modelSIIR = .Call(P_get_states_SIIR,object),
     modelSIR = .Call(P_get_states_SIR,object),
+    modelTIMVA = .Call(P_get_states_TIMVA,object),
     modelTwoSpecies = .Call(P_get_states_TwoSpecies,object),
     stop("unrecognized model ", sQuote(attr(object, "model")))
   ) |>

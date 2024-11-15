@@ -144,12 +144,12 @@ GENERICS({%name%},{%gen%})
     ndeme=length(model$demes),
     n_int=sum(sapply(model$state, function(x) x$type == "int")),  # New: Number of integer states
     n_dbl=sum(sapply(model$state, function(x) x$type == "double")), # New: Number of double states
-    int_names=sprintf('{"' %>% paste0(
+    int_names=sprintf('{"' |> paste0(
       paste(sapply(model$state[sapply(model$state, function(x) x$type == "int")],
                    function(x) x$name), collapse='", "'),
       '"}')
     ),
-    dbl_names=sprintf('{"' %>% paste0(
+    dbl_names=sprintf('{"' |> paste0(
       paste(sapply(model$state[sapply(model$state, function(x) x$type == "double")],
                    function(x) x$name), collapse='", "'),
       '"}')
