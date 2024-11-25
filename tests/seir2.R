@@ -2,14 +2,14 @@ png(filename="seir2-%02d.png",res=100)
 
 suppressPackageStartupMessages({
   library(tidyverse)
-  library(phylopomp)
   library(pomp)
+  library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(842110120)
 options(digits=3)
 
-runSEIR(
+simulate("SEIRS",
   Beta=4,sigma=1,gamma=1,psi=1,omega=1,
   S0=100,E0=3,I0=5,R0=100,
   time=5

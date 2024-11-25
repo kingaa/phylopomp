@@ -25,6 +25,12 @@ The following object is masked from 'package:stats':
 
     simulate
 
+> try(simulate("billyjoe"))
+Error : unrecognized model: 'billyjoe'.
+Do 'simulate()' to view available models.
+> try(simulate(22))
+Error : in 'simulate.default': 'object' must be specified as either the name of a model or the result of a previous simulation.
+Do 'simulate()' to view available models.
 > simulate()
 Available phylopomp models:
 - LBDP: Linear birth-death-sampling model
@@ -39,7 +45,4 @@ Available phylopomp models:
 - SEIRS: synonymous with SEIR
 
 
-> try(simulate(22))
-Error : in 'simulate.default': 'object' must be specified as either the name of a model or the result of a previous simulation.
-Do 'simulate()' to view available models.
 > 

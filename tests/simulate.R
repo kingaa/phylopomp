@@ -1,3 +1,4 @@
 library(phylopomp)
-simulate()
+try(simulate("billyjoe"))
 try(simulate(22))
+simulate()

@@ -57,8 +57,6 @@ getInfo <- function (
   )
   if (!is.null(x$lineages))
     x$lineages |> reshape_lineages() -> x$lineages
-  if (!is.null(x$gendat))
-    x$gendat |> as_tibble() -> x$gendat
   x
 }
 

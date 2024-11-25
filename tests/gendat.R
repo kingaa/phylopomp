@@ -15,6 +15,8 @@ x |>
 
 g
 
+stopifnot(identical(g,getInfo(x,gendat=TRUE)$gendat))
+
 g |>
   with({
     stopifnot(
