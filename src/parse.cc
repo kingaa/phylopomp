@@ -18,11 +18,7 @@ extern "C" {
     genealogy_t G(t0);
     G.parse(x,t0);
     if (!ISNA(tf)) {
-      if (G.time() > tf) {
-        G.curtail(tf,t0);
-      } else {
-        G.time() = tf;
-      }
+      G.curtail(tf,t0);
     }
     G.trace_lineages();
     UNPROTECT(3);

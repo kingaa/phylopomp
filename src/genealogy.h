@@ -77,7 +77,7 @@ public:
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
     name_t A[3]; A[0] = magic; A[1] = G._unique; A[2] = name_t(G._ndeme);
-    slate_t B[2]; B[0] = G._t0; B[1] = G._time;
+    slate_t B[2]; B[0] = G.timezero(); B[1] = G.time();
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
     return reinterpret_cast<const nodeseq_t&>(G) >> o;
@@ -93,7 +93,7 @@ public:
       err("in %s (%s line %d) corrupted genealogy serialization.",
           __func__,__FILE__,__LINE__);
     G._unique = A[1]; G._ndeme = size_t(A[2]);
-    G._t0 = B[0]; G._time = B[1];
+    G.timezero() = B[0]; G.time() = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
 
@@ -153,6 +153,10 @@ public:
   //! view current time.
   slate_t time (void) const {
     return _time;
+  };
+  //! view/set zero time.
+  slate_t& timezero (void) {
+    return _t0;
   };
   //! get zero time.
   slate_t timezero (void) const {
@@ -523,7 +527,7 @@ public:
         if (!empty()) p = back();
       }
     }
-    if (tnew < time()) _time = tnew;
+    time() = tnew;
     if (!empty() && troot > timezero()) {
       node_t *p = front();
       node_t *q;
@@ -563,7 +567,7 @@ public:
       }
       sort();
     }
-    if (troot > timezero()) _t0 = troot;
+    if (troot > timezero()) timezero() = troot;
   };
   //! merge two genealogies:
   //! 1. the node-sequences are merged;
