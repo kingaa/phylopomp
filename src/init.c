@@ -8,7 +8,7 @@ get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
-SEXP curtail (SEXP, SEXP);
+SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
 SEXP gendat (SEXP);
 
@@ -34,7 +34,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SIR),
   METHODS(TwoSpecies),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
-  {"curtail", (DL_FUNC) &curtail, 2},
+  {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
   {"gendat", (DL_FUNC) &gendat, 1},
   {NULL, NULL, 0}

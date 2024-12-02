@@ -5,10 +5,11 @@
 ##' @name curtail
 ##' @include getinfo.R
 ##' @inheritParams getInfo
+##' @param troot new root time for curtailed genealogy
 ##' @return A curtailed genealogy object.
 ##' @example examples/curtail.R
 ##' @rdname curtail
 ##' @export
-curtail <- function (object, time = NA, prune = TRUE, obscure = TRUE) {
-  .Call(P_curtail,geneal(object),time)
+curtail <- function (object, time = NA, troot = NA) {
+  .Call(P_curtail,geneal(object),time,troot)
 }

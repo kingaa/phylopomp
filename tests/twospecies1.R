@@ -1,3 +1,4 @@
+options(tidyverse.quiet=TRUE,digits=3)
 library(tidyverse)
 library(pomp)
 library(phylopomp)

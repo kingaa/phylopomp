@@ -1,12 +1,12 @@
 png(filename="s2i2r2-%02d.png",res=100)
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(847110120)
-options(digits=3)
 
 runS2I2R2(
   time=20,

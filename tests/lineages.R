@@ -1,12 +1,12 @@
 png(filename="lineages-%02d.png",res=100,width=6,height=4,units="in")
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(481604604)
-options(digits=3)
 
 simulate("SI2R",time=1) -> x
 

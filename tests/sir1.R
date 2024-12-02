@@ -1,5 +1,6 @@
 png(filename="sir1-%02d.png",res=100)
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(pomp)
@@ -7,7 +8,6 @@ suppressPackageStartupMessages({
 })
 theme_set(theme_bw())
 set.seed(847110120)
-options(digits=3)
 
 runSIR(time=10) -> x
 x

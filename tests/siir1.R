@@ -1,11 +1,12 @@
 png(filename="siir1-%02d.png",res=100)
+
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(phylopomp)
   library(tidyverse)
 })
 theme_set(theme_bw())
 set.seed(481604604)
-options(digits=3)
 
 runSIIR(time=10,psi1=1,psi2=1,S0=100)
 

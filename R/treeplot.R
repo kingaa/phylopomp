@@ -5,7 +5,7 @@
 ##' @name treeplot
 ##' @include getinfo.R diagram.R
 ##' @param tree character; tree representation in Newick format.
-##' @param t0 numeric; time of the root.
+##' @param t0 numeric; root time.
 ##' @param time numeric; time of the genealogy.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?

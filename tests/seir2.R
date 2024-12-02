@@ -1,5 +1,6 @@
 png(filename="seir2-%02d.png",res=100)
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(pomp)
@@ -7,7 +8,6 @@ suppressPackageStartupMessages({
 })
 theme_set(theme_bw())
 set.seed(842110120)
-options(digits=3)
 
 simulate("SEIRS",
   Beta=4,sigma=1,gamma=1,psi=1,omega=1,

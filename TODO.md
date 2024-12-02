@@ -1,5 +1,6 @@
 ## To-do List
 
+- curtail from the left also
 - LBDP and SIRS into new format
 - use integer time?
 

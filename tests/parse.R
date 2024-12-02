@@ -1,12 +1,12 @@
 png(filename="parse-%02d.png",res=100,width=6,height=4,units="in")
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(phylopomp)
 })
 theme_set(theme_bw())
 set.seed(4963811)
-options(digits=3)
 
 runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=FALSE) -> tree

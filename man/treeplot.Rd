@@ -25,7 +25,7 @@ treeplot(
 
 \item{time}{numeric; time of the genealogy.}
 
-\item{t0}{numeric; time of the root.}
+\item{t0}{numeric; root time.}
 
 \item{prune}{logical; prune the genealogy?}
 

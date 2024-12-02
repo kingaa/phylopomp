@@ -7,9 +7,14 @@
 extern "C" {
 
   //! curtail the given genealogy
-  SEXP curtail (SEXP State, SEXP Time) {
+  SEXP curtail (SEXP State, SEXP Time, SEXP Troot) {
     genealogy_t A = State;
-    A.curtail(*REAL(AS_NUMERIC(Time)));
+    double t, t0;
+    t = *REAL(AS_NUMERIC(Time));
+    t0 = *REAL(AS_NUMERIC(Troot));
+    if (ISNA(t)) t = A.time();
+    if (ISNA(t0)) t0 = A.timezero();
+    A.curtail(t,t0);
     SEXP out;
     PROTECT(out = serial(A));
     SET_ATTR(out,install("class"),mkString("gpgen"));

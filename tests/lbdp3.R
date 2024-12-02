@@ -1,5 +1,6 @@
 png(filename="lbdp3-%02d.png",res=100)
 
+options(tidyverse.quiet=TRUE,digits=3)
 suppressPackageStartupMessages({
   library(tidyverse)
   library(cowplot)
@@ -7,7 +8,6 @@ suppressPackageStartupMessages({
   library(phylopomp)
 })
 theme_set(theme_bw())
-options(digits=3)
 
 runLBDP(time=1,lambda=4,mu=1,psi=2,n0=2) |>
   freeze(seed=162343023) -> x

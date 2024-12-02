@@ -4,16 +4,14 @@
 \alias{curtail}
 \title{Curtail a genealogy to the given time}
 \usage{
-curtail(object, time = NA, prune = TRUE, obscure = TRUE)
+curtail(object, time = NA, troot = NA)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
 
 \item{time}{logical; return the current time?}
 
-\item{prune}{logical; prune the genealogy?}
-
-\item{obscure}{logical; obscure the demes?}
+\item{troot}{new root time for curtailed genealogy}
 }
 \value{
 A curtailed genealogy object.

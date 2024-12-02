@@ -19,13 +19,13 @@ Type 'q()' to quit R.
 
 > png(filename="lbdp2-%02d.png",res=100)
 > 
+> options(tidyverse.quiet=TRUE,digits=3)
 > suppressPackageStartupMessages({
 +   library(tidyverse)
 +   library(pomp)
 +   library(phylopomp)
 + })
 > theme_set(theme_bw())
-> options(digits=3)
 > 
 > ## Example 1
 > runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) |>

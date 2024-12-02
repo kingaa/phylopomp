@@ -491,9 +491,10 @@ public:
     return *this;
   };
   //! curtail the genealogy by removing nodes
-  //! with times later than tnew
-  void curtail (slate_t tnew) {
-    if (!empty()) {
+  //! with times later than tnew and/or earlier than troot
+  void curtail (slate_t tnew, slate_t troot) {
+    if (tnew < troot) troot = tnew;
+    if (!empty() && tnew < time()) {
       node_t *p = back();
       while (!empty() && p->slate > tnew) {
         ball_t *b;
@@ -504,7 +505,7 @@ public:
             p->erase(b); delete b;
             break;
           case green: case blue: // #nocov
-            assert(0);       // #nocov
+            assert(0);           // #nocov
             break;               // #nocov
           }
         }
@@ -523,7 +524,46 @@ public:
       }
     }
     if (tnew < time()) _time = tnew;
-    if (tnew < timezero()) _t0 = tnew;
+    if (!empty() && troot > timezero()) {
+      node_t *p = front();
+      node_t *q;
+      while (!empty() && p->slate <= troot) {
+        ball_t *b;
+        assert(p->holds_own());
+        while (p->size() > 1) {
+          b = p->last_ball();
+          switch (b->color) {
+          case blue:
+            p->erase(b); delete b;
+            break;
+          case black:
+            q = make_node(b->deme());
+            q->slate = troot;
+            b->holder() = q;
+            q->insert(b); p->erase(b);
+            push_back(q);
+            break;
+          case green:
+            q = b->child();
+            if (q->slate < troot) {
+              q->insert(b); p->erase(b);
+              b->holder() = q;
+            } else {
+              node_t *pp = make_node(b->deme());
+              pp->slate = troot;
+              pp->insert(b); p->erase(b);
+              b->holder() = pp;
+              push_back(pp);
+            }
+            break;
+          }
+        }
+        destroy_node(p);
+        if (!empty()) p = front();
+      }
+      sort();
+    }
+    if (troot > timezero()) _t0 = troot;
   };
   //! merge two genealogies:
   //! 1. the node-sequences are merged;

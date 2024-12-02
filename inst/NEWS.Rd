@@ -2,6 +2,7 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.14}{
   \itemize{
+    \item The \code{curtail()} function now allows one to curtail a genealogy from the left as well as the right.
     \item The filtering codes for the two-species model are now working.
     \item A new sample/death event-type has been introduced into the \code{genealogy_t} type.
     \item Corrections of filtering equations for the SEIR and Two-species models.
