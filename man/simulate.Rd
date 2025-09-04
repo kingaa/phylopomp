@@ -40,7 +40,7 @@ Note that, one cannot change initial conditions or \code{t0} when continuing a s
 \King2022
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},

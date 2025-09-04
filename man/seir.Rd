@@ -115,7 +115,7 @@ simulate("SEIR",sigma=1,omega=1,time=20,I0=4) |>
 \King2024
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},

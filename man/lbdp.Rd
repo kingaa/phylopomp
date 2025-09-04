@@ -73,7 +73,7 @@ simulate("LBDP",time=4) |>
 \Stadler2010
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},

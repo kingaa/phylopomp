@@ -90,7 +90,7 @@ continueS2I2R2(
 The population is structured by infection progression and host species.
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{seir}},

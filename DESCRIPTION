@@ -17,7 +17,7 @@ LazyData: true
 Contact: kingaa at umich dot edu
 Encoding: UTF-8
 Roxygen: list(roclets = c("collate", "namespace", "rd"))
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate: 
     'package.R'
     'geneal.R'

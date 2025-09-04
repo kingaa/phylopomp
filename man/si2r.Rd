@@ -105,7 +105,7 @@ plot_grid(
 )
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},

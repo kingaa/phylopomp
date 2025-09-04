@@ -157,7 +157,7 @@ The population is structured by infection progression and host species.
 Note that, for the moment, \code{twospecies_pomp} assumes that there is no importation of infection into the populations (i.e., \code{iota1 = iota2 = 0}).
 }
 \seealso{
-More example genealogy processes: 
+More example genealogy processes:
 \code{\link{lbdp}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
