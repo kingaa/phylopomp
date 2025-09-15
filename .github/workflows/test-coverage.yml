@@ -41,14 +41,20 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            any::covr
+            kingaa/pomp
+            any::rcmdcheck
             any::tidyr
             any::ggplot2
             any::dplyr
             any::knitr
             any::subplex
             any::nloptr
-            any::ggtree
+
+      - name: install bioconductor packages
+        shell: Rscript {0}
+        run: |
+          install.packages("BiocManager")
+          BiocManager::install("ggtree")
 
       - name: Test coverage
         run: covr::codecov()

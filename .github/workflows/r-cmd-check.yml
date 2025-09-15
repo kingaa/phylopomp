@@ -39,7 +39,7 @@ jobs:
         config:
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-22.04,   r: '4.3.0'}
+          - {os: ubuntu-22.04,   r: '4.5.0'}
           - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
 
@@ -58,6 +58,12 @@ jobs:
           extra-repositories: |
             https://kingaa.github.io/
 
+      - name: install bioconductor packages
+        shell: Rscript {0}
+        run: |
+          install.packages("BiocManager")
+          BiocManager::install("ggtree")
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
@@ -69,7 +75,6 @@ jobs:
             any::knitr
             any::subplex
             any::nloptr
-            any::ggtree
 
       - uses: r-lib/actions/check-r-package@v2
 
