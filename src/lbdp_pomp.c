@@ -134,6 +134,7 @@ void lbdp_gill
 
     while (t + tstep < tmax) {
       event = rcateg(event_rate,rate,2);
+      assert(event>=0 && event<2);
       ll -= penalty*tstep;
       switch (event) {
       case 0:                     // birth

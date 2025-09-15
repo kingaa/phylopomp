@@ -158,6 +158,7 @@ void sirs_gill
 
     while (t + tstep < tmax) {
       event = rcateg(event_rate,rate,nrate);
+      assert(event>=0 && event<nrate);
       ll -= penalty*tstep;
       switch (event) {
       case 0:                     // transmission
