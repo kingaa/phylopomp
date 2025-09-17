@@ -1,14 +1,14 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.14.9.3
+Version: 0.14.9.4
 Date: 2025-09-15
 Authors@R: c(person(given=c("Aaron","A."),family="King",role=c("aut","cre"),email="kingaa@umich.edu",comment=c(ORCID="0000-0001-6159-3207")),
 	  person(given=c("Qianying"),family="Lin",role=c("aut"),comment=c(ORCID="0000-0001-8620-9910"))
 	  )
 Description: Tools for phylodynamic analysis.
 biocViews:
-Depends: R(>= 4.3)
+Depends: R(>= 4.4)
 Imports: grid, ggtree, yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp(>= 5.9.1.0), cowplot
 LinkingTo: pomp
 Suggests: tidyverse, doFuture, broom
