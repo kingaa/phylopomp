@@ -48,4 +48,5 @@ Collate:
     'treeplot.R'
     'twospecies.R'
     'twospecies_pomp.R'
+    'twoundead.R'
     'yaml.R'

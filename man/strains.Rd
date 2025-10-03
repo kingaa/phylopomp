@@ -76,6 +76,7 @@ More example genealogy processes:
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}},
-\code{\link{twospecies}}
+\code{\link{twospecies}},
+\code{\link{twoundead}}
 }
 \concept{Genealogy processes}

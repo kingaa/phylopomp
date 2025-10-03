@@ -24,6 +24,7 @@ DECLARATIONS(SIIR);
 DECLARATIONS(SIR);
 DECLARATIONS(Strains);
 DECLARATIONS(TwoSpecies);
+DECLARATIONS(TwoUndead);
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
@@ -35,6 +36,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SIR),
   METHODS(Strains),
   METHODS(TwoSpecies),
+  METHODS(TwoUndead),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},

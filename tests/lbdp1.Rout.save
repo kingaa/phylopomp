@@ -1,5 +1,5 @@
 
-R version 4.5.1 (2025-06-13) -- "Great Square Root"
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
 Copyright (C) 2025 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -37,11 +37,6 @@ Type 'q()' to quit R.
 > 
 > simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
 +   plot(points=TRUE)
-Warning message:
-`aes_()` was deprecated in ggplot2 3.0.0.
-ℹ Please use tidy evaluation idioms with `aes()`
-ℹ The deprecated feature was likely used in the ggtree package.
-  Please report the issue at <https://github.com/YuLab-SMU/ggtree/issues>. 
 > 
 > runLBDP(lambda=3,mu=1,psi=1,n0=10,time=1) |>
 +   simulate(time=10,lambda=0.2,psi=3) |>

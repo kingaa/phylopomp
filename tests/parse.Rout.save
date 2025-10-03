@@ -1,5 +1,5 @@
 
-R version 4.5.1 (2025-06-13) -- "Great Square Root"
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
 Copyright (C) 2025 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -37,11 +37,6 @@ Type 'q()' to quit R.
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
-Warning message:
-`aes_()` was deprecated in ggplot2 3.0.0.
-ℹ Please use tidy evaluation idioms with `aes()`
-ℹ The deprecated feature was likely used in the ggtree package.
-  Please report the issue at <https://github.com/YuLab-SMU/ggtree/issues>. 
 > 
 > runSEIR(time=3,I0=3) |>
 +   newick(prune=FALSE,obscure=TRUE) -> tree
@@ -141,7 +136,7 @@ Error : in 'scan_tree': premature end of Newick string.
 +   r"{((o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 611): invalid Newick label: expected one of 'b','g','m', or 'o', got ';'.
+Error : in 'scan_label' (genealogy.h line 620): invalid Newick label: expected one of 'b','g','m', or 'o', got ';'.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
@@ -172,13 +167,13 @@ Error : in 'parse': invalid Newick string.
 +   r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 611): invalid Newick label: expected one of 'b','g','m', or 'o', got '_'.
+Error : in 'scan_label' (genealogy.h line 620): invalid Newick label: expected one of 'b','g','m', or 'o', got '_'.
 > 
 > try(
 +   r"{(o_9_1:1.000000)z_1_3:1.000000)m_0_0:0.000000;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 611): invalid Newick label: expected one of 'b','g','m', or 'o', got 'z'.
+Error : in 'scan_label' (genealogy.h line 620): invalid Newick label: expected one of 'b','g','m', or 'o', got 'z'.
 > 
 > r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
 +    parse_newick() |>
@@ -217,7 +212,7 @@ Error : in 'parse': invalid Newick string: unbalanced parentheses.
 +   r"{((((o_9_1:1.000000)g_1_3:1.000000)m_0_0:0.000000)g_3:22)()))));}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 611): invalid Newick label: expected one of 'b','g','m', or 'o', got '('.
+Error : in 'scan_label' (genealogy.h line 620): invalid Newick label: expected one of 'b','g','m', or 'o', got '('.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
@@ -263,7 +258,7 @@ $newick
 +   r"{(o_a9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 628): invalid Newick format: deme should be indicated with an integer.
+Error : in 'scan_label' (genealogy.h line 637): invalid Newick format: deme should be indicated with an integer.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0(:0.500000,b_____2:17;}" |>
@@ -275,7 +270,7 @@ Error : in 'scan_label': invalid Newick format: missing or invalid branch length
 +   r"{(o_9_1:1.000000,b_0_0:3)m_)0_0:0.500000,b_____2:17;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 618): invalid Newick format.
+Error : in 'scan_label' (genealogy.h line 627): invalid Newick format.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
@@ -326,7 +321,7 @@ $newick
 +   r"{(o_9_1:1.000000,b_0_0:3))m_0_0:0.000000,b_____2:17;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_label' (genealogy.h line 611): invalid Newick label: expected one of 'b','g','m', or 'o', got ')'.
+Error : in 'scan_label' (genealogy.h line 620): invalid Newick label: expected one of 'b','g','m', or 'o', got ')'.
 > 
 > try(
 +   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17))));}" |>
@@ -364,7 +359,7 @@ Error : in 'scan_label': invalid Newick format: missing or invalid branch length
 +      parse_newick() |>
 +      newick(prune=FALSE,obscure=FALSE)
 + )
-Error : in 'scan_label' (genealogy.h line 597): invalid Newick format: empty label.
+Error : in 'scan_label' (genealogy.h line 606): invalid Newick format: empty label.
 > 
 > dev.off()
 null device 
