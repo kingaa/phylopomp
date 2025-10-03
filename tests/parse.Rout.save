@@ -1,6 +1,6 @@
 
-R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
-Copyright (C) 2024 The R Foundation for Statistical Computing
+R version 4.5.1 (2025-06-13) -- "Great Square Root"
+Copyright (C) 2025 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -37,6 +37,11 @@ Type 'q()' to quit R.
 +     treeplot(points=TRUE),
 +   nrow=1
 + )
+Warning message:
+`aes_()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`
+ℹ The deprecated feature was likely used in the ggtree package.
+  Please report the issue at <https://github.com/YuLab-SMU/ggtree/issues>. 
 > 
 > runSEIR(time=3,I0=3) |>
 +   newick(prune=FALSE,obscure=TRUE) -> tree
