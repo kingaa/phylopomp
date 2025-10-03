@@ -41,6 +41,7 @@ Available phylopomp models:
 - SIIR: Two-strain SIR model
 - SIR: Classical susceptible-infected-recovered model
 - TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.
+- TwoUndead: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability. This is identical to the TwoSpecies model with the exception that dead lineages are not pruned. Instead, they become *ghosts*.
 - SIRS: synonymous with SIR
 - SEIRS: synonymous with SEIR
 
