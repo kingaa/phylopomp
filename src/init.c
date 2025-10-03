@@ -23,6 +23,7 @@ DECLARATIONS(SI2R);
 DECLARATIONS(SIIR);
 DECLARATIONS(SIR);
 DECLARATIONS(TwoSpecies);
+DECLARATIONS(TwoUndead);
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
@@ -33,6 +34,7 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(SIIR),
   METHODS(SIR),
   METHODS(TwoSpecies),
+  METHODS(TwoUndead),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
@@ -49,8 +51,8 @@ void R_init_phylopomp (DllInfo *info) {
   // Register routines
   R_registerRoutines(info,NULL,callMethods,NULL,extMethods);
   R_useDynamicSymbols(info,TRUE);
-  // R_useDynamicSymbols(info,FALSE);
-  // R_forceSymbols(info,TRUE);
+  //  R_useDynamicSymbols(info,FALSE);
+  //  R_forceSymbols(info,TRUE);
   get_userdata = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
   get_userdata_double = (get_userdata_double_t*) R_GetCCallable("pomp","get_userdata_double");
   get_userdata_int = (get_userdata_int_t*) R_GetCCallable("pomp","get_userdata_int");

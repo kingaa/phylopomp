@@ -451,13 +451,22 @@ public:
     drop(a);
   };
   //! movement into deme d
-  ball_t* migrate (ball_t* a, slate_t t, name_t d = 0) {
+  void migrate (ball_t* a, slate_t t, name_t d = 0) {
     time() = t;
     node_t *p = make_node(a->deme());
     p->slate = time();
     add(p,a);
     a->deme() = d;
-    return a;
+  };
+  //! insert a sample node and simultaneously migrate the lineage
+  void sample_migrate (ball_t* a, slate_t t, name_t d = 0) {
+    time() = t;
+    node_t *p = make_node(a->deme());
+    ball_t *b = new ball_t (p,p->uniq,blue,a->deme());
+    p->insert(b);
+    p->slate = time();
+    add(p,a);
+    a->deme() = d;
   };
   //! set up for extraction of black balls
   //! (see 'inventory.h')

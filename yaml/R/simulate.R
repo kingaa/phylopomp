@@ -36,6 +36,7 @@ simulate.default <- function (object, ...) {
       "- SIIR: Two-strain SIR model\n",
       "- SIR: Classical susceptible-infected-recovered model\n",
       "- TwoSpecies: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability.\n",
+      "- TwoUndead: Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability. This is identical to the TwoSpecies model with the exception that dead lineages are not pruned. Instead, they become *ghosts*.\n",
       "- SIRS: synonymous with SIR\n",
       "- SEIRS: synonymous with SEIR\n",
       "\n"
@@ -63,6 +64,7 @@ simulate.character <- function (object, time, ...) {
     modelSIIR = runSIIR(time=time,...),
     modelSIR = runSIR(time=time,...),
     modelTwoSpecies = runTwoSpecies(time=time,...),
+    modelTwoUndead = runTwoUndead(time=time,...),
     modelSIRS = runSIR(time=time,...),
     modelSEIRS = runSEIR(time=time,...),
     pStop_("unrecognized model: ",sQuote(object),".\n",
@@ -90,6 +92,7 @@ simulate.gpsim <- function (object, time, ...) {
     modelSIIR = continueSIIR(object,time=time,...),
     modelSIR = continueSIR(object,time=time,...),
     modelTwoSpecies = continueTwoSpecies(object,time=time,...),
+    modelTwoUndead = continueTwoUndead(object,time=time,...),
     model = pStop_("no model attribute detected."),
     pStop_("unrecognized model ",sQuote(model),".")
   )

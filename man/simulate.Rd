@@ -48,6 +48,7 @@ More example genealogy processes:
 \code{\link{si2r}},
 \code{\link{siir}},
 \code{\link{sir}},
-\code{\link{twospecies}}
+\code{\link{twospecies}},
+\code{\link{twoundead}}
 }
 \concept{Genealogy processes}

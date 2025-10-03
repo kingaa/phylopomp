@@ -186,7 +186,13 @@ public:
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.migrate(a,time(),j);
-    a->deme() = j;
+    inventory.insert(a);
+  };
+  //! sample_migrate in deme i to deme j
+  void sample_migrate (name_t i = 0, name_t j = 0) {
+    ball_t *a = inventory.random_ball(i);
+    inventory.erase(a);
+    geneal.sample_migrate(a,time(),j);
     inventory.insert(a);
   };
   //! initialize the state
