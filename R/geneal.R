@@ -18,6 +18,7 @@ geneal <- function (object) {
     modelSI2R = .Call(P_genealSI2R,object),
     modelSIIR = .Call(P_genealSIIR,object),
     modelSIR = .Call(P_genealSIR,object),
+    modelStrains = .Call(P_genealStrains,object),
     modelTwoSpecies = .Call(P_genealTwoSpecies,object),
     model = structure(object,class=c("gpgen")),
     pStop("unrecognized model ",sQuote(attr(object,"model")))

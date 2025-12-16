@@ -5,6 +5,7 @@
 ##' @name twospecies
 ##' @family Genealogy processes
 ##' @aliases TwoSpecies
+##' @include getinfo.R
 ##' @param Beta11 transmission rate within species 1
 ##' @param Beta12 transmission from species 2 to species 1
 ##' @param Beta21 transmission from species 1 to species 2

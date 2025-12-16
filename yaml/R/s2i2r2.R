@@ -5,6 +5,7 @@
 ##' @name s2i2r2
 ##' @family Genealogy processes
 ##' @aliases S2I2R2
+##' @include getinfo.R
 ##' @param Beta11 transmission rate within species 1
 ##' @param Beta12 transmission from species 2 to species 1
 ##' @param Beta22 transmission rate within species 2

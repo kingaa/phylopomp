@@ -5,6 +5,7 @@
 ##' @name moran
 ##' @family Genealogy processes
 ##' @aliases Moran
+##' @include getinfo.R
 ##' @param mu per capita event rate
 ##' @param psi per capita sampling rate
 ##' @param n population size

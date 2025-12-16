@@ -5,6 +5,7 @@
 ##' @name siir
 ##' @family Genealogy processes
 ##' @aliases SIIR
+##' @include getinfo.R
 ##' @param Beta1 transmission rate for strain 1
 ##' @param Beta2 transmission rate for strain 2
 ##' @param gamma recovery rate

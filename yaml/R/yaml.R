@@ -23,6 +23,7 @@ yaml <- function (object) {
     modelSI2R = .Call(P_yamlSI2R,object),
     modelSIIR = .Call(P_yamlSIIR,object),
     modelSIR = .Call(P_yamlSIR,object),
+    modelStrains = .Call(P_yamlStrains,object),
     modelTwoSpecies = .Call(P_yamlTwoSpecies,object),
     model = .Call(P_yaml,object),
     pStop("unrecognized model ",sQuote(attr(object,"model")))

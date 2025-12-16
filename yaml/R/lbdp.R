@@ -5,6 +5,7 @@
 ##' @name lbdp
 ##' @family Genealogy processes
 ##' @aliases LBDP
+##' @include getinfo.R
 ##' @param lambda per capita birth rate
 ##' @param mu per capita death rate
 ##' @param psi per capita sampling rate

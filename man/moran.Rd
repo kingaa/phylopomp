@@ -55,6 +55,7 @@ More example genealogy processes:
 \code{\link{siir}},
 \code{\link{simulate}()},
 \code{\link{sir}},
+\code{\link{strains}},
 \code{\link{twospecies}}
 }
 \concept{Genealogy processes}

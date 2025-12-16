@@ -5,6 +5,7 @@
 ##' @name seir
 ##' @family Genealogy processes
 ##' @aliases SEIR
+##' @include getinfo.R
 ##' @param Beta transmission rate
 ##' @param sigma progression rate
 ##' @param gamma recovery rate

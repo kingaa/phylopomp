@@ -5,6 +5,7 @@
 ##' @name sir
 ##' @family Genealogy processes
 ##' @aliases SIR
+##' @include getinfo.R
 ##' @param Beta transmission rate
 ##' @param gamma recovery rate
 ##' @param psi per capita sampling rate

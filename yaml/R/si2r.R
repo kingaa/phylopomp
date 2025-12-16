@@ -5,6 +5,7 @@
 ##' @name si2r
 ##' @family Genealogy processes
 ##' @aliases SI2R
+##' @include getinfo.R
 ##' @param Beta transmission rate
 ##' @param mu mean superspreading-event cluster size
 ##' @param gamma recovery rate
