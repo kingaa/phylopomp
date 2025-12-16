@@ -193,6 +193,7 @@ GENERICS({%name%},{%gen%})
 ##' @name {%rdname%}
 ##' @family Genealogy processes
 ##' @aliases {%name%}
+##' @include getinfo.R
 {%param_descript%}
 ##' @inheritParams sir
 ##' @return \code{run{%name%}} and \code{continue{%name%}} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{{%name%}}.
@@ -285,7 +286,7 @@ get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
-SEXP curtail (SEXP, SEXP);
+SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
 SEXP gendat (SEXP);
 
@@ -297,7 +298,7 @@ SEXP gendat (SEXP);
 static const R_CallMethodDef callMethods[] = {
 {%methods%}
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
-  {"curtail", (DL_FUNC) &curtail, 2},
+  {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
   {"gendat", (DL_FUNC) &gendat, 1},
   {NULL, NULL, 0}
@@ -312,15 +313,15 @@ void R_init_phylopomp (DllInfo *info) {
   // Register routines
   R_registerRoutines(info,NULL,callMethods,NULL,extMethods);
   R_useDynamicSymbols(info,TRUE);
-  //  R_useDynamicSymbols(info,FALSE);
-  //  R_forceSymbols(info,TRUE);
+  // R_useDynamicSymbols(info,FALSE);
+  // R_forceSymbols(info,TRUE);
   get_userdata = (get_userdata_t*) R_GetCCallable("pomp","get_userdata");
   get_userdata_double = (get_userdata_double_t*) R_GetCCallable("pomp","get_userdata_double");
   get_userdata_int = (get_userdata_int_t*) R_GetCCallable("pomp","get_userdata_int");
 }
 }" |>
   render(
-    declarations=paste(sprintf("DECLARATIONS(%s)",models),collapse="\n"),
+    declarations=paste(sprintf("DECLARATIONS(%s);",models),collapse="\n"),
     methods=paste(sprintf("  METHODS(%s),",models),collapse="\n")
   ) |>
   cat(file="src/init.c")
