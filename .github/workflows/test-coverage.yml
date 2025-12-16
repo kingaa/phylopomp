@@ -49,6 +49,7 @@ jobs:
             any::knitr
             any::subplex
             any::nloptr
+            any::covr
 
       - name: install bioconductor packages
         shell: Rscript {0}

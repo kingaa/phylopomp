@@ -1,0 +1,68 @@
+
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(tidyverse.quiet=TRUE,digits=3)
+> library(tidyverse)
+> library(phylopomp)
+
+Attaching package: 'phylopomp'
+
+The following object is masked from 'package:stats':
+
+    simulate
+
+> 
+> try(
++   simulate(
++     "TwoSpecies",
++     t0=0,time=3,
++     iota1=0,iota2=0,
++     Beta11=10,Beta12=0,
++     Beta21=0,Beta22=0,
++     gamma1=1,gamma2=1,
++     c1=1,c2=1,
++     psi1=1,psi2=1,
++     S1_0=1000,I1_0=2,R1_0=0,
++     S2_0=0,I2_0=0,R2_0=0,
++     b1=0,b2=0,
++     d1=0,d2=0,
++     omega1=0.5,omega2=0.5
++   )
++ )
+in 'update_clocks' (popul_proc.h line 151): invalid event rate[1]=-nan
+in 'update_clocks' (popul_proc.h line 151): invalid event rate[2]=-nan
+Error : in 'update_clocks' (popul_proc.h line 154): invalid total event rate=-nan
+> 
+> simulate(
++   "TwoSpecies",
++   t0=0,time=3,
++   iota1=0,iota2=0,
++   Beta11=10,Beta12=0,
++   Beta21=0,Beta22=0,
++   gamma1=1,gamma2=1,
++   c1=1,c2=1,
++   psi1=1,psi2=1,
++   S1_0=1000,I1_0=2,R1_0=0,
++   S2_0=1,I2_0=0,R2_0=0,
++   b1=0,b2=0,
++   d1=0,d2=0,
++   omega1=0.5,omega2=0.5
++ )
+<gpsim for TwoSpecies model>
+> 

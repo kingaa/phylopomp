@@ -138,16 +138,26 @@ public:
   void update_clocks (void) {
     double rate[nevent];
     double total_rate = event_rates(rate,nevent);
-    if (total_rate > 0) {
-      next = current+rexp(1/total_rate);
+    if (R_FINITE(total_rate)) {
+      if (total_rate > 0) {
+        next = current+rexp(1/total_rate);
+      } else {
+        next = R_PosInf;
+      }
     } else {
-      next = R_PosInf;
+      for (event = 0; event < nevent; event++) {
+        if (!R_FINITE(rate[event]))
+          Rprintf("in '%s' (%s line %d): invalid event rate[%zd]=%lg\n",
+                  __func__,__FILE__,__LINE__,event,rate[event]);
+      }
+      err("in '%s' (%s line %d): invalid total event rate=%lg",
+          __func__,__FILE__,__LINE__,total_rate);
     }
     double u = runif(0,total_rate);
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-        err("in '%s' (%s line %d): invalid negative rate[%zd]=%lg", // #nocov
+        err("in '%s' (%s line %d): invalid rate[%zd]=%lg", // #nocov
             __func__,__FILE__,__LINE__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;

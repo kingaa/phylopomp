@@ -1,0 +1,37 @@
+options(tidyverse.quiet=TRUE,digits=3)
+library(tidyverse)
+library(phylopomp)
+
+try(
+  simulate(
+    "TwoSpecies",
+    t0=0,time=3,
+    iota1=0,iota2=0,
+    Beta11=10,Beta12=0,
+    Beta21=0,Beta22=0,
+    gamma1=1,gamma2=1,
+    c1=1,c2=1,
+    psi1=1,psi2=1,
+    S1_0=1000,I1_0=2,R1_0=0,
+    S2_0=0,I2_0=0,R2_0=0,
+    b1=0,b2=0,
+    d1=0,d2=0,
+    omega1=0.5,omega2=0.5
+  )
+)
+
+simulate(
+  "TwoSpecies",
+  t0=0,time=3,
+  iota1=0,iota2=0,
+  Beta11=10,Beta12=0,
+  Beta21=0,Beta22=0,
+  gamma1=1,gamma2=1,
+  c1=1,c2=1,
+  psi1=1,psi2=1,
+  S1_0=1000,I1_0=2,R1_0=0,
+  S2_0=1,I2_0=0,R2_0=0,
+  b1=0,b2=0,
+  d1=0,d2=0,
+  omega1=0.5,omega2=0.5
+)
