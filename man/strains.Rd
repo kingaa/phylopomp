@@ -14,7 +14,6 @@ runStrains(
   Beta2 = 5,
   Beta3 = 5,
   gamma = 1,
-  omega = 0,
   psi1 = 1,
   psi2 = 0,
   psi3 = 0,
@@ -32,7 +31,6 @@ continueStrains(
   Beta2 = NA,
   Beta3 = NA,
   gamma = NA,
-  omega = NA,
   psi1 = NA,
   psi2 = NA,
   psi3 = NA
@@ -46,8 +44,6 @@ continueStrains(
 \item{Beta1, Beta2, Beta3}{transmission rate for strains 1, 2, 3, respectively}
 
 \item{gamma}{recovery rate}
-
-\item{omega}{rate of waning of immunity}
 
 \item{psi1, psi2, psi3}{sampling rates}
 

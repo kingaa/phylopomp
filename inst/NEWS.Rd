@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.15}{
+  \itemize{
+    \item New model in which three distinct strains compete for susceptibles from a single pool.
+    See \code{Strains}.
+    \item New model which is identical to \code{TwoSpecies} except in that lineages that terminate are replaced by \emph{ghosts}.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.14}{
   \itemize{
     \item The \code{curtail()} function now allows one to curtail a genealogy from the left as well as the right.

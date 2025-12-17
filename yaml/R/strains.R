@@ -10,7 +10,6 @@
 ##' @param Beta2 transmission rate for strain 2
 ##' @param Beta3 transmission rate for strain 3
 ##' @param gamma recovery rate
-##' @param omega rate of waning of immunity
 ##' @param psi1 sampling rate for strain 1
 ##' @param psi2 sampling rate for strain 2
 ##' @param psi3 sampling rate for strain 3
@@ -28,9 +27,9 @@ NULL
 ##' @export
 runStrains <- function (
   time, t0 = 0,
-  Beta1 = 5, Beta2 = 5, Beta3 = 5, gamma = 1, omega = 0, psi1 = 1, psi2 = 0, psi3 = 0, S0 = 10000, I1_0 = 10, I2_0 = 10, I3_0 = 10, R0 = 0
+  Beta1 = 5, Beta2 = 5, Beta3 = 5, gamma = 1, psi1 = 1, psi2 = 0, psi3 = 0, S0 = 10000, I1_0 = 10, I2_0 = 10, I3_0 = 10, R0 = 0
 ) {
-  params <- c(Beta1=Beta1,Beta2=Beta2,Beta3=Beta3,gamma=gamma,omega=omega,psi1=psi1,psi2=psi2,psi3=psi3)
+  params <- c(Beta1=Beta1,Beta2=Beta2,Beta3=Beta3,gamma=gamma,psi1=psi1,psi2=psi2,psi3=psi3)
   ivps <- c(S0=S0,I1_0=I1_0,I2_0=I2_0,I3_0=I3_0,R0=R0)
   x <- .Call(P_makeStrains,params,ivps,t0)
   .Call(P_runStrains,x,time) |>
@@ -41,10 +40,10 @@ runStrains <- function (
 ##' @export
 continueStrains <- function (
   object, time,
-  Beta1 = NA, Beta2 = NA, Beta3 = NA, gamma = NA, omega = NA, psi1 = NA, psi2 = NA, psi3 = NA
+  Beta1 = NA, Beta2 = NA, Beta3 = NA, gamma = NA, psi1 = NA, psi2 = NA, psi3 = NA
 ) {
   params <- c(
-    Beta1=Beta1,Beta2=Beta2,Beta3=Beta3,gamma=gamma,omega=omega,psi1=psi1,psi2=psi2,psi3=psi3
+    Beta1=Beta1,Beta2=Beta2,Beta3=Beta3,gamma=gamma,psi1=psi1,psi2=psi2,psi3=psi3
   )
   x <- .Call(P_reviveStrains,object,params)
   .Call(P_runStrains,x,time) |>

@@ -10,14 +10,19 @@ set.seed(481604604)
 
 runStrains(time=10,psi1=1,psi2=1,S0=100)
 
-runStrains(S0=100,Beta1=10,Beta2=8,Beta3=5,gamma=1,psi1=2,psi2=2,psi3=0.5,omega=1,time=2) |>
+runStrains(
+  S0=100,
+  Beta1=10,Beta2=8,Beta3=5,
+  gamma=1,
+  psi1=2,psi2=2,psi3=0.5,
+  time=2
+) |>
   plot(points=TRUE,obscure=FALSE)
 
 runStrains(
   S0=100,
   Beta1=10,Beta2=8,Beta3=5,
   gamma=1,psi1=2,psi2=2,psi3=0.5,
-  omega=1,
   time=1
 ) |>
   simulate(time=5) |>

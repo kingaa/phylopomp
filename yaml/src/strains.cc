@@ -24,7 +24,6 @@ typedef struct {
   double Beta2;
   double Beta3;
   double gamma;
-  double omega;
   double psi1;
   double psi2;
   double psi3;
@@ -35,7 +34,7 @@ typedef struct {
   int R0;
 } strains_parameters_t;
 
-using strains_proc_t = popul_proc_t<strains_state_t,strains_parameters_t,10>;
+using strains_proc_t = popul_proc_t<strains_state_t,strains_parameters_t,9>;
 using strains_genealogy_t = master_t<strains_proc_t,3>;
 
 template<>
@@ -46,7 +45,6 @@ std::string strains_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(Beta2)
     + YAML_PARAM(Beta3)
     + YAML_PARAM(gamma)
-    + YAML_PARAM(omega)
     + YAML_PARAM(psi1)
     + YAML_PARAM(psi2)
     + YAML_PARAM(psi3)
@@ -72,7 +70,6 @@ void strains_proc_t::update_params (double *p, int n) {
   PARAM_SET(Beta2);
   PARAM_SET(Beta3);
   PARAM_SET(gamma);
-  PARAM_SET(omega);
   PARAM_SET(psi1);
   PARAM_SET(psi2);
   PARAM_SET(psi3);
@@ -103,7 +100,6 @@ double strains_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.psi1 * state.I1);
   RATE_CALC(params.psi2 * state.I2);
   RATE_CALC(params.psi3 * state.I3);
-  RATE_CALC(params.omega * state.R);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -143,16 +139,13 @@ void strains_genealogy_t::jump (int event) {
       state.I3 -= 1; state.R += 1; death(strain3);
       break;
     case 6:
-      sample(strain1);
+      state.I1 -= 1; state.R += 1; sample_death(strain1);
       break;
     case 7:
-      sample(strain2);
+      state.I2 -= 1; state.R += 1; sample_death(strain2);
       break;
     case 8:
-      sample(strain3);
-      break;
-    case 9:
-      state.R -= 1; state.S += 1;
+      state.I3 -= 1; state.R += 1; sample_death(strain3);
       break;
   default:                      // #nocov
     assert(0);                  // #nocov
