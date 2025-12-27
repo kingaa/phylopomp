@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.15.1.1
-Date: 2025-12-27
+Version: 0.15.1.2
+Date: 2025-12-28
 Authors@R: c(person(given=c("Aaron","A."),family="King",role=c("aut","cre"),email="kingaa@umich.edu",comment=c(ORCID="0000-0001-6159-3207")),
 	  person(given=c("Qianying"),family="Lin",role=c("aut"),comment=c(ORCID="0000-0001-8620-9910"))
 	  )
@@ -27,8 +27,8 @@ Collate:
     'foreach.R'
     'gendat.R'
     'lbdp.R'
-    'lbdp_exact.R'
     'lbdp_pomp.R'
+    'lbdp_exact.R'
     'lineages.R'
     'moran.R'
     'moran_exact.R'
