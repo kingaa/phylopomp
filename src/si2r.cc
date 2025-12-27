@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static int ordinary = 0;
-static int superspreader = 1;
+static const int ordinary = 0;
+static const int superspreader = 1;
 
 //! SI2R process state.
 typedef struct {

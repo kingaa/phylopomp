@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static int Exposed = 0;
-static int Infectious = 1;
+static const int Exposed = 0;
+static const int Infectious = 1;
 
 //! SEIR process state.
 typedef struct {

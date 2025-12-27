@@ -8,9 +8,9 @@
 ##' @include getinfo.R
 ##' @family Genealogy processes
 ##' @param lambda per capita birth rate
-##' @param mu per capita recovery rate.
-##' @param psi per capita sampling rate.
-##' @param n0 initial population size
+##' @param mu per capita death rate
+##' @param psi per capita sampling rate
+##' @param n0 population size at time t0
 ##' @param time final time
 ##' @param t0 initial time
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.

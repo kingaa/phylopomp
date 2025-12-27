@@ -24,11 +24,11 @@ lbdp_pomp(x, lambda, mu, psi, n0 = 1, t0 = 0)
 
 \item{lambda}{per capita birth rate}
 
-\item{mu}{per capita recovery rate.}
+\item{mu}{per capita death rate}
 
-\item{psi}{per capita sampling rate.}
+\item{psi}{per capita sampling rate}
 
-\item{n0}{initial population size}
+\item{n0}{population size at time t0}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

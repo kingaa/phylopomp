@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static int deme = 0;
+static const int deme = 0;
 
 //! Moran process state.
 typedef struct {
