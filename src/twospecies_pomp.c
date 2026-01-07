@@ -322,12 +322,13 @@ void twospecies_gill
   assert(nearbyint(N2)==nearbyint(S2+I2+R2));
   assert(check_color(color,nsample,ell1,ell2));
 
+  ll = 0;
+
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event
     break;
   case 0:                       // root
-    ll = 0;
     // color lineages by sampling without replacement
     assert(sat[parent]==1);
     int c = child[index[parent]];
@@ -361,7 +362,6 @@ void twospecies_gill
     assert(check_color(color,nsample,ell1,ell2));
     break;
   case 1:                       // sample
-    ll = 0;
     if (sat[parent] == 0) {     // s=(0,0)
       if (parcol == host1) {
         ell1 -= 1;
@@ -404,7 +404,6 @@ void twospecies_gill
     assert(check_color(color,nsample,ell1,ell2));
     break;
   case 2:                       // branch point
-    ll = 0;
     assert(sat[parent]==2);
     if (parcol == host1) {      // parent is in I1
       assert(S1>=0 && S2 >=0 && I1>=ell1 && ell1>=0);

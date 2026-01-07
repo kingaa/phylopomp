@@ -90,16 +90,16 @@ void lbdp_gill
   assert(parent<=nnode);
 #endif
 
+  ll = 0;
+
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event
     break;
   case 0:                       // root
-    ll = 0;
     ell += 1;
     break;
   case 1:                       // sample
-    ll = 0;
     assert(n >= ell);
     assert(ell >= 0);
     if (sat[parent] == 1) {     // s=1

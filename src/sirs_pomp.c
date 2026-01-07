@@ -110,16 +110,16 @@ void sirs_gill
   assert(parent<=nnode);
 #endif
 
+  ll = 0;
+
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event
     break;
   case 0:                       // root
-    ll = 0;
     ellI += 1;
     break;
   case 1:                       // sample
-    ll = 0;
     assert(I >= ellI);
     assert(ellI >= 0);
     if (sat[parent] == 1) {
@@ -133,7 +133,6 @@ void sirs_gill
     }
     break;
   case 2:                       // branch point s=(1,1)
-    ll = 0;
     assert(S >= 0);
     assert(I >= 0);
     assert(ellI > 0);
