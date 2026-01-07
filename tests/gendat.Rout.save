@@ -20,6 +20,8 @@ Type 'q()' to quit R.
 > png(filename="gendat-%0d.png",res=100,
 +   width=1114,height=233,units="px")
 > 
+> options(tidyverse.quiet=TRUE,digits=3)
+> library(tidyverse)
 > library(phylopomp)
 
 Attaching package: 'phylopomp'
@@ -36,19 +38,19 @@ The following object is masked from 'package:stats':
 > 
 > diagram(x)
 > 
-> x |>
-+   gendat() -> g
-> 
+> x |> gendat() -> g
+> stopifnot(identical(g,getInfo(x,gendat=TRUE)$gendat))
 > g
 $nodetime
- [1] 0.000000000 0.000000000 0.003095916 0.038637980 0.344760750 0.420286484
- [7] 0.679076182 1.054236771 1.060787113 1.106324306 1.145606088 1.148094064
-[13] 1.280230062 1.319651408 1.406669536 1.505768927 1.531080965 1.590404441
-[19] 1.826787451 2.004886831 2.056610240 2.436429541 3.416193266 3.447434915
-[25] 3.719164553 3.839951497 3.903178944 3.916791438 4.000000000
+ [1] 0.0000 0.0000 0.0031 0.0386 0.3448 0.4203 0.6791 1.0542 1.0608 1.1063
+[11] 1.1456 1.1481 1.2802 1.3197 1.4067 1.5058 1.5311 1.5904 1.8268 2.0049
+[21] 2.0566 2.4364 3.4162 3.4474 3.7192 3.8400 3.9032 3.9168 4.0000
 
 $nodetype
  [1] 0 0 1 2 2 2 2 2 1 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+$deme
+ [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 
 $lineage
  [1]  0  1  0  1  1  1  3  4  1  3  6  9  2  3  4  5  6  7  8  9 10 11 12 13 14
@@ -76,8 +78,6 @@ $nnode
 [1] 28
 
 > 
-> stopifnot(identical(g,getInfo(x,gendat=TRUE)$gendat))
-> 
 > g |>
 +   with({
 +     stopifnot(
@@ -95,7 +95,7 @@ $nnode
 +   seed=540737457,
 +   runSEIRS(time=40,omega=3,psi=0.3)
 + ) |>
-+   gendat() -> g
++   gendat(obscure=FALSE) -> g
 > 
 > g |>
 +   with({
@@ -109,6 +109,72 @@ $nnode
 +       }
 +     }
 +   })
+> 
+> g |>
++   _[c("nodetype","deme","child","ancestor")] |>
++   bind_cols() |>
++   mutate(name=seq_along(deme)-1) |>
++   filter(nodetype==1) |>
++   count(deme)
+# A tibble: 1 × 2
+   deme     n
+  <int> <int>
+1     1   402
+> 
+> freeze(
++   seed=540737457,
++   runTwoSpecies(time=4,psi1=8,psi2=5,Beta12=10)
++ ) |>
++   gendat(obscure=FALSE) -> g
+> 
+> g |>
++   with({
++     stopifnot(
++       diff(c(index,max(index)))==saturation
++     )
++     for (i in seq_len(length(ancestor))) {
++       if (saturation[i] > 0) {
++         k <- seq.int(from=index[i],to=index[i]+saturation[i]-1,by=1)
++         stopifnot(i==ancestor[child[k+1]+1]+1)
++       }
++     }
++   })
+> 
+> g |>
++   _[c("nodetype","deme","child","ancestor")] |>
++   bind_cols() |>
++   mutate(name=seq_along(deme)-1) |>
++   filter(nodetype==1) |>
++   count(deme)
+# A tibble: 2 × 2
+   deme     n
+  <int> <int>
+1     0    38
+2     1    14
+> 
+> freeze(
++   seed=540737457,
++   runStrains(time=2,psi1=2,psi2=2,psi3=3)
++ ) -> x
+> 
+> x |> gendat(obscure=FALSE) -> g
+> stopifnot(identical(g,getInfo(x,obscure=FALSE,gendat=TRUE)$gendat))
+> stopifnot(identical(g,getInfo(x,prune=FALSE,obscure=FALSE,gendat=TRUE)$gendat))
+Warning message:
+pruning since 'gendat=TRUE' 
+> 
+> g |>
++   _[c("nodetype","deme","child","ancestor")] |>
++   bind_cols() |>
++   mutate(name=seq_along(deme)-1) |>
++   filter(nodetype==1) |>
++   count(deme)
+# A tibble: 3 × 2
+   deme     n
+  <int> <int>
+1     0   337
+2     1   665
+3     2    91
 > 
 > dev.off()
 null device 

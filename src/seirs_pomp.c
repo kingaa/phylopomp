@@ -99,7 +99,7 @@ static double event_rates
   // 6: waning
   event_rate += (*rate = omega*R); rate++;
   *logpi = 0; logpi++;
-  // 7: sampling (Q = 0)
+  // sampling (Q = 0)
   *penalty += psi*I;
   assert(R_FINITE(event_rate));
   return event_rate;
@@ -151,6 +151,7 @@ void seirs_gill
   double *color = &COLOR;
   const int nsample = *get_userdata_int("nsample");
   const int *nodetype = get_userdata_int("nodetype");
+  const int *nodedeme = get_userdata_int("deme");
   const int *lineage = get_userdata_int("lineage");
   const int *sat = get_userdata_int("saturation");
   const int *index = get_userdata_int("index");
@@ -166,6 +167,7 @@ void seirs_gill
 
   int parlin = lineage[parent];
   int parcol = color[parlin];
+  int deme = nodedeme[parent];
   assert(parlin >= 0 && parlin < nsample);
 
   ll = 0;
@@ -206,7 +208,8 @@ void seirs_gill
     break;
   case 1:                       // sample
     // If parent is not in deme I, likelihood = 0.
-    if (parcol != 1) {
+    assert(deme==1);
+    if (parcol != deme) {
       ll += R_NegInf;
       color[parlin] = 1;
       // the following keeps the state valid

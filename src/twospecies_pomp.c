@@ -302,6 +302,7 @@ void twospecies_gill
   double *color = &COLOR;
   const int nsample = *get_userdata_int("nsample");
   const int *nodetype = get_userdata_int("nodetype");
+  const int *nodedeme = get_userdata_int("deme");
   const int *lineage = get_userdata_int("lineage");
   const int *sat = get_userdata_int("saturation");
   const int *index = get_userdata_int("index");
@@ -317,6 +318,7 @@ void twospecies_gill
 
   int parlin = lineage[parent];
   int parcol = color[parlin];
+  int deme = nodedeme[parent];
   assert(parlin >= 0 && parlin < nsample);
   assert(nearbyint(N1)==nearbyint(S1+I1+R1));
   assert(nearbyint(N2)==nearbyint(S2+I2+R2));
@@ -350,11 +352,9 @@ void twospecies_gill
       if (unif_rand() < 0.5) {  // lineage is put into I1 deme
         color[lineage[c]] = host1;
         ell1 += 1; I1 += 1; N1 += 1;
-        //        ll -= log(0.5);
       } else {                  // lineage is put into I2 deme
         color[lineage[c]] = host2;
         ell2 += 1; I2 += 1; N2 += 1;
-        //        ll -= log(0.5);
       }
     }
     assert(nearbyint(N1)==nearbyint(S1+I1+R1));
@@ -362,6 +362,9 @@ void twospecies_gill
     assert(check_color(color,nsample,ell1,ell2));
     break;
   case 1:                       // sample
+    if (parcol != deme) { // parent color does not match the observed deme
+      ll += R_NegInf;
+    }
     if (sat[parent] == 0) {     // s=(0,0)
       if (parcol == host1) {
         ell1 -= 1;

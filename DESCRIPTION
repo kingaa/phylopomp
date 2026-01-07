@@ -45,6 +45,7 @@ Collate:
     'simulate.R'
     'sir_pomp.R'
     'strains.R'
+    'strains_pomp.R'
     'treeplot.R'
     'twospecies.R'
     'twospecies_pomp.R'

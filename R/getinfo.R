@@ -45,6 +45,10 @@ getInfo <- function (
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
   nsample = FALSE, genealogy = FALSE, gendat = FALSE
 ) {
+  if (gendat & !prune) {
+    warning("pruning since 'gendat=TRUE'",call.=FALSE)
+    prune <- TRUE
+  }
   x <- .External(
     P_getInfo,
     object=geneal(object),

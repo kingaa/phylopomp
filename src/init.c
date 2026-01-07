@@ -10,7 +10,7 @@ SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
 SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
-SEXP gendat (SEXP);
+SEXP gendat (SEXP, SEXP);
 
 // for each model, there must be
 // one DECLARATIONS line and one METHODS line.
@@ -40,7 +40,7 @@ static const R_CallMethodDef callMethods[] = {
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
-  {"gendat", (DL_FUNC) &gendat, 1},
+  {"gendat", (DL_FUNC) &gendat, 2},
   {NULL, NULL, 0}
 };
 

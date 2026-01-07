@@ -5,9 +5,10 @@
 ##' @name gendat
 ##' @include package.R
 ##' @param object a \sQuote{gpgen} object.
+##' @inheritParams getInfo
 ##' @return A list of objects containing the information pertinent for filtering.
 ##' @rdname gendat
 ##' @export
-gendat <- function (object) {
-  .Call(P_gendat,geneal(object))
+gendat <- function (object, obscure = TRUE) {
+  .Call(P_gendat,geneal(object),as.logical(obscure))
 }
