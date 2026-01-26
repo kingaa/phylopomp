@@ -8,7 +8,7 @@ parameter:
     name: lambda
     description: per capita birth rate
     type: double
-    default: 1.3
+    default: 2
   mu:
     name: mu
     description: per capita death rate
@@ -19,11 +19,16 @@ parameter:
     description: per capita sampling rate
     default: 1.0
     type: double
+  r:
+    name: r
+    description: probability that a sampled lineage is removed (must be between 0 and 1; r=0 is non-destructive; r=1 is destructive)
+    default: 0.0
+    type: double
 ivp:
   n0:
     name: n0
-    description: initial population size
-    default: 10
+    description: population size at time t0
+    default: 5
     type: int
 state:
   'n':
@@ -39,6 +44,9 @@ events:
   death:
     jump: state.n -= 1; death();
     rate: params.mu * state.n
+  sample_death:
+    rate: params.psi * params.r * state.n
+    jump: state.n -= 1; sample_death();
   sample:
-    rate: params.psi * state.n
+    rate: params.psi * (1 - params.r) * state.n
     jump: sample();

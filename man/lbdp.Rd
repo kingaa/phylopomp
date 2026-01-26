@@ -9,13 +9,13 @@
 \alias{lbdp_exact}
 \title{Linear birth-death-sampling model}
 \usage{
-runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, n0 = 5)
+runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, r = 0, n0 = 5)
 
-continueLBDP(object, time, lambda = NA, mu = NA, psi = NA)
+continueLBDP(object, time, lambda = NA, mu = NA, psi = NA, r = NA)
 
-lbdp_pomp(x, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp(x, lambda, mu, psi, r = 0, n0 = 1, t0 = 0)
 
-lbdp_exact(x, lambda, mu, psi, n0 = 1)
+lbdp_exact(x, lambda, mu, psi, r = 0, n0 = 1)
 }
 \arguments{
 \item{time}{final time}
@@ -27,6 +27,8 @@ lbdp_exact(x, lambda, mu, psi, n0 = 1)
 \item{mu}{per capita death rate}
 
 \item{psi}{per capita sampling rate}
+
+\item{r}{probability that a sampled lineage is removed (must be between 0 and 1; r=0 is non-destructive; r=1 is destructive; must be 0 for \code{lbdp_pomp} and \code{lbdp_exact})}
 
 \item{n0}{population size at time t0}
 
@@ -49,6 +51,8 @@ with constant-rate sampling.
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 
 \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process, conditioned on the population size at time 0.
+
+Destructive sampling (nonzero \code{r}) is supported for simulation but not for \code{lbdp_pomp} or \code{lbdp_exact}.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)
