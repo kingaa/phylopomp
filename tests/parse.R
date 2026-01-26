@@ -280,4 +280,9 @@ try(
      newick(prune=FALSE,obscure=FALSE)
 )
 
+try(
+  r"{(o_9_1:  1.000000,b_0:3,)m_0_0:-0.00001,b_2_45:17}" |>
+     parse_newick()
+)
+
 dev.off()

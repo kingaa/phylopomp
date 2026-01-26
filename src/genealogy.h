@@ -667,6 +667,7 @@ private:
     catch (...) {
       err("in '%s': other branch-length parsing error.",__func__);
     }
+    if (*time < 0.0) err("in '%s': negative branch length detected.",__func__);
     i += sz;
     return i;
   };
