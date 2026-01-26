@@ -5,12 +5,17 @@
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
+##' @param r probability that a sampled lineage is removed (must be between 0 and 1; must be 0 for \code{lbdp_exact})
 ##' @references
 ##' \Stadler2010
 ##'
 ##' \King2024
 ##' @export
-lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
+lbdp_exact <- function (x, lambda, mu, psi, r = 0, n0 = 1) {
+  if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+    pStop(sQuote("r")," must be between 0 and 1.")
+  if (!isTRUE(all.equal(r, 0)))
+    pStop(sQuote("r")," must be 0 for ",sQuote("lbdp_exact"),".")
   x |>
     lineages(prune=TRUE,obscure=TRUE) |>
     encode_data() -> data
