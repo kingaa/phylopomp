@@ -10,6 +10,7 @@
 ##' @param lambda per capita birth rate
 ##' @param mu per capita death rate
 ##' @param psi per capita sampling rate
+##' @param r probability that a sampled lineage is removed (must be between 0 and 1; r=0 is non-destructive; r=1 is destructive)
 ##' @param n0 population size at time t0
 ##' @param time final time
 ##' @param t0 initial time
@@ -27,13 +28,15 @@ NULL
 ##' @export
 runLBDP <- function (
   time,  t0 = 0,
-  lambda = 2, mu = 1, psi = 1,
+  lambda = 2, mu = 1, psi = 1, r = 0,
   n0 = 5
 ) {
+  if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+    pStop(sQuote("r")," must be between 0 and 1.")
   n0 <- round(n0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")
-  params <- c(lambda=lambda,mu=mu,psi=psi)
+  params <- c(lambda=lambda,mu=mu,psi=psi,r=r)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
   .Call(P_runLBDP,x,time) |>
@@ -44,9 +47,13 @@ runLBDP <- function (
 ##' @inheritParams simulate
 ##' @export
 continueLBDP <- function (
-  object, time, lambda = NA, mu = NA, psi = NA
+  object, time, lambda = NA, mu = NA, psi = NA, r = NA
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi)
+  if (!isTRUE(is.na(r))) {
+    if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+      pStop(sQuote("r")," must be between 0 and 1.")
+  }
+  params <- c(lambda=lambda,mu=mu,psi=psi,r=r)
   x <- .Call(P_reviveLBDP,object,params)
   .Call(P_runLBDP,x,time) |>
     structure(model="LBDP",class=c("gpsim","gpgen"))

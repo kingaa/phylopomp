@@ -5,8 +5,12 @@
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
 ##' @export
-lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp <- function (x, lambda, mu, psi, r = 0, n0 = 1, t0 = 0)
 {
+  if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+    pStop(sQuote("r")," must be between 0 and 1.")
+  if (!isTRUE(all.equal(r, 0)))
+    pStop(sQuote("r")," must be 0 for ",sQuote("lbdp_pomp"),".")
   x |> gendat() -> gi
   n0 <- round(n0)
   if (n0 < 0)

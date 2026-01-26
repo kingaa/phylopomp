@@ -16,10 +16,11 @@ typedef struct {
   double lambda;
   double mu;
   double psi;
+  double r;
   int n0;
 } lbdp_parameters_t;
 
-using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,3>;
+using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,4>;
 using lbdp_genealogy_t = master_t<lbdp_proc_t,1>;
 
 template<>
@@ -29,6 +30,7 @@ std::string lbdp_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(lambda)
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
+    + YAML_PARAM(r)
     + YAML_PARAM(n0);
   std::string s = tab + "state:\n"
     + YAML_STATE(n);
@@ -41,6 +43,9 @@ void lbdp_proc_t::update_params (double *p, int n) {
   PARAM_SET(lambda);
   PARAM_SET(mu);
   PARAM_SET(psi);
+  PARAM_SET(r);
+  if (!R_FINITE(params.r) || params.r < 0 || params.r > 1)
+    err("r must be between 0 and 1.");
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -57,7 +62,8 @@ double lbdp_proc_t::event_rates (double *rate, int n) const {
   double total = 0;
   RATE_CALC(params.lambda * state.n);
   RATE_CALC(params.mu * state.n);
-  RATE_CALC(params.psi * state.n);
+  RATE_CALC(params.psi * params.r * state.n);
+  RATE_CALC(params.psi * (1 - params.r) * state.n);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -78,6 +84,9 @@ void lbdp_genealogy_t::jump (int event) {
       state.n -= 1; death();
       break;
     case 2:
+      state.n -= 1; sample_death();
+      break;
+    case 3:
       sample();
       break;
   default:                      // #nocov
