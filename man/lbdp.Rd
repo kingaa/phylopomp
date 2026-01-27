@@ -28,7 +28,7 @@ lbdp_exact(x, lambda, mu, psi, r = 0, n0 = 1)
 
 \item{psi}{per capita sampling rate}
 
-\item{r}{probability that a sampled lineage is removed (must be between 0 and 1; r=0 is non-destructive; r=1 is destructive; must be 0 for \code{lbdp_pomp} and \code{lbdp_exact})}
+\item{r}{probability that a sampled lineage is removed (must be between 0 and 1; must be 0 for \code{lbdp_exact})}
 
 \item{n0}{population size at time t0}
 
@@ -48,11 +48,11 @@ The genealogy process induced by a simple linear birth-death process
 with constant-rate sampling.
 }
 \details{
+Destructive sampling (nonzero \code{r}) is supported for simulation but not for \code{lbdp_pomp} or \code{lbdp_exact}.
+
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 
 \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process, conditioned on the population size at time 0.
-
-Destructive sampling (nonzero \code{r}) is supported for simulation but not for \code{lbdp_pomp} or \code{lbdp_exact}.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)

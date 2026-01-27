@@ -1,0 +1,50 @@
+
+R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
+Copyright (C) 2025 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(digits=3)
+> suppressPackageStartupMessages({
++   library(phylopomp)
++ })
+> set.seed(1253219857)
+> 
+> runLBDP(time=1,lambda=0,mu=0,psi=10,r=1,n0=5) |>
++   gendat() -> gi
+> sample_idx <- gi$nodetype == 1L
+> stopifnot(
++   `no samples`=any(sample_idx),
++   `bad saturation`=all(gi$saturation[sample_idx] == 0)
++ )
+> 
+> runLBDP(time=1,lambda=0,mu=0,psi=100,r=0,n0=5) |>
++   gendat() -> gi
+> sample_idx <- gi$nodetype == 1L
+> stopifnot(
++   `no samples`=any(sample_idx),
++   `bad saturation`=sum(gi$saturation[sample_idx] == 0)==5
++ )
+> 
+> try(runLBDP(time=1,lambda=0,mu=0,psi=1,r=-0.1,n0=1))
+Error : in 'runLBDP': 'r' must be between 0 and 1.
+> try(runLBDP(time=1,lambda=0,mu=0,psi=1,r=1.5,n0=1))
+Error : in 'runLBDP': 'r' must be between 0 and 1.
+> try(runLBDP(time=1,lambda=0,mu=0,psi=1,r=Inf,n0=1))
+Error : in 'runLBDP': 'r' must be between 0 and 1.
+> try(runLBDP(time=1,lambda=0,mu=0,psi=1,r=NA,n0=1))
+Error : in 'runLBDP': 'r' must be between 0 and 1.
+> 

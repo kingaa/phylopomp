@@ -15,6 +15,8 @@
 ##' @param time final time
 ##' @param t0 initial time
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
+##' @details
+##' Destructive sampling (nonzero \code{r}) is supported for simulation but not for \code{lbdp_pomp} or \code{lbdp_exact}.
 ##' @references
 ##' \King2024
 ##'
@@ -28,7 +30,8 @@ NULL
 ##' @export
 runLBDP <- function (
   time,  t0 = 0,
-  lambda = 2, mu = 1, psi = 1, r = 0,
+  lambda = 2, mu = 1, psi = 1,
+  r = 0,
   n0 = 5
 ) {
   if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
@@ -49,10 +52,10 @@ runLBDP <- function (
 continueLBDP <- function (
   object, time, lambda = NA, mu = NA, psi = NA, r = NA
 ) {
-  if (!isTRUE(is.na(r))) {
-    if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
-      pStop(sQuote("r")," must be between 0 and 1.")
-  }
+  if (!is.na(r) &&
+        (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+  )
+    pStop(sQuote("r")," must be between 0 and 1.")
   params <- c(lambda=lambda,mu=mu,psi=psi,r=r)
   x <- .Call(P_reviveLBDP,object,params)
   .Call(P_runLBDP,x,time) |>
