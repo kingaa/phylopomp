@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static int strain1 = 0;
-static int strain2 = 1;
-static int strain3 = 2;
+static const int strain1 = 0;
+static const int strain2 = 1;
+static const int strain3 = 2;
 
 //! Strains process state.
 typedef struct {
@@ -107,46 +107,46 @@ double strains_proc_t::event_rates (double *rate, int n) const {
 template<>
 void strains_genealogy_t::rinit (void) {
   state.S = params.S0;
-state.I1 = params.I1_0;
-state.I2 = params.I2_0;
-state.I3 = params.I3_0;
-state.R = params.R0;
-state.N = double(params.S0+params.I1_0+params.I3_0+params.I3_0+params.R0);
-graft(strain1,params.I1_0);
-graft(strain2,params.I2_0);
-graft(strain3,params.I3_0);
+  state.I1 = params.I1_0;
+  state.I2 = params.I2_0;
+  state.I3 = params.I3_0;
+  state.R = params.R0;
+  state.N = double(params.S0+params.I1_0+params.I3_0+params.I3_0+params.R0);
+  graft(strain1,params.I1_0);
+  graft(strain2,params.I2_0);
+  graft(strain3,params.I3_0);
 }
 
 template<>
 void strains_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S -= 1; state.I1 += 1; birth(strain1,strain1);
-      break;
-    case 1:
-      state.S -= 1; state.I2 += 1; birth(strain2,strain2);
-      break;
-    case 2:
-      state.S -= 1; state.I3 += 1; birth(strain3,strain3);
-      break;
-    case 3:
-      state.I1 -= 1; state.R += 1; death(strain1);
-      break;
-    case 4:
-      state.I2 -= 1; state.R += 1; death(strain2);
-      break;
-    case 5:
-      state.I3 -= 1; state.R += 1; death(strain3);
-      break;
-    case 6:
-      state.I1 -= 1; state.R += 1; sample_death(strain1);
-      break;
-    case 7:
-      state.I2 -= 1; state.R += 1; sample_death(strain2);
-      break;
-    case 8:
-      state.I3 -= 1; state.R += 1; sample_death(strain3);
-      break;
+    state.S -= 1; state.I1 += 1; birth(strain1,strain1);
+    break;
+  case 1:
+    state.S -= 1; state.I2 += 1; birth(strain2,strain2);
+    break;
+  case 2:
+    state.S -= 1; state.I3 += 1; birth(strain3,strain3);
+    break;
+  case 3:
+    state.I1 -= 1; state.R += 1; death(strain1);
+    break;
+  case 4:
+    state.I2 -= 1; state.R += 1; death(strain2);
+    break;
+  case 5:
+    state.I3 -= 1; state.R += 1; death(strain3);
+    break;
+  case 6:
+    state.I1 -= 1; state.R += 1; sample_death(strain1);
+    break;
+  case 7:
+    state.I2 -= 1; state.R += 1; sample_death(strain2);
+    break;
+  case 8:
+    state.I3 -= 1; state.R += 1; sample_death(strain3);
+    break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov

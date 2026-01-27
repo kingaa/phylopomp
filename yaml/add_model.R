@@ -108,7 +108,7 @@ GENERICS({%name%},{%gen%})
       mapply(
         \(d,n) {
           render(
-            r"{static int {%name%} = {%number%};}",
+            r"{static const int {%name%} = {%number%};}",
             name=d,
             number=n-1L
           )

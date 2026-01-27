@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static int Exposed = 0;
-static int Infectious = 1;
+static const int Exposed = 0;
+static const int Infectious = 1;
 
 //! SEIR process state.
 typedef struct {
@@ -91,32 +91,32 @@ double seir_proc_t::event_rates (double *rate, int n) const {
 template<>
 void seir_genealogy_t::rinit (void) {
   state.S = params.S0;
-state.E = params.E0;
-state.I = params.I0;
-state.R = params.R0;
-state.N = double(params.S0+params.E0+params.I0+params.R0);
-graft(0,params.E0);
-graft(1,params.I0);
+  state.E = params.E0;
+  state.I = params.I0;
+  state.R = params.R0;
+  state.N = double(params.S0+params.E0+params.I0+params.R0);
+  graft(0,params.E0);
+  graft(1,params.I0);
 }
 
 template<>
 void seir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S -= 1; state.E += 1; birth(Infectious,Exposed);
-      break;
-    case 1:
-      state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
-      break;
-    case 2:
-      state.I -= 1; state.R += 1; death(Infectious);
-      break;
-    case 3:
-      sample(Infectious);
-      break;
-    case 4:
-      state.R -= 1; state.S += 1;
-      break;
+    state.S -= 1; state.E += 1; birth(Infectious,Exposed);
+    break;
+  case 1:
+    state.E -= 1; state.I += 1; migrate(Exposed,Infectious);
+    break;
+  case 2:
+    state.I -= 1; state.R += 1; death(Infectious);
+    break;
+  case 3:
+    sample(Infectious);
+    break;
+  case 4:
+    state.R -= 1; state.S += 1;
+    break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov

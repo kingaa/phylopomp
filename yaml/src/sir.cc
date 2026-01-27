@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static int Infected = 0;
+static const int Infected = 0;
 
 //! SIR process state.
 typedef struct {
@@ -81,27 +81,27 @@ double sir_proc_t::event_rates (double *rate, int n) const {
 template<>
 void sir_genealogy_t::rinit (void) {
   state.S = params.S0;
-state.I = params.I0;
-state.R = params.R0;
-state.N = double(params.S0+params.I0+params.R0);
-graft(Infected,params.I0);
+  state.I = params.I0;
+  state.R = params.R0;
+  state.N = double(params.S0+params.I0+params.R0);
+  graft(Infected,params.I0);
 }
 
 template<>
 void sir_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S -= 1; state.I += 1; birth();
-      break;
-    case 1:
-      state.I -= 1; state.R += 1; death();
-      break;
-    case 2:
-      sample();
-      break;
-    case 3:
-      state.R -= 1; state.S += 1;
-      break;
+    state.S -= 1; state.I += 1; birth();
+    break;
+  case 1:
+    state.I -= 1; state.R += 1; death();
+    break;
+  case 2:
+    sample();
+    break;
+  case 3:
+    state.R -= 1; state.S += 1;
+    break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov

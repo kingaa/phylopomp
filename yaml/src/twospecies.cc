@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static int host1 = 0;
-static int host2 = 1;
-static int outside = 2;
+static const int host1 = 0;
+static const int host2 = 1;
+static const int outside = 2;
 
 //! TwoSpecies process state.
 typedef struct {
@@ -160,86 +160,86 @@ double twospecies_proc_t::event_rates (double *rate, int n) const {
 template<>
 void twospecies_genealogy_t::rinit (void) {
   state.S1 = params.S1_0;
-state.I1 = params.I1_0;
-state.R1 = params.R1_0;
-state.S2 = params.S2_0;
-state.I2 = params.I2_0;
-state.R2 = params.R2_0;
-state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
-state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
-graft(host1,params.I1_0);
-graft(host2,params.I2_0);
+  state.I1 = params.I1_0;
+  state.R1 = params.R1_0;
+  state.S2 = params.S2_0;
+  state.I2 = params.I2_0;
+  state.R2 = params.R2_0;
+  state.N1 = double(params.S1_0+params.I1_0+params.R1_0);
+  state.N2 = double(params.S2_0+params.I2_0+params.R2_0);
+  graft(host1,params.I1_0);
+  graft(host2,params.I2_0);
 }
 
 template<>
 void twospecies_genealogy_t::jump (int event) {
   switch (event) {
   case 0:
-      state.S1 -= 1; state.I1 += 1; birth(host1,host1);
-      break;
-    case 1:
-      state.S2 -= 1; state.I2 += 1; birth(host2,host2);
-      break;
-    case 2:
-      state.S1 -= 1; state.I1 += 1; birth(host2,host1);
-      break;
-    case 3:
-      state.S2 -= 1; state.I2 += 1; birth(host1,host2);
-      break;
-    case 4:
-      state.I1 -= 1; state.R1 += 1; death(host1);
-      break;
-    case 5:
-      state.I2 -= 1; state.R2 += 1; death(host2);
-      break;
-    case 6:
-      state.R1 -= 1; state.S1 += 1;
-      break;
-    case 7:
-      state.R2 -= 1; state.S2 += 1;
-      break;
-    case 8:
-      state.I1 -= 1; sample_death(host1);
-      break;
-    case 9:
-      state.I2 -= 1; sample_death(host2);
-      break;
-    case 10:
-      sample(host1);
-      break;
-    case 11:
-      sample(host2);
-      break;
-    case 12:
-      state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
-      break;
-    case 13:
-      state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
-      break;
-    case 14:
-      state.S1 -= 1; state.N1 -= 1;
-      break;
-    case 15:
-      state.S2 -= 1; state.N2 -= 1;
-      break;
-    case 16:
-      state.I1 -= 1; state.N1 -= 1; death(host1);
-      break;
-    case 17:
-      state.I2 -= 1; state.N2 -= 1; death(host2);
-      break;
-    case 18:
-      state.R1 -= 1; state.N1 -= 1;
-      break;
-    case 19:
-      state.R2 -= 1; state.N2 -= 1;
-      break;
-    case 20:
-      state.S1 += 1; state.N1 += 1;
-      break;
-    case 21:
-      state.S2 += 1; state.N2 += 1;
-      break;
+    state.S1 -= 1; state.I1 += 1; birth(host1,host1);
+    break;
+  case 1:
+    state.S2 -= 1; state.I2 += 1; birth(host2,host2);
+    break;
+  case 2:
+    state.S1 -= 1; state.I1 += 1; birth(host2,host1);
+    break;
+  case 3:
+    state.S2 -= 1; state.I2 += 1; birth(host1,host2);
+    break;
+  case 4:
+    state.I1 -= 1; state.R1 += 1; death(host1);
+    break;
+  case 5:
+    state.I2 -= 1; state.R2 += 1; death(host2);
+    break;
+  case 6:
+    state.R1 -= 1; state.S1 += 1;
+    break;
+  case 7:
+    state.R2 -= 1; state.S2 += 1;
+    break;
+  case 8:
+    state.I1 -= 1; sample_death(host1);
+    break;
+  case 9:
+    state.I2 -= 1; sample_death(host2);
+    break;
+  case 10:
+    sample(host1);
+    break;
+  case 11:
+    sample(host2);
+    break;
+  case 12:
+    state.S1 -= 1; state.I1 += 1; graft(outside); migrate(outside,host1);
+    break;
+  case 13:
+    state.S2 -= 1; state.I2 += 1; graft(outside); migrate(outside,host2);
+    break;
+  case 14:
+    state.S1 -= 1; state.N1 -= 1;
+    break;
+  case 15:
+    state.S2 -= 1; state.N2 -= 1;
+    break;
+  case 16:
+    state.I1 -= 1; state.N1 -= 1; death(host1);
+    break;
+  case 17:
+    state.I2 -= 1; state.N2 -= 1; death(host2);
+    break;
+  case 18:
+    state.R1 -= 1; state.N1 -= 1;
+    break;
+  case 19:
+    state.R2 -= 1; state.N2 -= 1;
+    break;
+  case 20:
+    state.S1 += 1; state.N1 += 1;
+    break;
+  case 21:
+    state.S2 += 1; state.N2 += 1;
+    break;
   default:                      // #nocov
     assert(0);                  // #nocov
     break;                      // #nocov

@@ -4,11 +4,11 @@
 #include "generics.h"
 #include "internal.h"
 
-static int host1 = 0;
-static int host2 = 1;
-static int ghost1 = 2;
-static int ghost2 = 3;
-static int outside = 4;
+static const int host1 = 0;
+static const int host2 = 1;
+static const int ghost1 = 2;
+static const int ghost2 = 3;
+static const int outside = 4;
 
 //! TwoUndead process state.
 typedef struct {
