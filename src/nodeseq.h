@@ -97,7 +97,8 @@ private:
   static bool compare (node_t* p, node_t* q) {
     return (p->slate < q->slate) ||
       ((p->slate == q->slate) &&
-       ((p==q->green_ball()->holder()) || (p->uniq < q->uniq)));
+       ((p==q->green_ball()->holder()) ||
+	((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
   };
 
 public:
