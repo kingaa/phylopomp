@@ -92,10 +92,12 @@ private:
 private:
 
   //! Order relation among nodes.
-  //! Nodes should be ordered by time, then by unique name.
+  //! An ancestor node should always come before its descendants.
+  //! Nodes should be ordered by time, then arbitrarily.
   static bool compare (node_t* p, node_t* q) {
     return (p->slate < q->slate) ||
-      ((p->slate == q->slate) && (p->uniq < q->uniq));
+      ((p->slate == q->slate) &&
+       ((p==q->green_ball()->holder()) || (p->uniq < q->uniq)));
   };
 
 public:

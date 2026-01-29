@@ -5,6 +5,8 @@
     \item New model in which three distinct strains compete for susceptibles from a single pool.
     See \code{Strains}.
     \item New model which is identical to \code{TwoSpecies} except in that lineages that terminate are replaced by \emph{ghosts}.
+    \item Bug fix in \code{curtail()}.
+    \item Refactoring of \code{lbdp_exact()}.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.14}{

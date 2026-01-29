@@ -120,6 +120,10 @@ public:
     }
     return result;
   };
+  //! retrieve the first ball
+  ball_t* first_ball (void) const {
+    return *cbegin();
+  };
   //! retrieve the last ball
   ball_t* last_ball (void) const {
     return *crbegin();

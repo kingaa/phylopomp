@@ -540,7 +540,7 @@ public:
     if (!empty() && troot > timezero()) {
       node_t *p = front();
       node_t *q;
-      while (!empty() && p->slate <= troot) {
+      while (!empty() && p->slate < troot) {
         ball_t *b;
         assert(p->holds_own());
         while (p->size() > 1) {
@@ -552,12 +552,16 @@ public:
           case black:
             q = make_node(b->deme());
             q->slate = troot;
-            b->holder() = q;
             q->insert(b); p->erase(b);
+            b->holder() = q;
             push_back(q);
             break;
           case green:
             q = b->child();
+            if (q == p) {
+              b = p->first_ball();
+              q = b->child();
+            }
             if (q->slate < troot) {
               q->insert(b); p->erase(b);
               b->holder() = q;
