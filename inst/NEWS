@@ -4,6 +4,9 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
 
         • ‘gendat()’ now returns the deme for samples.
 
+        • The ‘Strains’ model (see ‘?strains’) now has a filtering
+          code: ‘strains_pomp’.
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_5:
 
         • New model in which three distinct strains compete for

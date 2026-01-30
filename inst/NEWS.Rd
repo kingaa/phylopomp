@@ -3,6 +3,7 @@
 \section{Changes in \pkg{phylopomp} version 0.16}{
   \itemize{
     \item \code{gendat()} now returns the deme for samples.
+    \item The \code{Strains} model (see \code{?strains}) now has a filtering code: \code{strains_pomp}.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.15}{
