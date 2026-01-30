@@ -16,11 +16,23 @@ simulate("SEIRS",
 ) -> G
 G |> plot(prune=FALSE,obscure=FALSE,points=TRUE)
 
-G |> plot(points=TRUE)
+G |> plot(obscure=FALSE,points=TRUE)
 
 G |>
   curtail(time=3) |>
-  plot(points=TRUE)
+  plot(obscure=FALSE,points=TRUE)
+
+stopifnot(
+  G |>
+    gendat(obscure=FALSE) |>
+    {
+      \(x)bind_cols(type=x$nodetype,deme=x$deme)
+    }() |>
+    filter(type==1) |>
+    count(deme) |>
+    filter(deme!=1) |>
+    nrow()==0
+)
 
 try(
   G |>

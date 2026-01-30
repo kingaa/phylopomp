@@ -29,10 +29,10 @@ extern "C" {
   }
 
   //! data-frame format
-  SEXP gendat (SEXP State) {
+  SEXP gendat (SEXP State, SEXP Obscure) {
     genealogy_t A = State;
     A.prune();
-    A.obscure();
+    if (*LOGICAL(Obscure)) A.obscure();
     A.trace_lineages();
     return A.gendat();
   }

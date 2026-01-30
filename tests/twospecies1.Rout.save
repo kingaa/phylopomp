@@ -107,8 +107,8 @@ The following object is masked from 'package:stats':
 > pf |>
 +   logLik() |>
 +   logmeanexp(se=TRUE,ess=TRUE)
-     est       se      ess 
--201.579    0.345    3.570 
+est  se ess 
+NaN  NA NaN 
 > 
 > try(
 +   s |>

@@ -4,10 +4,12 @@
 \alias{gendat}
 \title{Genealogy as a data frame}
 \usage{
-gendat(object)
+gendat(object, obscure = TRUE)
 }
 \arguments{
 \item{object}{a \sQuote{gpgen} object.}
+
+\item{obscure}{logical; obscure the demes?}
 }
 \value{
 A list of objects containing the information pertinent for filtering.

@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.16}{
+  \itemize{
+    \item \code{gendat()} now returns the deme for samples.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.15}{
   \itemize{
     \item New model in which three distinct strains compete for susceptibles from a single pool.

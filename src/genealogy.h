@@ -229,10 +229,9 @@ public:
     UNPROTECT(7);
     return out;
   };
-
-  //! nodelist in data-frame format
+  //! genealogy information in list format
   void gendat (double *tout, int *anc, int *lin,
-               int *sat, int *type,
+               int *sat, int *type, int *deme,
                int *index, int *child) const {
     int m, n, k;
     node_it i, j;
@@ -240,10 +239,12 @@ public:
       node_t *p = *i;
       assert(!p->holds(black)); // tree should be pruned first
       tout[n] = p->slate;
+      deme[n] = p->deme();
       if (p->is_root()) {
         type[n] = 0;            // root node
       } else if (p->holds(blue)) {
         type[n] = 1;            // sample node
+        deme[n] = p->ball(blue)->deme();
       } else {
         type[n] = 2;            // internal node
       }
@@ -276,13 +277,14 @@ public:
       }
     }
   };
-  //! nodelist in data-frame format
+  //! genealogy information in list format
   SEXP gendat (void) const {
-    SEXP tout, anc, lin, sat, type, index, child, ns, nn;
+    SEXP tout, anc, lin, sat, type, deme, index, child, ns, nn;
     SEXP out, outn;
     size_t n = length();
     PROTECT(tout = NEW_NUMERIC(n+1));
     PROTECT(type = NEW_INTEGER(n));
+    PROTECT(deme = NEW_INTEGER(n));
     PROTECT(lin = NEW_INTEGER(n));
     PROTECT(sat = NEW_INTEGER(n));
     PROTECT(index = NEW_INTEGER(n));
@@ -290,23 +292,24 @@ public:
     PROTECT(anc = NEW_INTEGER(n));
     PROTECT(ns = NEW_INTEGER(1));
     PROTECT(nn = NEW_INTEGER(1));
-    PROTECT(out = NEW_LIST(9));
-    PROTECT(outn = NEW_CHARACTER(9));
+    PROTECT(out = NEW_LIST(10));
+    PROTECT(outn = NEW_CHARACTER(10));
     set_list_elem(out,outn,tout,"nodetime",0);
     set_list_elem(out,outn,type,"nodetype",1);
-    set_list_elem(out,outn,lin,"lineage",2);
-    set_list_elem(out,outn,sat,"saturation",3);
-    set_list_elem(out,outn,index,"index",4);
-    set_list_elem(out,outn,child,"child",5);
-    set_list_elem(out,outn,anc,"ancestor",6);
-    set_list_elem(out,outn,ns,"nsample",7);
-    set_list_elem(out,outn,nn,"nnode",8);
+    set_list_elem(out,outn,deme,"deme",2);
+    set_list_elem(out,outn,lin,"lineage",3);
+    set_list_elem(out,outn,sat,"saturation",4);
+    set_list_elem(out,outn,index,"index",5);
+    set_list_elem(out,outn,child,"child",6);
+    set_list_elem(out,outn,anc,"ancestor",7);
+    set_list_elem(out,outn,ns,"nsample",8);
+    set_list_elem(out,outn,nn,"nnode",9);
     SET_NAMES(out,outn);
     gendat(REAL(tout),INTEGER(anc),INTEGER(lin),INTEGER(sat),
-           INTEGER(type),INTEGER(index),INTEGER(child));
+           INTEGER(type),INTEGER(deme),INTEGER(index),INTEGER(child));
     *INTEGER(ns) = nsample();   // number of samples
     *INTEGER(nn) = length();    // number of nodes
-    UNPROTECT(11);
+    UNPROTECT(12);
     return out;
   };
 
