@@ -119,25 +119,25 @@ static double event_rates
   // total pi = (I1-0.5*ell1)/I1
   assert(S2>=0 && I1>=ell1 && ell1>=0);
   alpha = (N1 > 0) ? Beta21*S2*I1/N1 : 0;
-  pi = (I1 > 0) ? (I1-0.5*ell1)/I1 : 0;
+  pi = (I1 > 0) ? (I1-0.5*ell1)/I1 : 1;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
   assert(R_FINITE(event_rate));
   // 3: Trans_21, s = (0,1)
   // s = (0,1): pi = 1/(2*I1), m = ell1
-  pi = 1-pi;
+  pi = (I1 > 0) ? 1-pi : 1;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ell1); logpi++;
   assert(R_FINITE(event_rate));
   // 4: Trans_12, s = (0,0),(0,1)
   assert(S1>=0 && I2>=ell2 && ell2>=0);
   alpha = (N2 > 0) ? Beta12*S1*I2/N2 : 0;
-  pi = (I2 > 0) ? (I2-ell2*0.5)/I2 : 0;
+  pi = (I2 > 0) ? (I2-ell2*0.5)/I2 : 1;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
   assert(R_FINITE(event_rate));
   // 5: Trans_12, s = (1,0)
-  pi = 1-pi;
+  pi = (I2 > 0) ? 1-pi : 0;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ell2); logpi++;
   assert(R_FINITE(event_rate));
