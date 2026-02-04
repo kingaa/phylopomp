@@ -14,12 +14,12 @@ static const int nrate = 6;
 #define psi1      (__p[__parindex[4]])
 #define psi2      (__p[__parindex[5]])
 #define psi3      (__p[__parindex[6]])
-#define S0        (__p[__parindex[7]])
+#define S_0       (__p[__parindex[7]])
 #define I1_0      (__p[__parindex[8]])
 #define I2_0      (__p[__parindex[9]])
 #define I3_0      (__p[__parindex[10]])
-#define R0        (__p[__parindex[11]])
-#define N         (__x[__parindex[12]])
+#define R_0       (__p[__parindex[11]])
+#define N         (__p[__parindex[12]])
 #define S         (__x[__stateindex[0]])
 #define I1        (__x[__stateindex[1]])
 #define I2        (__x[__stateindex[2]])
@@ -51,9 +51,13 @@ static double event_rates
   double event_rate = 0;
   double alpha, disc;
   *penalty = 0;
-  assert(I1 >= ellI1);
-  assert(ellI1 >= 0);
   assert(S >= 0);
+  assert(I1 >= ellI1);
+  assert(I2 >= ellI2);
+  assert(I3 >= ellI3);
+  assert(ellI1 >= 0);
+  assert(ellI2 >= 0);
+  assert(ellI3 >= 0);
   // 0: strain-1 transmission with saturation 0 or 1
   alpha = Beta1*S*I1/N;
   disc = (I1 > 0) ? ellI1*(ellI1-1)/I1/(I1+1) : 1;
@@ -117,12 +121,12 @@ void strains_rinit
  const int *__covindex,
  const double *__covars
  ){
-  double m = N/(S0+I1_0+I2_0+I3_0+R0);
-  S = nearbyint(S0*m);
+  double m = N/(S_0+I1_0+I2_0+I3_0+R_0);
+  S = nearbyint(S_0*m);
   I1 = nearbyint(I1_0*m);
   I2 = nearbyint(I2_0*m);
   I3 = nearbyint(I3_0*m);
-  R = nearbyint(R0*m);
+  R = nearbyint(R_0*m);
   ll = 0;
   ellI1 = 0;
   ellI2 = 0;
@@ -174,84 +178,60 @@ void strains_gill
     default:
       assert(0); break;
     }
+    break;
   case 1:                       // sample
+    assert(sat[parent]==0);
     switch (deme[parent]) {
     case STRAIN1:
       assert(I1 >= ellI1);
       assert(ellI1 >= 0);
-      if (sat[parent] == 1) {
-        ll += log(psi1);
-      } else if (sat[parent] == 0) {
-        ellI1 -= 1;
-        ll += log(psi1*(I1-ellI1));
-      } else {
-        assert(0);                // #nocov
-        ll += R_NegInf;           // #nocov
-      }
+      ellI1 -= 1; I1 -= 1;
+      ll += log(psi1);
       break;
     case STRAIN2:
       assert(I2 >= ellI2);
       assert(ellI2 >= 0);
-      if (sat[parent] == 1) {
-        ll += log(psi2);
-      } else if (sat[parent] == 0) {
-        ellI2 -= 1;
-        ll += log(psi2*(I2-ellI2));
-      } else {
-        assert(0);                // #nocov
-        ll += R_NegInf;           // #nocov
-      }
+      ellI2 -= 1; I2 -= 1;
+      ll += log(psi2);
       break;
     case STRAIN3:
       assert(I3 >= ellI3);
       assert(ellI3 >= 0);
-      if (sat[parent] == 1) {
-        ll += log(psi3);
-      } else if (sat[parent] == 0) {
-        ellI3 -= 1;
-        ll += log(psi3*(I3-ellI3));
-      } else {
-        assert(0);                // #nocov
-        ll += R_NegInf;           // #nocov
-      }
+      ellI3 -= 1; I3 -= 1;
+      ll += log(psi3);
       break;
     default:
-      assert(0);
-      break;
+      assert(0); break;
     }
     break;
   case 2:                       // branch point s=(1,1)
     assert(S >= 0);
+    if (sat[parent]!=2) break;
     switch (deme[parent]) {
     case STRAIN1:
       assert(I1 >= 0);
       assert(ellI1 > 0);
-      assert(sat[parent]==2);
       ll += (I1 > 0 && I1 >= ellI1) ? log(Beta1*S*I1/N) : R_NegInf;
-      S -= 1; I1 += 1;
-      ellI1 += 1;
+      S -= 1; I1 += 1; ellI1 += 1;
       ll -= log(I1*(I1-1)/2);
       break;
     case STRAIN2:
       assert(I2 >= 0);
       assert(ellI2 > 0);
-      assert(sat[parent]==2);
       ll += (I2 > 0 && I2 >= ellI2) ? log(Beta2*S*I2/N) : R_NegInf;
-      S -= 1; I2 += 1;
-      ellI2 += 1;
+      S -= 1; I2 += 1; ellI2 += 1;
       ll -= log(I2*(I2-1)/2);
       break;
     case STRAIN3:
       assert(I3 >= 0);
       assert(ellI3 > 0);
-      assert(sat[parent]==2);
       ll += (I3 > 0 && I3 >= ellI3) ? log(Beta3*S*I3/N) : R_NegInf;
-      S -= 1; I3 += 1;
-      ellI3 += 1;
+      S -= 1; I3 += 1; ellI3 += 1;
       ll -= log(I3*(I3-1)/2);
       break;
     default:
-      assert(0); break;
+      assert(0);
+      break;
     }
     S = (S > 0) ? S : 0;
     break;

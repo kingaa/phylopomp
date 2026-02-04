@@ -31,6 +31,16 @@ Do 'simulate()' to view available models.
 > try(simulate(22))
 Error : in 'simulate.default': 'object' must be specified as either the name of a model or the result of a previous simulation.
 Do 'simulate()' to view available models.
+> simulate("SEIR",time=4) -> x
+> attr(x,"model") <- "billybob"
+> try(simulate(x,time=10))
+Error : unrecognized model 'billybob'.
+> attr(x,"model") <- NULL
+> try(simulate(x,time=10))
+Error : no model attribute detected.
+> attr(x,"model") <- ""
+> try(simulate(x,time=10))
+Error : no model attribute detected.
 > simulate()
 Available phylopomp models:
 - LBDP: Linear birth-death-sampling model

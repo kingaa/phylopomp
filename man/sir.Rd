@@ -52,9 +52,9 @@ runSIRS(
 
 continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
 
-sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
+sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0)
 
-sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0 = 0)
+sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0)
 }
 \arguments{
 \item{time}{final time}

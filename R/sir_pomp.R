@@ -8,8 +8,9 @@
 ##' \code{sir_pomp} and \code{sirs_pomp} return \sQuote{pomp} objects.
 ##' @importFrom pomp pomp onestep
 ##' @export
-sir_pomp <- function (x, Beta, gamma, psi, omega = 0, S0, I0, R0, t0=0)
-{
+sir_pomp <- function (
+  x, Beta, gamma, psi, omega = 0, S0, I0, R0
+) {
   x |> gendat() -> gi
   ic <- as.integer(c(S0,I0,R0))
   names(ic) <- c("S0","I0","R0")

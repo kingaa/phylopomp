@@ -50,8 +50,7 @@ strains_pomp(
   I1_0,
   I2_0,
   I3_0,
-  R0,
-  t0 = 0
+  R0
 )
 }
 \arguments{

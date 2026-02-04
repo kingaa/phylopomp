@@ -8,8 +8,12 @@
 ##' \code{strains_pomp} returns a \sQuote{pomp} object.
 ##' @importFrom pomp pomp onestep
 ##' @export
-strains_pomp <- function (x, Beta1, Beta2, Beta3, gamma, psi1, psi2, psi3, S0, I1_0, I2_0, I3_0, R0, t0 = 0)
-{
+strains_pomp <- function (
+  x,
+  Beta1, Beta2, Beta3, gamma,
+  psi1, psi2, psi3,
+  S0, I1_0, I2_0, I3_0, R0
+) {
   x |> gendat(obscure=FALSE) -> gi
   ic <- as.integer(c(S0,I1_0,I2_0,I3_0,R0))
   names(ic) <- c("S0","I1_0","I2_0","I3_0","R0")
@@ -31,13 +35,13 @@ strains_pomp <- function (x, Beta1, Beta2, Beta3, gamma, psi1, psi2, psi3, S0, I
     rprocess=onestep("strains_gill"),
     dmeasure="strains_dmeas",
     statenames=c(
-      "S","I2","I2","I3","R",
+      "S","I1","I2","I3","R",
       "ll","ell1","ell2","ell3","node"
     ),
     paramnames=c(
       "Beta1","Beta2","Beta3","gamma",
       "psi1","psi2","psi3",
-      "S0","I1_0","I2_0","I3_0","R0","N"
+      names(ic),"N"
     ),
     PACKAGE="phylopomp"
   )
