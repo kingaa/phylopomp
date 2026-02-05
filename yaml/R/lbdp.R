@@ -22,6 +22,11 @@ runLBDP <- function (
   time, t0 = 0,
   lambda = 2, mu = 1, psi = 1, r = 0, n0 = 5
 ) {
+  if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
+    pStop(sQuote("r")," must be between 0 and 1.")
+  n0 <- round(n0)
+  if (n0 < 0)
+    pStop(sQuote("n0")," must be a nonnegative integer.")
   params <- c(lambda=lambda,mu=mu,psi=psi,r=r)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDP,params,ivps,t0)
@@ -35,6 +40,8 @@ continueLBDP <- function (
   object, time,
   lambda = NA, mu = NA, psi = NA, r = NA
 ) {
+  if (!is.na(r) && (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1))
+    pStop(sQuote("r")," must be between 0 and 1.")
   params <- c(
     lambda=lambda,mu=mu,psi=psi,r=r
   )

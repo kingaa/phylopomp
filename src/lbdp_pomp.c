@@ -4,7 +4,8 @@
 #define lambda  (__p[__parindex[0]])
 #define mu      (__p[__parindex[1]])
 #define psi     (__p[__parindex[2]])
-#define n0      (__p[__parindex[3]])
+#define r       (__p[__parindex[3]])
+#define n0      (__p[__parindex[4]])
 #define n       (__x[__stateindex[0]])
 #define ll      (__x[__stateindex[1]])
 #define ell     (__x[__stateindex[2]])
@@ -92,21 +93,27 @@ void lbdp_gill
 
   ll = 0;
 
-  // singular portion of filter equation
+  // singular portion of filter equation (supports BDD(r): 0 <= r <= 1)
   switch (nodetype[parent]) {
   default:                      // non-genealogical event
     break;
   case 0:                       // root
     ell += 1;
     break;
-  case 1:                       // sample
+  case 1:                       // sample (saturation 1 = non-destructive, 0 = destructive)
     assert(n >= ell);
     assert(ell >= 0);
     if (sat[parent] == 1) {     // s=1
-      ll += log(psi);
+      ll += log(psi*(1-r));
     } else if (sat[parent] == 0) { // s=0
+      double remove_rate, keep_rate, total_rate;
       ell -= 1;
-      ll += log(psi*(n-ell));
+      remove_rate = psi*r*(n-ell);
+      keep_rate = psi*(1-r)*(n-ell);
+      total_rate = remove_rate + keep_rate;
+      ll += (total_rate > 0) ? log(total_rate) : R_NegInf;
+      if (total_rate > 0 && unif_rand() < remove_rate/total_rate)
+        n -= 1;
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov

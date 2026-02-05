@@ -4,13 +4,12 @@
 ##' \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
+##' @param r probability that a sampled lineage is removed (must be between 0 and 1)
 ##' @export
 lbdp_pomp <- function (x, lambda, mu, psi, r = 0, n0 = 1, t0 = 0)
 {
   if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
     pStop(sQuote("r")," must be between 0 and 1.")
-  if (!isTRUE(all.equal(r, 0)))
-    pStop(sQuote("r")," must be 0 for ",sQuote("lbdp_pomp"),".")
   x |> gendat() -> gi
   n0 <- round(n0)
   if (n0 < 0)
@@ -19,13 +18,13 @@ lbdp_pomp <- function (x, lambda, mu, psi, r = 0, n0 = 1, t0 = 0)
     data=NULL,
     t0=gi$nodetime[1L],
     times=gi$nodetime[-1L],
-    params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+    params=c(lambda=lambda,mu=mu,psi=psi,r=r,n0=n0),
     userdata=gi,
     rinit="lbdp_rinit",
     dmeasure="lbdp_dmeas",
     rprocess=onestep("lbdp_gill"),
     statenames=c("n","ll","ell","node"),
-    paramnames=c("lambda","mu","psi","n0"),
+    paramnames=c("lambda","mu","psi","r","n0"),
     PACKAGE="phylopomp"
   )
 }
