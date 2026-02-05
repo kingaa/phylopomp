@@ -44,6 +44,8 @@ void lbdp_proc_t::update_params (double *p, int n) {
   PARAM_SET(mu);
   PARAM_SET(psi);
   PARAM_SET(r);
+  if (!R_FINITE(params.r) || params.r < 0 || params.r > 1)
+    err("r must be between 0 and 1.");
   if (m != n) err("wrong number of parameters!");
 }
 

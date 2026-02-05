@@ -16,7 +16,7 @@
 ##' @param t0 initial time
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
 ##' @details
-##' Destructive sampling (nonzero \code{r}) is supported for simulation but not for \code{lbdp_pomp} or \code{lbdp_exact}.
+##' Destructive sampling (\code{0 <= r <= 1}) is supported for simulation, exact likelihood \code{lbdp_exact}, and particle-filter inference via \code{lbdp_pomp}.
 ##' @references
 ##' \King2024
 ##'
