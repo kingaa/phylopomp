@@ -13,7 +13,7 @@
 ##' 
 ##' \Stadler2012
 ##' @export
-lbdp_exact <- function (x, lambda, mu, psi, r = 0, n0 = 1) {
+lbdp_exact <- function (x, lambda, mu, psi, r, n0 = 1) {
   if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
     pStop(sQuote("r")," must be between 0 and 1.")
   x |>
