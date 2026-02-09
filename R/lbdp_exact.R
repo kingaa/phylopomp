@@ -5,17 +5,17 @@
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
-##' @param r probability that a sampled lineage is removed (must be between 0 and 1; must be 0 for \code{lbdp_exact})
+##' @param r probability that a sampled lineage is removed (must be between 0 and 1)
 ##' @references
 ##' \Stadler2010
 ##'
 ##' \King2024
+##' 
+##' \Stadler2012
 ##' @export
 lbdp_exact <- function (x, lambda, mu, psi, r = 0, n0 = 1) {
   if (!is.numeric(r) || length(r) != 1L || !is.finite(r) || r < 0 || r > 1)
     pStop(sQuote("r")," must be between 0 and 1.")
-  if (!isTRUE(all.equal(r, 0)))
-    pStop(sQuote("r")," must be 0 for ",sQuote("lbdp_exact"),".")
   x |>
     lineages(prune=TRUE,obscure=TRUE) |>
     encode_data() -> data
@@ -27,32 +27,32 @@ lbdp_exact <- function (x, lambda, mu, psi, r = 0, n0 = 1) {
   y <- data$time[data$code==-1]    ## tip samples
   l0 <- data$lineages[1L]          ## number of roots
   k <- sum(data$code==0)           ## number of inline samples
-
+  
   if (length(y) != length(x)+l0)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov
-
+  
   d <- sqrt((lambda-mu-psi)^2+4*lambda*psi) ## guaranteed to be real
   a <- (lambda+mu+psi)/2/lambda
   b <- d/2/lambda
-
+  
   G <- function (t) {
     omega <- d*(t-tf)/2
     C <- d*cosh(omega)
     S <- sinh(omega)
     (C+(lambda-mu+psi)*S)/(C+(lambda-mu-psi)*S)
   }
-
+  
   H <- function (t) {
     omega <- d*(t-tf)/2
     g <- cosh(omega)+(1-a)/b*sinh(omega)
     1/g/g
   }
-
+  
   lchoose(n0,l0)+
     lfactorial(l0)+
     (n0-l0)*log(G(x0))+
     l0*log(H(x0))+
-    k*log(psi)+
+    k*log(psi*(1-r))+
     sum(log(2*lambda*H(x)))+
-    sum(log(psi*G(y)/H(y)))
+    sum(log(psi*(r+(1-r)*G(y))*G(y)/H(y)))
 }
