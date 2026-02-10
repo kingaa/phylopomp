@@ -4,7 +4,7 @@
 #define lambda  (__p[__parindex[0]])
 #define mu      (__p[__parindex[1]])
 #define psi     (__p[__parindex[2]])
-#define r       (__p[__parindex[3]])
+#define chi     (__p[__parindex[3]])
 #define n0      (__p[__parindex[4]])
 #define n       (__x[__stateindex[0]])
 #define ll      (__x[__stateindex[1]])
@@ -93,27 +93,25 @@ void lbdp_gill
 
   ll = 0;
 
-  // singular portion of filter equation (supports BDD(r): 0 <= r <= 1)
+  // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event
     break;
   case 0:                       // root
     ell += 1;
     break;
-  case 1:                       // sample (saturation 1 = non-destructive, 0 = destructive)
+  case 1:                       // sample
     assert(n >= ell);
     assert(ell >= 0);
+    assert(chi >= 0 && chi <= 1);
     if (sat[parent] == 1) {     // s=1
-      ll += log(psi*(1-r));
+      ll += log(psi*(1-chi));
     } else if (sat[parent] == 0) { // s=0
-      double remove_rate, keep_rate, total_rate;
       ell -= 1;
-      remove_rate = psi*r*(n-ell);
-      keep_rate = psi*(1-r)*(n-ell);
-      total_rate = remove_rate + keep_rate;
-      ll += (total_rate > 0) ? log(total_rate) : R_NegInf;
-      if (total_rate > 0 && unif_rand() < remove_rate/total_rate)
-        n -= 1;
+      double drate = psi*chi*n;
+      double trate = drate+psi*(1-chi)*(n-ell);
+      ll += (trate > 0) ? log(trate) : R_NegInf;
+      if (trate > 0 && unif_rand() < drate/trate) n -= 1;
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov

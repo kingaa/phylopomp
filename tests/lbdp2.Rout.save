@@ -51,7 +51,7 @@ Type 'q()' to quit R.
 +   logmeanexp(se=TRUE,ess=TRUE) -> llpf
 > llpf
    est     se    ess 
-9.8715 0.0196 9.9657 
+9.8662 0.0284 9.9278 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -73,7 +73,7 @@ Type 'q()' to quit R.
 +   logmeanexp(se=TRUE) |>
 +   freeze(seed=2122992313) -> llpf; llpf
     est      se 
--7.6052  0.0201 
+-7.5990  0.0124 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
@@ -97,7 +97,7 @@ Type 'q()' to quit R.
 +   logmeanexp(se=TRUE) |>
 +   freeze(seed=1569852047) -> llpf; llpf
    est     se 
-2.1928 0.0143 
+2.2074 0.0266 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],

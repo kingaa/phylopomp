@@ -87,7 +87,7 @@ Using alpha for a discrete variable is not advised.
 +   freeze(seed=442131820) -> llpf
 > llpf
    est     se 
-5.2235 0.0194 
+5.2038 0.0227 
 > 
 > stopifnot(
 +   llex>llpf[1]-2*llpf[2],
