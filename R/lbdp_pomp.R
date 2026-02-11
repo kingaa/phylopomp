@@ -25,15 +25,3 @@ lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
     PACKAGE="phylopomp"
   )
 }
-
-encode_data <- function (data) {
-  data <- as.data.frame(data)
-  data$code <- as.integer(c(2,diff(data$lineages)))
-  data$code[data$event_type==0] <- 2L
-  data$code[data$event_type==3] <- -2L
-  stopifnot(
-    `misformatted data (1)`=all(data$event_type!=2 | data$code==1),
-    `misformatted data (2)`=all(data$event_type!=1 | data$code==0 | data$code==-1)
-  )
-  data
-}

@@ -11,18 +11,16 @@
 ##' \King2024
 ##' @export
 lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
-  x |>
-    lineages(prune=TRUE,obscure=TRUE) |>
-    encode_data() -> data
+  x |> gendat() -> gi
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
-  tf <- data$time[nrow(data)]
-  x0 <- data$time[1L]              ## root time
-  x <- data$time[data$code==1]     ## coalescence times
-  y <- data$time[data$code==-1]    ## tip samples
-  l0 <- data$lineages[1L]          ## number of roots
-  k <- sum(data$code==0)           ## number of inline samples
-
+  tf <- gi$nodetime[length(gi$nodetime)] ## final time
+  t <- gi$nodetime[-length(gi$nodetime)] ## node times
+  x0 <- t[1L]                            ## root time
+  x <- t[gi$nodetype==2L]                ## coalescence times
+  y <- t[gi$nodetype==1L & gi$saturation==0L] ## tip sample times
+  l0 <- sum(gi$nodetype==0L)                  ## number of roots
+  k <- sum(gi$nodetype==1L & gi$saturation==1L) ## number of inline samples
   if (length(y) != length(x)+l0)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov
 
