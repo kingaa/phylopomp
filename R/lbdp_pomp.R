@@ -7,9 +7,6 @@
 ##' @export
 lbdp_pomp <- function (x, lambda, mu, psi, chi = 0, n0 = 1, t0 = 0)
 {
-  chi <- as.numeric(chi)
-  if (length(chi) != 1L || !is.finite(chi) || chi < 0 || chi > 1)
-    pStop(sQuote("chi")," must be between 0 and 1.")
   x |> gendat() -> gi
   n0 <- round(n0)
   if (n0 < 0)

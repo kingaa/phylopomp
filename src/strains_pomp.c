@@ -166,7 +166,7 @@ void strains_gill
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event #nocov
-    break;			// #nocov
+    break;                      // #nocov
   case 0:                       // root
     switch (deme[parent]) {
     case STRAIN1:
@@ -175,8 +175,8 @@ void strains_gill
       ellI2 += 1; break;
     case STRAIN3:
       ellI3 += 1; break;
-    default:
-      assert(0); break;
+    default:                    // #nocov
+      assert(0); break;         // #nocov
     }
     break;
   case 1:                       // sample
@@ -200,8 +200,8 @@ void strains_gill
       ellI3 -= 1; I3 -= 1;
       ll += log(psi3);
       break;
-    default:
-      assert(0); break;
+    default:                    // #nocov
+      assert(0); break;         // #nocov
     }
     break;
   case 2:                       // branch point s=(1,1)
@@ -229,9 +229,8 @@ void strains_gill
       S -= 1; I3 += 1; ellI3 += 1;
       ll -= log(I3*(I3-1)/2);
       break;
-    default:
-      assert(0);
-      break;
+    default:                    // #nocov
+      assert(0); break;         // #nocov
     }
     S = (S > 0) ? S : 0;
     break;
@@ -270,9 +269,8 @@ void strains_gill
       case 5:                     // strain-3 recovery
         I3 -= 1; R += 1;
         break;
-      default:                    // #nocov
-        assert(0);                // #nocov
-        break;                    // #nocov
+      default:                  // #nocov
+        assert(0); break;       // #nocov
       }
       t += tstep;
       event_rate = EVENT_RATES;

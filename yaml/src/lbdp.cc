@@ -60,8 +60,8 @@ double lbdp_proc_t::event_rates (double *rate, int n) const {
   double total = 0;
   RATE_CALC(params.lambda * state.n);
   RATE_CALC(params.mu * state.n);
-  RATE_CALC(params.psi * params.chi * state.n);
-  RATE_CALC(params.psi * (1 - params.chi) * state.n);
+  RATE_CALC(params.chi * state.n);
+  RATE_CALC(params.psi * state.n);
   if (m != n) err("wrong number of events!");
   return total;
 }

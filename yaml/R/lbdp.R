@@ -8,8 +8,8 @@
 ##' @include getinfo.R
 ##' @param lambda per capita birth rate
 ##' @param mu per capita death rate
-##' @param psi per capita sampling rate
-##' @param chi probability that a sampled lineage is removed
+##' @param psi per capita non-destructive sampling rate
+##' @param chi per capita destructive sampling rate
 ##' @param n0 population size at time t0
 ##' @inheritParams sir
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.

@@ -8,8 +8,8 @@
 ##' @include getinfo.R
 ##' @param lambda per capita birth rate
 ##' @param mu per capita death rate
-##' @param psi per capita sampling rate
-##' @param chi probability that a sampled lineage is removed
+##' @param psi per capita non-destructive sampling rate
+##' @param chi per capita destructive sampling rate
 ##' @param n0 population size at time t0
 ##' @inheritParams sir
 ##' @return \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
@@ -28,9 +28,6 @@ runLBDP <- function (
   time, t0 = 0,
   lambda = 2, mu = 1, psi = 1, chi = 0, n0 = 5
 ) {
-  chi <- as.numeric(chi)
-  if (length(chi) != 1L || !is.finite(chi) || chi < 0 || chi > 1)
-    pStop(sQuote("chi")," must be between 0 and 1.")
   n0 <- round(n0)
   if (n0 < 0)
     pStop(sQuote("n0")," must be a nonnegative integer.")

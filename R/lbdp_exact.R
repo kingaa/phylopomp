@@ -11,9 +11,6 @@
 ##' \King2024
 ##' @export
 lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
-  chi <- as.numeric(chi)
-  if (length(chi) != 1L || !is.finite(chi) || chi < 0 || chi > 1)
-    pStop(sQuote("chi")," must be between 0 and 1.")
   x |> gendat() -> gi
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
@@ -27,15 +24,15 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   if (length(y) != length(x)+l0)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov
 
-  d <- sqrt((lambda-mu-psi)^2+4*lambda*psi) ## guaranteed to be real
-  a <- (lambda+mu+psi)/2/lambda
+  d <- sqrt((lambda-mu-psi-chi)^2+4*lambda*(psi+chi)) ## guaranteed to be real
+  a <- (lambda+mu+psi+chi)/2/lambda
   b <- d/2/lambda
 
   G <- function (t) {
     omega <- d*(t-tf)/2
     C <- d*cosh(omega)
     S <- sinh(omega)
-    (C+(lambda-mu+psi)*S)/(C+(lambda-mu-psi)*S)
+    (C+(lambda-mu+psi+chi)*S)/(C+(lambda-mu-psi-chi)*S)
   }
 
   H <- function (t) {
@@ -48,7 +45,7 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
     lfactorial(l0)+
     (n0-l0)*log(G(x0))+
     l0*log(H(x0))+
-    ifelse(k>0,k*sum(log(psi*(1-chi))),0)+
+    ifelse(k>0,k*sum(log(psi)),0)+
     sum(log(2*lambda*H(x)))+
-    sum(log(psi*((1-chi)*G(y)+chi)/H(y)))
+    sum(log((psi*G(y)+chi)/H(y)))
 }

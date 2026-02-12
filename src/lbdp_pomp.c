@@ -44,7 +44,7 @@ static double event_rates
     *penalty += alpha;
   }
   // sampling
-  *penalty += psi*n;
+  *penalty += (psi+chi)*n;
   assert(R_FINITE(event_rate));
   return event_rate;
 }
@@ -103,13 +103,12 @@ void lbdp_gill
   case 1:                       // sample
     assert(n >= ell);
     assert(ell >= 0);
-    assert(chi >= 0 && chi <= 1);
     if (sat[parent] == 1) {     // s=1
-      ll += log(psi*(1-chi));
+      ll += log(psi);
     } else if (sat[parent] == 0) { // s=0
       ell -= 1;
-      double drate = psi*chi*n;
-      double trate = drate+psi*(1-chi)*(n-ell);
+      double drate = chi*n;
+      double trate = drate+psi*(n-ell);
       ll += (trate > 0) ? log(trate) : R_NegInf;
       if (trate > 0 && unif_rand() < drate/trate) n -= 1;
     } else {

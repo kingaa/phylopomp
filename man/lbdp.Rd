@@ -26,9 +26,9 @@ lbdp_exact(x, lambda, mu, psi, chi = 0, n0 = 1)
 
 \item{mu}{per capita death rate}
 
-\item{psi}{per capita sampling rate}
+\item{psi}{per capita non-destructive sampling rate}
 
-\item{chi}{probability that a sampled lineage is removed}
+\item{chi}{per capita destructive sampling rate}
 
 \item{n0}{population size at time t0}
 

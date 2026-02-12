@@ -16,12 +16,12 @@ parameter:
     default: 1.0
   psi:
     name: psi
-    description: per capita sampling rate
+    description: per capita non-destructive sampling rate
     default: 1.0
     type: double
   chi:
     name: chi
-    description: probability that a sampled lineage is removed
+    description: per capita destructive sampling rate
     default: 0.0
     type: double
 ivp:
@@ -45,8 +45,8 @@ events:
     jump: state.n -= 1; death();
     rate: params.mu * state.n
   sample_death:
-    rate: params.psi * params.chi * state.n
+    rate: params.chi * state.n
     jump: state.n -= 1; sample_death();
   sample:
-    rate: params.psi * (1 - params.chi) * state.n
+    rate: params.psi * state.n
     jump: sample();

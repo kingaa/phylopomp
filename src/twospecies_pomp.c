@@ -329,7 +329,7 @@ void twospecies_gill
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event #nocov
-    break;			// #nocov
+    break;                      // #nocov
   case 0:                       // root
     // color lineages by sampling without replacement
     assert(sat[parent]==1);
@@ -429,8 +429,8 @@ void twospecies_gill
         } else {
           // the genealogy is incompatible with the state.
           // nevertheless, the state remains valid.
-          I1 += 1; N1 += 1; ell1 += 1;
-          ll += R_NegInf;
+          I1 += 1; N1 += 1; ell1 += 1; // #nocov
+          ll += R_NegInf;              // #nocov
         }
       } else {                  // s = (1,1)
         if (unif_rand() < 0.5) {
