@@ -1,7 +1,7 @@
 ##' @rdname lbdp
 ##' @include lbdp.R lbdp_pomp.R
 ##' @details
-##' \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process, conditioned on the population size at time 0.
+##' \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process with (optionally destructive) sampling, conditioned on the population size at time 0.
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
@@ -10,7 +10,10 @@
 ##'
 ##' \King2024
 ##' @export
-lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
+lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
+  chi <- as.numeric(chi)
+  if (length(chi) != 1L || !is.finite(chi) || chi < 0 || chi > 1)
+    pStop(sQuote("chi")," must be between 0 and 1.")
   x |> gendat() -> gi
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
@@ -45,7 +48,7 @@ lbdp_exact <- function (x, lambda, mu, psi, n0 = 1) {
     lfactorial(l0)+
     (n0-l0)*log(G(x0))+
     l0*log(H(x0))+
-    k*log(psi)+
+    ifelse(k>0,k*sum(log(psi*(1-chi))),0)+
     sum(log(2*lambda*H(x)))+
-    sum(log(psi*G(y)/H(y)))
+    sum(log(psi*((1-chi)*G(y)+chi)/H(y)))
 }

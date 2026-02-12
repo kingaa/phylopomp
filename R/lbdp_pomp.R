@@ -5,8 +5,11 @@
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
 ##' @export
-lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
+lbdp_pomp <- function (x, lambda, mu, psi, chi = 0, n0 = 1, t0 = 0)
 {
+  chi <- as.numeric(chi)
+  if (length(chi) != 1L || !is.finite(chi) || chi < 0 || chi > 1)
+    pStop(sQuote("chi")," must be between 0 and 1.")
   x |> gendat() -> gi
   n0 <- round(n0)
   if (n0 < 0)
@@ -15,13 +18,13 @@ lbdp_pomp <- function (x, lambda, mu, psi, n0 = 1, t0 = 0)
     data=NULL,
     t0=gi$nodetime[1L],
     times=gi$nodetime[-1L],
-    params=c(lambda=lambda,mu=mu,psi=psi,n0=n0),
+    params=c(lambda=lambda,mu=mu,psi=psi,chi=chi,n0=n0),
     userdata=gi,
     rinit="lbdp_rinit",
     dmeasure="lbdp_dmeas",
     rprocess=onestep("lbdp_gill"),
     statenames=c("n","ll","ell","node"),
-    paramnames=c("lambda","mu","psi","n0"),
+    paramnames=c("lambda","mu","psi","chi","n0"),
     PACKAGE="phylopomp"
   )
 }

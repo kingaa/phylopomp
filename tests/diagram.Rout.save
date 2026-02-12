@@ -192,6 +192,7 @@ parameter:
   lambda: 2.000000
   mu: 1.000000
   psi: 1.000000
+  chi: 0.000000
   n0: 5
 state:
   n: 11
@@ -382,6 +383,7 @@ parameter:
   lambda: 2.000000
   mu: 1.000000
   psi: 1.000000
+  chi: 0.000000
   n0: 5
 state:
   n: 6
@@ -586,6 +588,7 @@ parameter:
   lambda: 2.000000
   mu: 1.000000
   psi: 1.000000
+  chi: 0.000000
   n0: 5
 state:
   n: 11

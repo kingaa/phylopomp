@@ -4,7 +4,8 @@
 #define lambda  (__p[__parindex[0]])
 #define mu      (__p[__parindex[1]])
 #define psi     (__p[__parindex[2]])
-#define n0      (__p[__parindex[3]])
+#define chi     (__p[__parindex[3]])
+#define n0      (__p[__parindex[4]])
 #define n       (__x[__stateindex[0]])
 #define ll      (__x[__stateindex[1]])
 #define ell     (__x[__stateindex[2]])
@@ -102,11 +103,15 @@ void lbdp_gill
   case 1:                       // sample
     assert(n >= ell);
     assert(ell >= 0);
+    assert(chi >= 0 && chi <= 1);
     if (sat[parent] == 1) {     // s=1
-      ll += log(psi);
+      ll += log(psi*(1-chi));
     } else if (sat[parent] == 0) { // s=0
       ell -= 1;
-      ll += log(psi*(n-ell));
+      double drate = psi*chi*n;
+      double trate = drate+psi*(1-chi)*(n-ell);
+      ll += (trate > 0) ? log(trate) : R_NegInf;
+      if (trate > 0 && unif_rand() < drate/trate) n -= 1;
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov
