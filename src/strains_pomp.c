@@ -165,8 +165,8 @@ void strains_gill
 
   // singular portion of filter equation
   switch (nodetype[parent]) {
-  default:                      // non-genealogical event
-    break;
+  default:                      // non-genealogical event #nocov
+    break;			// #nocov
   case 0:                       // root
     switch (deme[parent]) {
     case STRAIN1:

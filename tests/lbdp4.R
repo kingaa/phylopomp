@@ -30,6 +30,16 @@ freeze(seed=1772991206,
   runLBDP(time=2,lambda=2,mu=1,psi=1,chi=0.4,n0=10)
 ) -> x
 
+try(x |> lbdp_exact(lambda=2,mu=1,psi=1,chi=1.5,n0=10))
+try(x |> lbdp_exact(lambda=2,mu=1,psi=1,chi=-1.5,n0=10))
+try(x |> lbdp_exact(lambda=2,mu=1,psi=1,chi=NA,n0=10))
+try(x |> lbdp_exact(lambda=2,mu=1,psi=1,chi=c(0.1,0.2),n0=10))
+
+try(x |> lbdp_pomp(lambda=2,mu=1,psi=1,chi=1.5,n0=10))
+try(x |> lbdp_pomp(lambda=2,mu=1,psi=1,chi=-1.5,n0=10))
+try(x |> lbdp_pomp(lambda=2,mu=1,psi=1,chi=NA,n0=10))
+try(x |> lbdp_pomp(lambda=2,mu=1,psi=1,chi=c(0.1,0.2),n0=10))
+
 stopifnot(
   `lbdp_exact supports chi in (0,1)`=is.finite(
     x |> lbdp_exact(lambda=2,mu=1,psi=1,chi=0.4,n0=10)

@@ -114,8 +114,8 @@ void sirs_gill
 
   // singular portion of filter equation
   switch (nodetype[parent]) {
-  default:                      // non-genealogical event
-    break;
+  default:                      // non-genealogical event #nocov
+    break;			// #nocov
   case 0:                       // root
     ellI += 1;
     break;
