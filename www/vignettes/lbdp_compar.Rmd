@@ -195,3 +195,5 @@ params |>
     legend.background=element_rect(fill="white")
   )
 ```
+
+## References

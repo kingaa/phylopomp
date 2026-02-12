@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-	
+
 ```{r knitr_setup,include=FALSE,purl=FALSE,cache=FALSE}
 library(knitr)
 opts_chunk$set(
@@ -40,7 +40,7 @@ options(
   encoding="UTF-8"
 )
 ```
- 
+
 ```{r packages,include=FALSE,cache=FALSE}
 library(tidyverse)
 library(pomp)
@@ -54,7 +54,7 @@ theme_set(theme_bw(base_family="serif"))
 options(dplyr.summarise.inform=FALSE)
 set.seed(1159254136)
 ```
- 
+
 ## One simulation of the MGP
 
 The Moran genealogy process is described in @King2020.

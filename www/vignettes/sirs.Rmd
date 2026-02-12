@@ -83,7 +83,7 @@ bake(
 sim |>
   sir_pomp(
     Beta=4,gamma=2,psi=1,omega=1,
-    S0=97,I0=3,R0=3,t0=0
+    S0=97,I0=3,R0=3
   ) -> sirs_pomp
 ```
 
