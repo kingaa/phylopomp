@@ -13,7 +13,7 @@ runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, chi = 0, n0 = 5)
 
 continueLBDP(object, time, lambda = NA, mu = NA, psi = NA, chi = NA)
 
-lbdp_pomp(x, lambda, mu, psi, chi = 0, n0 = 1, t0 = 0)
+lbdp_pomp(x, lambda, mu, psi, chi = 0, n0 = 1)
 
 lbdp_exact(x, lambda, mu, psi, chi = 0, n0 = 1)
 }

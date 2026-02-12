@@ -5,7 +5,7 @@
 ##' @importFrom pomp pomp onestep covariate_table
 ##' @inheritParams lbdp_exact
 ##' @export
-lbdp_pomp <- function (x, lambda, mu, psi, chi = 0, n0 = 1, t0 = 0)
+lbdp_pomp <- function (x, lambda, mu, psi, chi = 0, n0 = 1)
 {
   x |> gendat() -> gi
   n0 <- round(n0)

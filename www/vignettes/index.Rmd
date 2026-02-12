@@ -95,6 +95,7 @@ dt {
 ### Checking the theoretical formulae for several models.
 
 - [Linear birth-death-sampling process](./lbdp_compar.html)
+- [Linear birth-death-sampling with destructive sampling](./lbdp_destruc.html)
 - [Moran genealogy process](./moran.html)
 - [SEIR genealogy process](./seir.html)
 - [SIRS likelihoods via particle filter](./sirs.html)

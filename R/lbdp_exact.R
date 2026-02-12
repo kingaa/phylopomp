@@ -16,12 +16,12 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
   tf <- gi$nodetime[length(gi$nodetime)] ## final time
   t <- gi$nodetime[-length(gi$nodetime)] ## node times
-  x0 <- t[1L]                            ## root time
-  x <- t[gi$nodetype==2L]                ## coalescence times
-  y <- t[gi$nodetype==1L & gi$saturation==0L] ## tip sample times
-  l0 <- sum(gi$nodetype==0L)                  ## number of roots
-  k <- sum(gi$nodetype==1L & gi$saturation==1L) ## number of inline samples
-  if (length(y) != length(x)+l0)
+  t0 <- t[1L]                            ## root time
+  tbr <- t[gi$nodetype==2L]              ## coalescence times
+  ttp <- t[gi$nodetype==1L & gi$saturation==0L] ## tip sample times
+  nrt <- sum(gi$nodetype==0L)                   ## number of roots
+  nin <- sum(gi$nodetype==1L & gi$saturation==1L) ## number of inline samples
+  if (length(ttp) != length(tbr)+nrt)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov
 
   d <- sqrt((lambda-mu-psi-chi)^2+4*lambda*(psi+chi)) ## guaranteed to be real
@@ -41,11 +41,11 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
     1/g/g
   }
 
-  lchoose(n0,l0)+
-    lfactorial(l0)+
-    (n0-l0)*log(G(x0))+
-    l0*log(H(x0))+
-    ifelse(k>0,k*sum(log(psi)),0)+
-    sum(log(2*lambda*H(x)))+
-    sum(log((psi*G(y)+chi)/H(y)))
+  lchoose(n0,nrt)+
+    lfactorial(nrt)+
+    (n0-nrt)*log(G(t0))+
+    nrt*log(H(t0))+
+    ifelse(nin>0,nin*sum(log(psi)),0)+
+    sum(log(2*lambda*H(tbr)))+
+    sum(log((psi*G(ttp)+chi)/H(ttp)))
 }
