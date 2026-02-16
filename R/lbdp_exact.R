@@ -24,20 +24,20 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   if (length(ttp) != length(tbr)+nrt)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov
 
-  d <- sqrt((lambda-mu-psi-chi)^2+4*lambda*(psi+chi)) ## guaranteed to be real
-  a <- (lambda+mu+psi+chi)/2/lambda
-  b <- d/2/lambda
+  a <- lambda-mu+psi+chi
+  b <- lambda-mu-psi-chi
+  d <- sqrt(b*b+4*lambda*(psi+chi)) ## guaranteed to be real
 
   G <- function (t) {
     omega <- d*(t-tf)/2
     C <- d*cosh(omega)
     S <- sinh(omega)
-    (C+(lambda-mu+psi+chi)*S)/(C+(lambda-mu-psi-chi)*S)
+    (C+a*S)/(C+b*S)
   }
 
   H <- function (t) {
     omega <- d*(t-tf)/2
-    g <- cosh(omega)+(1-a)/b*sinh(omega)
+    g <- cosh(omega)+b/d*sinh(omega)
     1/g/g
   }
 
