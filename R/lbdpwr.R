@@ -14,34 +14,27 @@
 ##' @param psi per capita sampling rate.
 ##' @param rhoA per capita reassortment rate for segment A
 ##' @param rhoB per capita reassortment rate for segment B
-##' @param frac fraction of batch sampling
+##' @param p probability of sample termination (0 = lineage continues, 1 = lineage dies)
 ##' @param n0 initial population size
 ##' @param time final time
 ##' @param t0 initial time
-##' @param cont logical; continue to infect after being sampled?
 ##'
 ##' @return An object of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDPwr}.
 ##'
-##' @example examples/lbdpwr.R
 NULL
 
 ##' @rdname lbdpwr
 ##' @export
 runLBDPwr <- function (
-  time,  t0 = 0,
+  time, t0 = 0,
   lambda = 2, mu = 1, psi = 1,
-  rhoA = 0, rhoB=0, frac = 0,
-  n0 = 5, cont = TRUE
+  rhoA = 0, rhoB = 0, p = 1,
+  n0 = 5
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,frac=frac)
+  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,p=p)
   ivps <- c(n0=n0)
-  if (cont) {
-    x <- .Call(P_makeLBDPwr,params,ivps,t0)
-    x <- .Call(P_runLBDPwr,x,time)
-  } else {
-    x <- .Call(P_makeLBDPwr2,params,ivps,t0)
-    x <- .Call(P_runLBDPwr2,x,time)
-  }
+  x <- .Call(P_makeLBDPwr2,params,ivps,t0)
+  x <- .Call(P_runLBDPwr2,x,time)
   structure(x,model="LBDPwr",class="gpsim")
 }
 
@@ -50,14 +43,10 @@ runLBDPwr <- function (
 ##' @export
 continueLBDPwr <- function (
   object, time, lambda = NA, mu = NA, psi = NA,
-  rhoA = NA, rhoB = NA, frac = NA, cont = TRUE
+  rhoA = NA, rhoB = NA, p = NA
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,frac=frac)
-  if (cont) {
-    x <- .Call(P_reviveLBDPwr,object,params)
-    .Call(P_runLBDPwr,x,time)
-  } else {
-    x <- .Call(P_reviveLBDPwr2,object,params)
-    .Call(P_runLBDPwr2,x,time)
-  }
+  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,p=p)
+  x <- .Call(P_reviveLBDPwr2,object,params)
+  x <- .Call(P_runLBDPwr2,x,time)
+  structure(x,model="LBDPwr",class="gpsim")
 }

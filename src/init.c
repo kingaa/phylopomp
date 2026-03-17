@@ -1,36 +1,25 @@
 #include "init.h"
 
-// edit this file to register new model routines with R
-// for each model, there must be
-// one DECLARATIONS line and one METHODS line.
+DECLARATIONS(LBDPwr2);
+DECLARATIONS(SEI2Rwr);
 
-DECLARATIONS(SIR)
-DECLARATIONS(SIIR)
-DECLARATIONS(LBDP)
-DECLARATIONS(Moran)
-DECLARATIONS(SI2R)
-DECLARATIONS(SEIR)
-DECLARATIONS(SIRwr)
-DECLARATIONS(Moranwr)
-DECLARATIONS(LBDPwr)
-DECLARATIONS(LBDPwr2)
-  
+// bare genealogy functions
+SEXP curtail (SEXP State, SEXP Time, SEXP Troot);
+SEXP yaml (SEXP State);
+SEXP bare_gendat (SEXP State, SEXP Obscure);
+SEXP parse_newick (SEXP X, SEXP T0, SEXP Tf);
+
 static const R_CallMethodDef callMethods[] = {
-  METHODS(SIR),
-  METHODS(SIIR),
-  METHODS(LBDP),
-  METHODS(Moran),
-  METHODS(SI2R),
-  METHODS(SEIR),
-  METHODS(SIRwr),
-  METHODS(Moranwr),
-  METHODS(LBDPwr),
   METHODS(LBDPwr2),
+  METHODS(SEI2Rwr),
+  {"curtail", (DL_FUNC) &curtail, 3},
+  {"yaml", (DL_FUNC) &yaml, 1},
+  {"bare_gendat", (DL_FUNC) &bare_gendat, 2},
+  {"parse_newick", (DL_FUNC) &parse_newick, 3},
   {NULL, NULL, 0}
 };
 
-void R_init_phylopomp (DllInfo *info) {
-  // Register routines
+void R_init_phylopompRe (DllInfo *info) {
   R_registerRoutines(info,NULL,callMethods,NULL,NULL);
-  R_useDynamicSymbols(info,TRUE);
+  R_useDynamicSymbols(info,FALSE);
 }

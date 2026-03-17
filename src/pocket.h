@@ -8,36 +8,39 @@
 #include <unordered_map>
 #include <string>
 #include <cstring>
-#include "internal.h"
 #include "ball.h"
+#include "internal.h"
 
 //! Ordering for balls in pockets.
 
 //! Without this, order depends on machine state,
 //! defeating reproducibility.
-struct ball_compare {
+//! The correctness of the algorithms depends on this order.
+struct ball_order {
   bool operator() (const ball_t* a, const ball_t* b) const {
-    return compare(a,b);
-  }
+    return (a->color < b->color) ||
+      ((a->color == b->color) && (a->uniq < b->uniq));
+  };
 };
 
-typedef typename std::set<ball_t*,ball_compare>::const_iterator ball_it;
+typedef typename std::set<ball_t*,ball_order>::const_iterator ball_it;
+typedef typename std::set<ball_t*,ball_order>::const_reverse_iterator ball_rev_it;
 
 //! A pocket is a set of balls.
 
 //! An order relation among balls ensures the uniqueness of the internal representation.
-class pocket_t : public std::set<ball_t*,ball_compare> {
-  
+class pocket_t : public std::set<ball_t*,ball_order> {
+
 private:
-  
+
   //! delete balls and clear pocket
   void clean (void) {
-    for (ball_it i = begin(); i != end(); i++) delete *i;
+    for (ball_t *b : *this) delete b;
     clear();
   };
 
 public:
-  
+
   // SERIALIZATION
   //! size of binary serialization
   size_t bytesize (void) const {
@@ -47,8 +50,8 @@ public:
   friend raw_t* operator>> (const pocket_t &p, raw_t *o) {
     size_t psize = p.size();
     memcpy(o,&psize,sizeof(size_t)); o += sizeof(size_t);
-    for (ball_it i = p.begin(); i != p.end(); i++) 
-      o = (**i >> o);
+    for (ball_t *i : p)
+      o = (*i >> o);
     return o;
   };
   //! binary deserialization.
@@ -69,19 +72,18 @@ protected:
   //! Needed in deserialization.
   //! Inform all balls as to their holder.
   void repair_holder (node_t* p) {
-    for (ball_it i = begin(); i != end(); i++) {
-      (*i)->holder() = p;
+    for (ball_t *b : *this) {
+      b->holder() = p;
     }
   };
-  
+
 public:
   //! Needed in deserialization.
   //! This function repairs the links green balls and their names.
   void repair_owners (const std::unordered_map<name_t,node_t*>& node_name,
                       std::unordered_map<name_t,ball_t*> *ball_name) {
     std::unordered_map<name_t,node_t*>::const_iterator n;
-    for (ball_it i = begin(); i != end(); i++) {
-      ball_t *b = *i;
+    for (ball_t *b : *this) {
       if (b->is(green)) {
         n = node_name.find(b->uniq);
         if (n != node_name.end()) {
@@ -89,12 +91,13 @@ public:
           b->owner() = p;
           ball_name->insert({b->uniq,b});
         } else {
-          err("in '%s': cannot find ball %ld (pocket.h)",__func__,b->uniq); // #nocov
+          err("in '%s' (%s line %d): cannot find ball %zd", // #nocov
+              __func__,__FILE__,__LINE__,b->uniq);          // #nocov
         }
       }
     }
   };
-  
+
 public:
 
   //! destructor
@@ -103,7 +106,7 @@ public:
   };
 
 public:
-  
+
   //! does this node hold the given ball?
   bool holds (ball_t *b) const {
     ball_it i = find(b);
@@ -117,24 +120,30 @@ public:
     }
     return result;
   };
+  //! retrieve the first ball
+  ball_t* first_ball (void) const {
+    return *cbegin();
+  };
   //! retrieve the last ball
   ball_t* last_ball (void) const {
     return *crbegin();
   };
   //! retrieve the first ball of the specified color.
   ball_t* ball (const color_t c) const {
-    for (ball_it i = begin(); i != end(); i++) {
-      if ((*i)->color == c) return *i;
+    for (ball_t *b : *this) {
+      if (b->color == c) return b;
     }
-    err("no ball of color %s",colores[c]); // # nocov
+    err("in '%s' (%s line %d): no ball of color %s", // # nocov
+        __func__,__FILE__,__LINE__,colores[c]);      // # nocov
     return 0;
   };
   //! return a pointer to another ball
   ball_t* other (const ball_t *b) const {
-    for (ball_it i = begin(); i != end(); i++) {
-      if (*i != b) return *i;
+    for (ball_t *a : *this) {
+      if (a != b) return a;
     }
-    err("error in '%s': there is no other.",__func__); // # nocov
+    err("error in '%s' (%s line %d): there is no other.", // # nocov
+        __func__,__FILE__,__LINE__);                      // # nocov
     return 0;
   };
   //! human-readable info
@@ -153,7 +162,7 @@ public:
     SEXP o;
     PROTECT(o = NEW_LIST(size()));
     int k = 0;
-    for (ball_it i = begin(); i != end(); i++) {
+    for (ball_rev_it i = crbegin(); i != crend(); i++) {
       SET_ELEMENT(o,k++,(*i)->structure());
     }
     UNPROTECT(1);
@@ -163,8 +172,8 @@ public:
   std::string yaml (std::string tab = "") const {
     std::string o = "";
     std::string t = tab + "  ";
-    for (ball_it i = begin(); i != end(); i++) {
-      o += tab + "- " + (*i)->yaml(t);
+    for (ball_t *b : *this) {
+      o += tab + "- " + b->yaml(t);
     }
     return o;
   };

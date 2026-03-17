@@ -4,5 +4,5 @@
 ##' @method print gpsim
 ##' @export
 print.gpsim <- function (x, ...) {
-  cat("<gpsim for model ",sQuote(as.character(attr(x,"model"))),">\n",sep="")
+  cat("<gpsim for",as.character(attr(x,"model")),"model>\n",sep=" ")
 }

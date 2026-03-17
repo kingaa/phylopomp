@@ -1,46 +1,20 @@
-simulate("LBDPwr",time=4) |> plot(points=TRUE)
+## Simulate a linear birth-death process with reassortment
+x <- runLBDPwr(time=5, lambda=2, mu=1, psi=1,
+               rhoA=0.5, rhoB=0.5, n0=5)
+x
 
-simulate("LBDPwr",lambda=2,mu=1,psi=3,rhoA=.5,rhoB=0,n0=1,time=1) |>
-  simulate(time=10,lambda=1) |>
-  plot(points=TRUE)
+## Extract per-segment Newick trees
+newick(x)
 
-simulate("LBDPwr",rhoA=.5,time=4) |>
-  lineages() |>
-  plot()
+## Extract genealogy data frames
+gendat(x)
 
-# a pure birth process
-simulate("LBDPwr",lambda=1,mu=0,psi=3,rhoA=1,rhoB=0,n0=1,time=4) |>
-  plot(points=TRUE)
+## Extract lineage counts
+lineages(x)
 
-# a pure death process
-## the `coalesent event` is exactly the reassortment
-simulate("LBDPwr",lambda=0,mu=1,psi=3,rhoA=1,rhoB=0,n0=1e2,time=4) |>
-  plot(points=TRUE)
+## Continue simulation
+y <- continueLBDPwr(x, time=10)
+y
 
-simulate("LBDPwr",lambda=2,mu=1,psi=0,rhoA=1,rhoB=0,frac=.2,n0=10,time=2) |>
-  batch() |>
-  plot(points=TRUE)
-
-simulate("LBDPwr",time=2,cont=FALSE) |> plot(points=TRUE)
-
-simulate("LBDPwr",lambda=2,mu=1,psi=.5,rhoA=.5,rhoB=0,n0=1,time=1,cont=FALSE) |>
-  simulate(time=10,lambda=1) |>
-  plot(points=TRUE)
-
-simulate("LBDPwr",time=4,cont=FALSE) |>
-  lineages() |>
-  plot()
-
-# a pure birth process
-simulate("LBDPwr",lambda=1,mu=0,psi=3,rhoA=1,rhoB=0,n0=1,time=4,cont=FALSE) |>
-  plot(points=TRUE)
-
-# a pure death process
-## the `coalesent event` is exactly the reassortment
-simulate("LBDPwr",lambda=0,mu=1,psi=3,rhoA=1,rhoB=0,n0=1e2,time=4,cont=FALSE) |>
-  plot(points=TRUE)
-
-simulate("LBDPwr",lambda=2,mu=1,psi=0,rhoA=1,rhoB=0,frac=.2,n0=10,time=2) |>
-  batch() |>
-  plot(points=TRUE)
-
+## Extract bare per-segment genealogies
+geneal(x)

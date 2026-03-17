@@ -1,42 +1,30 @@
 Package: phylopomp
 Type: Package
-Title: Phylodynamic Inference for POMP Models
-Version: 0.1.1.0
-Date: 2022-03-07
-Authors@R: c(person(given=c("Aaron","A."),family="King",
-		role=c("aut","cre"),email="kingaa@umich.edu"),
-	  person(given=c("Qianying"),family="Lin",role=c("ctb"))
+Title: Phylodynamic Inference for POMP Models with Reassortment
+Version: 0.1.0
+Date: 2026-03-04
+Author: Qianying Lin [aut, cre], Aaron A. King [aut]
+Maintainer: Qianying Lin <lin.5268@osu.edu>
+Authors@R: c(person(given=c("Aaron","A."),family="King",role=c("aut","cre"),email="kingaa@umich.edu",comment=c(ORCID="0000-0001-6159-3207")),
+	  person(given=c("Qianying"),family="Lin",role=c("aut"),comment=c(ORCID="0000-0001-8620-9910"))
 	  )
-Description: Tools for phylodynamic analysis.
-Depends: R(>= 4.1.0)
-Imports: grid, ggtree, yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp, cowplot
+Description: Simulation of Markov genealogy processes with multi-segment
+  reassortment support. Extends the phylopomp framework to handle multiple
+  genealogies representing different viral segments, enabling simulation and
+  inference of reassortment events in segmented viruses such as influenza.
+Depends: R(>= 4.5)
+Imports:
+  methods,
+  pomp(>= 6.1),
+  ape,
+  cowplot,
+  ggplot2,
+  ggtree,
+  dplyr,
+  tibble,
+  tidyr,
+  scales
 LinkingTo: pomp
-Suggests: tidyverse, magrittr, doParallel, doRNG, broom
 License: GPL-3
-LazyData: true
-Contact: kingaa at umich dot edu
 Encoding: UTF-8
-RoxygenNote: 7.2.0
-Collate: 
-    'package.R'
-    'aaa.R'
-    'getinfo.R'
-    'sirwr.R'
-    'moranwr.R'
-    'lbdpwr.R'
-    'si2r.R'
-    'siir.R'
-    'moran.R'
-    'seir.R'
-    'sir.R'
-    'lbdp.R'
-    'batch.R'
-    'diagram.R'
-    'foreach.R'
-    'plot.R'
-    'lineages.R'
-    'newick2df.R'
-    'pomp.R'
-    'print.R'
-    'simulate.R'
-    'yaml.R'
+RoxygenNote: 7.3.2

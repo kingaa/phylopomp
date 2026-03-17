@@ -1,0 +1,30 @@
+// Parser for Newick code
+// Returns a genealogy in the phylopompRe format
+
+#include "genealogy.h"
+#include "generics.h"
+#include "internal.h"
+
+extern "C" {
+
+  SEXP parse_newick (SEXP X, SEXP T0, SEXP Tf) {
+    PROTECT(X = AS_CHARACTER(X));
+    PROTECT(T0 = AS_NUMERIC(T0));
+    PROTECT(Tf = AS_NUMERIC(Tf));
+    double t0 = *REAL(T0);
+    double tf = *REAL(Tf);
+    std::string x = CHAR(STRING_ELT(X,0));
+    genealogy_t G(t0);
+    G.parse(x,t0);
+    if (!ISNA(tf)) {
+      G.curtail(tf,t0);
+    }
+    G.trace_lineages();
+    SEXP out;
+    PROTECT(out = serial(G));
+    SET_ATTR(out,install("class"),mkString("gpgen"));
+    UNPROTECT(4);
+    return out;
+  }
+
+}

@@ -27,10 +27,9 @@ protected:
   static const size_t ndeme = NDEME;
 
 protected:
-  // MEMBER DATA  
+  // MEMBER DATA
   slate_t next;                 // time of next event
   size_t event;                 // mark of next event
-  slate_t t0;                   // initial time
   slate_t current;              // current time
   state_t state;                // current state
   parameters_t params;          // model parameters
@@ -40,16 +39,16 @@ private:
   void clean (void) {};         // memory cleanup
 
 public:
-  
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
-    return 3*sizeof(slate_t) + sizeof(size_t)
+    return 2*sizeof(slate_t) + sizeof(size_t)
       + sizeof(state_t) + sizeof(parameters_t);
   };
   //! binary serialization
   friend raw_t* operator>> (const popul_proc_t &X, raw_t *o) {
-    slate_t A[3]; A[0] = X.t0; A[1] = X.current; A[2] = X.next;
+    slate_t A[2]; A[0] = X.current; A[1] = X.next;
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,&X.event,sizeof(size_t)); o += sizeof(size_t);
     memcpy(o,&X.state,sizeof(state_t)); o += sizeof(state_t);
@@ -59,9 +58,9 @@ public:
   //! binary deserialization
   friend raw_t* operator>> (raw_t *o, popul_proc_t &X) {
     X.clean();
-    slate_t A[3];
+    slate_t A[2];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
-    X.t0 = A[0]; X.current = A[1]; X.next = A[2]; 
+    X.current = A[0]; X.next = A[1];
     memcpy(&X.event,o,sizeof(size_t)); o += sizeof(size_t);
     memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
@@ -74,7 +73,7 @@ public:
   //!  t0 = initial time
   popul_proc_t (double t0 = 0) {
     clean();
-    next = current = t0 = slate_t(t0);
+    next = current = slate_t(t0);
     event = 0;
   };
   //! constructor from serialized binary form
@@ -84,14 +83,16 @@ public:
   //! copy constructor
   popul_proc_t (const popul_proc_t & X) {
     raw_t *o = new raw_t[X.bytesize()];
-    X >> o >> *this;
+    X >> o;
+    o >> *this;
     delete[] o;
   };
   //! copy assignment operator
   popul_proc_t & operator= (const popul_proc_t & X) {
     clean();
     raw_t *o = new raw_t[X.bytesize()];
-    X >> o >> *this;
+    X >> o;
+    o >> *this;
     delete[] o;
     return *this;
   };
@@ -105,15 +106,11 @@ public:
   };
 
 public:
-  
+
   // INFORMATION EXTRACTORS
   //! get current time.
   slate_t time (void) const {
     return current;
-  };
-  //! get zero time.
-  slate_t timezero (void) const {
-    return t0;
   };
 
 public:
@@ -121,8 +118,8 @@ public:
   virtual void valid (void) const {};
 
 public:
-  
-  //! set parameters 
+
+  //! set parameters
   void update_params (double*, int);
   //! set initial-value parameters
   void update_IVPs (double*, int);
@@ -132,8 +129,6 @@ public:
   virtual void rinit (void) = 0;
   //! makes a jump
   virtual void jump (int e) = 0;
-  //! set an ending pose
-  virtual void batch (void) = 0;
   //! machine/human readable info
   std::string yaml (std::string tab) const;
 
@@ -143,21 +138,31 @@ public:
   void update_clocks (void) {
     double rate[nevent];
     double total_rate = event_rates(rate,nevent);
-    if (total_rate > 0) {
-      next = current+rexp(1/total_rate);
+    if (R_FINITE(total_rate)) {
+      if (total_rate > 0) {
+        next = current+rexp(1/total_rate);
+      } else {
+        next = R_PosInf;
+      }
     } else {
-      next = R_PosInf;
+      for (event = 0; event < nevent; event++) {
+        if (!R_FINITE(rate[event]))
+          Rprintf("in '%s' (%s line %d): invalid event rate[%zd]=%lg\n",
+                  __func__,__FILE__,__LINE__,event,rate[event]);
+      }
+      err("in '%s' (%s line %d): invalid total event rate=%lg",
+          __func__,__FILE__,__LINE__,total_rate);
     }
     double u = runif(0,total_rate);
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-        err("in '%s': invalid rate[%ld]=%lg",__func__,event,rate[event]); // #nocov
+        err("in '%s' (%s line %d): invalid rate[%zd]=%lg", // #nocov
+            __func__,__FILE__,__LINE__,event,rate[event]); // #nocov
       u -= rate[event];
       event++;
     }
-    if (event >= nevent)
-      err("in '%s': invalid event %ld!",__func__,event); // #nocov
+    assert(event < nevent);
   };
 
   //! run process to a specified time.

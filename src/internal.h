@@ -1,19 +1,22 @@
-#ifndef _PHYLOPOMP_INTERNAL_H_
-#define _PHYLOPOMP_INTERNAL_H_
+#ifndef _PHYLOPOMPRE_INTERNAL_H_
+#define _PHYLOPOMPRE_INTERNAL_H_
+
+#define R_NO_REMAP
 
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
-#include <Rinternals.h>
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
+
+#ifdef __cplusplus
+#include <cassert>
+#else
+#include <assert.h>
+#endif
 
 #ifndef STANDALONE
 
-#define err(...) errorcall(R_NilValue,__VA_ARGS__)
-#define warn(...) warningcall(R_NilValue,__VA_ARGS__)
+#define err(...) Rf_errorcall(R_NilValue,__VA_ARGS__)
+#define warn(...) Rf_warningcall(R_NilValue,__VA_ARGS__)
 #define rprint(S) Rprintf("%s\n",(S).c_str())
 
 #else
@@ -26,75 +29,68 @@
 
 #endif
 
-typedef Rbyte raw_t; // must match with R's 'Rbyte' (see Rinternals.h)
+#ifdef __cplusplus
+
+#define mkChar Rf_mkChar
+#define mkString Rf_mkString
+#define ScalarInteger Rf_ScalarInteger
+#define ScalarReal Rf_ScalarReal
+#define install Rf_install
+#define isNull Rf_isNull
+
+#endif
+
+typedef Rbyte raw_t;
 typedef double slate_t;
 typedef size_t name_t;
 
-inline SEXP trueSEXP (void) {
-  SEXP x;
-  PROTECT(x = NEW_LOGICAL(1));
-  *LOGICAL(x) = 1;
-  UNPROTECT(1);
-  return x;
-}
-
-inline SEXP falseSEXP (void) {
-  SEXP x;
-  PROTECT(x = NEW_LOGICAL(1));
-  *LOGICAL(x) = 0;
-  UNPROTECT(1);
-  return x;
-}
-
 // interface with R's integer RNG
-inline int random_integer (int n) {
+static inline int random_integer (int n) {
   return (int) floor(R_unif_index((double) n));
 }
 
-// whether an element in an array
-inline bool anyof (name_t* arr, size_t len, name_t elem) {
+// select n of the first N integers at random
+static inline void random_sample_wo_repl (int *samples, int N, int n) {
+  int k = 0;
+  int m = 0;
+  while (m < n && k < N) {
+    int u = random_integer(N-k);
+    if (u < n-m) {
+      samples[m++] = k;
+    }
+    k++;
+  }
+}
+
+// whether an element is in an array
+static inline bool anyof (name_t* arr, size_t len, name_t elem) {
   for (name_t k = 0; k < len; k++) {
     if (elem == arr[k]) return true;
   }
   return false;
 }
 
-// sample random numbers; Fisher-Yates algorithm
-inline void swap_elem (name_t *a, name_t *b) {
-  name_t temp = *a;
-  *a = *b;
-  *b = temp;
-}
-
-inline void random_numbers (name_t* out, size_t len, size_t n) {
-  if (n > len)  err("in '%s': exceeding size!",__func__);
-  name_t i;
-  name_t* arr = R_Calloc(len,name_t);
-  for (i = 0; i < len; i++) arr[i] = i;
-  srand(time(NULL));
-  for (i = len - 1; i > 0; i--)  {
-    // Pick a random index from 0 to i
-    name_t j = rand() % (i+1);
-    // Swap arr[i] with the element at random index
-    swap_elem(&arr[i], &arr[j]);
-  }
-  for (i = 0; i < n; i++) {
-    out[i] = arr[i];
-  }
-  R_Free(arr);
-}
-
-// compare integers
-inline int compare_int (const void* a, const void* b) {
-  return (*(int*)a - *(int*)b);
-}
-
 // helper function for filling a return list
-inline int set_list_elem (SEXP list, SEXP names, SEXP element,
-                          const char *name, int pos) {
+static inline int set_list_elem
+(
+ SEXP list, SEXP names, SEXP element,
+ const char *name, int pos
+ ) {
   SET_ELEMENT(list,pos,element);
-  SET_STRING_ELT(names,pos,mkChar(name));
+  SET_STRING_ELT(names,pos,Rf_mkChar(name));
   return ++pos;
+}
+
+static inline int rcateg (double erate, double *rate, int nrate) {
+  double u = erate*unif_rand();
+  int e = 0;
+  while (u > rate[e] && e < nrate) {
+    if (rate[e] < 0)
+      err("in '%s': invalid rate rate[%d]=%lg",__func__,e,rate[e]);
+    u -= rate[e++];
+  }
+  assert(e!=nrate);
+  return e;
 }
 
 #endif

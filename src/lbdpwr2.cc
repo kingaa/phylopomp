@@ -1,4 +1,4 @@
-// LBDPwr2: Linear birth-death-sampling model with reassortment, but not direct-descent (C++)
+// LBDPwr2: Linear birth-death-sampling model with reassortment (C++)
 // two segments
 #include "master.h"
 #include "popul_proc.h"
@@ -16,27 +16,27 @@ typedef struct {
   double psi;
   double rhoA;
   double rhoB;
-  double frac;
+  double p;       // probability of sample termination
   int n0;
 } lbdpwr2_parameters_t;
 
 using lbdpwr2_proc_t = popul_proc_t<lbdpwr2_state_t,lbdpwr2_parameters_t,5>;
-using lbdpwr2_genealogy_t = master_t<lbdpwr2_proc_t,1,2,true>;
+using lbdpwr2_genealogy_t = master_t<lbdpwr2_proc_t,1,2>;
 
 template<>
 std::string lbdpwr2_proc_t::yaml (std::string tab) const {
   std::string t = tab + "  ";
   std::string p = tab + "parameter:\n"
-  + YAML_PARAM(lambda)
+    + YAML_PARAM(lambda)
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
     + YAML_PARAM(rhoA)
     + YAML_PARAM(rhoB)
-    + YAML_PARAM(frac)
+    + YAML_PARAM(p)
     + YAML_PARAM(n0);
-    std::string s = tab + "state:\n"
+  std::string s = tab + "state:\n"
     + YAML_STATE(n);
-    return p+s;
+  return p+s;
 }
 
 template<>
@@ -47,7 +47,7 @@ void lbdpwr2_proc_t::update_params (double *p, int n) {
   PARAM_SET(psi);
   PARAM_SET(rhoA);
   PARAM_SET(rhoB);
-  PARAM_SET(frac);
+  PARAM_SET(p);
   if (m != n) err("wrong number of parameters!");
 }
 
@@ -65,13 +65,14 @@ double lbdpwr2_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.lambda * state.n);
   RATE_CALC(params.mu * state.n);
   RATE_CALC(params.psi * state.n);
-  if (state.n > 1)  {
+  if (state.n > 1) {
     RATE_CALC(params.rhoA * state.n);
     RATE_CALC(params.rhoB * state.n);
-    if (m != n) err("wrong number of events!");
   } else {
-    if (m != n-2) err("wrong number of events!");
+    rate[m++] = 0.0;
+    rate[m++] = 0.0;
   }
+  if (m != n) err("wrong number of events!");
   return total;
 }
 
@@ -92,7 +93,7 @@ void lbdpwr2_genealogy_t::jump (int event) {
     state.n -= 1; death();
     break;
   case 2:
-    state.n -= 1; sample();
+    if (sample(0, params.p)) state.n -= 1;
     break;
   case 3:
     seg[0] = 0UL;
@@ -103,14 +104,9 @@ void lbdpwr2_genealogy_t::jump (int event) {
     reassort(0,0,seg,1);
     break;
   default:
-    err("in %s: c'est impossible! (%ld)",__func__,event);
-  break;
+    err("in %s: c'est impossible! (%d)",__func__,event);
+    break;
   }
-}
-
-template<>
-void lbdpwr2_genealogy_t::batch (void) {
-  batch_sample(params.frac);
 }
 
 GENERICS(LBDPwr2,lbdpwr2_genealogy_t)

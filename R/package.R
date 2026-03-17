@@ -1,16 +1,16 @@
-#' Phylodynamics for POMP models
-#' 
-#' Super cool.
-#' 
-#' @name phylopomp-package
-#' @docType package
-#' @author Aaron A. King, Qianying Lin
-#' 
-#' @import ggplot2
-#' @importFrom foreach registerDoSEQ
-#' 
-#' @useDynLib phylopomp, .registration = TRUE, .fixes="P_"
-#' 
+##' phylopompRe
+##'
+##' Phylodynamic Inference for POMP Models with Reassortment
+##'
+##' @name phylopompRe-package
+##' @aliases phylopompRe
+##' @docType package
+##' @importFrom methods is
+##' @importFrom pomp bake stew freeze
+##' @importFrom ape read.tree
+##' @useDynLib phylopompRe, .registration = TRUE, .fixes = "P_"
 NULL
 
-foreach::registerDoSEQ()
+pStop <- function (...) {
+  stop(..., call. = FALSE)
+}
