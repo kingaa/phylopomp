@@ -71,14 +71,18 @@ treeplot <- function (
   if (nchar(tree)==0L) tree <- "i_NA_NA:0.0;"
   tree |>
     gsub(";$",")i_NA_NA:0.0",x=_) |>
-    gsub(";",")i_NA_NA:0.0,(",x=_) -> tree
+    gsub(";",")i_NA_NA:0.0,(",x=_) |>
+    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=sample\]}",r"{b_\1_}",x=_,perl=TRUE) |>
+    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=extant\]}",r"{o_\1_}",x=_,perl=TRUE) |>
+    gsub(r"{\[\&\&PhyloPOMP:deme=([^,]),type=node\]}",r"{g_\1_}",x=_,perl=TRUE) |>
+    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=root\]}",r"{m_\1_}",x=_,perl=TRUE) -> tree
 
   paste0(
     "(i_NA_NA:0.0,i_NA_NA:0.0,(",
     tree,
     ")i_NA_NA:0.0;"
   ) |>
-  read.tree(text=_) |>
+    read.tree(text=_) |>
     fortify(ladderize=ladderize) |>
     separate(label,into=c("nodecol","deme","label")) |>
     mutate(
@@ -107,7 +111,7 @@ treeplot <- function (
 
   ## number of nodes and tips of each color
   expand_grid(
-    nodecol=c("o","b","r","g","p","m"),
+    nodecol=c("o","b","g","m"),
     isTip=c(TRUE,FALSE)
   ) |>
     left_join(

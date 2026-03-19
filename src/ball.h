@@ -135,8 +135,8 @@ public:
   std::string describe (void) const {
     std::string o = color_name()
       + "(" + std::to_string(uniq) + ",";
-    if (_deme != undeme) {
-      o += std::to_string(_deme);
+    if (deme() != undeme) {
+      o += std::to_string(deme());
     }
     o += ")";
     return o;
@@ -147,7 +147,7 @@ public:
     o = "color: " + color_name() + "\n"
       + tab + "name: " + std::to_string(uniq) + "\n";
     if (color==black) {
-      o += tab + "deme: " + std::to_string(_deme) + "\n";
+      o += tab + "deme: " + std::to_string(deme()) + "\n";
     }
     return o;
   };
@@ -165,7 +165,7 @@ public:
     set_list_elem(O,On,Color,"color",1);
     if (is(black)) {
       PROTECT(Deme = NEW_INTEGER(1));
-      *INTEGER(Deme) = int(_deme);
+      *INTEGER(Deme) = int(deme());
       set_list_elem(O,On,Deme,"deme",2);
       UNPROTECT(1);
     }
@@ -173,12 +173,21 @@ public:
     UNPROTECT(4);
     return O;
   };
-  //! element of a newick representation
+  //! Element of a Newick representation.
+  //! This should only be called at tip-nodes.
   std::string newick (const slate_t &t) const {
-    return color_symbol()
-      + "_" + std::to_string(_deme)
-      + "_" + std::to_string(uniq)
-      + ":" + std::to_string(t);
+    std::string o = "[&&PhyloPOMP:deme=" + std::to_string(deme());
+    switch (color) {
+    case black:
+      o += ",type=extant]";
+      break;
+    case blue:
+      o += ",type=sample]";
+    case green: default:
+      assert(0);
+    }
+    o += std::to_string(uniq) + ":" + std::to_string(t);
+    return o;
   };
 };
 

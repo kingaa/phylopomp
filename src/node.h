@@ -210,20 +210,21 @@ public:
     UNPROTECT(2);
     return O;
   };
-  //! Newick format
+  //! Newick format with phylopomp extension
+  //! Deme and node-type information is returned in a metadata wrapper.
   std::string newick (const slate_t& tnow, const slate_t& tpar) const {
     std::string o1 = "", o2 = "", o3 = "";
     int n = nchildren();
     if (n > 0) {
       o1 = "("; o3 = ")";
     }
-    if (holds(blue)) {
-      o3 += "b_";
-    } else if (holds_own()) {
-      o3 += "m_";
-    } else {
-      o3 += "g_";
-    }
+    o3 += "[&&PhyloPOMP:deme=" + std::to_string(deme());
+    if (holds(blue))
+      o3 += ",type=sample]";
+    else if (holds_own())
+      o3 += ",type=root]";
+    else
+      o3 += ",type=node]";
     n = 0;
     for (ball_t *b : *this) {
       node_t *p = 0;
@@ -244,8 +245,7 @@ public:
       }
     }
     return o1 + o2 + o3
-      + std::to_string(deme())
-      + "_" + std::to_string(uniq)
+      + std::to_string(uniq)
       + ":" + std::to_string(slate - tpar);
   };
 };
