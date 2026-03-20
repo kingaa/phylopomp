@@ -608,9 +608,9 @@ private:
   //! simple function for scanning a slate_t from a string
   //! (with error trapping)
   slate_t scan_slate (const std::string& s) const {
-    slate_t bl;
+    double bl;
     try {
-      bl = slate_t(stod(s));
+      bl = stod(s);
     }
     catch (const std::invalid_argument& e) {
       err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
@@ -625,14 +625,15 @@ private:
       err("in '%s': other branch-length parsing error.",__func__);
     }
     if (bl < 0.0) err("in '%s': negative branch length detected.",__func__);
-    return bl;
+    return slate_t(bl);
   }
   //! simple function for scanning a name_t from a string
   //! (with error trapping)
   name_t scan_name (const std::string& s) const {
-    name_t deme;
+    int d;
     try {
-      deme = name_t(stoi(s));
+      d = stoi(s);
+      if (d < 0) err("in '%s': negative deme number detected.",__func__);
     }
     catch (const std::invalid_argument& e) {
       err("in '%s': invalid Newick format: deme should be indicated with an integer.",__func__);
@@ -646,13 +647,13 @@ private:
     catch (...) {
       err("in '%s': other deme-parsing error.",__func__);
     }
-    return deme;
+    return name_t(d);
   }
   //! simple function for scanning the color
   color_t scan_color (const std::string& s) const {
     std::string copy(s);
-    std::map<std::string,color_t> options({
-        {"sample",blue},{"extant",black},
+    const std::map<std::string,color_t> options({
+        {"sample",blue},{"extant",black},{"migration",green},
         {"node",green},{"branch",green},{"root",green}
       });
     color_t col = green;
@@ -662,7 +663,7 @@ private:
       col = options.at(copy);
     }
     catch (const std::out_of_range& e) {
-      err("in %s: invalid metadata: type %s not recognized.",__func__,s.c_str());
+      err("in %s: invalid metadata: type '%s' not recognized.",__func__,s.c_str());
     }
     return col;
   }
@@ -674,30 +675,28 @@ private:
     name_t deme = 0;
     slate_t bl = 0;
     std::string s(b,e);
-    std::regex wre("^(.*?):([+-]?\\d*(\\.\\d+)?).?$");
+    const std::regex wre("^(.*?):([+-]?\\d*(\\.\\d+)?){1}.?$");
     std::smatch wm;
     if (std::regex_match(s,wm,wre)) {
       bl = scan_slate(wm[2].str());
       const std::string label = wm[1].str();
       //! FIXME: allow multiple metadata tags
-      std::regex mre("^.*?\\[&&PhyloPOMP:(.+?)\\].*$");
+      const std::regex mre("^.*?\\[&&PhyloPOMP:(.+?)\\].*$");
       std::smatch mm;
       if (std::regex_match(label,mm,mre)) {
         std::string meta = mm[1].str();
-        std::regex dre("deme=(\\d+)",std::regex_constants::icase);
-        std::regex tre("type=(\\w+)",std::regex_constants::icase);
+        const std::regex dre("deme=(\\w*)",std::regex_constants::icase);
+        const std::regex tre("type=(\\w*)",std::regex_constants::icase);
         std::smatch sm;
         if (std::regex_search(meta,sm,dre)) {
-          deme = scan_slate(sm[1].str());
+          deme = scan_name(sm[1].str());
         }
         if (std::regex_search(meta,sm,tre)) {
           col = scan_color(sm[1].str());
         }
       }
-    } else {
-      // FIXME: empty strings can be OK
-      //    } else if (s.size() != 0) {
-      err("in '%s': invalid Newick format: invalid label: \"%s\".",__func__,s.c_str());
+    } else if (s.size() != 0) {
+      warn("node label '%s' ignored: zero branch length assumed.",s.c_str());
     }
     node_t *q = make_node(deme);
     if (col == blue || col == black) {
@@ -721,7 +720,7 @@ public:
       switch (*pos1) {
       case ']':
         while (pos1 != s.crend() && *pos1 != '[') pos1++; // skip metadata
-        pos1++;
+        if (pos1 != s.crend()) pos1++;
         break;
       case ';':
         p = 0;
@@ -737,7 +736,7 @@ public:
           if (q->holds(black)) {
             move(q->last_ball(),q,p);
             destroy_node(q);
-	    q = 0;
+            q = 0;
           } else {
             attach(p,q);
             push_back(q);
@@ -745,17 +744,17 @@ public:
         } else {
           q->slate += timezero();
           tf = (q->slate > tf) ? q->slate : tf;
-	  if (q->slate > timezero()) {
-	    p = make_node(q->deme());
-	    push_front(p); attach(p,q);
-	  }
+          if (q->slate > timezero()) {
+            p = make_node(q->deme());
+            push_front(p); attach(p,q);
+          }
           p = q;
           push_back(q);
         }
         switch (*pos1) {
         case ')':
-	  if (q == 0)
-	    err("in '%s': invalid Newick format: extant tip cannot be ancestral.",__func__);
+          if (q == 0)           // FIXME: this may be unreachable
+            err("in '%s': invalid Newick format: extant tip cannot be ancestral.",__func__);
           p = q;
           pos1++;
           break;

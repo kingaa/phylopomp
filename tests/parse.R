@@ -8,33 +8,6 @@ suppressPackageStartupMessages({
 theme_set(theme_bw())
 set.seed(4963811)
 
-runSEIR(time=0.5,E0=0,I0=2) -> x
-x |> newick(prune=FALSE,obscure=FALSE) -> tree
-plot_grid(
-  tree |> treeplot(points=TRUE),
-  tree |> parse_newick() |>
-    newick(prune=FALSE,obscure=FALSE) |>
-    treeplot(points=TRUE),
-  ncol=1
-)
-
-plot_grid(
-  x |> diagram(obscure=FALSE,prune=FALSE),
-  x |> diagram(obscure=FALSE,prune=TRUE),
-  tree |> parse_newick() |> diagram(obscure=FALSE,prune=FALSE),
-  tree |> parse_newick() |> diagram(obscure=FALSE,prune=TRUE),
-  ncol=2
-)
-
-tree
-tree |> parse_newick() |> newick(prune=FALSE,obscure=FALSE)
-
-all.equal(
-  x |> gendat(),
-  tree |> parse_newick() |> gendat(),
-  tolerance=1e-5
-)
-
 runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=FALSE) -> tree
 plot_grid(
@@ -135,181 +108,49 @@ plot_grid(
 )
 
 try(
-  r"{(((p_9_0:1.0000,b_3_5:0.999,o_1_8:0.5555)g_0_88:0.5;}" |>
+  r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
      parse_newick()
 )
 
-try(
-  r"{((o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-     parse_newick()
-)
+r"{(((:0.1)),[&&PhyloPOMP:deme=9|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+   parse_newick(t0=0.5,tf=2) |>
+   {\(x)
+     plot_grid(
+       plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
+       diagram(object=x,obscure=FALSE,prune=FALSE),
+       ncol=1
+     )
+   }()
 
-try(
-  r"{(o_9_1:1.000000,b_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000);}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,o_3_2:0.500000,o_1_3:1.000000)m_0_0:0.000000)()));}" |>
-     parse_newick()
-)
-
-r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
+r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+   {\(x)
+     plot_grid(
+       plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
+       diagram(object=x,obscure=FALSE,prune=FALSE),
+       ncol=1
+     )
+   }()
 
-try(
-  r"{(o_9_1:1.000000,m_1_3:1.000000)m_0_0:0.000000;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000)_g_1_3:1.000000)m_0_0:0.000000;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000)z_1_3:1.000000)m_0_0:0.000000;}" |>
-     parse_newick()
-)
-
-r"{((,o_9_1:1.000000,)g_1_3:1.000000)m_0_0:0.000000;}" |>
+r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_1:1.000000,b_0_0:3,,)m_0_0:0.000000;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{((,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+   {\(x)
+     plot_grid(
+       plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
+       diagram(object=x,obscure=FALSE,prune=FALSE),
+       ncol=1
+     )
+   }()
 
 try(
-  r"{(,o_9_1:1.000000,)g_1_3:1.000000,h)m_0_0:0.000000))));}" |>
+  r"{((([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
      parse_newick()
 )
 
-try(
-  r"{(,o_9_1:1.000000,)g_1_3:1.000000,)m_0_0:0.000000))y));}" |>
-     parse_newick()
-)
-
-try(
-  r"{((((o_9_1:1.000000)g_1_3:1.000000)m_0_0:0.000000)g_3:22)()))));}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
-  parse_newick()
-)
-
-r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
-     parse_newick()
-)
-
-r"{(o_9_1:1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-try(
-  r"{(o_a9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_0_0(:0.500000,b_____2:17;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_)0_0:0.500000,b_____2:17;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,(b_____2:17;}" |>
-     parse_newick()
-)
-
-r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
+r"{(((1.0000):0.5;}" |>
    parse_newick()
 
-r"{(o_9_1:  1.000000,b_0:3,)m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,b_2_45:17}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,  b_2_45:17}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-r"{(o_9_1:  1.000000,b_0:3,  )m_0_0:0.000000,
-       b_2____45:17}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3))m_0_0:0.000000,b_____2:17;}" |>
-     parse_newick()
-)
-
-try(
-  r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_____2:17))));}" |>
-     parse_newick()
-)
-
-try(r"{((o_9:20,b_9:20)g_9:10,b_9:10)m______}" |> parse_newick())
-
-r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b:17;}" |>
-   parse_newick() |>
-   newick(prune=FALSE,obscure=FALSE)
-
-r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b:1;}" |>
-   parse_newick() |>
-   newick(prune=FALSE,obscure=FALSE)
-
-r"{(o_9:1.000000,b_:3)m_0_0:0.000000,b:1;}" |>
-   parse_newick() |>
-   newick(prune=FALSE,obscure=FALSE)
-
-try(
-  r"{(o_9_1;,b_0_0:3)m_0_0:0.000000,b:1;}" |>
-  parse_newick() |>
-  newick(prune=FALSE,obscure=FALSE)
-)
-
-try(
-  r"{(o_9:1.000000,b_:3)}" |>
-     parse_newick() |>
-     newick(prune=FALSE,obscure=FALSE)
-)
-
-try(
-  r"{(o_9_1:  1.000000,b_0:3,)m_0_0:-0.00001,b_2_45:17}" |>
-     parse_newick()
-)
+r"{(((:1.0000)A;}" |>
+   parse_newick()
 
 dev.off()
