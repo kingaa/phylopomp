@@ -165,13 +165,24 @@ public:
 
 public:
 
+  //! attach node q as descendant of node p
+  void attach (node_t *p, node_t *q) {
+    ball_t *g = q->green_ball();
+    assert(g->holder() == q);
+    q->erase(g); p->insert(g);
+  };
+  //! detach node p from its parent
+  void detach (node_t *p) {
+    ball_t *g = p->green_ball();
+    p->parent()->erase(g); p->insert(g);
+  };
   //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
     node_t *q = b->holder();
     if (p != q) {
-      p->erase(a); q->insert(a); a->holder() = q;
-      q->erase(b); p->insert(b); b->holder() = p;
+      p->erase(a); q->insert(a);
+      q->erase(b); p->insert(b);
     }
   };
   //! add node p; take as parent the node holding ball a.
@@ -229,16 +240,13 @@ public:
   //! drop all zero-length branches
   void drop_zlb (void) {
     for (node_t *p : *this) {
-      ball_t *b;
-      if (p->slate == p->parent()->slate) {
+      if (!p->holds_own() && p->slate == p->parent()->slate) {
         while (!p->empty()) {
-          b = p->last_ball();
-          p->erase(b);
-          p->parent()->insert(b);
+          ball_t *b = p->last_ball();
+          p->erase(b); p->parent()->insert(b);
           //FIXME: do we also need to change ball-demes?
         }
-        b = p->green_ball();
-        p->parent()->erase(b); p->insert(b);
+        detach(p);
       }
     }
     weed();

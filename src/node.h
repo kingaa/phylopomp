@@ -173,6 +173,12 @@ public:
 
 public:
 
+  //! insert a ball into the pocket of a node
+  void insert (ball_t *a) {
+    a->holder() = this;
+    pocket_t::insert(a);
+  };
+
   //! human-readable info
   std::string describe (void) const {
     std::string s = "node("

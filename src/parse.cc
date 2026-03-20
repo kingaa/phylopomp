@@ -16,7 +16,7 @@ extern "C" {
     // parse the Newick representation into a genealogy:
     std::string x = CHAR(STRING_ELT(X,0));
     genealogy_t G(t0);
-    G.parse(x,t0);
+    G.parse(x);
     if (!ISNA(tf)) {
       G.curtail(tf,t0);
     }

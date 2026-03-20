@@ -8,6 +8,33 @@ suppressPackageStartupMessages({
 theme_set(theme_bw())
 set.seed(4963811)
 
+runSEIR(time=0.5,E0=0,I0=2) -> x
+x |> newick(prune=FALSE,obscure=FALSE) -> tree
+plot_grid(
+  tree |> treeplot(points=TRUE),
+  tree |> parse_newick() |>
+    newick(prune=FALSE,obscure=FALSE) |>
+    treeplot(points=TRUE),
+  ncol=1
+)
+
+tree
+tree |> parse_newick() |> newick(prune=FALSE,obscure=FALSE)
+
+all.equal(
+  x |> gendat(),
+  tree |> parse_newick() |> gendat(),
+  tolerance=1e-5
+)
+
+plot_grid(
+  x |> diagram(obscure=FALSE,prune=FALSE),
+  x |> diagram(obscure=FALSE,prune=TRUE),
+  tree |> parse_newick() |> diagram(obscure=FALSE,prune=FALSE),
+  tree |> parse_newick() |> diagram(obscure=FALSE,prune=TRUE),
+  ncol=2
+)
+
 runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=FALSE) -> tree
 plot_grid(
@@ -183,8 +210,8 @@ r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+  parse_newick() |>
+  getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
@@ -216,7 +243,7 @@ try(
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:(0.000000,b_____2:17;}" |>
-  parse_newick()
+     parse_newick()
 )
 
 try(

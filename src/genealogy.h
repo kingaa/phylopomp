@@ -6,6 +6,7 @@
 
 #include <string>
 #include <cstring>
+#include <regex>
 #include <utility>
 #include <stdexcept>
 
@@ -556,7 +557,7 @@ public:
             q = make_node(b->deme());
             q->slate = troot;
             q->insert(b); p->erase(b);
-            b->holder() = q;
+            // b->holder() = q;
             push_back(q);
             break;
           case green:
@@ -567,12 +568,12 @@ public:
             }
             if (q->slate < troot) {
               q->insert(b); p->erase(b);
-              b->holder() = q;
+              // b->holder() = q;
             } else {
               node_t *pp = make_node(b->deme());
               pp->slate = troot;
               pp->insert(b); p->erase(b);
-              b->holder() = pp;
+              // b->holder() = pp;
               push_back(pp);
             }
             break;
@@ -601,66 +602,22 @@ public:
 
 private:
 
-  size_t scan_color (const std::string& s, color_t* col) const {
-    return 1;
+  //! tips without descendants are reclassified as samples
+  void repair_tips (void) {
+    for (node_t *p : *this) {
+      if (p->empty()) {
+        ball_t *b = new ball_t(p,p->uniq,blue,p->deme());
+        p->insert(b);
+      }
+    }
   };
-  //! Scan the Newick-format label string.
-  //! This has format %c_%d_%d:%f
-  size_t scan_label (const std::string& s, color_t* col,
-                     name_t *deme, slate_t *time) const {
-    size_t n = s.size();
-    if (n < 1)
-      err("in '%s' (%s line %d): invalid Newick format: empty label.",__func__,__FILE__,__LINE__);
-    size_t sz, i = 1;
-    switch (s[0]) {
-    case 'o':
-      *col = black;
-      break;
-    case 'b':
-      *col = blue;
-      break;
-    case 'g': case 'm':
-      *col = green;
-      break;
-    default:
-      err("in '%s' (%s line %d): invalid Newick label: expected one of 'b','g','m', or 'o', got '%c'.",
-          __func__,__FILE__,__LINE__,s[0]);
-      break;
-    }
-    while (i < n && s[i] == '_') i++;
-    if (i == n)
-      err("in '%s': invalid Newick format: premature termination.",__func__);
-    if (s[i] == '(' || s[i] == ')' || s[i] == ',' || s[i] == ';')
-      err("in '%s' (%s line %d): invalid Newick format.",__func__,__FILE__,__LINE__);
-    if (s[i] == ':') {
-      *deme = 0;
-    } else {
-      try {
-        *deme = name_t(stoi(s.substr(i),&sz));
-        i += sz;
-      }
-      catch (const std::invalid_argument& e) {
-        err("in '%s' (%s line %d): invalid Newick format: deme should be indicated with an integer.",
-            __func__,__FILE__,__LINE__);
-      }
-      catch (const std::out_of_range& e) {
-        err("in '%s': invalid Newick format: deme out of range.",__func__);
-      }
-      catch (const std::exception& e) {
-        err("in '%s': parsing deme label: %s.",__func__,e.what());
-      }
-      catch (...) {
-        err("in '%s': other deme-parsing error.",__func__);
-      }
-    }
-    // skip to branch length
-    while (i < n && s[i] != ':' &&
-           s[i] != '(' && s[i] != ')' && s[i] != ',' && s[i] != ';') i++;
-    if (i == n || s[i] != ':')
-      err("in '%s': invalid Newick format: missing or invalid branch length.",__func__);
-    i++;
+
+  //! simple function for scanning a slate_t from a string
+  //! (with error trapping)
+  slate_t scan_slate (const std::string& s) const {
+    slate_t bl;
     try {
-      *time = slate_t(stod(s.substr(i),&sz));
+      bl = slate_t(stod(s));
     }
     catch (const std::invalid_argument& e) {
       err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
@@ -674,125 +631,152 @@ private:
     catch (...) {
       err("in '%s': other branch-length parsing error.",__func__);
     }
-    if (*time < 0.0) err("in '%s': negative branch length detected.",__func__);
-    i += sz;
-    return i;
-  };
-  //! Scan the Newick string and put the ball
-  //! into the indicated pocket, as appropriate.
-  size_t scan_ball (const std::string& s, const slate_t t0, node_t *p) {
-    color_t col;
+    if (bl < 0.0) err("in '%s': negative branch length detected.",__func__);
+    return bl;
+  }
+  //! simple function for scanning a name_t from a string
+  //! (with error trapping)
+  name_t scan_name (const std::string& s) const {
     name_t deme;
-    slate_t t;
-    ball_t *b;
-    size_t i = scan_label(s,&col,&deme,&t);
-    t += t0;
-    _time = (_time < t) ? t : _time;
-    _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
-    if (col != black) err("in '%s': bad Newick string (1)",__func__);
-    if (p == 0) err("in '%s': bad Newick string (2)",__func__);
-    b = new ball_t(p,unique(),col,deme);
-    p->insert(b);
-    return i;
-  };
-  //! Scan the Newick string and create the indicated node.
-  size_t scan_node (const std::string& s, const slate_t t0, node_t **q) {
-    size_t i;
-    color_t col;
-    name_t deme;
-    slate_t t;
-    name_t u = unique();
-    i = scan_label(s,&col,&deme,&t);
-    t += t0;
-    _ndeme = (_ndeme <= deme) ? deme+1 : _ndeme;
-    _time = (_time < t) ? t : _time;
-    node_t *p = new node_t(u,t);
-    ball_t *g = new ball_t(p,u,green,deme);
-    p->green_ball() = g;
-    p->insert(g);
-    if (col==blue) {
-      ball_t *b = new ball_t(p,p->uniq,blue,deme);
-      p->insert(b);
+    try {
+      deme = name_t(stoi(s));
     }
-    push_back(p);
-    *q = p;
-    return i;
-  };
-  //! Parse a single-root Newick tree.
-  //! This assumes the string starts with a '('.
-  size_t scan_tree (const std::string& s,
-                    const slate_t t0, node_t **root) {
-    size_t n = s.size();
-    size_t i = 1, j = 1, k;
-    size_t stack = 1;
-    while (j < n && stack > 0) {
-      switch (s[j]) {
-      case '(':
-        stack++;
-        break;
-      case ')':
-        stack--;
-        break;
-      default:
-        break;
+    catch (const std::invalid_argument& e) {
+      err("in '%s': invalid Newick format: deme should be indicated with an integer.",__func__);
+    }
+    catch (const std::out_of_range& e) {
+      err("in '%s': invalid Newick format: deme out of range.",__func__);
+    }
+    catch (const std::exception& e) {
+      err("in '%s': parsing deme label: %s.",__func__,e.what());
+    }
+    catch (...) {
+      err("in '%s': other deme-parsing error.",__func__);
+    }
+    return deme;
+  }
+  //! simple function for scanning the color
+  color_t scan_color (const std::string& s) const {
+    std::string copy(s);
+    std::map<std::string,color_t> options({
+        {"sample",blue},{"extant",black},
+        {"node",green},{"branch",green},{"root",green}
+      });
+    color_t col = green;
+    std::transform(copy.begin(),copy.end(),copy.begin(),
+                   [](unsigned char c){return std::tolower(c);});
+    try {
+      col = options.at(copy);
+    }
+    catch (const std::out_of_range& e) {
+      err("in %s: invalid metadata: type %s not recognized.",__func__,s.c_str());
+    }
+    return col;
+  }
+  //! Scan the label string.
+  //! This has format [&&PhyloPOMP:deme=%d,type=%s]%s:%f
+  node_t *scan_label (std::string::const_iterator b,
+                      std::string::const_iterator e) {
+    color_t col = green;
+    name_t deme = 0;
+    slate_t bl = 0;
+    std::string s(b,e);
+    std::regex wre("^(.*?):([+-]?\\d*(\\.\\d+)?).?$");
+    std::smatch wm;
+    if (std::regex_match(s,wm,wre)) {
+      bl = scan_slate(wm[2].str());
+      const std::string label = wm[1].str();
+      //! FIXME: allow multiple metadata tags
+      std::regex mre("^.*?\\[&&PhyloPOMP:(.+?)\\].*$");
+      std::smatch mm;
+      if (std::regex_match(label,mm,mre)) {
+        std::string meta = mm[1].str();
+        std::regex dre("deme=(\\d+)",std::regex_constants::icase);
+        std::regex tre("type=(\\w+)",std::regex_constants::icase);
+        std::smatch sm;
+        if (std::regex_search(meta,sm,dre)) {
+          deme = scan_slate(sm[1].str());
+        }
+        if (std::regex_search(meta,sm,tre)) {
+          col = scan_color(sm[1].str());
+        }
       }
-      j++;
+    } else {
+      //    } else if (s.size() != 0) {
+      err("in '%s': invalid Newick format: invalid label: \"%s\".",__func__,s.c_str());
     }
-    if (stack > 0)
-      err("in '%s': premature end of Newick string.",__func__);
-    node_t *p = 0;
-    k = j;
-    k += scan_node(s.substr(j),t0,&p);
-    parse(s.substr(i,j-i-1),p->slate,p);
-    *root = p;
-    return k;
+    node_t *q = make_node(deme);
+    if (col == blue || col == black) {
+      ball_t *b = new ball_t(q,q->uniq,col,deme);
+      q->insert(b);
+    }
+    q->slate = bl;
+    return q;
   };
 
 public:
 
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (const std::string& s, slate_t t0, node_t *p = 0) {
-    size_t i = 0;
-    size_t n = s.size();
-    while (i < n) {
-      switch (s[i]) {
-      case '(':
-        {
-          genealogy_t G(t0,unique());
-          node_t *q = 0;
-          i += G.scan_tree(s.substr(i),t0,&q);
-          *this += G;
-          if (p != 0) {
-            ball_t *g = q->green_ball();
-            q->erase(g); p->insert(g); g->holder() = p;
-          }
+  genealogy_t& parse (const std::string& s) {
+    node_t *p = 0, *q;
+    slate_t tf = timezero();
+    size_t nd = 1;
+    std::string::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
+    if (*pos1 != ';')
+      err("in '%s': invalid Newick format: no final semicolon.",__func__);
+    while (pos1 != s.crend()) {
+      switch (*pos1) {
+      case ']':
+        while (pos1 != s.crend() && *pos1 != '[') pos1++; // skip metadata
+        pos1++;
+        break;
+      case ';':
+        p = make_node(0);       // FIXME: always deme=0?
+        p->slate = timezero();
+        push_front(p);
+        pos1++;
+        pos2 = pos1;
+        break;
+      case ')': case '(': case ',':
+        q = scan_label(pos1.base(),pos2.base());
+        assert(p != 0);
+        p->insert(q->green_ball()); q->erase(q->green_ball());
+        q->slate += p->slate;
+        tf = (q->slate > tf) ? q->slate : tf;
+        nd = (nd > q->deme()+1) ? nd : q->deme()+1;
+        if (q->holds(black)) {
+          swap(q->green_ball(),q->last_ball());
+          destroy_node(q);
+        } else {
+          push_back(q);
         }
-        break;
-      case 'b':
-        {
-          node_t *q = 0;
-          i += scan_node(s.substr(i),t0,&q);
-          if (p != 0) {
-            ball_t *g = q->green_ball();
-            q->erase(g); p->insert(g); g->holder() = p;
+        switch (*pos1) {
+        case ')':
+          p = q;
+          pos1++;
+          break;
+        case '(':
+          while (pos1 != s.crend() && *pos1 == '(') {
+            p = p->parent();
+            pos1++;
           }
+          if (pos1 != s.crend() && *pos1 == ',') pos1++;
+          break;
+        default:
+          pos1++;
+          break;
         }
-        break;
-      case 'o':
-        i += scan_ball(s.substr(i),t0,p);
-        break;
-      case ',': case ';': case ' ': case '\n': case '\t':
-        i++;
-        break;
-      case ')':
-        err("in '%s': invalid Newick string: unbalanced parentheses.",__func__);
+        pos2 = pos1;
         break;
       default:
-        err("in '%s': invalid Newick string.",__func__);
+        pos1++;
         break;
       }
     }
+    time() = tf;
+    ndeme() = nd;
     sort();
+    repair_tips(); drop_zlb();
     return *this;
   };
 };
