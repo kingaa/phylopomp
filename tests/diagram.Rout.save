@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -824,9 +824,9 @@ Error : in 'geneal': unrecognized model 'bob'
 > raw(0) |> geneal()
 <phylopomp genealogy>
 > try(raw(0) |> newick())
-Error : in genealogy_t (genealogy.h line 119): cannot deserialize a NULL.
+Error : in genealogy_t: cannot deserialize a NULL.
 > try(raw(0) |> geneal() |> newick())
-Error : in genealogy_t (genealogy.h line 119): cannot deserialize a NULL.
+Error : in genealogy_t: cannot deserialize a NULL.
 > try(raw(10) |> newick())
-Error : in operator>> (genealogy.h line 94) corrupted genealogy serialization.
+Error : in operator>>: corrupted genealogy serialization.
 > 

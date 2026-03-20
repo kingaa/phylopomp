@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -83,7 +83,7 @@ $time
 [1] 0
 
 $newick
-[1] "(o_1_13:0.000000)m_1_9:0.000000;(o_1_20:0.000000)m_1_8:0.000000;(o_1_47:0.000000)m_1_6:0.000000;(o_0_24:0.000000)m_0_3:0.000000;(o_0_22:0.000000)m_0_1:0.000000;(o_0_50:0.000000)m_0_0:0.000000;"
+[1] "([&&PhyloPOMP:deme=1,type=extant]13:0.000000)[&&PhyloPOMP:deme=1,type=root]9:0.000000;([&&PhyloPOMP:deme=1,type=extant]20:0.000000)[&&PhyloPOMP:deme=1,type=root]8:0.000000;([&&PhyloPOMP:deme=1,type=extant]47:0.000000)[&&PhyloPOMP:deme=1,type=root]6:0.000000;([&&PhyloPOMP:deme=0,type=extant]24:0.000000)[&&PhyloPOMP:deme=0,type=root]3:0.000000;([&&PhyloPOMP:deme=0,type=extant]22:0.000000)[&&PhyloPOMP:deme=0,type=root]1:0.000000;([&&PhyloPOMP:deme=0,type=extant]50:0.000000)[&&PhyloPOMP:deme=0,type=root]0:0.000000;"
 
 > 
 > x |>

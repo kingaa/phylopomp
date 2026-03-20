@@ -91,8 +91,7 @@ public:
     memcpy(A,o,sizeof(A)); o += sizeof(A);
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     if (A[0] != magic)
-      err("in %s (%s line %d) corrupted genealogy serialization.",
-          __func__,__FILE__,__LINE__);
+      err("in %s: corrupted genealogy serialization.",__func__);
     G._unique = A[1]; G._ndeme = size_t(A[2]);
     G.timezero() = B[0]; G.time() = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
@@ -116,8 +115,7 @@ public:
   //! constructor from RAW SEXP (containing binary serialization)
   genealogy_t (SEXP o) {
     if (LENGTH(o)==0)
-      err("in %s (%s line %d): cannot deserialize a NULL.",
-          __func__,__FILE__,__LINE__);
+      err("in %s: cannot deserialize a NULL.",__func__);
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);
