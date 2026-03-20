@@ -18,6 +18,14 @@ plot_grid(
   ncol=1
 )
 
+plot_grid(
+  x |> diagram(obscure=FALSE,prune=FALSE),
+  x |> diagram(obscure=FALSE,prune=TRUE),
+  tree |> parse_newick() |> diagram(obscure=FALSE,prune=FALSE),
+  tree |> parse_newick() |> diagram(obscure=FALSE,prune=TRUE),
+  ncol=2
+)
+
 tree
 tree |> parse_newick() |> newick(prune=FALSE,obscure=FALSE)
 
@@ -25,14 +33,6 @@ all.equal(
   x |> gendat(),
   tree |> parse_newick() |> gendat(),
   tolerance=1e-5
-)
-
-plot_grid(
-  x |> diagram(obscure=FALSE,prune=FALSE),
-  x |> diagram(obscure=FALSE,prune=TRUE),
-  tree |> parse_newick() |> diagram(obscure=FALSE,prune=FALSE),
-  tree |> parse_newick() |> diagram(obscure=FALSE,prune=TRUE),
-  ncol=2
 )
 
 runSEIR(time=3,I0=3) |>
@@ -202,7 +202,7 @@ try(
 
 try(
   r"{(o_9_1:1.000000,b_1_3)m_0_0:0.000000;}" |>
-     parse_newick()
+  parse_newick()
 )
 
 r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
@@ -210,8 +210,8 @@ r"{(o_9_1:1.000000,b_0_0:3;;;)m_0_0:0.000000;}" |>
    getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 r"{(o_9_:1.000000;;;b_0:3;;)m_0:0.000000;}" |>
-  parse_newick() |>
-  getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
+   parse_newick() |>
+   getInfo(prune=FALSE,obscure=FALSE,lineages=FALSE,newick=TRUE)
 
 try(
   r"{(o_9_1:1.000000,b_0_0:3)m_0_0:0.000000,b_4_42:abc}" |>
@@ -297,8 +297,8 @@ r"{(o_9:1.000000,b_:3)m_0_0:0.000000,b:1;}" |>
 
 try(
   r"{(o_9_1;,b_0_0:3)m_0_0:0.000000,b:1;}" |>
-     parse_newick() |>
-     newick(prune=FALSE,obscure=FALSE)
+  parse_newick() |>
+  newick(prune=FALSE,obscure=FALSE)
 )
 
 try(

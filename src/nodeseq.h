@@ -165,16 +165,10 @@ public:
 
 public:
 
-  //! attach node q as descendant of node p
-  void attach (node_t *p, node_t *q) {
-    ball_t *g = q->green_ball();
-    assert(g->holder() == q);
-    q->erase(g); p->insert(g);
-  };
-  //! detach node p from its parent
-  void detach (node_t *p) {
-    ball_t *g = p->green_ball();
-    p->parent()->erase(g); p->insert(g);
+  //! move ball b from p to q
+  void move (ball_t *b, node_t *p, node_t *q) {
+    assert(b->holder() == p);
+    p->erase(b); q->insert(b);
   };
   //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
@@ -184,6 +178,16 @@ public:
       p->erase(a); q->insert(a);
       q->erase(b); p->insert(b);
     }
+  };
+  //! attach node q as descendant of node p.
+  //! note that this does not push q into the nodeseq.
+  void attach (node_t *p, node_t *q) {
+    move(q->green_ball(),q,p);
+  };
+  //! detach node p from its parent.
+  //! note that this does not remove q from the nodeseq.
+  void detach (node_t *p) {
+    move(p->green_ball(),p->parent(),p);
   };
   //! add node p; take as parent the node holding ball a.
   //! the deme of p is changed to match that of a

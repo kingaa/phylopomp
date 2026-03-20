@@ -556,9 +556,7 @@ public:
           case black:
             q = make_node(b->deme());
             q->slate = troot;
-            q->insert(b); p->erase(b);
-            // b->holder() = q;
-            push_back(q);
+            move(b,p,q); push_back(q);
             break;
           case green:
             q = b->child();
@@ -567,14 +565,11 @@ public:
               q = b->child();
             }
             if (q->slate < troot) {
-              q->insert(b); p->erase(b);
-              // b->holder() = q;
+              move(b,p,q);
             } else {
               node_t *pp = make_node(b->deme());
               pp->slate = troot;
-              pp->insert(b); p->erase(b);
-              // b->holder() = pp;
-              push_back(pp);
+              move(b,p,pp); push_back(pp);
             }
             break;
           }
@@ -702,6 +697,7 @@ private:
         }
       }
     } else {
+      // FIXME: empty strings can be OK
       //    } else if (s.size() != 0) {
       err("in '%s': invalid Newick format: invalid label: \"%s\".",__func__,s.c_str());
     }
@@ -720,7 +716,6 @@ public:
   genealogy_t& parse (const std::string& s) {
     node_t *p = 0, *q;
     slate_t tf = timezero();
-    size_t nd = 1;
     std::string::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
     if (*pos1 != ';')
       err("in '%s': invalid Newick format: no final semicolon.",__func__);
@@ -731,27 +726,38 @@ public:
         pos1++;
         break;
       case ';':
-        p = make_node(0);       // FIXME: always deme=0?
-        p->slate = timezero();
-        push_front(p);
+        p = 0;
         pos1++;
         pos2 = pos1;
         break;
       case ')': case '(': case ',':
         q = scan_label(pos1.base(),pos2.base());
-        assert(p != 0);
-        p->insert(q->green_ball()); q->erase(q->green_ball());
-        q->slate += p->slate;
-        tf = (q->slate > tf) ? q->slate : tf;
-        nd = (nd > q->deme()+1) ? nd : q->deme()+1;
-        if (q->holds(black)) {
-          swap(q->green_ball(),q->last_ball());
-          destroy_node(q);
+        ndeme() = (ndeme() > q->deme()+1) ? ndeme() : q->deme()+1;
+        if (p != 0) {
+          q->slate += p->slate;
+          tf = (q->slate > tf) ? q->slate : tf;
+          if (q->holds(black)) {
+            move(q->last_ball(),q,p);
+            destroy_node(q);
+	    q = 0;
+          } else {
+            attach(p,q);
+            push_back(q);
+          }
         } else {
+          q->slate += timezero();
+          tf = (q->slate > tf) ? q->slate : tf;
+	  if (q->slate > timezero()) {
+	    p = make_node(q->deme());
+	    push_front(p); attach(p,q);
+	  }
+          p = q;
           push_back(q);
         }
         switch (*pos1) {
         case ')':
+	  if (q == 0)
+	    err("in '%s': invalid Newick format: extant tip cannot be ancestral.",__func__);
           p = q;
           pos1++;
           break;
@@ -774,9 +780,7 @@ public:
       }
     }
     time() = tf;
-    ndeme() = nd;
-    sort();
-    repair_tips(); drop_zlb();
+    sort(); repair_tips(); drop_zlb();
     return *this;
   };
 };
