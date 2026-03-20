@@ -23,13 +23,13 @@ using moran_proc_t = popul_proc_t<moran_state_t,moran_parameters_t,2>;
 using moran_genealogy_t = master_t<moran_proc_t,1>;
 
 template<>
-std::string moran_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t moran_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
     + YAML_PARAM(n);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(m)
     + YAML_STATE(g);
   return p+s;

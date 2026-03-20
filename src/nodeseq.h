@@ -6,8 +6,6 @@
 
 #include <list>
 #include <unordered_map>
-#include <string>
-#include <cstring>
 #include "node.h"
 #include "internal.h"
 
@@ -292,17 +290,17 @@ public:
 public:
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string o = "";
+  string_t describe (void) const {
+    string_t o = "";
     for (node_t *p : *this) {
       o += p->describe();
     }
     return o;
   };
   //! human- & machine-readable info
-  virtual std::string yaml (std::string tab = "") const {
-    std::string o = "";
-    std::string t = tab + "  ";
+  virtual string_t yaml (string_t tab = "") const {
+    string_t o = "";
+    string_t t = tab + "  ";
     for (node_t *p : *this) {
       o += tab + "- " + p->yaml(t);
     }
@@ -320,9 +318,9 @@ public:
     return Nodes;
   };
   //! put genealogy at time `t` into Newick format.
-  std::string newick (slate_t t) const {
+  string_t newick (slate_t t) const {
     slate_t te = dawn();
-    std::string o = "";
+    string_t o = "";
     for (node_t *p : *this) {
       if (p->is_root()) {
         o += p->newick(t,te) + ";";

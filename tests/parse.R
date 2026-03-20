@@ -122,35 +122,25 @@ r"{(((:0.1)),[&&PhyloPOMP:deme=9|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}
      )
    }()
 
-r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
-   parse_newick() |>
-   {\(x)
-     plot_grid(
-       plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
-       diagram(object=x,obscure=FALSE,prune=FALSE),
-       ncol=1
-     )
-   }()
-
-r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
-   parse_newick() |>
-   {\(x)
-     plot_grid(
-       plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
-       diagram(object=x,obscure=FALSE,prune=FALSE),
-       ncol=1
-     )
-   }()
-
 try(
-  r"{((([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
+  r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
      parse_newick()
 )
 
-r"{(((1.0000):0.5;}" |>
+try(
+  r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+     parse_newick()
+)
+
+try(
+  r"{([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
+     parse_newick()
+)
+
+r"{(1.0000):0.5;}" |>
    parse_newick()
 
-r"{(((:1.0000)A;}" |>
+r"{(:1.0000)A;}" |>
    parse_newick()
 
 dev.off()

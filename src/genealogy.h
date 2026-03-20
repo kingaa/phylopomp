@@ -4,8 +4,6 @@
 #ifndef _GENEALOGY_H_
 #define _GENEALOGY_H_
 
-#include <string>
-#include <cstring>
 #include <regex>
 #include <utility>
 #include <stdexcept>
@@ -344,8 +342,8 @@ public:
 public:
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string o = "t0 = " + std::to_string(double(timezero()))
+  string_t describe (void) const {
+    string_t o = "t0 = " + std::to_string(double(timezero()))
       + "\ntime = " + std::to_string(double(time())) + "\n"
       + nodeseq_t::describe();
     return o;
@@ -354,9 +352,9 @@ public:
 public:
 
   //! machine-readable info
-  virtual std::string yaml (std::string tab = "") const {
-    std::string o;
-    std::string t = tab + "  ";
+  virtual string_t yaml (string_t tab = "") const {
+    string_t o;
+    string_t t = tab + "  ";
     o = tab + "t0: " + std::to_string(timezero()) + "\n"
       + tab + "time: " + std::to_string(time()) + "\n"
       + tab + "nodes:\n" + nodeseq_t::yaml(tab);
@@ -366,7 +364,7 @@ public:
 public:
 
   //! put genealogy at current time into Newick format.
-  std::string newick (void) const {
+  string_t newick (void) const {
     return nodeseq_t::newick(time());
   };
 
@@ -607,7 +605,7 @@ private:
 
   //! simple function for scanning a slate_t from a string
   //! (with error trapping)
-  slate_t scan_slate (const std::string& s) const {
+  slate_t scan_slate (const string_t& s) const {
     double bl;
     try {
       bl = stod(s);
@@ -629,7 +627,7 @@ private:
   }
   //! simple function for scanning a name_t from a string
   //! (with error trapping)
-  name_t scan_name (const std::string& s) const {
+  name_t scan_name (const string_t& s) const {
     int d;
     try {
       d = stoi(s);
@@ -650,9 +648,9 @@ private:
     return name_t(d);
   }
   //! simple function for scanning the color
-  color_t scan_color (const std::string& s) const {
-    std::string copy(s);
-    const std::map<std::string,color_t> options({
+  color_t scan_color (const string_t& s) const {
+    string_t copy(s);
+    const std::map<string_t,color_t,std::less<string_t>,std::allocator<std::pair<const string_t, color_t> > > options({
         {"sample",blue},{"extant",black},{"migration",green},
         {"node",green},{"branch",green},{"root",green}
       });
@@ -669,22 +667,22 @@ private:
   }
   //! Scan the label string.
   //! This has format [&&PhyloPOMP:deme=%d,type=%s]%s:%f
-  node_t *scan_label (std::string::const_iterator b,
-                      std::string::const_iterator e) {
+  node_t *scan_label (string_t::const_iterator b,
+                      string_t::const_iterator e) {
     color_t col = green;
     name_t deme = 0;
     slate_t bl = 0;
-    std::string s(b,e);
-    const std::regex wre("^(.*?):([+-]?\\d*(\\.\\d+)?){1}.?$");
+    string_t s(b,e);
+    const std::regex wre("^(.*?):([+-]?\\d*(?:\\.\\d+)?){1}.?$");
     std::smatch wm;
     if (std::regex_match(s,wm,wre)) {
       bl = scan_slate(wm[2].str());
-      const std::string label = wm[1].str();
+      const string_t label = wm[1].str();
       //! FIXME: allow multiple metadata tags
       const std::regex mre("^.*?\\[&&PhyloPOMP:(.+?)\\].*$");
       std::smatch mm;
       if (std::regex_match(label,mm,mre)) {
-        std::string meta = mm[1].str();
+        string_t meta = mm[1].str();
         const std::regex dre("deme=(\\w*)",std::regex_constants::icase);
         const std::regex tre("type=(\\w*)",std::regex_constants::icase);
         std::smatch sm;
@@ -710,10 +708,11 @@ private:
 public:
 
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (const std::string& s) {
+  genealogy_t& parse (const string_t& s) {
     node_t *p = 0, *q;
     slate_t tf = timezero();
-    std::string::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
+    string_t::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
+    int stack = 0;
     if (*pos1 != ';')
       err("in '%s': invalid Newick format: no final semicolon.",__func__);
     while (pos1 != s.crend()) {
@@ -736,7 +735,7 @@ public:
           if (q->holds(black)) {
             move(q->last_ball(),q,p);
             destroy_node(q);
-            q = 0;
+            q = p;
           } else {
             attach(p,q);
             push_back(q);
@@ -753,15 +752,15 @@ public:
         }
         switch (*pos1) {
         case ')':
-          if (q == 0)           // FIXME: this may be unreachable
-            err("in '%s': invalid Newick format: extant tip cannot be ancestral.",__func__);
           p = q;
           pos1++;
+          stack++;
           break;
         case '(':
           while (pos1 != s.crend() && *pos1 == '(') {
             p = p->parent();
             pos1++;
+	    stack--;
           }
           if (pos1 != s.crend() && *pos1 == ',') pos1++;
           break;
@@ -776,6 +775,8 @@ public:
         break;
       }
     }
+    if (stack != 0)
+      err("in '%s': invalid Newick format: unbalanced parentheses.",__func__);
     time() = tf;
     sort(); repair_tips(); drop_zlb();
     return *this;

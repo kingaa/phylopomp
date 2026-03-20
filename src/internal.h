@@ -31,6 +31,15 @@
 
 #ifdef __cplusplus
 
+#include <string>
+#include <cstring>
+
+typedef std::string string_t;
+
+#endif
+
+#ifdef __cplusplus
+
 #define mkChar Rf_mkChar
 #define mkString Rf_mkString
 #define ScalarInteger Rf_ScalarInteger

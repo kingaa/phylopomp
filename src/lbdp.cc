@@ -24,15 +24,15 @@ using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,4>;
 using lbdp_genealogy_t = master_t<lbdp_proc_t,1>;
 
 template<>
-std::string lbdp_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t lbdp_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(lambda)
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
     + YAML_PARAM(chi)
     + YAML_PARAM(n0);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(n);
   return p+s;
 }

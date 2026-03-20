@@ -54,9 +54,9 @@ using twoundead_proc_t = popul_proc_t<twoundead_state_t,twoundead_parameters_t,2
 using twoundead_genealogy_t = master_t<twoundead_proc_t,5>;
 
 template<>
-std::string twoundead_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t twoundead_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(Beta11)
     + YAML_PARAM(Beta12)
     + YAML_PARAM(Beta21)
@@ -81,7 +81,7 @@ std::string twoundead_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(I2_0)
     + YAML_PARAM(R1_0)
     + YAML_PARAM(R2_0);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(S1)
     + YAML_STATE(I1)
     + YAML_STATE(R1)

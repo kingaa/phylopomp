@@ -35,9 +35,9 @@ using si2r_proc_t = popul_proc_t<si2r_state_t,si2r_parameters_t,9>;
 using si2r_genealogy_t = master_t<si2r_proc_t,2>;
 
 template<>
-std::string si2r_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t si2r_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(Beta)
     + YAML_PARAM(mu)
     + YAML_PARAM(gamma)
@@ -49,7 +49,7 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(S)
     + YAML_STATE(I1)
     + YAML_STATE(I2)

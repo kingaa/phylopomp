@@ -36,9 +36,9 @@ using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
 using siir_genealogy_t = master_t<siir_proc_t,2>;
 
 template<>
-std::string siir_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t siir_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(Beta1)
     + YAML_PARAM(Beta2)
     + YAML_PARAM(gamma)
@@ -51,7 +51,7 @@ std::string siir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(I1_0)
     + YAML_PARAM(I2_0)
     + YAML_PARAM(R0);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(S)
     + YAML_STATE(I1)
     + YAML_STATE(I2)

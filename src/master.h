@@ -9,8 +9,6 @@
 #ifndef _MASTER_H_
 #define _MASTER_H_
 
-#include <string>
-#include <cstring>
 #include "popul_proc.h"
 #include "genealogy.h"
 #include "internal.h"
@@ -114,18 +112,18 @@ public:
     return popul_t::time();
   };
   //! human-readable info
-  std::string describe (void) const {
+  string_t describe (void) const {
     return geneal.describe();
   };
   //! machine/human readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string s = popul_t::yaml(tab)
+  string_t yaml (string_t tab = "") const {
+    string_t t = tab + "  ";
+    string_t s = popul_t::yaml(tab)
       + "genealogy:\n" + geneal.yaml(t);
     return s;
   };
   //! tree in Newick format
-  std::string newick (void) const {
+  string_t newick (void) const {
     return geneal.newick();
   };
   //! lineage count table

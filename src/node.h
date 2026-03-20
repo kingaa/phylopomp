@@ -4,8 +4,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include <string>
-#include <cstring>
 #include "ball.h"
 #include "pocket.h"
 #include "internal.h"
@@ -180,8 +178,8 @@ public:
   };
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string s = "node("
+  string_t describe (void) const {
+    string_t s = "node("
       + std::to_string(uniq)
       + "," + std::to_string(deme()) + ",";
     if (lineage() != null_lineage) {
@@ -192,9 +190,9 @@ public:
     return s;
   };
   //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string o = "name: " + std::to_string(uniq) + "\n"
+  string_t yaml (string_t tab = "") const {
+    string_t t = tab + "  ";
+    string_t o = "name: " + std::to_string(uniq) + "\n"
       + tab + "time: " + std::to_string(slate) + "\n"
       + tab + "deme: " + std::to_string(deme()) + "\n";
     if (lineage() != null_lineage) {
@@ -218,8 +216,8 @@ public:
   };
   //! Newick format with phylopomp extension
   //! Deme and node-type information is returned in a metadata wrapper.
-  std::string newick (const slate_t& tnow, const slate_t& tpar) const {
-    std::string o1 = "", o2 = "", o3 = "";
+  string_t newick (const slate_t& tnow, const slate_t& tpar) const {
+    string_t o1 = "", o2 = "", o3 = "";
     int n = nchildren();
     if (n > 0) {
       o1 = "("; o3 = ")";

@@ -3,8 +3,6 @@
 #ifndef _BALL_H_
 #define _BALL_H_
 
-#include <string>
-#include <cstring>
 #include "internal.h"
 
 //! BALL COLORS
@@ -118,11 +116,11 @@ public:
     return color==c;
   };
   //! human-readable colors
-  std::string color_name (void) const {
+  string_t color_name (void) const {
     return colores[color];
   };
   //! machine-readable color symbols
-  std::string color_symbol (void) const {
+  string_t color_symbol (void) const {
     if (is(green) && _holder==_owner)
       return "m";               // brown balls
     else
@@ -132,8 +130,8 @@ public:
 public:
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string o = color_name()
+  string_t describe (void) const {
+    string_t o = color_name()
       + "(" + std::to_string(uniq) + ",";
     if (deme() != undeme) {
       o += std::to_string(deme());
@@ -142,8 +140,8 @@ public:
     return o;
   };
   //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string o;
+  string_t yaml (string_t tab = "") const {
+    string_t o;
     o = "color: " + color_name() + "\n"
       + tab + "name: " + std::to_string(uniq) + "\n";
     if (color==black) {
@@ -175,8 +173,8 @@ public:
   };
   //! Element of a Newick representation.
   //! This should only be called at tip-nodes.
-  std::string newick (const slate_t &t) const {
-    std::string o = "[&&PhyloPOMP:deme=" + std::to_string(deme());
+  string_t newick (const slate_t &t) const {
+    string_t o = "[&&PhyloPOMP:deme=" + std::to_string(deme());
     switch (color) {
     case black:
       o += ",type=extant]";

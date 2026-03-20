@@ -142,39 +142,31 @@ Error : in 'parse': invalid Newick format: no final semicolon.
 +      )
 +    }()
 > 
-> r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
-+    parse_newick() |>
-+    {\(x)
-+      plot_grid(
-+        plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
-+        diagram(object=x,obscure=FALSE,prune=FALSE),
-+        ncol=1
-+      )
-+    }()
-> 
-> r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
-+    parse_newick() |>
-+    {\(x)
-+      plot_grid(
-+        plot(x=x,obscure=FALSE,prune=FALSE,points=TRUE),
-+        diagram(object=x,obscure=FALSE,prune=FALSE),
-+        ncol=1
-+      )
-+    }()
+> try(
++   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: unbalanced parentheses.
 > 
 > try(
-+   r"{((([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
++   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: unbalanced parentheses.
+> 
+> try(
++   r"{([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
 +      parse_newick()
 + )
 Error : in scan_color: invalid metadata: type 'bob' not recognized.
 > 
-> r"{(((1.0000):0.5;}" |>
+> r"{(1.0000):0.5;}" |>
 +    parse_newick()
 <phylopomp genealogy>
 Warning message:
 node label '1.0000' ignored: zero branch length assumed. 
 > 
-> r"{(((:1.0000)A;}" |>
+> r"{(:1.0000)A;}" |>
 +    parse_newick()
 <phylopomp genealogy>
 Warning message:

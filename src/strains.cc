@@ -38,9 +38,9 @@ using strains_proc_t = popul_proc_t<strains_state_t,strains_parameters_t,9>;
 using strains_genealogy_t = master_t<strains_proc_t,3>;
 
 template<>
-std::string strains_proc_t::yaml (std::string tab) const {
-  std::string t = tab + "  ";
-  std::string p = tab + "parameter:\n"
+string_t strains_proc_t::yaml (string_t tab) const {
+  string_t t = tab + "  ";
+  string_t p = tab + "parameter:\n"
     + YAML_PARAM(Beta1)
     + YAML_PARAM(Beta2)
     + YAML_PARAM(Beta3)
@@ -53,7 +53,7 @@ std::string strains_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(I2_0)
     + YAML_PARAM(I3_0)
     + YAML_PARAM(R0);
-  std::string s = tab + "state:\n"
+  string_t s = tab + "state:\n"
     + YAML_STATE(S)
     + YAML_STATE(I1)
     + YAML_STATE(I2)

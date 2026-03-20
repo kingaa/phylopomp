@@ -28,6 +28,10 @@ Type 'q()' to quit R.
 > set.seed(24963811)
 > 
 > runSEIR(time=5,S0=20,omega=2) -> x
+> x |> curtail(troot=3)
+<phylopomp genealogy>
+> x |> curtail(troot=3,time=4)
+<phylopomp genealogy>
 > 
 > plot_grid(
 +   x |>

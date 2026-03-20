@@ -4,9 +4,6 @@
 #ifndef _POPUL_PROC_H_
 #define _POPUL_PROC_H_
 
-#include <string>
-#include <cstring>
-
 #include "internal.h"
 
 //! Population process class.
@@ -130,7 +127,7 @@ public:
   //! makes a jump
   virtual void jump (int e) = 0;
   //! machine/human readable info
-  std::string yaml (std::string tab) const;
+  string_t yaml (string_t tab) const;
 
 public:
 
@@ -147,18 +144,18 @@ public:
     } else {
       for (event = 0; event < nevent; event++) {
         if (!R_FINITE(rate[event]))
-          Rprintf("in '%s' (%s line %d): invalid event rate[%zd]=%lg\n",
-                  __func__,__FILE__,__LINE__,event,rate[event]);
+          Rprintf("in '%s': invalid event rate[%zd]=%lg\n",
+                  __func__,event,rate[event]);
       }
-      err("in '%s' (%s line %d): invalid total event rate=%lg",
-          __func__,__FILE__,__LINE__,total_rate);
+      err("in '%s': invalid total event rate=%lg",
+          __func__,total_rate);
     }
     double u = runif(0,total_rate);
     event = 0;
     while (u > rate[event] && event < nevent) {
       if (rate[event] < 0)
-        err("in '%s' (%s line %d): invalid rate[%zd]=%lg", // #nocov
-            __func__,__FILE__,__LINE__,event,rate[event]); // #nocov
+        err("in '%s': invalid rate[%zd]=%lg", // #nocov
+            __func__,event,rate[event]);      // #nocov
       u -= rate[event];
       event++;
     }

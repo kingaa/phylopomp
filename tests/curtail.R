@@ -9,6 +9,8 @@ theme_set(theme_bw())
 set.seed(24963811)
 
 runSEIR(time=5,S0=20,omega=2) -> x
+x |> curtail(troot=3)
+x |> curtail(troot=3,time=4)
 
 plot_grid(
   x |>
