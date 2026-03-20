@@ -98,7 +98,7 @@ private:
     return (p->slate < q->slate) ||
       ((p->slate == q->slate) &&
        ((p==q->green_ball()->holder()) ||
-	((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
+        ((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
   };
 
 public:
@@ -205,14 +205,8 @@ public:
     remove(p);
     delete p;
   };
-  //! pass through the sequence, dropping superfluous nodes
-  //! i.e., those holding just one ball that is green.
-  void comb (void) {
-    for (node_rev_it i = crbegin(); i != crend(); i++) {
-      if ((*i)->size() == 1 && (*i)->holds(green)) {
-        swap((*i)->last_ball(),(*i)->green_ball());
-      }
-    }
+  //! drop all dead roots
+  void weed (void) {
     node_nit j = begin();
     while (j != end()) {
       if ((*j)->dead_root()) {
@@ -221,6 +215,33 @@ public:
         j++;
       }
     }
+  };
+  //! drop all inline nodes
+  //! i.e., those holding just one ball that is green.
+  void comb (void) {
+    for (node_t *p : *this) {
+      if (p->size() == 1 && p->holds(green)) {
+        swap(p->last_ball(),p->green_ball());
+      }
+    }
+    weed();
+  };
+  //! drop all zero-length branches
+  void drop_zlb (void) {
+    for (node_t *p : *this) {
+      ball_t *b;
+      if (p->slate == p->parent()->slate) {
+        while (!p->empty()) {
+          b = p->last_ball();
+          p->erase(b);
+          p->parent()->insert(b);
+          //FIXME: do we also need to change ball-demes?
+        }
+        b = p->green_ball();
+        p->parent()->erase(b); p->insert(b);
+      }
+    }
+    weed();
   };
 
 private:
