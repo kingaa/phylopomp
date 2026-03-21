@@ -5,6 +5,7 @@
 #define _GENEALOGY_H_
 
 #include <regex>
+#include <map>
 #include <utility>
 #include <stdexcept>
 
@@ -648,9 +649,9 @@ private:
     return name_t(d);
   }
   //! simple function for scanning the color
-  color_t scan_color (const string_t& s) const {
-    string_t copy(s);
-    const std::map<string_t,color_t,std::less<string_t>,std::allocator<std::pair<const string_t, color_t> > > options({
+  color_t scan_color (const std::string& s) const {
+    std::string copy(s);
+    const std::map<string_t,color_t> options({
         {"sample",blue},{"extant",black},{"migration",green},
         {"node",green},{"branch",green},{"root",green}
       });
@@ -760,7 +761,7 @@ public:
           while (pos1 != s.crend() && *pos1 == '(') {
             p = p->parent();
             pos1++;
-	    stack--;
+            stack--;
           }
           if (pos1 != s.crend() && *pos1 == ',') pos1++;
           break;
