@@ -4,13 +4,15 @@
 ##'
 ##' @name treeplot
 ##' @include getinfo.R diagram.R
-##' @param tree character; tree representation in Newick format.
 ##' @param t0 numeric; root time.
 ##' @param time numeric; time of the genealogy.
 ##' @param ladderize Ladderize?
 ##' @param points Show nodes and tips?
-##' @param ... \code{plot} passes extra arguments to \code{\link{treeplot}}.
-##' \code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.
+##' @param palette color palette for branches.
+##' This can be furnished either as a function or a vector of colors.
+##' If this is a function, it should take a single integer argument, the number of colors required.
+##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
+##' @param ... \code{plot} passes extra arguments to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##' @example examples/movie.R
 ##'
@@ -19,11 +21,15 @@ NULL
 ##' @rdname treeplot
 ##' @inheritParams getInfo
 ##' @param x object of class \sQuote{gpgen}
+##' @importFrom scales hue_pal
 ##' @method plot gpgen
 ##' @export
 plot.gpgen <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE
+  prune = TRUE, obscure = TRUE, points = FALSE,
+  ladderize = TRUE,
+  palette = scales::hue_pal(l=30,h=c(220,580))
+
 ) {
   x |>
     getInfo(
@@ -37,11 +43,13 @@ plot.gpgen <- function (
     tree=out$newick,
     time=time,
     t0=t0,
-    ...
-  )
+    ladderize=ladderize,
+    palette=palette,
+    points=points
+  )+
+    theme(...)
 }
 
-##' @rdname treeplot
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify
 ##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
@@ -50,13 +58,9 @@ plot.gpgen <- function (
 ##' @importFrom tibble column_to_rownames
 ##' @importFrom tidyr separate unite expand_grid
 ##' @importFrom scales alpha hue_pal
-##' @param palette color palette for branches.
-##' This can be furnished either as a function or a vector of colors.
-##' If this is a function, it should take a single integer argument, the number of colors required.
-##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
 treeplot <- function (
   tree, time = NULL, t0 = 0,
-  ladderize = TRUE, points = FALSE, ...,
+  ladderize = TRUE, points = FALSE,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
 
@@ -68,19 +72,17 @@ treeplot <- function (
 
   tree |> as.character() -> tree
   if (nchar(tree)==0L) tree <- "i_NA_NA:0.0;"
-  tree |>
-    gsub(";$",")i_NA_NA:0.0",x=_) |>
-    gsub(";",")i_NA_NA:0.0,(",x=_) |>
-    gsub(r"{\[(&&PhyloPOMP:type=(?:sample|extant|node|root))\]}",r"{[\1,deme=0]}",x=_,perl=TRUE) |>
-    gsub(r"{\[&&PhyloPOMP:(type=\w+),deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
-    gsub(r"{type=sample}",r"{b}",x=_,perl=TRUE) |>
-    gsub(r"{type=extant}",r"{o}",x=_,perl=TRUE) |>
-    gsub(r"{type=node}",r"{g}",x=_,perl=TRUE) |>
-    gsub(r"{type=root}",r"{m}",x=_,perl=TRUE) -> tree
-
   paste0(
     "(i_NA_NA:0.0,i_NA_NA:0.0,(",
-    tree,
+    tree |>
+      gsub(";$",")i_NA_NA:0.0",x=_) |>
+      gsub(";",")i_NA_NA:0.0,(",x=_) |>
+      gsub(r"{\[(&&PhyloPOMP:type=(?:sample|extant|node|root))\]}",r"{[\1,deme=0]}",x=_,perl=TRUE) |>
+      gsub(r"{\[&&PhyloPOMP:(type=\w+),deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
+      gsub(r"{type=sample}",r"{b}",x=_,perl=TRUE) |>
+      gsub(r"{type=extant}",r"{o}",x=_,perl=TRUE) |>
+      gsub(r"{type=node}",r"{g}",x=_,perl=TRUE) |>
+      gsub(r"{type=root}",r"{m}",x=_,perl=TRUE),
     ")i_NA_NA:0.0;"
   ) |>
     read.tree(text=_) |>
@@ -138,8 +140,7 @@ treeplot <- function (
     guides(alpha="none",color="none")+
     expand_limits(x=c(dat$x,t0,time))+
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
-    theme_tree2()+
-    theme(...) -> pl
+    theme_tree2() -> pl
 
   if (points) {
     if (ncolors["m_node",] > 0) {

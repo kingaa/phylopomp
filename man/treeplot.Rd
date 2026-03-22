@@ -5,23 +5,22 @@
 \alias{plot.gpgen}
 \title{Fancy tree plotter}
 \usage{
-\method{plot}{gpgen}(x, ..., time, t0, prune = TRUE, obscure = TRUE)
-
-treeplot(
-  tree,
-  time = NULL,
-  t0 = 0,
-  ladderize = TRUE,
-  points = FALSE,
+\method{plot}{gpgen}(
+  x,
   ...,
+  time,
+  t0,
+  prune = TRUE,
+  obscure = TRUE,
+  points = FALSE,
+  ladderize = TRUE,
   palette = scales::hue_pal(l = 30, h = c(220, 580))
 )
 }
 \arguments{
 \item{x}{object of class \sQuote{gpgen}}
 
-\item{...}{\code{plot} passes extra arguments to \code{\link{treeplot}}.
-\code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.}
+\item{...}{\code{plot} passes extra arguments to \code{\link[ggplot2]{theme}}.}
 
 \item{time}{numeric; time of the genealogy.}
 
@@ -31,11 +30,9 @@ treeplot(
 
 \item{obscure}{logical; obscure the demes?}
 
-\item{tree}{character; tree representation in Newick format.}
+\item{points}{Show nodes and tips?}
 
 \item{ladderize}{Ladderize?}
-
-\item{points}{Show nodes and tips?}
 
 \item{palette}{color palette for branches.
 This can be furnished either as a function or a vector of colors.
