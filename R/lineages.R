@@ -8,7 +8,7 @@
 ##'  \item{saturation}{the number of lineages emerging from the event}
 ##'  \item{event_type}{an integer coding the type of event}
 ##' }
-##' 
+##'
 ##' If the genealogy has been obscured (the default), the number in the \code{lineages} returned is the total number of lineages present at the specified time and the saturation is the total saturation.
 ##' If the genealogy has not been obscured (\code{obscure = FALSE}), the deme-specific data are returned.
 ##' In this case, the \code{deme} column specifies the pertinent deme.
@@ -27,9 +27,9 @@
 ##' @return A \code{\link[tibble]{tibble}} containing information about the genealogy.
 ##' See Details for specifics.
 ##' The \code{\link[tibble]{tibble}} returned by \code{lineages} has a \code{\link[=plot.gplin]{plot}} method.
-##' 
+##'
 ##' @example examples/lineages.R
-##' 
+##'
 ##' @rdname lineages
 ##' @export
 lineages <- function (object, prune = TRUE, obscure = TRUE) {

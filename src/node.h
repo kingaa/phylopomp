@@ -216,22 +216,25 @@ public:
   };
   //! Newick format with phylopomp extension
   //! Deme and node-type information is returned in a metadata wrapper.
-  string_t newick (const slate_t& tnow, const slate_t& tpar, bool showdeme) const {
+  string_t newick (const slate_t& tnow, const slate_t& tpar,
+                   bool showdeme, bool extended) const {
     string_t o1 = "", o2 = "", o3 = "";
     int n = nchildren();
     if (n > 0) {
       o1 = "("; o3 = ")";
     }
-    o3 += "[&&PhyloPOMP:";
-    if (holds(blue))
-      o3 += "type=sample";
-    else if (holds_own())
-      o3 += "type=root";
-    else
-      o3 += "type=node";
-    if (showdeme)
-      o3 += ",deme=" + std::to_string(deme());
-    o3 += "]";
+    if (extended) {
+      o3 += "[&&PhyloPOMP:";
+      if (holds(blue))
+        o3 += "type=sample";
+      else if (holds_own())
+        o3 += "type=root";
+      else
+        o3 += "type=node";
+      if (showdeme)
+        o3 += ",deme=" + std::to_string(deme());
+      o3 += "]";
+    }
     n = 0;
     for (ball_t *b : *this) {
       node_t *p = 0;
@@ -240,10 +243,11 @@ public:
         p = b->child();
         if (p != this) {
           if (n++ > 0) o2 += ",";
-          o2 += p->newick(tnow,slate,showdeme);
+          o2 += p->newick(tnow,slate,showdeme,extended);
         }
         break;
       case black:
+        assert(extended);
         if (n++ > 0) o2 += ",";
         o2 += b->newick(tnow-slate,showdeme);
         break;

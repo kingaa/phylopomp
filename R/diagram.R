@@ -92,7 +92,7 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##'
 ##' Code for the resizing text adapted from a blog post by Mark Heckmann
 ##' (https://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/).
-##' 
+##'
 ##' @rdname internals
 ##' @name genealogy diagram internals
 ##' @keywords internal
@@ -101,7 +101,7 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##' @importFrom grid viewport gList gTree
 ##' @inheritParams diagram
 ##' @inheritParams grid::grob
-##' 
+##'
 ##' @export
 genealogyGrob <- function (
   object, m = NULL, n = NULL, vp = NULL,

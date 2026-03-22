@@ -3,7 +3,7 @@
 ##' Parses a Newick description and returns a binary version of the genealogy.
 ##'
 ##' \code{parse_newick} parses a string containing information in an extended Newick format and returns a \pkg{phylopomp} genealogy.
-##' 
+##'
 ##' The extension allows metadata (enclosed by square brackets).
 ##' It ignores metadata unless they are specifically flagged as PhyloPOMP metadata, i.e.:
 ##' \preformatted{

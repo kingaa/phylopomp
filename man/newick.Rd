@@ -4,7 +4,7 @@
 \alias{newick}
 \title{Newick output}
 \usage{
-newick(object, prune = TRUE, obscure = TRUE)
+newick(object, prune = TRUE, obscure = TRUE, extended = TRUE)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
@@ -12,6 +12,14 @@ newick(object, prune = TRUE, obscure = TRUE)
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{extended}{logical; if TRUE, an extended-Newick format is used.
+In particular, metadata tags of the form `[&&PhyloPOMP:...]` are inserted.
+These contain information regarding node-type and deme.
+
+If `extended = FALSE`, then the string returned is in ordinary Newick format.
+Deme and node-type information is discarded.
+Note that `extended = FALSE` implies both `prune = TRUE` and `obscure = TRUE`.}
 }
 \value{
 A string in Newick format.

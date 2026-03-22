@@ -58,8 +58,8 @@ SEXP structure (const TYPE& X) {
 
 //! tree in newick format
 template <class TYPE>
-SEXP newick (const TYPE& X) {
-  return mkString(X.newick().c_str());
+SEXP newick (const TYPE& X, bool extended) {
+  return mkString(X.newick(extended).c_str());
 }
 
 //! number of lineages through time

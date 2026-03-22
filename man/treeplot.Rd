@@ -30,9 +30,9 @@
 
 \item{obscure}{logical; obscure the demes?}
 
-\item{points}{Show nodes and tips?}
+\item{points}{logical; show nodes and tips?}
 
-\item{ladderize}{Ladderize?}
+\item{ladderize}{logical; ladderize?}
 
 \item{palette}{color palette for branches.
 This can be furnished either as a function or a vector of colors.

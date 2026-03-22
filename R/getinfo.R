@@ -7,6 +7,7 @@
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
 ##' @param obscure logical; obscure the demes?
+##' @param extended logical; return extended-Newick format?
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param newick logical; return a Newick-format description of the tree?
@@ -29,7 +30,7 @@
 ##'   \item{ndeme}{the number of demes (an integer)}
 ##'   \item{nsample}{the number of samples (an integer)}
 ##'   \item{nroot}{the number of roots (an integer)}
-##'   \item{newick}{the genealogical tree, in Newick format}
+##'   \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
 ##'   \item{description}{a human readable description of the state of the genealogy process}
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
@@ -41,7 +42,7 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune = TRUE, obscure = TRUE,
+  object, prune = TRUE, obscure = TRUE, extended = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
@@ -54,7 +55,7 @@ getInfo <- function (
   x <- .External(
     P_getInfo,
     object=geneal(object),
-    prune=prune,obscure=obscure,
+    prune=prune,obscure=obscure,extended=extended,
     t0=t0,time=time,
     nsample=nsample,nroot=nroot,ndeme=ndeme,
     description=description,yaml=yaml,

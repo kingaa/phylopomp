@@ -175,7 +175,7 @@ void seirs_gill
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event #nocov
-    break;			// #nocov
+    break;                      // #nocov
   case 0:                       // root
     // color lineages by sampling without replacement
     assert(sat[parent]==1);

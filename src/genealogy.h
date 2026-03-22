@@ -380,8 +380,8 @@ public:
 public:
 
   //! put genealogy at current time into Newick format.
-  string_t newick (void) const {
-    return nodeseq_t::newick(time(),(ndeme() > 1));
+  string_t newick (bool extended = true) const {
+    return nodeseq_t::newick(time(),(ndeme() > 1),extended);
   };
 
 public:
@@ -605,6 +605,22 @@ public:
     _unique = (_unique < G._unique) ? G._unique : _unique;
     _ndeme = (_ndeme < G.ndeme()) ? G.ndeme() : _ndeme;
     return *this;
+  };
+
+  //! insert zero-length branches for all samples
+  void insert_zlb (void) {
+    for (node_t *p : *this) {
+      if (p->holds(green) && p->holds(blue)) {
+	assert(!p->holds(black)); // genealogy should have already been pruned
+	ball_t *b = p->last_ball();
+	assert(b->is(blue));
+	node_t *q = make_node(p->deme());
+	q->slate = p->slate;
+	swap(q->green_ball(),b);
+	push_back(q);
+      }
+    }
+    sort();
   };
 
 private:

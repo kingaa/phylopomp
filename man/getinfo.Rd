@@ -8,6 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
+  extended = TRUE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -28,6 +29,8 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{extended}{logical; return extended-Newick format?}
 
 \item{t0}{logical; return the zero-time?}
 
@@ -61,7 +64,7 @@ A list containing the requested elements, including any or all of:
   \item{ndeme}{the number of demes (an integer)}
   \item{nsample}{the number of samples (an integer)}
   \item{nroot}{the number of roots (an integer)}
-  \item{newick}{the genealogical tree, in Newick format}
+  \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}

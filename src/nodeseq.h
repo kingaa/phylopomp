@@ -318,12 +318,12 @@ public:
     return Nodes;
   };
   //! put genealogy at time `t` into Newick format.
-  string_t newick (slate_t t, bool showdeme) const {
+  string_t newick (slate_t t, bool showdeme, bool extended) const {
     slate_t te = dawn();
     string_t o = "";
     for (node_t *p : *this) {
       if (p->is_root()) {
-        o += p->newick(t,te,showdeme) + ";";
+        o += p->newick(t,te,showdeme,extended) + ";";
       }
     }
     return o;

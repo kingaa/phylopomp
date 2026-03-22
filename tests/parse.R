@@ -121,6 +121,17 @@ plot_grid(
   diagram(x2,obscure=FALSE,prune=FALSE)
 )
 
+runSEIR(time=5,I0=3) |>
+  freeze(seed=39585882) -> x
+x |>
+  newick(extended=FALSE) |>
+  parse_newick() -> y
+plot_grid(
+  x |> plot(points=TRUE),
+  y |> plot(points=TRUE),
+  ncol=1
+)
+
 try(
   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
      parse_newick()

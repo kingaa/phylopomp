@@ -6,8 +6,8 @@
 ##' @include getinfo.R diagram.R
 ##' @param t0 numeric; root time.
 ##' @param time numeric; time of the genealogy.
-##' @param ladderize Ladderize?
-##' @param points Show nodes and tips?
+##' @param ladderize logical; ladderize?
+##' @param points logical; show nodes and tips?
 ##' @param palette color palette for branches.
 ##' This can be furnished either as a function or a vector of colors.
 ##' If this is a function, it should take a single integer argument, the number of colors required.
