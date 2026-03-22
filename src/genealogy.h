@@ -277,9 +277,10 @@ public:
   };
   //! genealogy information in list format
   SEXP gendat (void) const {
-    SEXP tout, anc, lin, sat, type, deme, index, child, ns, nr, nn;
+    SEXP t0, tout, anc, lin, sat, type, deme, index, child, ns, nr, nn;
     SEXP out, outn;
     size_t n = length();
+    PROTECT(t0 = NEW_NUMERIC(1));
     PROTECT(tout = NEW_NUMERIC(n+1));
     PROTECT(type = NEW_INTEGER(n));
     PROTECT(deme = NEW_INTEGER(n));
@@ -291,26 +292,28 @@ public:
     PROTECT(ns = NEW_INTEGER(1));
     PROTECT(nr = NEW_INTEGER(1));
     PROTECT(nn = NEW_INTEGER(1));
-    PROTECT(out = NEW_LIST(11));
-    PROTECT(outn = NEW_CHARACTER(11));
-    set_list_elem(out,outn,tout,"nodetime",0);
-    set_list_elem(out,outn,type,"nodetype",1);
-    set_list_elem(out,outn,deme,"deme",2);
-    set_list_elem(out,outn,lin,"lineage",3);
-    set_list_elem(out,outn,sat,"saturation",4);
-    set_list_elem(out,outn,index,"index",5);
-    set_list_elem(out,outn,child,"child",6);
-    set_list_elem(out,outn,anc,"ancestor",7);
-    set_list_elem(out,outn,ns,"nsample",8);
-    set_list_elem(out,outn,nr,"nroot",9);
-    set_list_elem(out,outn,nn,"nnode",10);
+    PROTECT(out = NEW_LIST(12));
+    PROTECT(outn = NEW_CHARACTER(12));
+    set_list_elem(out,outn,t0,"t0",0);
+    set_list_elem(out,outn,tout,"nodetime",1);
+    set_list_elem(out,outn,type,"nodetype",2);
+    set_list_elem(out,outn,deme,"deme",3);
+    set_list_elem(out,outn,lin,"lineage",4);
+    set_list_elem(out,outn,sat,"saturation",5);
+    set_list_elem(out,outn,index,"index",6);
+    set_list_elem(out,outn,child,"child",7);
+    set_list_elem(out,outn,anc,"ancestor",8);
+    set_list_elem(out,outn,ns,"nsample",9);
+    set_list_elem(out,outn,nr,"nroot",10);
+    set_list_elem(out,outn,nn,"nnode",11);
     SET_NAMES(out,outn);
     gendat(REAL(tout),INTEGER(anc),INTEGER(lin),INTEGER(sat),
            INTEGER(type),INTEGER(deme),INTEGER(index),INTEGER(child));
-    *INTEGER(ns) = nsample();   // number of samples
-    *INTEGER(nr) = nroot();   // number of samples
-    *INTEGER(nn) = length();    // number of nodes
-    UNPROTECT(13);
+    *REAL(t0) = double(timezero()); // zero-time
+    *INTEGER(ns) = nsample();       // number of samples
+    *INTEGER(nr) = nroot();         // number of roots
+    *INTEGER(nn) = length();        // number of nodes
+    UNPROTECT(14);
     return out;
   };
 
@@ -726,8 +729,6 @@ public:
     slate_t tf = timezero();
     string_t::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
     int stack = 0;
-    if (*pos1 != ';')
-      err("in '%s': invalid Newick format: no final semicolon.",__func__);
     while (pos1 != s.crend()) {
       switch (*pos1) {
       case ']':

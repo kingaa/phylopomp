@@ -126,11 +126,9 @@ Type 'q()' to quit R.
 +   ncol=1,rel_heights=c(1,1,1)
 + )
 > 
-> try(
-+   r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
-+      parse_newick()
-+ )
-Error : in 'parse': invalid Newick format: no final semicolon.
+> r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000}" |>
++    parse_newick()
+<phylopomp genealogy>
 > 
 > r"{(((:0.1)),[&&PhyloPOMP:deme=9|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) |>
@@ -160,6 +158,13 @@ Error : in 'parse': invalid Newick format: unbalanced parentheses.
 + )
 Error : in scan_color: invalid metadata: type 'bob' not recognized.
 > 
+> r"{([deme=2|type=extant]:1.0000):0.5;}" |>
++    parse_newick() |>
++    getInfo(nsample=TRUE)
+$nsample
+[1] 1
+
+> 
 > r"{(1.0000):0.5;}" |>
 +    parse_newick()
 <phylopomp genealogy>
@@ -171,6 +176,10 @@ node label '1.0000' ignored: zero branch length assumed.
 <phylopomp genealogy>
 Warning message:
 node label 'A' ignored: zero branch length assumed. 
+> 
+> "" |> parse_newick() |> gendat() |> unlist()
+      t0 nodetime  nsample    nroot    nnode 
+       0        0        0        0        0 
 > 
 > dev.off()
 null device 

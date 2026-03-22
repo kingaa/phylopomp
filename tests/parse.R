@@ -107,10 +107,8 @@ plot_grid(
   ncol=1,rel_heights=c(1,1,1)
 )
 
-try(
-  r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.000000}" |>
-     parse_newick()
-)
+r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000}" |>
+   parse_newick()
 
 r"{(((:0.1)),[&&PhyloPOMP:deme=9|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) |>
@@ -137,10 +135,16 @@ try(
      parse_newick()
 )
 
+r"{([deme=2|type=extant]:1.0000):0.5;}" |>
+   parse_newick() |>
+   getInfo(nsample=TRUE)
+
 r"{(1.0000):0.5;}" |>
    parse_newick()
 
 r"{(:1.0000)A;}" |>
    parse_newick()
+
+"" |> parse_newick() |> gendat() |> unlist()
 
 dev.off()

@@ -41,6 +41,9 @@ The following object is masked from 'package:stats':
 > x |> gendat() -> g
 > stopifnot(identical(g,getInfo(x,gendat=TRUE)$gendat))
 > g
+$t0
+[1] 0
+
 $nodetime
  [1] 0.0000 0.0000 0.0031 0.0386 0.3448 0.4203 0.6791 1.0542 1.0608 1.1063
 [11] 1.1456 1.1481 1.2802 1.3197 1.4067 1.5058 1.5311 1.5904 1.8268 2.0049
