@@ -692,23 +692,17 @@ private:
     const std::regex wre("^(.*?):([+-]?\\d*(?:\\.\\d+)?){1}.?$");
     std::smatch wm;
     if (std::regex_match(s,wm,wre)) {
-      bl = scan_slate(wm[2].str());
       const string_t label = wm[1].str();
-      //! FIXME: allow multiple metadata tags
-      const std::regex mre("^.*?\\[&&PhyloPOMP:(.+?)\\].*$");
+      const std::regex dre("^.*?\\[&&PhyloPOMP:.*?deme=(\\w*).*?\\].*$");
+      const std::regex tre("^.*?\\[&&PhyloPOMP:.*?type=(\\w*).*?\\].*$");
       std::smatch mm;
-      if (std::regex_match(label,mm,mre)) {
-        string_t meta = mm[1].str();
-        const std::regex dre("deme=(\\w*)",std::regex_constants::icase);
-        const std::regex tre("type=(\\w*)",std::regex_constants::icase);
-        std::smatch sm;
-        if (std::regex_search(meta,sm,dre)) {
-          deme = scan_name(sm[1].str());
-        }
-        if (std::regex_search(meta,sm,tre)) {
-          col = scan_color(sm[1].str());
-        }
+      if (std::regex_match(label,mm,dre)) {
+        deme = scan_name(mm[1].str());
       }
+      if (std::regex_match(label,mm,tre)) {
+        col = scan_color(mm[1].str());
+      }
+      bl = scan_slate(wm[2].str());
     } else if (s.size() != 0) {
       warn("node label '%s' ignored: zero branch length assumed.",s.c_str());
     }
