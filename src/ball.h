@@ -173,18 +173,14 @@ public:
   };
   //! Element of a Newick representation.
   //! This should only be called at tip-nodes.
-  string_t newick (const slate_t &t) const {
-    string_t o = "[&&PhyloPOMP:deme=" + std::to_string(deme());
-    switch (color) {
-    case black:
-      o += ",type=extant]";
-      break;
-    case blue:
-      o += ",type=sample]";
-    case green: default:
-      assert(0);
-    }
-    o += std::to_string(uniq) + ":" + std::to_string(t);
+  string_t newick (const slate_t &t, bool showdeme) const {
+    assert(color==black);
+    string_t o = "[&&PhyloPOMP:type=extant";
+    if (showdeme)
+      o += ",deme=" + std::to_string(deme());
+    o += "]"
+      + std::to_string(uniq) +
+      ":" + std::to_string(t);
     return o;
   };
 };

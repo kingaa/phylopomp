@@ -15,6 +15,7 @@
 ##' @param structure logical; return the structure in \R list format?
 ##' @param ndeme logical; return the number of demes?
 ##' @param nsample logical; return the number of samples?
+##' @param nroot logical; return the number of roots?
 ##' @param lineages logical; return the lineage-count function?
 ##' @param gendat logical; return the data-frame format?
 ##' @param genealogy logical; return the lineage-traced genealogy?
@@ -27,6 +28,7 @@
 ##'   \item{time}{the final time (a numeric scalar)}
 ##'   \item{ndeme}{the number of demes (an integer)}
 ##'   \item{nsample}{the number of samples (an integer)}
+##'   \item{nroot}{the number of roots (an integer)}
 ##'   \item{newick}{the genealogical tree, in Newick format}
 ##'   \item{description}{a human readable description of the state of the genealogy process}
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
@@ -43,7 +45,7 @@ getInfo <- function (
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
-  nsample = FALSE, genealogy = FALSE, gendat = FALSE
+  nsample = FALSE, nroot = FALSE, genealogy = FALSE, gendat = FALSE
 ) {
   if (gendat & !prune) {
     warning("pruning since 'gendat=TRUE'",call.=FALSE)
@@ -53,7 +55,8 @@ getInfo <- function (
     P_getInfo,
     object=geneal(object),
     prune=prune,obscure=obscure,
-    t0=t0,time=time,nsample=nsample,ndeme=ndeme,
+    t0=t0,time=time,
+    nsample=nsample,nroot=nroot,ndeme=ndeme,
     description=description,yaml=yaml,
     structure=structure,newick=newick,
     lineages=lineages,genealogy=genealogy,

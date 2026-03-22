@@ -807,9 +807,9 @@ The following objects are masked from 'package:base':
 null device 
           1 
 > 
-> x |> getInfo(obscure=FALSE,nsample=TRUE,ndeme=TRUE) |> unlist()
-nsample   ndeme 
-     37       2 
+> x |> getInfo(obscure=FALSE,nsample=TRUE,nroot=TRUE,ndeme=TRUE) |> unlist()
+nsample   nroot   ndeme 
+     37       7       2 
 > x |> getInfo(obscure=FALSE,genealogy=TRUE)
 $genealogy
 <phylopomp genealogy>

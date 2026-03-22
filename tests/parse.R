@@ -11,44 +11,44 @@ set.seed(4963811)
 runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=FALSE) -> tree
 plot_grid(
-  tree |> treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
     getInfo(prune=FALSE,obscure=FALSE,newick=TRUE) |>
     getElement("newick") |>
-    treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 
 runSEIR(time=3,I0=3) |>
   newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
-  tree |> treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 
 runSEIR(time=30,I0=3) |>
   newick(prune=FALSE,obscure=TRUE) -> tree
 plot_grid(
-  tree |> treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 
 runSEIR(time=3,I0=3) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
-  tree |> treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
     getInfo(prune=TRUE,obscure=FALSE,newick=TRUE) |>
     getElement("newick") |>
-    treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 
@@ -60,7 +60,7 @@ plot_grid(
   tree |> parse_newick() |>
     getInfo(prune=TRUE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 

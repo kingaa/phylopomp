@@ -89,6 +89,9 @@ freeze(
 x |> gendat(obscure=FALSE) -> g
 stopifnot(identical(g,getInfo(x,obscure=FALSE,gendat=TRUE)$gendat))
 stopifnot(identical(g,getInfo(x,prune=FALSE,obscure=FALSE,gendat=TRUE)$gendat))
+gi <- getInfo(x,nsample=TRUE,nroot=TRUE)
+stopifnot(identical(g$nsample,gi$nsample))
+stopifnot(identical(g$nroot,gi$nroot))
 
 g |>
   _[c("nodetype","deme","child","ancestor")] |>

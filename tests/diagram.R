@@ -102,7 +102,7 @@ x |>
   print(vp=viewport(x=0.52,y=0.1,width=0.9,height=0.05))
 dev.off()
 
-x |> getInfo(obscure=FALSE,nsample=TRUE,ndeme=TRUE) |> unlist()
+x |> getInfo(obscure=FALSE,nsample=TRUE,nroot=TRUE,ndeme=TRUE) |> unlist()
 x |> getInfo(obscure=FALSE,genealogy=TRUE)
 
 try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))

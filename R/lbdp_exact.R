@@ -19,7 +19,7 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   t0 <- t[1L]                            ## root time
   tbr <- t[gi$nodetype==2L]              ## coalescence times
   ttp <- t[gi$nodetype==1L & gi$saturation==0L] ## tip sample times
-  nrt <- sum(gi$nodetype==0L)                   ## number of roots
+  nrt <- gi$nroot                               ## number of roots
   nin <- sum(gi$nodetype==1L & gi$saturation==1L) ## number of inline samples
   if (length(ttp) != length(tbr)+nrt)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov

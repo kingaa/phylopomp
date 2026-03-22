@@ -74,6 +74,9 @@ $ancestor
 $nsample
 [1] 18
 
+$nroot
+[1] 2
+
 $nnode
 [1] 28
 
@@ -162,6 +165,9 @@ $nnode
 > stopifnot(identical(g,getInfo(x,prune=FALSE,obscure=FALSE,gendat=TRUE)$gendat))
 Warning message:
 pruning since 'gendat=TRUE' 
+> gi <- getInfo(x,nsample=TRUE,nroot=TRUE)
+> stopifnot(identical(g$nsample,gi$nsample))
+> stopifnot(identical(g$nroot,gi$nroot))
 > 
 > g |>
 +   _[c("nodetype","deme","child","ancestor")] |>

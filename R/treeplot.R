@@ -54,7 +54,6 @@ plot.gpgen <- function (
 ##' This can be furnished either as a function or a vector of colors.
 ##' If this is a function, it should take a single integer argument, the number of colors required.
 ##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
-##' @export
 treeplot <- function (
   tree, time = NULL, t0 = 0,
   ladderize = TRUE, points = FALSE, ...,
@@ -72,10 +71,12 @@ treeplot <- function (
   tree |>
     gsub(";$",")i_NA_NA:0.0",x=_) |>
     gsub(";",")i_NA_NA:0.0,(",x=_) |>
-    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=sample\]}",r"{b_\1_}",x=_,perl=TRUE) |>
-    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=extant\]}",r"{o_\1_}",x=_,perl=TRUE) |>
-    gsub(r"{\[\&\&PhyloPOMP:deme=([^,]),type=node\]}",r"{g_\1_}",x=_,perl=TRUE) |>
-    gsub(r"{\[&&PhyloPOMP:deme=([^,]),type=root\]}",r"{m_\1_}",x=_,perl=TRUE) -> tree
+    gsub(r"{\[(&&PhyloPOMP:type=(?:sample|extant|node|root))\]}",r"{[\1,deme=0]}",x=_,perl=TRUE) |>
+    gsub(r"{\[&&PhyloPOMP:(type=\w+),deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
+    gsub(r"{type=sample}",r"{b}",x=_,perl=TRUE) |>
+    gsub(r"{type=extant}",r"{o}",x=_,perl=TRUE) |>
+    gsub(r"{type=node}",r"{g}",x=_,perl=TRUE) |>
+    gsub(r"{type=root}",r"{m}",x=_,perl=TRUE) -> tree
 
   paste0(
     "(i_NA_NA:0.0,i_NA_NA:0.0,(",

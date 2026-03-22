@@ -17,6 +17,7 @@ getInfo(
   lineages = FALSE,
   newick = FALSE,
   nsample = FALSE,
+  nroot = FALSE,
   genealogy = FALSE,
   gendat = FALSE
 )
@@ -46,6 +47,8 @@ getInfo(
 
 \item{nsample}{logical; return the number of samples?}
 
+\item{nroot}{logical; return the number of roots?}
+
 \item{genealogy}{logical; return the lineage-traced genealogy?}
 
 \item{gendat}{logical; return the data-frame format?}
@@ -57,6 +60,7 @@ A list containing the requested elements, including any or all of:
   \item{time}{the final time (a numeric scalar)}
   \item{ndeme}{the number of demes (an integer)}
   \item{nsample}{the number of samples (an integer)}
+  \item{nroot}{the number of roots (an integer)}
   \item{newick}{the genealogical tree, in Newick format}
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}

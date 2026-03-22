@@ -19,9 +19,9 @@ extern "C" {
   SEXP getInfo (SEXP args) {
     const char *argname[] = {
       "object","prune","obscure",
-      "t0","time","nsample","ndeme",
-      "description","structure","yaml","newick",
-      "lineages","gendat","genealogy"};
+        "t0","time","nsample","nroot","ndeme",
+        "description","structure","yaml","newick",
+        "lineages","gendat","genealogy"};
     const int narg = sizeof(argname)/sizeof(const char *);
     bool flag[narg];
     SEXP object = R_NilValue;
@@ -70,6 +70,9 @@ extern "C" {
     }
     if (*(f++)) {               // nsample
       k = set_list_elem(out,outnames,nsample(A),"nsample",k);
+    }
+    if (*(f++)) {               // nroot
+      k = set_list_elem(out,outnames,nroot(A),"nroot",k);
     }
     if (*(f++)) {               // ndeme
       k = set_list_elem(out,outnames,ndeme(A),"ndeme",k);
