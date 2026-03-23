@@ -290,44 +290,14 @@ public:
 public:
 
   //! human-readable info
-  string_t describe (void) const {
-    string_t o = "";
-    for (node_t *p : *this) {
-      o += p->describe();
-    }
-    return o;
-  };
+  string_t describe (void) const;
   //! human- & machine-readable info
-  virtual string_t yaml (string_t tab = "") const {
-    string_t o = "";
-    string_t t = tab + "  ";
-    for (node_t *p : *this) {
-      o += tab + "- " + p->yaml(t);
-    }
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
   //! R list description
-  SEXP structure (void) const {
-    SEXP Nodes;
-    PROTECT(Nodes = NEW_LIST(size()));
-    int k = 0;
-    for (node_t *p : *this) {
-      SET_ELEMENT(Nodes,k++,p->structure());
-    }
-    UNPROTECT(1);
-    return Nodes;
-  };
+  SEXP structure (void) const;
   //! put genealogy at time `t` into Newick format.
-  string_t newick (slate_t t, bool showdeme, bool extended) const {
-    slate_t te = dawn();
-    string_t o = "";
-    for (node_t *p : *this) {
-      if (p->is_root()) {
-        o += p->newick(t,te,showdeme,extended) + ";";
-      }
-    }
-    return o;
-  };
+  string_t newick (slate_t t, bool showdeme, bool extended) const;
+
 };
 
 #endif

@@ -1,6 +1,6 @@
 ## To-do List
 
+- do we really need root nodes?
 - use integer time?
 - runtime yaml parser
-- trap Newick errors in `parse_newick`
 - segmented virus simulator

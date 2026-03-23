@@ -11,6 +11,7 @@
 
 #include "popul_proc.h"
 #include "genealogy.h"
+#include "inventory.h"
 #include "internal.h"
 
 //! Encodes the master process.
@@ -65,8 +66,7 @@ public:
   //! constructor from RAW SEXP (containing binary serialization)
   master_t (SEXP o) {
     if (LENGTH(o)==0)
-      err("in %s (%s line %d): cannot deserialize a NULL.",
-          __func__,__FILE__,__LINE__);
+      err("in %s: cannot deserialize a NULL.",__func__);
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);

@@ -130,59 +130,15 @@ public:
 public:
 
   //! human-readable info
-  string_t describe (void) const {
-    string_t o = color_name()
-      + "(" + std::to_string(uniq) + ",";
-    if (deme() != undeme) {
-      o += std::to_string(deme());
-    }
-    o += ")";
-    return o;
-  };
+  string_t describe (void) const;
   //! machine-readable info
-  string_t yaml (string_t tab = "") const {
-    string_t o;
-    o = "color: " + color_name() + "\n"
-      + tab + "name: " + std::to_string(uniq) + "\n";
-    if (color==black) {
-      o += tab + "deme: " + std::to_string(deme()) + "\n";
-    }
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
   //! R list description
-  SEXP structure (void) const {
-    SEXP O, On, Name, Color, Deme;
-    int size = (is(black)) ? 3 : 2;
-    PROTECT(O = NEW_LIST(size));
-    PROTECT(On = NEW_CHARACTER(size));
-    PROTECT(Name = NEW_INTEGER(1));
-    *INTEGER(Name) = int(uniq);
-    PROTECT(Color = NEW_CHARACTER(1));
-    SET_STRING_ELT(Color,0,mkChar(color_symbol().c_str()));
-    set_list_elem(O,On,Name,"name",0);
-    set_list_elem(O,On,Color,"color",1);
-    if (is(black)) {
-      PROTECT(Deme = NEW_INTEGER(1));
-      *INTEGER(Deme) = int(deme());
-      set_list_elem(O,On,Deme,"deme",2);
-      UNPROTECT(1);
-    }
-    SET_NAMES(O,On);
-    UNPROTECT(4);
-    return O;
-  };
+  SEXP structure (void) const;
   //! Element of a Newick representation.
   //! This should only be called at tip-nodes.
-  string_t newick (const slate_t &t, bool showdeme) const {
-    assert(color==black);
-    string_t o = "[&&PhyloPOMP:type=extant";
-    if (showdeme)
-      o += ",deme=" + std::to_string(deme());
-    o += "]"
-      + std::to_string(uniq) +
-      ":" + std::to_string(t);
-    return o;
-  };
+  string_t newick (const slate_t &t, bool showdeme) const;
+
 };
 
 #endif
