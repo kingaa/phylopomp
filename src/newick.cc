@@ -8,9 +8,9 @@ ball_t::newick
 (const slate_t &t, bool showdeme) const
 {
   assert(color==black);
-  string_t o = "[&&PhyloPOMP:type=extant";
+  string_t o = "[&&PhyloPOMP type=extant";
   if (showdeme)
-    o += ",deme=" + std::to_string(deme());
+    o += " deme=" + std::to_string(deme());
   o += "]"
     + std::to_string(uniq) +
     ":" + std::to_string(t);
@@ -30,7 +30,7 @@ node_t::newick
     o1 = "("; o3 = ")";
   }
   if (extended) {
-    o3 += "[&&PhyloPOMP:";
+    o3 += "[&&PhyloPOMP ";
     if (holds(blue))
       o3 += "type=sample";
     else if (holds_own())
@@ -38,7 +38,7 @@ node_t::newick
     else
       o3 += "type=node";
     if (showdeme)
-      o3 += ",deme=" + std::to_string(deme());
+      o3 += " deme=" + std::to_string(deme());
     o3 += "]";
   }
   n = 0;

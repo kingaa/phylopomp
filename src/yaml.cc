@@ -63,6 +63,7 @@ genealogy_t::yaml
   string_t t = tab + "  ";
   o = tab + "t0: " + std::to_string(timezero()) + "\n"
     + tab + "time: " + std::to_string(time()) + "\n"
+    + tab + "ndeme: " + std::to_string(ndeme()) + "\n"
     + tab + "nodes:\n" + nodeseq_t::yaml(tab);
   return o;
 }

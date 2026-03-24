@@ -28,7 +28,7 @@ stopifnot(
     yaml() |>
     textConnection() |>
     readLines() |>
-    length()==4561
+    length()==4562
 )
 
 pal <- c("#00274c","#ffcb05","#aaaaaa","#cccccc","#800000")

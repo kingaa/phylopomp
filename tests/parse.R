@@ -112,7 +112,7 @@ r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000}" |>
 
 r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x1
-r"{(((:0.1)),chuck[&&PhyloPOMP:deme=2]bob[&&PhyloPOMP:type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x2
 plot_grid(
   plot(x1,obscure=FALSE,prune=FALSE,points=TRUE),
@@ -147,12 +147,23 @@ try(
      parse_newick()
 )
 
+r"{([&&PhyloPOMP|deme=9|type=extant]:1.0000):0.5}" |>
+     parse_newick()
+
+r"{([&&PhyloPOMP deme=2|type=extant]:1.0000):0.5;}" |>
+   parse_newick() |>
+   getInfo(prune=FALSE,nsample=TRUE)
+
 r"{([deme=2|type=extant]:1.0000):0.5;}" |>
    parse_newick() |>
-   getInfo(nsample=TRUE)
+   getInfo(prune=FALSE,nsample=TRUE)
 
 r"{(1.0000):0.5;}" |>
    parse_newick()
+
+r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
+   parse_newick() |>
+   yaml()
 
 r"{(:1.0000)A;}" |>
    parse_newick()

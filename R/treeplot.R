@@ -77,8 +77,8 @@ treeplot <- function (
     tree |>
       gsub(";$",")i_NA_NA:0.0",x=_) |>
       gsub(";",")i_NA_NA:0.0,(",x=_) |>
-      gsub(r"{\[(&&PhyloPOMP:type=(?:sample|extant|node|root))\]}",r"{[\1,deme=0]}",x=_,perl=TRUE) |>
-      gsub(r"{\[&&PhyloPOMP:(type=\w+),deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
+      gsub(r"{\[(&&PhyloPOMP type=(?:sample|extant|node|root))\]}",r"{[\1 deme=0]}",x=_,perl=TRUE) |>
+      gsub(r"{\[&&PhyloPOMP (type=\w+) deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
       gsub(r"{type=sample}",r"{b}",x=_,perl=TRUE) |>
       gsub(r"{type=extant}",r"{o}",x=_,perl=TRUE) |>
       gsub(r"{type=node}",r"{g}",x=_,perl=TRUE) |>

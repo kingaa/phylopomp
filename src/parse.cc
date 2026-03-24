@@ -2,7 +2,7 @@
 #include "generics.h"
 #include "internal.h"
 #include <regex>
-#include <map>
+#include <unordered_map>
 
 //! simple function for scanning a slate_t from a string
 //! (with error trapping)
@@ -62,7 +62,7 @@ color_t scan_color
 (const std::string& s)
 {
   std::string copy(s);
-  const std::map<string_t,color_t> options({
+  const std::unordered_map<string_t,color_t> options({
       {"sample",blue},{"extant",black},{"migration",green},
       {"node",green},{"branch",green},{"root",green}
     });
@@ -79,7 +79,7 @@ color_t scan_color
 }
 
 //! Scan the label string.
-//! This has format [&&PhyloPOMP:deme=%d,type=%s]%s:%f
+//! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
 node_t *genealogy_t::scan_label
 (string_t::const_iterator b,
  string_t::const_iterator e)
@@ -88,12 +88,12 @@ node_t *genealogy_t::scan_label
   name_t deme = 0;
   slate_t bl = 0;
   string_t s(b,e);
-  const std::regex wre("^(.*?):([+-]?\\d*(?:\\.\\d+)?){1}.?$");
+  const std::regex wre("^(.*?):([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?).?$");
   std::smatch wm;
   if (std::regex_match(s,wm,wre)) {
     const string_t label = wm[1].str();
-    const std::regex dre("^.*?\\[&&PhyloPOMP:.*?deme=(\\w*).*?\\].*$");
-    const std::regex tre("^.*?\\[&&PhyloPOMP:.*?type=(\\w*).*?\\].*$");
+    const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w*).*?\\].*$");
+    const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w*).*?\\].*$");
     std::smatch mm;
     if (std::regex_match(label,mm,dre)) {
       deme = scan_name(mm[1].str());

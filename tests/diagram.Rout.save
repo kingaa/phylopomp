@@ -176,6 +176,7 @@ state:
 genealogy:
   t0: 0.000000
   time: 0.500000
+  ndeme: 1
   nodes:
   - name: 0
     time: 0.000000
@@ -199,6 +200,7 @@ state:
 genealogy:
   t0: 0.000000
   time: 0.500000
+  ndeme: 1
   nodes:
   - name: 4
     time: 0.000000
@@ -390,6 +392,7 @@ state:
 genealogy:
   t0: 0.000000
   time: 0.500000
+  ndeme: 1
   nodes:
   - name: 4
     time: 0.000000
@@ -477,6 +480,7 @@ genealogy:
 > simulate("LBDP",time=0.5) |> geneal() |> yaml()
 t0: 0.000000
 time: 0.500000
+ndeme: 1
 nodes:
 - name: 4
   time: 0.000000
@@ -595,6 +599,7 @@ state:
 genealogy:
   t0: 0.000000
   time: 0.500000
+  ndeme: 1
   nodes:
   - name: 4
     time: 0.000000
