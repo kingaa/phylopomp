@@ -11,7 +11,7 @@ Depends: R(>= 4.5)
 Remotes: bioc::ggtree
 Imports: grid, ggtree(>= 3.16), yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp(>= 6.1), cowplot
 LinkingTo: pomp
-Suggests: tidyverse, doFuture, broom
+Suggests: tidyverse, doFuture, broom, gifski
 License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu

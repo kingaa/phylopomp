@@ -309,11 +309,6 @@ public:
     add(p,a);
     a->deme() = d;
   };
-  //! set up for extraction of black balls
-  //! (see 'inventory.h')
-  std::pair<node_it, node_it> extant (void) const {
-    return std::pair<node_it,node_it>(cbegin(),cend());
-  };
   //! prune the tree (drop all black balls)
   genealogy_t& prune (void) {
     pocket_t *blacks = colored(black);

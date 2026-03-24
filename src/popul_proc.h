@@ -110,81 +110,82 @@ public:
     return current;
   };
 
-public:
-
   virtual void valid (void) const {};
 
-public:
-
+  //! initialize the state
+  virtual void rinit (void) = 0;
+  //! makes a jump
+  virtual void jump (int e) = 0;
   //! set parameters
   void update_params (double*, int);
   //! set initial-value parameters
   void update_IVPs (double*, int);
   //! compute event rates
   double event_rates (double *rate, int n) const;
-  //! initialize the state
-  virtual void rinit (void) = 0;
-  //! makes a jump
-  virtual void jump (int e) = 0;
   //! machine/human readable info
   string_t yaml (string_t tab) const;
 
-public:
-
   //! updates clock and next event
-  void update_clocks (void) {
-    double rate[nevent];
-    double total_rate = event_rates(rate,nevent);
-    if (R_FINITE(total_rate)) {
-      if (total_rate > 0) {
-        next = current+rexp(1/total_rate);
-      } else {
-        next = R_PosInf;
-      }
-    } else {
-      for (event = 0; event < nevent; event++) {
-        if (!R_FINITE(rate[event]))
-          Rprintf("in '%s': invalid event rate[%zd]=%lg\n",
-                  __func__,event,rate[event]);
-      }
-      err("in '%s': invalid total event rate=%lg",
-          __func__,total_rate);
-    }
-    double u = runif(0,total_rate);
-    event = 0;
-    while (u > rate[event] && event < nevent) {
-      if (rate[event] < 0)
-        err("in '%s': invalid rate[%zd]=%lg", // #nocov
-            __func__,event,rate[event]);      // #nocov
-      u -= rate[event];
-      event++;
-    }
-    assert(event < nevent);
-  };
-
+  void update_clocks (void);
   //! run process to a specified time.
   //! return number of events that have occurred.
-  int play (double tfin) {
-    int count = 0;
-    if (current > tfin)
-      err("cannot simulate backward! (current t=%lg, requested t=%lg)",current,tfin);
-    while (next < tfin) {
-      current = next;
-      jump(event);
-      update_clocks();
-      count++;
-      R_CheckUserInterrupt();
-    }
-    if (next > tfin) current = tfin; // relies on Markov property
-    return count;
-  };
+  int play (double tfin);
 
 };
 
-#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m];  \
-  m++;
+#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m]; m++;
 #define RATE_CALC(X) total += rate[m++] = (X);
 #define YAML_PARAM(X) (t + #X + ": " + std::to_string(params.X) + "\n")
 #define YAML_STATE(X) (t + #X + ": " + std::to_string(state.X) + "\n")
+
+template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME>
+void
+popul_proc_t<STATE,PARAMETERS,NEVENT,NDEME>::update_clocks
+(void)
+{
+  double rate[nevent];
+  double total_rate = event_rates(rate,nevent);
+  if (R_FINITE(total_rate)) {
+    if (total_rate > 0) {
+      next = current+rexp(1/total_rate);
+    } else {
+      next = R_PosInf;
+    }
+  } else {
+    for (event = 0; event < nevent; event++) {
+      if (!R_FINITE(rate[event]))
+        Rprintf("in '%s': invalid event rate[%zd]=%lg\n",__func__,event,rate[event]);
+    }
+    err("in '%s': invalid total event rate=%lg", __func__,total_rate);
+  }
+  double u = runif(0,total_rate);
+  event = 0;
+  while (u > rate[event] && event < nevent) {
+    if (rate[event] < 0)
+      err("in '%s': negative rate[%zd]=%lg",__func__,event,rate[event]); // #nocov
+    u -= rate[event];
+    event++;
+  }
+  assert(event < nevent);
+}
+
+template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME>
+int
+popul_proc_t<STATE,PARAMETERS,NEVENT,NDEME>::play
+(double tfin)
+{
+  int count = 0;
+  if (current > tfin)
+    err("cannot simulate backward! (current t=%lg, requested t=%lg)",current,tfin);
+  while (next < tfin) {
+    current = next;
+    jump(event);
+    update_clocks();
+    count++;
+    R_CheckUserInterrupt();
+  }
+  if (next > tfin) current = tfin; // relies on Markov property
+  return count;
+}
 
 #endif

@@ -46,7 +46,7 @@ public:
     A.clean();
     o = (o >> reinterpret_cast<popul_t&>(A));
     o = (o >> A.geneal);
-    A.inventory = A.geneal.extant();
+    A.inventory = A.geneal;
     return o;
   }
 
