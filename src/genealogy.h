@@ -94,16 +94,16 @@ public:
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
 
-
 public:
   // CONSTRUCTORS
   //! basic constructor for genealogy class
   //!  t0 = initial time
-  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1) {
+  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1, double time = 0) {
     clean();
     _ndeme = nd;
     _unique = u;
-    _time = _t0 = slate_t(t0);
+    _t0 = slate_t(t0);
+    _time = slate_t(time);
   };
   //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
@@ -228,7 +228,7 @@ public:
 private:
 
   //! create a node holding its own green ball.
-  //! insert into the genealogy.
+  //! this does not insert into the genealogy.
   node_t* make_node (name_t d) {
     check_genealogy_size(0);
     name_t u = unique();
@@ -344,17 +344,29 @@ public:
   //! with times later than tnew and/or earlier than troot
   void curtail (slate_t tnew, slate_t troot);
 
+private:
+
+  void reuniqify (name_t shift) {
+    this->_unique += shift;
+    for (node_t *p : *this) p->reuniqify(shift);
+  };
+
+public:
+
   //! merge two genealogies:
   //! 1. the node-sequences are merged;
   //! 2. the root time retreats as necessary;
   //! 3. the current time advances as necessary;
   //! 4. the unique-name stack advances as necessary.
-  genealogy_t& operator+= (genealogy_t& G) {
-    reinterpret_cast<nodeseq_t&>(*this) += reinterpret_cast<nodeseq_t&>(G);
+  genealogy_t& operator+= (const genealogy_t& other) {
+    genealogy_t G = other;
+    G.reuniqify(_unique);
+    merge(G,compare);
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
-    _unique = (_unique < G._unique) ? G._unique : _unique;
     _ndeme = (_ndeme < G.ndeme()) ? G.ndeme() : _ndeme;
+    _unique = G._unique;
+    repair_roots();
     return *this;
   };
 
@@ -386,9 +398,24 @@ private:
     }
   };
 
-  //! Scan the label string.
-  //! This has format [&&PhyloPOMP:deme=%d,type=%s]%s:%f
-  node_t *scan_label (string_t::const_iterator b, string_t::const_iterator e);
+  //! roots are added at zero time if needed
+  void repair_roots (void) {
+    node_nit j = begin();
+    while (j != end()) {
+      if ((*j)->holds_own() && (*j)->slate > timezero()) {
+        node_t *q = make_node((*j)->deme());
+        q->slate = timezero();
+        attach(q,*j);
+        push_front(q);
+      }
+      j++;
+    }
+    sort();
+  };
+
+  //! Scan the branch (label+branch-length) string.
+  //! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
+  node_t *scan_branch (string_t::const_iterator b, string_t::const_iterator e);
 
 public:
 

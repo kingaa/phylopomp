@@ -28,18 +28,18 @@ Type 'q()' to quit R.
 > set.seed(4963811)
 > 
 > runSEIR(time=3,I0=3) |>
-+   newick(prune=FALSE,obscure=FALSE) -> tree
++   newick(prune=TRUE,obscure=FALSE) -> tree
 > plot_grid(
 +   tree |> phylopomp:::treeplot(points=TRUE),
 +   tree |> parse_newick() |>
-+     getInfo(prune=FALSE,obscure=FALSE,newick=TRUE) |>
++     getInfo(obscure=FALSE,newick=TRUE) |>
 +     getElement("newick") |>
 +     phylopomp:::treeplot(points=TRUE),
 +   nrow=1
 + )
 > 
 > runSEIR(time=3,I0=3) |>
-+   newick(prune=FALSE,obscure=TRUE) -> tree
++   newick(prune=TRUE,obscure=TRUE) -> tree
 > plot_grid(
 +   tree |> phylopomp:::treeplot(points=TRUE),
 +   tree |> parse_newick() |>
@@ -50,7 +50,7 @@ Type 'q()' to quit R.
 + )
 > 
 > runSEIR(time=30,I0=3) |>
-+   newick(prune=FALSE,obscure=TRUE) -> tree
++   newick(prune=TRUE,obscure=TRUE) -> tree
 > plot_grid(
 +   tree |> phylopomp:::treeplot(points=TRUE),
 +   tree |> parse_newick() |>
@@ -101,11 +101,11 @@ Type 'q()' to quit R.
 > 
 > stopifnot(
 +   all.equal(
-+     x |> lineages(prune=FALSE,obscure=FALSE) |>
++     x |> lineages(prune=TRUE,obscure=FALSE) |>
 +       slice(1:20),
-+     x |> newick(prune=FALSE,obscure=FALSE) |>
++     x |> newick(prune=TRUE,obscure=FALSE) |>
 +       parse_newick() |>
-+       getInfo(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
++       getInfo(prune=TRUE,obscure=FALSE,lineages=TRUE) |>
 +       getElement("lineages") |>
 +       slice(1:20),
 +     tolerance=1e-4
@@ -113,26 +113,26 @@ Type 'q()' to quit R.
 + )
 > 
 > plot_grid(
-+   x |> newick(prune=FALSE,obscure=FALSE) |>
++   x |> newick(prune=TRUE,obscure=FALSE) |>
 +     parse_newick(tf=3) |>
 +     plot()+expand_limits(x=7),
-+   x |> newick(prune=FALSE,obscure=FALSE) |>
++   x |> newick(prune=TRUE,obscure=FALSE) |>
 +     parse_newick() |>
 +     plot()+expand_limits(x=7),
-+   x |> newick(prune=FALSE,obscure=FALSE) |>
++   x |> newick(prune=TRUE,obscure=FALSE) |>
 +     parse_newick(tf=7) |>
 +     plot()+expand_limits(x=7),
 +   align="hv",axis="tblr",
 +   ncol=1,rel_heights=c(1,1,1)
 + )
 > 
-> r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000}" |>
+> r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
 +    parse_newick()
 <phylopomp genealogy>
 > 
-> r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+> r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) -> x1
-> r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+> r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=sample]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) -> x2
 > plot_grid(
 +   plot(x1,obscure=FALSE,prune=FALSE,points=TRUE),
@@ -153,16 +153,28 @@ Type 'q()' to quit R.
 + )
 > 
 > try(
-+   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1]type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: unbalanced square brackets.
+> 
+> try(
++   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
 Error : in 'parse': invalid Newick format: unbalanced parentheses.
 > 
 > try(
++   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++      parse_newick()
++ )
+Error : in 'scan_branch': cannot parse Newick with extant tips.
+> 
+> try(
 +   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced parentheses.
+Error : in 'parse': invalid Newick format: unbalanced square brackets.
 > 
 > try(
 +   r"{([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
@@ -170,29 +182,50 @@ Error : in 'parse': invalid Newick format: unbalanced parentheses.
 + )
 Error : in scan_color: invalid metadata: type 'bob' not recognized.
 > 
-> r"{([&&PhyloPOMP|deme=9|type=extant]:1.0000):0.5}" |>
+> try(
++   r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
 +      parse_newick()
++ )
+Error : in 'scan_branch': cannot parse Newick with extant tips.
+> 
+> try(
++   r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: no final semicolon.
+> 
+> r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5;}" |>
++    parse_newick()
 <phylopomp genealogy>
 > 
-> r"{([&&PhyloPOMP deme=2|type=extant]:1.0000):0.5;}" |>
-+    parse_newick() |>
-+    getInfo(prune=FALSE,nsample=TRUE)
-$nsample
-[1] 0
-
+> try(
++   r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
++      parse_newick()
++ )
+<phylopomp genealogy>
+Warning message:
+in 'scan_branch': in branch string '[&&PhyloPOMP|deme=9|type=sample]:1.0000A': no branch-length detected: assuming zero branch length. 
 > 
-> r"{([deme=2|type=extant]:1.0000):0.5;}" |>
+> r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
 +    parse_newick() |>
 +    getInfo(prune=FALSE,nsample=TRUE)
 $nsample
 [1] 1
 
 > 
-> r"{(1.0000):0.5;}" |>
-+    parse_newick()
-<phylopomp genealogy>
-Warning message:
-node label '1.0000' ignored: zero branch length assumed. 
+> r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
++    parse_newick() |>
++    getInfo(prune=FALSE,nsample=TRUE)
+$nsample
+[1] 1
+
+> 
+> r"{([deme=2|type=sample]:1.0000):0.5;}" |>
++    parse_newick() |>
++    getInfo(prune=FALSE,nsample=TRUE)
+$nsample
+[1] 1
+
 > 
 > r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
 +    parse_newick() |>
@@ -201,7 +234,7 @@ t0: 0.000000
 time: 0.504500
 ndeme: 4
 nodes:
-- name: 1
+- name: 0
   time: 0.000000
   deme: 0
   lineage: 0
@@ -210,7 +243,7 @@ nodes:
     name: 0
   - color: green
     name: 1
-- name: 0
+- name: 1
   time: 0.500000
   deme: 0
   lineage: 0
@@ -225,11 +258,35 @@ nodes:
   - color: blue
     name: 2
 > 
-> r"{(:1.0000)A;}" |>
-+    parse_newick()
-<phylopomp genealogy>
+> r"{(1.0000):0.0;}" |>
++    parse_newick() |>
++    getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
+$t0
+[1] 0
+
+$time
+[1] 0
+
+$nsample
+[1] 1
+
 Warning message:
-node label 'A' ignored: zero branch length assumed. 
+in 'scan_branch': in branch string '1.0000': no branch-length detected: assuming zero branch length. 
+> 
+> r"{(:1.0000)A;}" |>
++    parse_newick() |>
++    getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
+$t0
+[1] 0
+
+$time
+[1] 1
+
+$nsample
+[1] 1
+
+Warning message:
+in 'scan_branch': in branch string 'A': no branch-length detected: assuming zero branch length. 
 > 
 > "" |> parse_newick() |> gendat() |> unlist()
       t0 nodetime  nsample    nroot    nnode 

@@ -8,6 +8,7 @@ get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
 SEXP getInfo (SEXP);
+SEXP genealSum (SEXP);
 SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
 SEXP gendat (SEXP, SEXP);
@@ -46,6 +47,7 @@ static const R_CallMethodDef callMethods[] = {
 
 static const R_CallMethodDef extMethods[] = {
   {"getInfo", (DL_FUNC) &getInfo, -1},
+  {"genealSum", (DL_FUNC) &genealSum, -1},
   {NULL, NULL, 0}
 };
 

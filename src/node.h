@@ -58,6 +58,13 @@ public:
     return o;
   };
 
+  void reuniqify (name_t shift) {
+    this->uniq += shift;
+    for (ball_t *b : *this) {
+      b->uniq += shift;
+    }
+  };
+
 public:
 
   //! basic constructor for node class

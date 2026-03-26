@@ -12,7 +12,7 @@ slate_t scan_slate
 {
   double bl;
   try {
-    bl = stod(s);
+    bl = (s.empty()) ? 0.0 : stod(s);
   }
   catch (const std::invalid_argument& e) {
     err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
@@ -80,34 +80,42 @@ color_t scan_color
 
 //! Scan the label string.
 //! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
-node_t *genealogy_t::scan_label
+node_t *genealogy_t::scan_branch
 (string_t::const_iterator b,
  string_t::const_iterator e)
 {
   color_t col = green;
   name_t deme = 0;
   slate_t bl = 0;
-  string_t s(b,e);
-  const std::regex wre("^(.*?):([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?).?$");
-  std::smatch wm;
-  if (std::regex_match(s,wm,wre)) {
-    const string_t label = wm[1].str();
-    const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w*).*?\\].*$");
-    const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w*).*?\\].*$");
-    std::smatch mm;
-    if (std::regex_match(label,mm,dre)) {
-      deme = scan_name(mm[1].str());
+  if (b != e) {
+    string_t s(b,e);
+    const std::regex wre("^(.*?)(?::([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))?$");
+    std::smatch wm;
+    if (std::regex_match(s,wm,wre)) {
+      const string_t label = wm[1].str();
+      const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w*).*?\\].*$");
+      const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w*).*?\\].*$");
+      std::smatch mm;
+      if (std::regex_match(label,mm,dre)) {
+        deme = scan_name(mm[1].str());
+      }
+      if (std::regex_match(label,mm,tre)) {
+        col = scan_color(mm[1].str());
+      }
+      if (wm[2].str().empty())
+        warn("in '%s': in branch string '%s': no branch-length detected: assuming zero branch length.",
+             __func__,s.c_str());
+      bl = scan_slate(wm[2].str());
+    } else {
+      assert(0);		// #nocov
+      //      err("in '%s': branch-string '%s' is improperly formatted.",__func__,s.c_str()); // unreachable?
     }
-    if (std::regex_match(label,mm,tre)) {
-      col = scan_color(mm[1].str());
-    }
-    bl = scan_slate(wm[2].str());
-  } else if (s.size() != 0) {
-    warn("node label '%s' ignored: zero branch length assumed.",s.c_str());
+    if (col == black)
+      err("in '%s': cannot parse Newick with extant tips.",__func__);
   }
   node_t *q = make_node(deme);
-  if (col == blue || col == black) {
-    ball_t *b = new ball_t(q,q->uniq,col,deme);
+  if (col == blue) {
+    ball_t *b = new ball_t(q,q->uniq,blue,deme);
     q->insert(b);
   }
   q->slate = bl;
@@ -122,41 +130,29 @@ genealogy_t::parse
   node_t *p = 0, *q;
   slate_t tf = timezero();
   string_t::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
-  int stack = 0;
+  int stack = 0, sqstack = 0;
+  bool needs_deme = false;      // FIXME: this is a kluge
+  if (!s.empty() && *pos1 != ';')
+    err("in '%s': invalid Newick format: no final semicolon.",__func__);
   while (pos1 != s.crend()) {
     switch (*pos1) {
-    case ']':
-      while (pos1 != s.crend() && *pos1 != '[') pos1++; // skip metadata
-      if (pos1 != s.crend()) pos1++;
-      break;
     case ';':
-      p = 0;
+      p = make_node(0); needs_deme = true;
+      p->slate = timezero();
+      push_front(p);
       pos1++;
       pos2 = pos1;
       break;
     case ')': case '(': case ',':
-      q = scan_label(pos1.base(),pos2.base());
+      q = scan_branch(pos1.base(),pos2.base());
       ndeme() = (ndeme() > q->deme()+1) ? ndeme() : q->deme()+1;
-      if (p != 0) {
-        q->slate += p->slate;
-        tf = (q->slate > tf) ? q->slate : tf;
-        if (q->holds(black)) {
-          move(q->last_ball(),q,p);
-          destroy_node(q);
-          q = p;
-        } else {
-          attach(p,q);
-          push_back(q);
-        }
-      } else {
-        q->slate += timezero();
-        tf = (q->slate > tf) ? q->slate : tf;
-        if (q->slate > timezero()) {
-          p = make_node(q->deme());
-          push_front(p); attach(p,q);
-        }
-        p = q;
-        push_back(q);
+      q->slate += p->slate;
+      tf = (q->slate > tf) ? q->slate : tf;
+      attach(p,q);
+      push_back(q);
+      if (needs_deme) {
+        q->parent()->deme() = q->deme();
+        needs_deme = false;
       }
       switch (*pos1) {
       case ')':
@@ -177,6 +173,17 @@ genealogy_t::parse
         break;
       }
       pos2 = pos1;
+      break;
+    case ']':                   // skip metadata
+      sqstack++;
+      while (pos1 != s.crend() && sqstack > 0) {
+        pos1++;
+        if (*pos1 == ']') sqstack++;
+        if (*pos1 == '[') sqstack--;
+      }
+      if (sqstack != 0)
+        err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
+      if (pos1 != s.crend()) pos1++;
       break;
     default:
       pos1++;

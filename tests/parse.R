@@ -9,18 +9,18 @@ theme_set(theme_bw())
 set.seed(4963811)
 
 runSEIR(time=3,I0=3) |>
-  newick(prune=FALSE,obscure=FALSE) -> tree
+  newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
-    getInfo(prune=FALSE,obscure=FALSE,newick=TRUE) |>
+    getInfo(obscure=FALSE,newick=TRUE) |>
     getElement("newick") |>
     phylopomp:::treeplot(points=TRUE),
   nrow=1
 )
 
 runSEIR(time=3,I0=3) |>
-  newick(prune=FALSE,obscure=TRUE) -> tree
+  newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
@@ -31,7 +31,7 @@ plot_grid(
 )
 
 runSEIR(time=30,I0=3) |>
-  newick(prune=FALSE,obscure=TRUE) -> tree
+  newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE),
   tree |> parse_newick() |>
@@ -82,11 +82,11 @@ plot_grid(
 
 stopifnot(
   all.equal(
-    x |> lineages(prune=FALSE,obscure=FALSE) |>
+    x |> lineages(prune=TRUE,obscure=FALSE) |>
       slice(1:20),
-    x |> newick(prune=FALSE,obscure=FALSE) |>
+    x |> newick(prune=TRUE,obscure=FALSE) |>
       parse_newick() |>
-      getInfo(prune=FALSE,obscure=FALSE,lineages=TRUE) |>
+      getInfo(prune=TRUE,obscure=FALSE,lineages=TRUE) |>
       getElement("lineages") |>
       slice(1:20),
     tolerance=1e-4
@@ -94,25 +94,25 @@ stopifnot(
 )
 
 plot_grid(
-  x |> newick(prune=FALSE,obscure=FALSE) |>
+  x |> newick(prune=TRUE,obscure=FALSE) |>
     parse_newick(tf=3) |>
     plot()+expand_limits(x=7),
-  x |> newick(prune=FALSE,obscure=FALSE) |>
+  x |> newick(prune=TRUE,obscure=FALSE) |>
     parse_newick() |>
     plot()+expand_limits(x=7),
-  x |> newick(prune=FALSE,obscure=FALSE) |>
+  x |> newick(prune=TRUE,obscure=FALSE) |>
     parse_newick(tf=7) |>
     plot()+expand_limits(x=7),
   align="hv",axis="tblr",
   ncol=1,rel_heights=c(1,1,1)
 )
 
-r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000}" |>
+r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
    parse_newick()
 
-r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x1
-r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=sample]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x2
 plot_grid(
   plot(x1,obscure=FALSE,prune=FALSE,points=TRUE),
@@ -133,6 +133,16 @@ plot_grid(
 )
 
 try(
+  r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1]type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+     parse_newick()
+)
+
+try(
+  r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+     parse_newick()
+)
+
+try(
   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
      parse_newick()
 )
@@ -147,26 +157,47 @@ try(
      parse_newick()
 )
 
-r"{([&&PhyloPOMP|deme=9|type=extant]:1.0000):0.5}" |>
+try(
+  r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
      parse_newick()
+)
 
-r"{([&&PhyloPOMP deme=2|type=extant]:1.0000):0.5;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,nsample=TRUE)
+try(
+  r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5}" |>
+     parse_newick()
+)
 
-r"{([deme=2|type=extant]:1.0000):0.5;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,nsample=TRUE)
-
-r"{(1.0000):0.5;}" |>
+r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5;}" |>
    parse_newick()
+
+try(
+  r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
+     parse_newick()
+)
+
+r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
+   parse_newick() |>
+   getInfo(prune=FALSE,nsample=TRUE)
+
+r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
+   parse_newick() |>
+   getInfo(prune=FALSE,nsample=TRUE)
+
+r"{([deme=2|type=sample]:1.0000):0.5;}" |>
+   parse_newick() |>
+   getInfo(prune=FALSE,nsample=TRUE)
 
 r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
    parse_newick() |>
    yaml()
 
+r"{(1.0000):0.0;}" |>
+   parse_newick() |>
+   getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
+
 r"{(:1.0000)A;}" |>
-   parse_newick()
+   parse_newick() |>
+   getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
 
 "" |> parse_newick() |> gendat() |> unlist()
 

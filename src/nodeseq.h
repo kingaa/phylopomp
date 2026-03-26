@@ -87,7 +87,7 @@ private:
     }
   };
 
-private:
+public:
 
   //! Order relation among nodes.
   //! An ancestor node should always come before its descendants.
@@ -97,14 +97,6 @@ private:
       ((p->slate == q->slate) &&
        ((p==q->green_ball()->holder()) ||
         ((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
-  };
-
-public:
-
-  //! merge two node sequences
-  nodeseq_t& operator+= (nodeseq_t& other) {
-    merge(other,compare);
-    return *this;
   };
 
   //! order nodes in order of increasing time
