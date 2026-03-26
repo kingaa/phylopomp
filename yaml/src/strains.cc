@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int strain1 = 0;
-static const int strain2 = 1;
-static const int strain3 = 2;
+static const int strain1 = 1;
+static const int strain2 = 2;
+static const int strain3 = 3;
 
 //! Strains process state.
 typedef struct {
@@ -35,7 +35,7 @@ typedef struct {
 } strains_parameters_t;
 
 using strains_proc_t = popul_proc_t<strains_state_t,strains_parameters_t,9>;
-using strains_genealogy_t = master_t<strains_proc_t,3>;
+using strains_genealogy_t = master_t<strains_proc_t,4>;
 
 template<>
 std::string strains_proc_t::yaml (std::string tab) const {

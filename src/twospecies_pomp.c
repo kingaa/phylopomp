@@ -2,8 +2,8 @@
 #include "internal.h"
 
 static const int nrate = 18;
-#define host1 0
-#define host2 1
+#define host1 1
+#define host2 2
 
 static inline int random_choice (double n) {
   return floor(R_unif_index(n));

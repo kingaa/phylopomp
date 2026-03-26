@@ -4,11 +4,11 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int host1 = 0;
-static const int host2 = 1;
-static const int ghost1 = 2;
-static const int ghost2 = 3;
-static const int outside = 4;
+static const int host1 = 1;
+static const int host2 = 2;
+static const int ghost1 = 3;
+static const int ghost2 = 4;
+static const int outside = 5;
 
 //! TwoUndead process state.
 typedef struct {
@@ -51,7 +51,7 @@ typedef struct {
 } twoundead_parameters_t;
 
 using twoundead_proc_t = popul_proc_t<twoundead_state_t,twoundead_parameters_t,22>;
-using twoundead_genealogy_t = master_t<twoundead_proc_t,5>;
+using twoundead_genealogy_t = master_t<twoundead_proc_t,6>;
 
 template<>
 std::string twoundead_proc_t::yaml (std::string tab) const {

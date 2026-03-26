@@ -51,7 +51,6 @@ g |>
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 
@@ -77,7 +76,6 @@ g |>
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 
@@ -96,7 +94,6 @@ stopifnot(identical(g$nroot,gi$nroot))
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 

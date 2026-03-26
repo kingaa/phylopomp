@@ -42,7 +42,7 @@ genealogy_t::lineage_count
   slate_t tcur = timezero();
   for (size_t j = 0; j < _ndeme; j++) {
     tout[j] = tcur;
-    deme[j] = j+1;
+    deme[j] = j;
     sat[j] = ell[j] = 0;
     etype[j] = 0;
   }
@@ -53,7 +53,7 @@ genealogy_t::lineage_count
       tcur = p->slate;
       for (size_t j = 0; j < _ndeme; j++) {
         tout[j] = tcur;
-        deme[j] = j+1;
+        deme[j] = j;
         ell[j] = (ell-_ndeme)[j];
         sat[j] = 0;
         etype[j] = 0;
@@ -67,7 +67,7 @@ genealogy_t::lineage_count
   for (size_t j = 0; j < _ndeme; j++) {
     tout[j] = tcur;
     sat[j] = ell[j] = 0;
-    deme[j] = j+1;
+    deme[j] = j;
     etype[j] = 3;
   }
 }

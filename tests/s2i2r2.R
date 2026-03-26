@@ -17,7 +17,11 @@ runS2I2R2(
   b2=0.02,d2=0.02
 ) -> x
 
-x |> plot(obscure=FALSE,palette=c("#440154FF","#21908CFF","#ffffff00"))
+x |>
+  plot(
+    obscure=FALSE,
+    palette=c("#000000FF","#440154FF","#21908CFF","#FFFFFF00")
+  )
 
 x |> lineages(obscure=FALSE) |> plot()
 

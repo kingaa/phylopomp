@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int Infected = 0;
+static const int Infected = 1;
 
 //! SIR process state.
 typedef struct {
@@ -26,12 +26,12 @@ typedef struct {
 } sir_parameters_t;
 
 using sir_proc_t = popul_proc_t<sir_state_t,sir_parameters_t,4>;
-using sir_genealogy_t = master_t<sir_proc_t,1>;
+using sir_genealogy_t = master_t<sir_proc_t,2>;
 
 template<>
-string_t sir_proc_t::yaml (string_t tab) const {
-  string_t t = tab + "  ";
-  string_t p = tab + "parameter:\n"
+std::string sir_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
     + YAML_PARAM(Beta)
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
@@ -39,7 +39,7 @@ string_t sir_proc_t::yaml (string_t tab) const {
     + YAML_PARAM(S0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
-  string_t s = tab + "state:\n"
+  std::string s = tab + "state:\n"
     + YAML_STATE(S)
     + YAML_STATE(I)
     + YAML_STATE(R)

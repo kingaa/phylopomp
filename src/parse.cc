@@ -131,13 +131,12 @@ genealogy_t::parse
   slate_t tf = timezero();
   string_t::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
   int stack = 0, sqstack = 0;
-  bool needs_deme = false;      // FIXME: this is a kluge
   if (!s.empty() && *pos1 != ';')
     err("in '%s': invalid Newick format: no final semicolon.",__func__);
   while (pos1 != s.crend()) {
     switch (*pos1) {
     case ';':
-      p = make_node(0); needs_deme = true;
+      p = make_node();
       p->slate = timezero();
       push_front(p);
       pos1++;
@@ -150,10 +149,6 @@ genealogy_t::parse
       tf = (q->slate > tf) ? q->slate : tf;
       attach(p,q);
       push_back(q);
-      if (needs_deme) {
-        q->parent()->deme() = q->deme();
-        needs_deme = false;
-      }
       switch (*pos1) {
       case ')':
         p = q;

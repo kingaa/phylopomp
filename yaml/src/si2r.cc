@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int ordinary = 0;
-static const int superspreader = 1;
+static const int ordinary = 1;
+static const int superspreader = 2;
 
 //! SI2R process state.
 typedef struct {
@@ -32,7 +32,7 @@ typedef struct {
 } si2r_parameters_t;
 
 using si2r_proc_t = popul_proc_t<si2r_state_t,si2r_parameters_t,9>;
-using si2r_genealogy_t = master_t<si2r_proc_t,2>;
+using si2r_genealogy_t = master_t<si2r_proc_t,3>;
 
 template<>
 std::string si2r_proc_t::yaml (std::string tab) const {

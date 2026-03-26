@@ -1,6 +1,6 @@
 ## To-do List
 
-- %+% function for trees
+- deme to integer mapping
 - do we really need root nodes? (no, but they are helpful)
 - use integer time?
 - runtime yaml parser

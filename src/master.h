@@ -137,7 +137,7 @@ public:
 
 public:
   //! n births into deme j with parent in deme i
-  void birth (name_t i = 0, name_t j = 0, int n = 1) {
+  void birth (name_t i = 1, name_t j = 1, int n = 1) {
     ball_t *a = inventory.random_ball(i);
     ball_t *b = geneal.birth(a,time(),j);
     inventory.insert(b);
@@ -148,20 +148,20 @@ public:
     }
   };
   //! death in deme i
-  void death (name_t i = 0) {
+  void death (name_t i = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.death(a,time());
   };
   //! new root in deme i
-  void graft (name_t i = 0, int m = 1) {
+  void graft (name_t i = 1, int m = 1) {
     for (int j = 0; j < m; j++) {
       ball_t *a = geneal.graft(time(),i);
       inventory.insert(a);
     }
   };
   //! sample in deme i
-  void sample (name_t i = 0, int n = 1) {
+  void sample (name_t i = 1, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
     for (ball_t *a : *p) {
       geneal.sample(a,time());
@@ -170,7 +170,7 @@ public:
     delete p;
   };
   //! sample_death in deme i
-  void sample_death (name_t i = 0, int n = 1) {
+  void sample_death (name_t i = 1, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
     for (ball_t *a : *p) {
       inventory.erase(a);
@@ -180,14 +180,14 @@ public:
     delete p;
   };
   //! migration from deme i to deme j
-  void migrate (name_t i = 0, name_t j = 0) {
+  void migrate (name_t i = 1, name_t j = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.migrate(a,time(),j);
     inventory.insert(a);
   };
   //! sample_migrate in deme i to deme j
-  void sample_migrate (name_t i = 0, name_t j = 0) {
+  void sample_migrate (name_t i = 1, name_t j = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.sample_migrate(a,time(),j);

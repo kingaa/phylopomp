@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int host1 = 0;
-static const int host2 = 1;
-static const int outside = 2;
+static const int host1 = 1;
+static const int host2 = 2;
+static const int outside = 3;
 
 //! S2I2R2 process state.
 typedef struct {
@@ -46,12 +46,12 @@ typedef struct {
 } s2i2r2_parameters_t;
 
 using s2i2r2_proc_t = popul_proc_t<s2i2r2_state_t,s2i2r2_parameters_t,19>;
-using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,3>;
+using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,4>;
 
 template<>
-string_t s2i2r2_proc_t::yaml (string_t tab) const {
-  string_t t = tab + "  ";
-  string_t p = tab + "parameter:\n"
+std::string s2i2r2_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
     + YAML_PARAM(Beta11)
     + YAML_PARAM(Beta12)
     + YAML_PARAM(Beta22)
@@ -73,7 +73,7 @@ string_t s2i2r2_proc_t::yaml (string_t tab) const {
     + YAML_PARAM(I2_0)
     + YAML_PARAM(R1_0)
     + YAML_PARAM(R2_0);
-  string_t s = tab + "state:\n"
+  std::string s = tab + "state:\n"
     + YAML_STATE(S1)
     + YAML_STATE(I1)
     + YAML_STATE(R1)

@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int host1 = 0;
-static const int host2 = 1;
-static const int outside = 2;
+static const int host1 = 1;
+static const int host2 = 2;
+static const int outside = 3;
 
 //! TwoSpecies process state.
 typedef struct {
@@ -49,12 +49,12 @@ typedef struct {
 } twospecies_parameters_t;
 
 using twospecies_proc_t = popul_proc_t<twospecies_state_t,twospecies_parameters_t,22>;
-using twospecies_genealogy_t = master_t<twospecies_proc_t,3>;
+using twospecies_genealogy_t = master_t<twospecies_proc_t,4>;
 
 template<>
-string_t twospecies_proc_t::yaml (string_t tab) const {
-  string_t t = tab + "  ";
-  string_t p = tab + "parameter:\n"
+std::string twospecies_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
     + YAML_PARAM(Beta11)
     + YAML_PARAM(Beta12)
     + YAML_PARAM(Beta21)
@@ -79,7 +79,7 @@ string_t twospecies_proc_t::yaml (string_t tab) const {
     + YAML_PARAM(I2_0)
     + YAML_PARAM(R1_0)
     + YAML_PARAM(R2_0);
-  string_t s = tab + "state:\n"
+  std::string s = tab + "state:\n"
     + YAML_STATE(S1)
     + YAML_STATE(I1)
     + YAML_STATE(R1)

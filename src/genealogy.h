@@ -229,7 +229,7 @@ private:
 
   //! create a node holding its own green ball.
   //! this does not insert into the genealogy.
-  node_t* make_node (name_t d) {
+  node_t* make_node (name_t d = undeme) {
     check_genealogy_size(0);
     name_t u = unique();
     node_t *p = new node_t(u,_time);
@@ -265,7 +265,7 @@ public:
   //! graft a new lineage into deme d
   ball_t* graft (slate_t t, name_t d) {
     time() = t;
-    node_t *p = make_node(d);
+    node_t *p = make_node();
     ball_t *b = new ball_t (p,p->uniq,black,d);
     p->insert(b);
     p->slate = timezero();
@@ -403,7 +403,7 @@ private:
     node_nit j = begin();
     while (j != end()) {
       if ((*j)->holds_own() && (*j)->slate > timezero()) {
-        node_t *q = make_node((*j)->deme());
+        node_t *q = make_node();
         q->slate = timezero();
         attach(q,*j);
         push_front(q);

@@ -12,7 +12,7 @@
 typedef enum {green, blue, black} color_t;
 static const char* colores[] = {"green", "blue", "black"};
 static const char* colorsymb[] = {"g", "b", "o"};
-static const name_t undeme = name_t(NA_INTEGER);
+static const name_t undeme = 0;
 
 class node_t;
 

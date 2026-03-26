@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int strain1 = 0;
-static const int strain2 = 1;
+static const int strain1 = 1;
+static const int strain2 = 2;
 
 //! SIIR process state.
 typedef struct {
@@ -33,7 +33,7 @@ typedef struct {
 } siir_parameters_t;
 
 using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
-using siir_genealogy_t = master_t<siir_proc_t,2>;
+using siir_genealogy_t = master_t<siir_proc_t,3>;
 
 template<>
 std::string siir_proc_t::yaml (std::string tab) const {

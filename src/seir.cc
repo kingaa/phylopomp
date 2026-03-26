@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int Exposed = 0;
-static const int Infectious = 1;
+static const int Exposed = 1;
+static const int Infectious = 2;
 
 //! SEIR process state.
 typedef struct {
@@ -30,12 +30,12 @@ typedef struct {
 } seir_parameters_t;
 
 using seir_proc_t = popul_proc_t<seir_state_t,seir_parameters_t,5>;
-using seir_genealogy_t = master_t<seir_proc_t,2>;
+using seir_genealogy_t = master_t<seir_proc_t,3>;
 
 template<>
-string_t seir_proc_t::yaml (string_t tab) const {
-  string_t t = tab + "  ";
-  string_t p = tab + "parameter:\n"
+std::string seir_proc_t::yaml (std::string tab) const {
+  std::string t = tab + "  ";
+  std::string p = tab + "parameter:\n"
     + YAML_PARAM(Beta)
     + YAML_PARAM(sigma)
     + YAML_PARAM(gamma)
@@ -45,7 +45,7 @@ string_t seir_proc_t::yaml (string_t tab) const {
     + YAML_PARAM(E0)
     + YAML_PARAM(I0)
     + YAML_PARAM(R0);
-  string_t s = tab + "state:\n"
+  std::string s = tab + "state:\n"
     + YAML_STATE(S)
     + YAML_STATE(E)
     + YAML_STATE(I)
@@ -95,8 +95,8 @@ void seir_genealogy_t::rinit (void) {
   state.I = params.I0;
   state.R = params.R0;
   state.N = double(params.S0+params.E0+params.I0+params.R0);
-  graft(0,params.E0);
-  graft(1,params.I0);
+  graft(Exposed,params.E0);
+  graft(Infectious,params.I0);
 }
 
 template<>

@@ -43,25 +43,26 @@ Type 'q()' to quit R.
 +   ggplot(aes(x=time,y=lineages,color=method,group=method))+
 +   geom_step()
 > 
-> pal <- c("#00274c","#ffcb05","#006597")
+> pal <- c("#000000","#00274c","#ffcb05","#006597")
 > 
 > plot_grid(
 +   plot_grid(
-+     x |> plot(),
++     x |> plot(palette=pal),
 +     x |> plot(obscure=FALSE,palette=pal),
 +     nrow=1,align="h",axis="l"
 +   ),
 +   plot_grid(
-+     x |> lineages() |> plot(),
++     x |> lineages() |> plot(palette=pal),
 +     x |> lineages(obscure=FALSE) |>
 +       select(time,deme,lineages) |>
++       filter(deme>0) |>
 +       pivot_wider(names_from=deme,values_from=lineages,names_prefix="deme") |>
 +       mutate(total=deme1+deme2) |>
 +       pivot_longer(-time) |>
 +       ggplot(aes(x=time,y=value,color=name))+
 +       geom_step()+
-+       scale_color_manual(values=pal)+
-+       guides(color="none")+
++       scale_color_manual(values=pal[c(2,3,1)])+
++       labs(color="")+
 +       theme_classic(),
 +     nrow=1,align="hv",axis="tblr"
 +   ),
@@ -75,23 +76,24 @@ Type 'q()' to quit R.
 +     x |> plot(prune=F,obscure=F,points=T,palette=pal),
 +     x |> lineages(prune=F,obscure=F) |>
 +       select(time,deme,lineages) |>
++       filter(deme>0) |>
 +       pivot_wider(names_from=deme,values_from=lineages,names_prefix="deme") |>
 +       mutate(total=deme1+deme2) |>
 +       pivot_longer(-time) |>
 +       ggplot(aes(x=time,y=value,color=name,group=name))+
-+       scale_color_discrete(type=pal)+
++       scale_color_manual(values=pal[c(2,3,1)])+
 +       geom_step()+
-+       theme_classic()+
-+       guides(color="none"),
++       labs(color="")+
++       theme_classic(),
 +     ncol=1,align='v',axis='b'
 +   ),
-+   x |> diagram(prune=F,obscure=F),
++   x |> diagram(prune=FALSE,obscure=FALSE,palette=pal),
 +   ncol=1,
 +   rel_heights=c(2,0.3)
 + )
 > 
 > try(x |> lineages(obscure=FALSE) |> plot(palette=pal[1]))
-Error : in 'plot.gplin': 'palette' must have length at least 2 if specified as a vector.
+Error : if specified as a vector, 'palette' must have length at least 3.
 > 
 > dev.off()
 null device 

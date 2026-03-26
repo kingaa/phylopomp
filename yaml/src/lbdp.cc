@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int deme = 0;
+static const int deme = 1;
 
 //! LBDP process state.
 typedef struct {
@@ -21,7 +21,7 @@ typedef struct {
 } lbdp_parameters_t;
 
 using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,4>;
-using lbdp_genealogy_t = master_t<lbdp_proc_t,1>;
+using lbdp_genealogy_t = master_t<lbdp_proc_t,2>;
 
 template<>
 std::string lbdp_proc_t::yaml (std::string tab) const {

@@ -14,7 +14,7 @@
 
 //! An inventory consists of an array of demes.
 //! Each deme is a set of black balls.
-template <size_t NDEME = 1>
+template <size_t NDEME>
 class inventory_t {
 
 private:
@@ -144,7 +144,7 @@ public:
     return q;
   };
   //! choose one random ball from deme `i`
-  ball_t* random_ball (name_t i = 0) const {
+  ball_t* random_ball (name_t i) const {
     name_t n = inven[i].size();
     assert(n > 0);
     name_t draw = random_integer(n);
@@ -153,7 +153,7 @@ public:
     return *k;
   };
   //! choose a random set of `n` balls from deme `i`
-  pocket_t* random_balls (name_t i = 0, int n = 1) const {
+  pocket_t* random_balls (name_t i, int n = 1) const {
     pocket_t *p = new pocket_t();
     if (n == 1) {
       ball_t *b = random_ball(i);

@@ -103,14 +103,14 @@ GENERICS({%name%},{%gen%})
     proc=paste0(tolower(model$name),"_proc_t"),
     param_type=paste0(tolower(model$name),"_parameters_t"),
     state_type=paste0(tolower(model$name),"_state_t"),
-    ndeme=length(model$demes),
+    ndeme=length(model$demes)+1,
     demenames=paste(
       mapply(
         \(d,n) {
           render(
             r"{static const int {%name%} = {%number%};}",
             name=d,
-            number=n-1L
+            number=n
           )
         },
         d=model$demes,

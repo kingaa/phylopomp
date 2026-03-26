@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int deme = 0;
+static const int deme = 1;
 
 //! Moran process state.
 typedef struct {
@@ -20,7 +20,7 @@ typedef struct {
 } moran_parameters_t;
 
 using moran_proc_t = popul_proc_t<moran_state_t,moran_parameters_t,2>;
-using moran_genealogy_t = master_t<moran_proc_t,1>;
+using moran_genealogy_t = master_t<moran_proc_t,2>;
 
 template<>
 std::string moran_proc_t::yaml (std::string tab) const {

@@ -20,7 +20,7 @@ lineages(object, prune = TRUE, obscure = TRUE)
 
 \item{...}{passed to \code{\link[ggplot2]{theme}}.}
 
-\item{palette}{color palette for branches.
+\item{palette}{color palette for indicating demes.
 This can be furnished either as a function or a vector of colors.
 If this is a function, it should take a single integer argument, the number of colors required.
 If it is a vector, it should have at least as many elements as there are demes in the genealogy.}
@@ -54,14 +54,12 @@ The event types are: \describe{
 }
 }
 \examples{
-library(tidyverse)
+pal <- c("#000000","#00274c","#ffcb05")
 
-pal <- c("#00274c","#ffcb05")
-
-simulate("SIIR",time=3) -> x
+simulate("SIIR",time=3,psi1=1,psi2=1) -> x
 plot_grid(
-  x |> plot(),
-  x |> lineages() |> plot(),
+  x |> plot(palette=pal),
+  x |> lineages() |> plot(palette=pal),
   x |> plot(obscure=FALSE,palette=pal),
   x |> lineages(obscure=FALSE) |>
     plot(palette=pal,legend.position=c(0.8,0.9)),

@@ -41,7 +41,7 @@ This can be furnished either as a function or a vector of colors.
 If this is a function, it should take a single integer argument, the number of colors required.
 If it is a vector, it should have at least as many elements as there are demes in the genealogy.}
 
-\item{x}{ An \R object. }
+\item{x}{object of class \sQuote{gpdiag}}
 
 \item{newpage}{draw new empty page first?}
 

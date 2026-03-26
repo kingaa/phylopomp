@@ -8,7 +8,7 @@
 ##' @param time numeric; time of the genealogy.
 ##' @param ladderize logical; ladderize?
 ##' @param points logical; show nodes and tips?
-##' @param palette color palette for branches.
+##' @param palette color palette for indicating demes.
 ##' This can be furnished either as a function or a vector of colors.
 ##' If this is a function, it should take a single integer argument, the number of colors required.
 ##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
@@ -94,15 +94,7 @@ treeplot <- function (
       y=y-3
     ) -> dat
 
-  ndeme <- max(1L,length(unique(dat$deme))-1L)
-  if (is.function(palette)) {
-    palette <- palette(ndeme)
-  } else {
-    if (length(palette) < ndeme)
-      pStop("if specified as a vector, ",sQuote("palette"),
-        " must have length at least ",ndeme,".")
-  }
-
+  palette <- get_palette(palette,dat$deme)
   time <- as.numeric(c(time,max(dat$x)))[1L]
 
   if (is.na(t0)) { # root time is to be determined from the current time
@@ -135,13 +127,16 @@ treeplot <- function (
     ggplot(aes(x=x,y=y))+
     geom_tree(aes(alpha=vis,color=deme))+
     scale_x_continuous()+
-    scale_color_manual(values=palette,na.value="#ffffff00")+
+    scale_color_manual(values=palette,na.translate=FALSE)+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(dat$x,t0,time))+
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
     theme_tree2() -> pl
-
+  if (length(palette) > 1L) {
+    pl+
+      guides(color=guide_legend(title="deme")) -> pl
+  }
   if (points) {
     if (ncolors["m_node",] > 0) {
       pl+geom_nodepoint(
@@ -190,3 +185,18 @@ ball_colors <- c(
 globalVariables(
   c("time","deme","label","x","y","nodecol","isTip","n","rowname","vis")
 )
+
+##' @importFrom utils head
+get_palette <- function (palette, demes) {
+  demes <- sort(setdiff(unique(demes),NA_character_))
+  ndeme <- max(1L,length(demes))
+  if (is.function(palette)) {
+    palette <- palette(ndeme)
+  } else {
+    if (length(palette) < ndeme)
+      pStop("if specified as a vector, ",sQuote("palette"),
+        " must have length at least ",ndeme,".",who=NULL)
+    palette <- head(palette,ndeme)
+  }
+  structure(palette,names=as.character(demes))
+}

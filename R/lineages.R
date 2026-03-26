@@ -22,7 +22,7 @@
 ##' }
 ##'
 ##' @name lineages
-##' @include getinfo.R
+##' @include getinfo.R treeplot.R
 ##' @inheritParams getInfo
 ##' @return A \code{\link[tibble]{tibble}} containing information about the genealogy.
 ##' See Details for specifics.
@@ -39,7 +39,7 @@ lineages <- function (object, prune = TRUE, obscure = TRUE) {
 
 ##' @rdname lineages
 ##' @method plot gplin
-##' @inheritParams treeplot
+##' @inheritParams plot.gpgen
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @importFrom ggplot2 ggplot guides geom_step labs guide_legend
 ##' @importFrom ggplot2 scale_color_manual theme_classic
@@ -51,23 +51,22 @@ plot.gplin <- function (
   x, ...,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-  demes <- sort(unique(x$deme))
-  ndeme <- length(demes)
-  if (is.function(palette)) {
-    palette <- structure(palette(ndeme),names=as.character(demes))
-  } else {
-    if (length(palette) < ndeme)
-      pStop(sQuote("palette")," must have length at least ",ndeme,
-        " if specified as a vector.")
-  }
+  palette <- get_palette(palette,x$deme)
   x |>
-    ggplot(aes(x=time,y=lineages,color=factor(deme),group=factor(deme)))+
+    ggplot(
+      aes(
+        x=time,
+        y=lineages,
+        color=factor(deme),
+        group=factor(deme)
+      )
+    )+
     geom_step()+
-    scale_color_manual(values=palette)+
+    scale_color_manual(values=palette,na.translate = FALSE)+
     guides(color="none")+
     theme_classic()+
     theme(...) -> pl
-  if (ndeme>1L) {
+  if (length(palette) > 1L) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }

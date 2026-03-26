@@ -27,7 +27,4 @@ try(runLBDP(n0=-5,time=10))
 simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
   plot(points=TRUE,palette=c("#ff0000"))
 
-try(simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
-  plot(points=TRUE,palette=NULL))
-
 dev.off()

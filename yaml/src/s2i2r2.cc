@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int host1 = 0;
-static const int host2 = 1;
-static const int outside = 2;
+static const int host1 = 1;
+static const int host2 = 2;
+static const int outside = 3;
 
 //! S2I2R2 process state.
 typedef struct {
@@ -46,7 +46,7 @@ typedef struct {
 } s2i2r2_parameters_t;
 
 using s2i2r2_proc_t = popul_proc_t<s2i2r2_state_t,s2i2r2_parameters_t,19>;
-using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,3>;
+using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,4>;
 
 template<>
 std::string s2i2r2_proc_t::yaml (std::string tab) const {
