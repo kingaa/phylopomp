@@ -30,7 +30,7 @@ typedef struct {
 } seir_parameters_t;
 
 using seir_proc_t = popul_proc_t<seir_state_t,seir_parameters_t,5>;
-using seir_genealogy_t = master_t<seir_proc_t,3>;
+using seir_genealogy_t = master_t<seir_proc_t,2>;
 
 template<>
 std::string seir_proc_t::yaml (std::string tab) const {

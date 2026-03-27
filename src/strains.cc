@@ -35,7 +35,7 @@ typedef struct {
 } strains_parameters_t;
 
 using strains_proc_t = popul_proc_t<strains_state_t,strains_parameters_t,9>;
-using strains_genealogy_t = master_t<strains_proc_t,4>;
+using strains_genealogy_t = master_t<strains_proc_t,3>;
 
 template<>
 std::string strains_proc_t::yaml (std::string tab) const {

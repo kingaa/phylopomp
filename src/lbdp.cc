@@ -21,7 +21,7 @@ typedef struct {
 } lbdp_parameters_t;
 
 using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,4>;
-using lbdp_genealogy_t = master_t<lbdp_proc_t,2>;
+using lbdp_genealogy_t = master_t<lbdp_proc_t,1>;
 
 template<>
 std::string lbdp_proc_t::yaml (std::string tab) const {

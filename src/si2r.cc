@@ -32,7 +32,7 @@ typedef struct {
 } si2r_parameters_t;
 
 using si2r_proc_t = popul_proc_t<si2r_state_t,si2r_parameters_t,9>;
-using si2r_genealogy_t = master_t<si2r_proc_t,3>;
+using si2r_genealogy_t = master_t<si2r_proc_t,2>;
 
 template<>
 std::string si2r_proc_t::yaml (std::string tab) const {

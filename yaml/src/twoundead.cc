@@ -51,7 +51,7 @@ typedef struct {
 } twoundead_parameters_t;
 
 using twoundead_proc_t = popul_proc_t<twoundead_state_t,twoundead_parameters_t,22>;
-using twoundead_genealogy_t = master_t<twoundead_proc_t,6>;
+using twoundead_genealogy_t = master_t<twoundead_proc_t,5>;
 
 template<>
 std::string twoundead_proc_t::yaml (std::string tab) const {

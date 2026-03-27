@@ -1,8 +1,8 @@
 #include "pomplink.h"
 #include "internal.h"
 
-static const int Exposed = 1;
-static const int Infected = 2;
+#define Exposed  1
+#define Infected 2
 
 static const int nrate = 7;
 

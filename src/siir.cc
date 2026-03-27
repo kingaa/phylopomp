@@ -33,7 +33,7 @@ typedef struct {
 } siir_parameters_t;
 
 using siir_proc_t = popul_proc_t<siir_state_t,siir_parameters_t,9>;
-using siir_genealogy_t = master_t<siir_proc_t,3>;
+using siir_genealogy_t = master_t<siir_proc_t,2>;
 
 template<>
 std::string siir_proc_t::yaml (std::string tab) const {

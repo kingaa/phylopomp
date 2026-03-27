@@ -23,12 +23,12 @@ class master_t : public POPN {
 public:
 
   typedef POPN popul_t;
-  const static size_t ndeme = NDEME;
+  const static size_t ndeme = NDEME+1; // one extra for the undeme
 
 public:
   // DATA MEMBERS
   genealogy_t geneal;
-  inventory_t<ndeme> inventory;
+  inventory_t<NDEME> inventory;
 
 public:
   //! size of serialized binary form

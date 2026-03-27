@@ -10,7 +10,7 @@
 #include "nodeseq.h"
 #include "internal.h"
 
-//! Representation for the inventory process.
+//! Implementation of the inventory process.
 
 //! An inventory consists of an array of demes.
 //! Each deme is a set of black balls.
@@ -19,8 +19,8 @@ class inventory_t {
 
 private:
 
-  pocket_t inven[NDEME];
   const static size_t ndeme = NDEME;
+  pocket_t _inven[ndeme];
 
 public:
 
@@ -72,7 +72,7 @@ private:
   //! memory cleanup
   void clear (void) {
     for (size_t i = 0; i < ndeme; i++)
-      inven[i].clear();
+      _inven[i].clear();
   };
 
 public:
@@ -82,13 +82,13 @@ public:
   size_t bytesize (void) const {
     size_t s = 0;
     for (size_t i = 0; i < ndeme; i++)
-      s += inven[i].bytesize();
+      s += _inven[i].bytesize();
     return s;
   };
   //! binary serialization
   friend raw_t* operator>> (const inventory_t& I, raw_t* o) {
     for (size_t i = 0; i < ndeme; i++) {
-      o = (I.inven[i] >> o);
+      o = (I._inven[i] >> o);
     }
     return o;
   };
@@ -96,10 +96,12 @@ public:
   friend raw_t* operator>> (raw_t* o, inventory_t& I) {
     I.clean();
     for (size_t i = 0; i < ndeme; i++) {
-      o = (o >> I.inven[i]);
+      o = (o >> I._inven[i]);
     }
     return o;
   };
+
+public:
 
   //! Total number of balls in an inventory.
   //! i.e., the sum of the sizes of all demes
@@ -112,18 +114,38 @@ public:
   };
   //! size of deme
   size_t size (name_t i) const {
-    return inven[i].size();
+    return inven(i).size();
   };
-  //! return the `n`-th deme
-  pocket_t& operator[] (const name_t n) {
-    return inven[n];
+  //! return the `i`-th deme
+  const pocket_t& operator[] (const name_t i) const {
+    return inven(i);
   };
+  //! return the `i`-th deme
+  pocket_t& operator[] (const name_t i) {
+    return inven(i);
+  };
+
+private:
+
+  //! access the `i`-th deme
+  const pocket_t& inven (const name_t i) const {
+    assert(i > 0);
+    return _inven[i-1];
+  };
+  //! access the `i`-th deme
+  pocket_t& inven (const name_t i) {
+    assert(i > 0);
+    return _inven[i-1];
+  };
+
+public:
+
   //! add a black ball to a deme.
   //! this checks the color of the ball.
   //! if it is not black, nothing is done.
   void insert (ball_t *b) {
     if (b->is(black)) {
-      inven[b->deme()].insert(b);
+      inven(b->deme()).insert(b);
     }
   };
   //! remove a black ball from its deme.
@@ -131,24 +153,24 @@ public:
   //! if it is not black, nothing is done.
   void erase (ball_t *b) {
     if (b->is(black)) {
-      assert(!(inven[b->deme()].empty()));
-      inven[b->deme()].erase(b);
+      assert(!inven(b->deme()).empty());
+      inven(b->deme()).erase(b);
     }
   };
   //! are all demes empty?
   bool empty (void) const {
     bool q = true;
     for (name_t i = 0; i < ndeme; i++) {
-      q = q && inven[i].empty();
+      q = q && _inven[i].empty();
     }
     return q;
   };
   //! choose one random ball from deme `i`
   ball_t* random_ball (name_t i) const {
-    name_t n = inven[i].size();
+    name_t n = inven(i).size();
     assert(n > 0);
     name_t draw = random_integer(n);
-    ball_it k = inven[i].begin();
+    ball_it k = inven(i).begin();
     while (draw-- > 0) k++;
     return *k;
   };
@@ -159,10 +181,10 @@ public:
       ball_t *b = random_ball(i);
       p->insert(b);
     } else if (n > 1) {
-      int N = inven[i].size();
+      int N = inven(i).size();
       assert(N > 0);
       assert(n <= N);
-      ball_it j = inven[i].begin();
+      ball_it j = inven(i).begin();
       int k = 0, m = 0;
       while (m < n && k < N) {
         int u = random_integer(N-k);

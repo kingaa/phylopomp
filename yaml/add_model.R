@@ -103,7 +103,7 @@ GENERICS({%name%},{%gen%})
     proc=paste0(tolower(model$name),"_proc_t"),
     param_type=paste0(tolower(model$name),"_parameters_t"),
     state_type=paste0(tolower(model$name),"_state_t"),
-    ndeme=length(model$demes)+1,
+    ndeme=length(model$demes),
     demenames=paste(
       mapply(
         \(d,n) {

@@ -46,7 +46,7 @@ typedef struct {
 } s2i2r2_parameters_t;
 
 using s2i2r2_proc_t = popul_proc_t<s2i2r2_state_t,s2i2r2_parameters_t,19>;
-using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,4>;
+using s2i2r2_genealogy_t = master_t<s2i2r2_proc_t,3>;
 
 template<>
 std::string s2i2r2_proc_t::yaml (std::string tab) const {

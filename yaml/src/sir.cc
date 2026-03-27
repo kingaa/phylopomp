@@ -26,7 +26,7 @@ typedef struct {
 } sir_parameters_t;
 
 using sir_proc_t = popul_proc_t<sir_state_t,sir_parameters_t,4>;
-using sir_genealogy_t = master_t<sir_proc_t,2>;
+using sir_genealogy_t = master_t<sir_proc_t,1>;
 
 template<>
 std::string sir_proc_t::yaml (std::string tab) const {

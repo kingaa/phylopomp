@@ -49,7 +49,7 @@ typedef struct {
 } twospecies_parameters_t;
 
 using twospecies_proc_t = popul_proc_t<twospecies_state_t,twospecies_parameters_t,22>;
-using twospecies_genealogy_t = master_t<twospecies_proc_t,4>;
+using twospecies_genealogy_t = master_t<twospecies_proc_t,3>;
 
 template<>
 std::string twospecies_proc_t::yaml (std::string tab) const {
