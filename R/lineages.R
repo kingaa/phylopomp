@@ -38,6 +38,8 @@ lineages <- function (object, prune = TRUE, obscure = TRUE) {
 }
 
 ##' @rdname lineages
+##' @details \code{plot} applied to the data frame produced by
+##' \code{lineages} yields a lineage-through-time plot.
 ##' @method plot gplin
 ##' @inheritParams plot.gpgen
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
@@ -51,22 +53,23 @@ plot.gplin <- function (
   x, ...,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-  palette <- get_palette(palette,x$deme)
+  demes <- sort(unique(x$deme))
+  palette <- get_palette(palette,demes,undeme="#333333")
   x |>
     ggplot(
       aes(
         x=time,
         y=lineages,
-        color=factor(deme),
-        group=factor(deme)
+        color=factor(deme,levels=demes),
+        group=deme
       )
     )+
     geom_step()+
-    scale_color_manual(values=palette,na.translate = FALSE)+
+    scale_color_manual(values=palette)+
     guides(color="none")+
     theme_classic()+
     theme(...) -> pl
-  if (length(palette) > 1L) {
+  if (length(demes) > 1L) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }

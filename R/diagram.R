@@ -37,14 +37,21 @@ diagram <- function (
       structure=TRUE,
       ndeme=TRUE
     ) -> info
-  ndeme <- info$ndeme
+
+  palette <- get_palette(
+    palette,
+    seq_len(info$ndeme),
+    undeme="#FFFFFF"
+  )
+
   info |>
     getElement("structure") |>
     genealogyGrob(
       m=m,n=n,digits=digits,
-      palette=get_palette(palette,seq.int(from=0,to=ndeme-1)),
+      palette=palette,
       vp=viewport(height=0.95,width=0.95,gp=gpar(...))
     ) -> x
+
   class(x) <- c("gpdiag",class(x))
   x
 }

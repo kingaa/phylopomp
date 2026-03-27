@@ -39,8 +39,9 @@ genealogy_t::lineage_count
 (double *tout, int *deme,
  int *ell, int *sat, int *etype) const
 {
+  size_t nd = ndeme()+1;
   slate_t tcur = timezero();
-  for (size_t j = 0; j < _ndeme; j++) {
+  for (size_t j = 0; j < nd; j++) {
     tout[j] = tcur;
     deme[j] = j;
     sat[j] = ell[j] = 0;
@@ -48,23 +49,23 @@ genealogy_t::lineage_count
   }
   for (const node_t *p : *this) {
     if (tcur < p->slate) {
-      tout += _ndeme; ell += _ndeme; sat += _ndeme;
-      deme += _ndeme; etype += _ndeme;
+      tout += nd; ell += nd; sat += nd;
+      deme += nd; etype += nd;
       tcur = p->slate;
-      for (size_t j = 0; j < _ndeme; j++) {
+      for (size_t j = 0; j < nd; j++) {
         tout[j] = tcur;
         deme[j] = j;
-        ell[j] = (ell-_ndeme)[j];
+        ell[j] = (ell-nd)[j];
         sat[j] = 0;
         etype[j] = 0;
       }
     }
     p->lineage_incr(ell,sat,etype);
   }
-  tout += _ndeme; ell += _ndeme; sat += _ndeme;
-  deme += _ndeme; etype += _ndeme;
+  tout += nd; ell += nd; sat += nd;
+  deme += nd; etype += nd;
   tcur = time();
-  for (size_t j = 0; j < _ndeme; j++) {
+  for (size_t j = 0; j < nd; j++) {
     tout[j] = tcur;
     sat[j] = ell[j] = 0;
     deme[j] = j;
@@ -79,7 +80,7 @@ genealogy_t::lineage_count
 {
   SEXP tout, deme, ell, sat, etype, out, outn;
   int nt = ntime(timezero())+1;
-  int nl = _ndeme*nt;
+  int nl = (ndeme()+1)*nt;
   PROTECT(tout = NEW_NUMERIC(nl));
   PROTECT(deme = NEW_INTEGER(nl));
   PROTECT(ell = NEW_INTEGER(nl));

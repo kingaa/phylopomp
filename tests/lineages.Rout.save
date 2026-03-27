@@ -43,7 +43,7 @@ Type 'q()' to quit R.
 +   ggplot(aes(x=time,y=lineages,color=method,group=method))+
 +   geom_step()
 > 
-> pal <- c("#000000","#00274c","#ffcb05","#006597")
+> pal <- c("#00274c","#ffcb05","#006597","#000000")
 > 
 > plot_grid(
 +   plot_grid(
@@ -61,7 +61,7 @@ Type 'q()' to quit R.
 +       pivot_longer(-time) |>
 +       ggplot(aes(x=time,y=value,color=name))+
 +       geom_step()+
-+       scale_color_manual(values=pal[c(2,3,1)])+
++       scale_color_manual(values=pal[c(2,3,4)])+
 +       labs(color="")+
 +       theme_classic(),
 +     nrow=1,align="hv",axis="tblr"
@@ -81,13 +81,13 @@ Type 'q()' to quit R.
 +       mutate(total=deme1+deme2) |>
 +       pivot_longer(-time) |>
 +       ggplot(aes(x=time,y=value,color=name,group=name))+
-+       scale_color_manual(values=pal[c(2,3,1)])+
++       scale_color_manual(values=pal[c(2,3,4)])+
 +       geom_step()+
 +       labs(color="")+
 +       theme_classic(),
 +     ncol=1,align='v',axis='b'
 +   ),
-+   x |> diagram(prune=FALSE,obscure=FALSE,palette=pal),
++   x |> diagram(prune=FALSE,obscure=FALSE,palette=alpha(pal,0.3)),
 +   ncol=1,
 +   rel_heights=c(2,0.3)
 + )

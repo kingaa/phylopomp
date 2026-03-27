@@ -86,5 +86,5 @@ string_t
 genealogy_t::newick
 (bool extended) const
 {
-  return nodeseq_t::newick(time(),(ndeme() > 1),extended);
+  return nodeseq_t::newick(time(),(ndeme() > 0),extended);
 }

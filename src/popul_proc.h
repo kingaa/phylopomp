@@ -12,8 +12,7 @@
 //! - STATE is a datatype that holds the state of the Markov process.
 //! - PARAMETERS is a datatype for the model parameters
 //! - NEVENT is the number of event-types
-//! - NDEME is the number of demes
-template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
+template <class STATE, class PARAMETERS, size_t NEVENT>
 class popul_proc_t  {
 
 protected:
@@ -21,7 +20,6 @@ protected:
   typedef STATE state_t;
   typedef PARAMETERS parameters_t;
   static const size_t nevent = NEVENT;
-  static const size_t ndeme = NDEME;
 
 protected:
   // MEMBER DATA
@@ -138,9 +136,9 @@ public:
 #define YAML_PARAM(X) (t + #X + ": " + std::to_string(params.X) + "\n")
 #define YAML_STATE(X) (t + #X + ": " + std::to_string(state.X) + "\n")
 
-template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME>
+template <class STATE, class PARAMETERS, size_t NEVENT>
 void
-popul_proc_t<STATE,PARAMETERS,NEVENT,NDEME>::update_clocks
+popul_proc_t<STATE,PARAMETERS,NEVENT>::update_clocks
 (void)
 {
   double rate[nevent];
@@ -169,9 +167,9 @@ popul_proc_t<STATE,PARAMETERS,NEVENT,NDEME>::update_clocks
   assert(event < nevent);
 }
 
-template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME>
+template <class STATE, class PARAMETERS, size_t NEVENT>
 int
-popul_proc_t<STATE,PARAMETERS,NEVENT,NDEME>::play
+popul_proc_t<STATE,PARAMETERS,NEVENT>::play
 (double tfin)
 {
   int count = 0;

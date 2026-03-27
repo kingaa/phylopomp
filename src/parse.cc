@@ -144,7 +144,7 @@ genealogy_t::parse
       break;
     case ')': case '(': case ',':
       q = scan_branch(pos1.base(),pos2.base());
-      ndeme() = (ndeme() > q->deme()+1) ? ndeme() : q->deme()+1;
+      ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
       q->slate += p->slate;
       tf = (q->slate > tf) ? q->slate : tf;
       attach(p,q);

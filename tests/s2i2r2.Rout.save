@@ -93,7 +93,7 @@ state:
 genealogy:
   t0: 0.000000
   time: 2.000000
-  ndeme: 4
+  ndeme: 3
   nodes:
   - name: 1657
     time: 0.000000

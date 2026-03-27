@@ -52,6 +52,9 @@ The event types are: \describe{
   \item{2}{a non-sample event,}
   \item{3}{the end of the time interval, which may or may not coincide with the latest tip of the genealogy.}
 }
+
+\code{plot} applied to the data frame produced by
+\code{lineages} yields a lineage-through-time plot.
 }
 \examples{
 pal <- c("#000000","#00274c","#ffcb05")

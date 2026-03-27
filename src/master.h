@@ -17,13 +17,13 @@
 //! Encodes the master process.
 
 //! This consists of a population process and a genealogy process.
-template <class POPN, size_t NDEME = 1>
+template <class POPN, size_t NDEME>
 class master_t : public POPN {
 
 public:
 
   typedef POPN popul_t;
-  const static size_t ndeme = NDEME+1; // one extra for the undeme
+  const static size_t ndeme = NDEME; // one extra for the undeme
 
 public:
   // DATA MEMBERS

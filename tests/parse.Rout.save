@@ -232,7 +232,7 @@ $nsample
 +    yaml()
 t0: 0.000000
 time: 0.504500
-ndeme: 4
+ndeme: 3
 nodes:
 - name: 0
   time: 0.000000

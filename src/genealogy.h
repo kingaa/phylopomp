@@ -33,7 +33,7 @@ private:
   slate_t _t0;
   //! The current time.
   slate_t _time;
-  //! The number of demes.
+  //! The number of demes (excluding the undeme).
   size_t _ndeme;
 
   const static name_t magic = 1123581321;
@@ -74,7 +74,7 @@ public:
   };
   //! binary serialization
   friend raw_t* operator>> (const genealogy_t& G, raw_t* o) {
-    name_t A[3]; A[0] = magic; A[1] = G._unique; A[2] = name_t(G._ndeme);
+    name_t A[3]; A[0] = magic; A[1] = G._unique; A[2] = name_t(G.ndeme());
     slate_t B[2]; B[0] = G.timezero(); B[1] = G.time();
     memcpy(o,A,sizeof(A)); o += sizeof(A);
     memcpy(o,B,sizeof(B)); o += sizeof(B);
@@ -89,7 +89,7 @@ public:
     memcpy(B,o,sizeof(B)); o += sizeof(B);
     if (A[0] != magic)
       err("in %s: corrupted genealogy serialization.",__func__);
-    G._unique = A[1]; G._ndeme = size_t(A[2]);
+    G._unique = A[1]; G.ndeme() = size_t(A[2]);
     G.timezero() = B[0]; G.time() = B[1];
     return o >> reinterpret_cast<nodeseq_t&>(G);
   };
@@ -98,9 +98,9 @@ public:
   // CONSTRUCTORS
   //! basic constructor for genealogy class
   //!  t0 = initial time
-  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 1, double time = 0) {
+  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 0, double time = 0) {
     clean();
-    _ndeme = nd;
+    ndeme() = nd;
     _unique = u;
     _t0 = slate_t(t0);
     _time = slate_t(time);
@@ -326,17 +326,17 @@ public:
     pocket_t *blacks = colored(black);
     while (!blacks->empty()) {
       ball_t *a = *(blacks->begin());
-      a->deme() = 0;
+      a->deme() = undeme;
       blacks->erase(a);
     }
     delete blacks;
     // erase deme information from nodes.
     for (node_t *p : *this) {
-      p->deme() = 0;
+      p->deme() = undeme;
     }
     // drop superfluous nodes (holding just one ball).
     comb();
-    _ndeme = 1;
+    ndeme() = 0;
     return *this;
   };
 
@@ -364,7 +364,7 @@ public:
     merge(G,compare);
     _t0 = (_t0 > G._t0) ? G._t0 : _t0;
     _time = (_time < G._time) ? G._time : _time;
-    _ndeme = (_ndeme < G.ndeme()) ? G.ndeme() : _ndeme;
+    ndeme() = (ndeme() < G.ndeme()) ? G.ndeme() : ndeme();
     _unique = G._unique;
     repair_roots();
     return *this;

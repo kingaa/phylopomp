@@ -54,9 +54,9 @@ plot.gpgen <- function (
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify
 ##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate left_join count coalesce
+##' @importFrom dplyr mutate left_join count coalesce if_else
 ##' @importFrom tibble column_to_rownames
-##' @importFrom tidyr separate unite expand_grid
+##' @importFrom tidyr separate_wider_delim unite expand_grid
 ##' @importFrom scales alpha hue_pal
 treeplot <- function (
   tree, time = NULL, t0 = 0,
@@ -87,14 +87,18 @@ treeplot <- function (
   ) |>
     read.tree(text=_) |>
     fortify(ladderize=ladderize) |>
-    separate(label,into=c("nodecol","deme","label")) |>
+    separate_wider_delim(
+      cols=label,
+      delim="_",
+      names=c("nodecol","deme",NA),
+      cols_remove=TRUE
+    ) |>
     mutate(
-      deme=if_else(deme=="NA",NA_character_,deme),
-      label=if_else(label=="NA",NA_character_,label),
+      deme=strtoi(deme),
+      vis=nodecol != "i",
       y=y-3
     ) -> dat
 
-  palette <- get_palette(palette,dat$deme)
   time <- as.numeric(c(time,max(dat$x)))[1L]
 
   if (is.na(t0)) { # root time is to be determined from the current time
@@ -102,7 +106,8 @@ treeplot <- function (
   } else {
     dat |> mutate(x=x-min(x)+t0) -> dat
   }
-  dat |> mutate(vis=nodecol != "i") -> dat
+  demes <- sort(unique(dat$deme))
+  palette <- get_palette(palette,demes,undeme="#000000")
 
   ## number of nodes and tips of each color
   expand_grid(
@@ -125,15 +130,24 @@ treeplot <- function (
 
   dat |>
     ggplot(aes(x=x,y=y))+
-    geom_tree(aes(alpha=vis,color=deme))+
+    geom_tree(
+      aes(
+        alpha=vis,
+        color=factor(deme,levels=demes)
+      )
+    )+
     scale_x_continuous()+
-    scale_color_manual(values=palette,na.translate=FALSE)+
+    scale_color_manual(
+      values=palette,
+      na.value="gray90",
+      na.translate=FALSE
+    )+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(dat$x,t0,time))+
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
     theme_tree2() -> pl
-  if (length(palette) > 1L) {
+  if (length(demes) > 1L) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }
@@ -187,16 +201,30 @@ globalVariables(
 )
 
 ##' @importFrom utils head
-get_palette <- function (palette, demes) {
-  demes <- sort(setdiff(unique(demes),NA_character_))
-  ndeme <- max(1L,length(demes))
+get_palette <- function (palette, demes = NULL, undeme = "#000000") {
+  demes <- as.character(demes)
   if (is.function(palette)) {
-    palette <- palette(ndeme)
+    if (length(demes) > 0L) {
+      palette <- structure(palette(length(demes)),names=demes)
+    } else {
+      palette <- c()
+    }
   } else {
-    if (length(palette) < ndeme)
+    if (length(palette) < length(demes))
       pStop("if specified as a vector, ",sQuote("palette"),
-        " must have length at least ",ndeme,".",who=NULL)
-    palette <- head(palette,ndeme)
+        " must have length at least ",length(demes),".",who=NULL)
+    if (is.null(names(palette))) {
+      palette <- structure(head(palette,length(demes)),names=demes)
+    } else if (all(demes %in% names(palette))) {
+      palette <- palette[demes]
+    } else {
+      pStop(
+        "no palette color assigned for deme ",
+        paste(setdiff(demes,names(palette)),sep=","),".",
+        who=NULL
+      )
+    }
   }
-  structure(palette,names=as.character(demes))
+  if (all(demes != "0")) palette["0"] <- undeme
+  palette
 }

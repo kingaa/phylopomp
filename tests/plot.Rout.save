@@ -17,8 +17,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> png(filename="plot-%02d.png",res=100)
-> 
 > library(phylopomp)
 
 Attaching package: 'phylopomp'
@@ -32,18 +30,5 @@ The following object is masked from 'package:stats':
 > try(phylopomp:::treeplot())
 Error : in ':::': 'tree' must be specified.
 > 
-> simulate("SIR",time=10) |>
-+   newick(prune=FALSE) |>
-+   phylopomp:::treeplot(time=0,t0=NA)
-> 
-> phylopomp:::treeplot("")
-Warning messages:
-1: No shared levels found between `names(values)` of the manual scale and the
-data's colour values. 
-2: No shared levels found between `names(values)` of the manual scale and the
-data's colour values. 
-> 
-> dev.off()
-null device 
-          1 
+> phylopomp:::treeplot("",time=0,t0=0) -> pl
 > 
