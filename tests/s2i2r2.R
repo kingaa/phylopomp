@@ -9,21 +9,26 @@ theme_set(theme_bw())
 set.seed(847110120)
 
 runS2I2R2(
-  time=20,
+  time=30,
   iota2=0.01,Beta12=0.1,
   I1_0=0,I2_0=0,
   psi1=10,psi2=10,
   omega1=0.2,
   b2=0.02,d2=0.02
-) -> x
+) |>
+  freeze(seed=847110120) -> x
 
 x |>
   plot(
     obscure=FALSE,
-    palette=c("#000000FF","#440154FF","#21908CFF","#FFFFFF00")
+    palette=c("#000000ff","#440154ff","#21908cff","#ccccccff")
   )
 
-x |> lineages(obscure=FALSE) |> plot()
+x |>
+  lineages(obscure=FALSE) |>
+  plot(
+    palette=c("#000000ff","#440154ff","#21908cff","#ccccccff")
+  )
 
 simulate(
   "S2I2R2",
@@ -37,8 +42,22 @@ simulate(
   b1=1,d1=1,
   b2=0.5,d2=0.5
 ) |>
-  simulate(time=2) -> x
+  simulate(time=2) |>
+  freeze(seed=56104661) -> x
 
-x |> yaml()
+x |>
+  yaml() |>
+  strsplit("\\s+",perl=TRUE) |>
+  getElement(1) |>
+  factor(
+    levels=c("color:","nodes:","deme:","blue",
+      "name:","pocket:","time:","S1_0:","t0:")
+  ) |>
+  table() -> y
+stopifnot(
+  y["color:"] == 7456,
+  y["blue"] == 3092,
+  y["time:"] == 3964
+)
 
 dev.off()

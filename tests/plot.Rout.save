@@ -30,5 +30,10 @@ The following object is masked from 'package:stats':
 > try(phylopomp:::treeplot())
 Error : in ':::': 'tree' must be specified.
 > 
-> phylopomp:::treeplot("",time=0,t0=0) -> pl
+> "" |> parse_newick() |> plot(obscure=FALSE,prune=FALSE,points=TRUE)
+Warning messages:
+1: No shared levels found between `names(values)` of the manual scale and the
+data's colour values. 
+2: No shared levels found between `names(values)` of the manual scale and the
+data's colour values. 
 > 

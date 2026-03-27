@@ -4,8 +4,7 @@
 ##'
 ##' @name treeplot
 ##' @include getinfo.R diagram.R
-##' @param t0 numeric; root time.
-##' @param time numeric; time of the genealogy.
+##' @param legend logical; if FALSE, the legend is suppressed.
 ##' @param ladderize logical; ladderize?
 ##' @param points logical; show nodes and tips?
 ##' @param palette color palette for indicating demes.
@@ -25,9 +24,10 @@ NULL
 ##' @method plot gpgen
 ##' @export
 plot.gpgen <- function (
-  x, ..., time, t0,
+  x, ...,
   prune = TRUE, obscure = TRUE, points = FALSE,
   ladderize = TRUE,
+  legend = TRUE,
   palette = scales::hue_pal(l=30,h=c(220,580))
 
 ) {
@@ -37,12 +37,11 @@ plot.gpgen <- function (
       prune=prune,
       obscure=obscure
     ) -> out
-  if (missing(time)) time <- out$time
-  if (missing(t0)) t0 <- out$t0
   treeplot(
     tree=out$newick,
-    time=time,
-    t0=t0,
+    time=out$time,
+    t0=out$t0,
+    legend=legend,
     ladderize=ladderize,
     palette=palette,
     points=points
@@ -59,14 +58,16 @@ plot.gpgen <- function (
 ##' @importFrom tidyr separate_wider_delim unite expand_grid
 ##' @importFrom scales alpha hue_pal
 treeplot <- function (
-  tree, time = NULL, t0 = 0,
-  ladderize = TRUE, points = FALSE,
+  tree, time, t0,
+  legend = TRUE, ladderize = TRUE, points = FALSE,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
 
   if (missing(tree) || is.null(tree))
     pStop(sQuote("tree")," must be specified.")
   t0 <- as.numeric(t0)
+  time <- as.numeric(time)
+  legend <- as.logical(legend)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
@@ -96,16 +97,10 @@ treeplot <- function (
     mutate(
       deme=strtoi(deme),
       vis=nodecol != "i",
+      x=x-min(x)+t0,
       y=y-3
     ) -> dat
 
-  time <- as.numeric(c(time,max(dat$x)))[1L]
-
-  if (is.na(t0)) { # root time is to be determined from the current time
-    dat |> mutate(x=x-max(x)+time) -> dat
-  } else {
-    dat |> mutate(x=x-min(x)+t0) -> dat
-  }
   demes <- sort(unique(dat$deme))
   palette <- get_palette(palette,demes,undeme="#000000")
 
@@ -147,10 +142,12 @@ treeplot <- function (
     expand_limits(x=c(dat$x,t0,time))+
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
     theme_tree2() -> pl
-  if (length(demes) > 1L) {
+
+  if (length(demes) > 1L && legend) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }
+
   if (points) {
     if (ncolors["m_node",] > 0) {
       pl+geom_nodepoint(

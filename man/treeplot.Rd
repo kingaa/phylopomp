@@ -8,12 +8,11 @@
 \method{plot}{gpgen}(
   x,
   ...,
-  time,
-  t0,
   prune = TRUE,
   obscure = TRUE,
   points = FALSE,
   ladderize = TRUE,
+  legend = TRUE,
   palette = scales::hue_pal(l = 30, h = c(220, 580))
 )
 }
@@ -22,10 +21,6 @@
 
 \item{...}{\code{plot} passes extra arguments to \code{\link[ggplot2]{theme}}.}
 
-\item{time}{numeric; time of the genealogy.}
-
-\item{t0}{numeric; root time.}
-
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
@@ -33,6 +28,8 @@
 \item{points}{logical; show nodes and tips?}
 
 \item{ladderize}{logical; ladderize?}
+
+\item{legend}{logical; if FALSE, the legend is suppressed.}
 
 \item{palette}{color palette for indicating demes.
 This can be furnished either as a function or a vector of colors.

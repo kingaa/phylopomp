@@ -11,44 +11,44 @@ set.seed(4963811)
 runSEIR(time=3,I0=3) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
-  tree |> phylopomp:::treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   tree |> parse_newick() |>
     getInfo(obscure=FALSE,newick=TRUE) |>
     getElement("newick") |>
-    phylopomp:::treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   nrow=1
 )
 
 runSEIR(time=3,I0=3) |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
-  tree |> phylopomp:::treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   tree |> parse_newick() |>
     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    phylopomp:::treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   nrow=1
 )
 
-runSEIR(time=30,I0=3) |>
+runSEIR(time=10,I0=3) |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
-  tree |> phylopomp:::treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=10),
   tree |> parse_newick() |>
     getInfo(prune=FALSE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    phylopomp:::treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE,t0=0,time=10),
   nrow=1
 )
 
 runSEIR(time=3,I0=3) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
-  tree |> phylopomp:::treeplot(points=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   tree |> parse_newick() |>
     getInfo(prune=TRUE,obscure=FALSE,newick=TRUE) |>
     getElement("newick") |>
-    phylopomp:::treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE,t0=0,time=3),
   nrow=1
 )
 
@@ -56,11 +56,11 @@ runSEIR(time=5,I0=3) -> x
 x |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
-  x |> plot(points=TRUE,prune=TRUE,obscure=TRUE),
+  tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=5),
   tree |> parse_newick() |>
     getInfo(prune=TRUE,obscure=TRUE,newick=TRUE) |>
     getElement("newick") |>
-    phylopomp:::treeplot(points=TRUE),
+    phylopomp:::treeplot(points=TRUE,t0=0,time=5),
   nrow=1
 )
 

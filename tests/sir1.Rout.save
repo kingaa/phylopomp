@@ -36,8 +36,8 @@ Type 'q()' to quit R.
 +   plot(points=TRUE)
 > 
 > runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
-+   simulate(time=100) |>
-+   plot(points=TRUE,time=NULL)
++   simulate(time=10) |>
++   plot(points=TRUE)
 > 
 > simulate("SIR",Beta=3,gamma=1,psi=2,omega=1,S0=100,I0=5,time=10) -> x
 > x |> yaml() -> y

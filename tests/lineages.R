@@ -24,16 +24,16 @@ bind_rows(
   ggplot(aes(x=time,y=lineages,color=method,group=method))+
   geom_step()
 
-pal <- c("#00274c","#ffcb05","#006597","#000000")
+pal <- c("#006597","#ffcb05","#000000")
 
 plot_grid(
   plot_grid(
-    x |> plot(palette=pal),
-    x |> plot(obscure=FALSE,palette=pal),
+    x |> plot(),
+    x |> plot(obscure=FALSE,palette=pal,legend=FALSE),
     nrow=1,align="h",axis="l"
   ),
   plot_grid(
-    x |> lineages() |> plot(palette=pal),
+    x |> lineages() |> plot(),
     x |> lineages(obscure=FALSE) |>
       select(time,deme,lineages) |>
       filter(deme>0) |>
@@ -42,8 +42,8 @@ plot_grid(
       pivot_longer(-time) |>
       ggplot(aes(x=time,y=value,color=name))+
       geom_step()+
-      scale_color_manual(values=pal[c(2,3,4)])+
-      labs(color="")+
+      scale_color_manual(values=pal)+
+      labs(color="",y="lineages")+
       theme_classic(),
     nrow=1,align="hv",axis="tblr"
   ),
@@ -62,7 +62,7 @@ plot_grid(
       mutate(total=deme1+deme2) |>
       pivot_longer(-time) |>
       ggplot(aes(x=time,y=value,color=name,group=name))+
-      scale_color_manual(values=pal[c(2,3,4)])+
+      scale_color_manual(values=pal)+
       geom_step()+
       labs(color="")+
       theme_classic(),

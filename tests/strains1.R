@@ -29,7 +29,7 @@ runStrains(
   simulate(time=5) -> x
 
 x |>
-  plot(obscure=FALSE,time=NULL)
+  plot(obscure=FALSE)
 
 plot_grid(
   x |> plot(),

@@ -3,4 +3,4 @@ set.seed(137429846)
 
 try(phylopomp:::treeplot())
 
-phylopomp:::treeplot("",time=0,t0=0) -> pl
+"" |> parse_newick() |> plot(obscure=FALSE,prune=FALSE,points=TRUE)
