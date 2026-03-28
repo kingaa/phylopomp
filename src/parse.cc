@@ -4,6 +4,35 @@
 #include <regex>
 #include <unordered_map>
 
+void
+nodeseq_t::drop_zlb
+(void)
+{
+  for (node_t *p : *this) {
+    if (!p->holds_own() && p->slate == p->parent()->slate) {
+      while (!p->empty()) {
+        ball_t *b = p->last_ball();
+        p->erase(b); p->parent()->insert(b);
+        //FIXME: do we also need to change ball-demes?
+      }
+      detach(p);
+    }
+  }
+}
+
+void
+genealogy_t::repair_tips
+(void)
+{
+  for (node_t *p : *this) {
+    if (p->empty()) {
+      ball_t *b = new ball_t(p,p->uniq,blue,p->deme());
+      p->insert(b);
+    } else if (p->holds(black))
+      swap(p->last_ball(),p->green_ball());
+  }
+}
+
 //! simple function for scanning a slate_t from a string
 //! (with error trapping)
 static
@@ -93,8 +122,8 @@ node_t *genealogy_t::scan_branch
     std::smatch wm;
     if (std::regex_match(s,wm,wre)) {
       const string_t label = wm[1].str();
-      const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w*).*?\\].*$");
-      const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w*).*?\\].*$");
+      const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w+).*?\\].*$");
+      const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w+).*?\\].*$");
       std::smatch mm;
       if (std::regex_match(label,mm,dre)) {
         deme = scan_name(mm[1].str());
@@ -107,15 +136,13 @@ node_t *genealogy_t::scan_branch
              __func__,s.c_str());
       bl = scan_slate(wm[2].str());
     } else {
-      assert(0);		// #nocov
+      assert(0);                // #nocov
       //      err("in '%s': branch-string '%s' is improperly formatted.",__func__,s.c_str()); // unreachable?
     }
-    if (col == black)
-      err("in '%s': cannot parse Newick with extant tips.",__func__);
   }
   node_t *q = make_node(deme);
-  if (col == blue) {
-    ball_t *b = new ball_t(q,q->uniq,blue,deme);
+  if (col != green) {
+    ball_t *b = new ball_t(q,q->uniq,col,deme);
     q->insert(b);
   }
   q->slate = bl;
@@ -129,66 +156,100 @@ genealogy_t::parse
 {
   node_t *p = 0, *q;
   slate_t tf = timezero();
-  string_t::const_reverse_iterator pos1 = s.crbegin(), pos2 = pos1;
+  string_t::const_reverse_iterator b = s.crbegin(), e = b;
+  bool open = false;            // open for scanning node specs
   int stack = 0, sqstack = 0;
-  if (!s.empty() && *pos1 != ';')
+  if (!s.empty() && *b != ';')
     err("in '%s': invalid Newick format: no final semicolon.",__func__);
-  while (pos1 != s.crend()) {
-    switch (*pos1) {
-    case ';':
+  while (b != s.crend()) {
+    switch (*b) {
+    case ';':                   // root
+      if (stack != 0)
+        err("in '%s': invalid Newick: unbalanced parentheses.",__func__);
       p = make_node();
       p->slate = timezero();
       push_front(p);
-      pos1++;
-      pos2 = pos1;
+      b++;
+      e = b;
+      open = true;
       break;
-    case ')': case '(': case ',':
-      q = scan_branch(pos1.base(),pos2.base());
-      ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
-      q->slate += p->slate;
-      tf = (q->slate > tf) ? q->slate : tf;
-      attach(p,q);
-      push_back(q);
-      switch (*pos1) {
-      case ')':
+    case ')':                   // internal node
+      if (open) {
+        q = scan_branch(b.base(),e.base());
+        if (q->holds(black))
+          err("in '%s': 'type=extant' on internal node.",__func__);
+        q->slate += p->slate;
+        attach(p,q);
+        push_back(q);
+        tf = (q->slate > tf) ? q->slate : tf;
+        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
         p = q;
-        pos1++;
-        stack++;
-        break;
-      case '(':
-        while (pos1 != s.crend() && *pos1 == '(') {
-          p = p->parent();
-          pos1++;
-          stack--;
-        }
-        if (pos1 != s.crend() && *pos1 == ',') pos1++;
-        break;
-      default:
-        pos1++;
-        break;
+      } else {
+        err("in '%s': invalid Newick: missing comma or semicolon.",__func__);
       }
-      pos2 = pos1;
+      stack++;
+      b++;
+      e = b;
+      open = true;
+      break;
+    case '(':                   // tip node, eldest sister
+      if (open) {
+        q = scan_branch(b.base(),e.base());
+        q->slate += p->slate;
+        attach(p,q);
+        push_back(q);
+        tf = (q->slate > tf) ? q->slate : tf;
+        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
+      }
+      p = p->parent();
+      b++;
+      stack--;
+      e = b;
+      open = false;
+      break;
+    case ',':                   // tip node, younger sister
+      if (stack == 0)
+        err("in '%s': invalid Newick string: misplaced comma.",__func__);
+      if (open) {
+        q = scan_branch(b.base(),e.base());
+        q->slate += p->slate;
+        attach(p,q);
+        push_back(q);
+        tf = (q->slate > tf) ? q->slate : tf;
+        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
+      }
+      b++;
+      e = b;
+      open = true;
       break;
     case ']':                   // skip metadata
       sqstack++;
-      while (pos1 != s.crend() && sqstack > 0) {
-        pos1++;
-        if (*pos1 == ']') sqstack++;
-        if (*pos1 == '[') sqstack--;
+      while (b != s.crend() && sqstack > 0) {
+        b++;
+        if (*b == ']') sqstack++;
+        if (*b == '[') sqstack--;
       }
       if (sqstack != 0)
         err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
-      if (pos1 != s.crend()) pos1++;
+      if (b != s.crend()) b++;
       break;
     default:
-      pos1++;
+      b++;
       break;
     }
   }
   if (stack != 0)
     err("in '%s': invalid Newick format: unbalanced parentheses.",__func__);
+  if (open) {
+    q = scan_branch(b.base(),e.base());
+    q->slate += p->slate;
+    attach(p,q);
+    push_back(q);
+    tf = (q->slate > tf) ? q->slate : tf;
+    ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
+  }
   time() = tf;
-  sort(); repair_tips(); drop_zlb();
+  sort(); repair_tips(); drop_zlb(); weed();
   return *this;
 }
 

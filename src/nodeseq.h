@@ -232,19 +232,7 @@ public:
     weed();
   };
   //! drop all zero-length branches
-  void drop_zlb (void) {
-    for (node_t *p : *this) {
-      if (!p->holds_own() && p->slate == p->parent()->slate) {
-        while (!p->empty()) {
-          ball_t *b = p->last_ball();
-          p->erase(b); p->parent()->insert(b);
-          //FIXME: do we also need to change ball-demes?
-        }
-        detach(p);
-      }
-    }
-    weed();
-  };
+  void drop_zlb (void);
 
 private:
 

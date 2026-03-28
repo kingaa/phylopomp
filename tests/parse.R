@@ -110,9 +110,9 @@ plot_grid(
 r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
    parse_newick()
 
-r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x1
-r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=sample]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x2
 plot_grid(
   plot(x1,obscure=FALSE,prune=FALSE,points=TRUE),
@@ -158,7 +158,7 @@ try(
 )
 
 try(
-  r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
+  r"{(()[&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
      parse_newick()
 )
 
@@ -170,8 +170,11 @@ try(
 r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5;}" |>
    parse_newick()
 
+r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
+   parse_newick()
+
 try(
-  r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
+  r"{(:1,:1):1;((:1,:1):1;}" |>
      parse_newick()
 )
 
@@ -199,6 +202,42 @@ r"{(:1.0000)A;}" |>
    parse_newick() |>
    getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
 
-"" |> parse_newick() |> gendat() |> unlist()
+try(
+  r"{()();}" |>
+     parse_newick()
+)
+
+try(
+  r"{(A();}" |>
+     parse_newick()
+)
+
+try(
+  r"{,();}" |>
+     parse_newick()
+)
+
+try(
+  r"{:2 ,:3 ();}" |>
+     parse_newick() |>
+     diagram()
+)
+
+plot_grid(
+  "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  ";" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "A;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  ":1;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  ":;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "A:1;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "A:3();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "()A:3;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "(:2):2;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
+     parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  nrow=1,labels="AUTO"
+)
 
 dev.off()

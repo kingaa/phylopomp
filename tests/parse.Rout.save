@@ -130,9 +130,9 @@ Type 'q()' to quit R.
 +    parse_newick()
 <phylopomp genealogy>
 > 
-> r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+> r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) -> x1
-> r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=sample]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+> r"{(((:0.1)),chuck[&&PhyloPOMP deme=2]bob[&&PhyloPOMP|type=extant]tim:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) -> x2
 > plot_grid(
 +   plot(x1,obscure=FALSE,prune=FALSE,points=TRUE),
@@ -168,7 +168,7 @@ Error : in 'parse': invalid Newick format: unbalanced parentheses.
 +   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_branch': cannot parse Newick with extant tips.
+Error : in 'parse': invalid Newick format: unbalanced parentheses.
 > 
 > try(
 +   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
@@ -183,10 +183,10 @@ Error : in 'parse': invalid Newick format: unbalanced square brackets.
 Error : in scan_color: invalid metadata: type 'bob' not recognized.
 > 
 > try(
-+   r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
++   r"{(()[&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'scan_branch': cannot parse Newick with extant tips.
+Error : in 'parse': 'type=extant' on internal node.
 > 
 > try(
 +   r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5}" |>
@@ -198,13 +198,17 @@ Error : in 'parse': invalid Newick format: no final semicolon.
 +    parse_newick()
 <phylopomp genealogy>
 > 
-> try(
-+   r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
-+      parse_newick()
-+ )
+> r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
++    parse_newick()
 <phylopomp genealogy>
 Warning message:
 in 'scan_branch': in branch string '[&&PhyloPOMP|deme=9|type=sample]:1.0000A': no branch-length detected: assuming zero branch length. 
+> 
+> try(
++   r"{(:1,:1):1;((:1,:1):1;}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick: unbalanced parentheses.
 > 
 > r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
 +    parse_newick() |>
@@ -288,9 +292,50 @@ $nsample
 Warning message:
 in 'scan_branch': in branch string 'A': no branch-length detected: assuming zero branch length. 
 > 
-> "" |> parse_newick() |> gendat() |> unlist()
-      t0 nodetime  nsample    nroot    nnode 
-       0        0        0        0        0 
+> try(
++   r"{()();}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick: missing comma or semicolon.
+> 
+> try(
++   r"{(A();}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: unbalanced parentheses.
+> 
+> try(
++   r"{,();}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick string: misplaced comma.
+> 
+> try(
++   r"{:2 ,:3 ();}" |>
++      parse_newick() |>
++      diagram()
++ )
+Error : in 'parse': invalid Newick string: misplaced comma.
+> 
+> plot_grid(
++   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   ";" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "A;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   ":1;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   ":;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "A:1;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "A:3();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "()A:3;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   "(:2):2;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>
++      parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
++   nrow=1,labels="AUTO"
++ )
+Warning messages:
+1: in 'scan_branch': in branch string 'A': no branch-length detected: assuming zero branch length. 
+2: in 'scan_branch': in branch string ':': no branch-length detected: assuming zero branch length. 
 > 
 > dev.off()
 null device 

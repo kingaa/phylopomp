@@ -389,15 +389,7 @@ public:
 private:
 
   //! tips without descendants are reclassified as samples
-  void repair_tips (void) {
-    for (node_t *p : *this) {
-      if (p->empty()) {
-        ball_t *b = new ball_t(p,p->uniq,blue,p->deme());
-        p->insert(b);
-      }
-    }
-  };
-
+  void repair_tips (void);
   //! roots are added at zero time if needed
   void repair_roots (void) {
     node_nit j = begin();
