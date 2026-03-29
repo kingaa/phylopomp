@@ -30,13 +30,17 @@ genealogy_t::operator+=
 (const genealogy_t& other)
 {
   genealogy_t G = other;
+  slate_t t = time();
+  slate_t t0 = timezero();
+  t0 = (t0 > G.timezero()) ? t0 : G.timezero();
+  t = (t < G.time()) ? t : G.time();
   G.reuniqify(_unique);
   merge(G,compare);
   timezero() = (timezero() < G.timezero()) ? timezero() : G.timezero();
   time() = (time() > G.time()) ? time() : G.time();
   ndeme() = (ndeme() > G.ndeme()) ? ndeme() : G.ndeme();
   _unique = G._unique;
-  repair_roots();
+  curtail(t,t0);
   return *this;
 }
 
@@ -45,8 +49,8 @@ extern "C" {
   //! combine genealogies
   SEXP genealSum (SEXP args) {
     args = CDR(args);
-    genealogy_t A(R_PosInf);    // a "null" genealogy
-    A.time() = R_NegInf;
+    genealogy_t A(R_NegInf);	// a "null" genealogy on [-inf,inf]
+    A.time() = R_PosInf;
     while (args != R_NilValue) {
       A += CAR(args);
       args = CDR(args);

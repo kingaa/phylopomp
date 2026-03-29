@@ -351,8 +351,8 @@ public:
 
   //! merge two genealogies:
   //! 1. the node-sequences are merged;
-  //! 2. the root time retreats as necessary;
-  //! 3. the current time advances as necessary;
+  //! 2. the root time advances as necessary;
+  //! 3. the current time retreats as necessary;
   //! 4. the unique-name stack advances as necessary.
   genealogy_t& operator+= (const genealogy_t& other);
 
