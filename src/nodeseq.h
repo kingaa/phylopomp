@@ -231,8 +231,6 @@ public:
     }
     weed();
   };
-  //! drop all zero-length branches
-  void drop_zlb (void);
 
 private:
 

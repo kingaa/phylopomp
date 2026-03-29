@@ -23,7 +23,7 @@ class master_t : public POPN {
 public:
 
   typedef POPN popul_t;
-  const static size_t ndeme = NDEME; // one extra for the undeme
+  const static size_t ndeme = NDEME;
 
 public:
   // DATA MEMBERS

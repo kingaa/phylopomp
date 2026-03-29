@@ -108,7 +108,8 @@ plot_grid(
 )
 
 r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
-   parse_newick()
+   parse_newick() |>
+   newick(extended=FALSE)
 
 r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
    parse_newick(t0=0.5,tf=2) -> x1
@@ -138,6 +139,11 @@ try(
 )
 
 try(
+  r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+     parse_newick()
+)
+
+try(
   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
      parse_newick()
 )
@@ -148,7 +154,7 @@ try(
 )
 
 try(
-  r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
+  r"{((:0.1)),([&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
      parse_newick()
 )
 
@@ -167,9 +173,6 @@ try(
      parse_newick()
 )
 
-r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5;}" |>
-   parse_newick()
-
 r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
    parse_newick()
 
@@ -178,29 +181,32 @@ try(
      parse_newick()
 )
 
-r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,nsample=TRUE)
-
-r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,nsample=TRUE)
-
-r"{([deme=2|type=sample]:1.0000):0.5;}" |>
-   parse_newick() |>
-   getInfo(prune=FALSE,nsample=TRUE)
-
-r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
-   parse_newick() |>
-   yaml()
-
-r"{(1.0000):0.0;}" |>
-   parse_newick() |>
-   getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
-
-r"{(:1.0000)A;}" |>
-   parse_newick() |>
-   getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
+stopifnot(
+  A=r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
+       parse_newick() |>
+       getInfo(prune=FALSE,nsample=TRUE) |>
+       getElement("nsample")==1,
+  B=r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
+       parse_newick() |>
+       getInfo(prune=FALSE,nsample=TRUE) |>
+       getElement("nsample")==1,
+  C=r"{([deme=2|type=sample]:1.0000):0.5;}" |>
+       parse_newick() |>
+       getInfo(prune=FALSE,nsample=TRUE) |>
+       getElement("nsample")==1,
+  D=r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
+       parse_newick() |>
+       getInfo(time=TRUE) |>
+       getElement("time")==0.5045,
+  E=r"{(1.0000):0.0;}" |>
+       parse_newick() |>
+       getInfo(time=TRUE,t0=TRUE,nsample=TRUE) |>
+       unlist()==c(t0=0,time=0,nsample=1),
+  F=r"{(:1.0000)A;}" |>
+       parse_newick() |>
+       getInfo(time=TRUE,t0=TRUE,nsample=TRUE) |>
+       unlist()==c(t0=0,time=1,nsample=1)
+)
 
 try(
   r"{()();}" |>

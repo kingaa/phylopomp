@@ -5,22 +5,6 @@
 #include <unordered_map>
 
 void
-nodeseq_t::drop_zlb
-(void)
-{
-  for (node_t *p : *this) {
-    if (!p->holds_own() && p->slate == p->parent()->slate) {
-      while (!p->empty()) {
-        ball_t *b = p->last_ball();
-        p->erase(b); p->parent()->insert(b);
-        //FIXME: do we also need to change ball-demes?
-      }
-      detach(p);
-    }
-  }
-}
-
-void
 genealogy_t::repair_tips
 (void)
 {
@@ -36,7 +20,8 @@ genealogy_t::repair_tips
 //! simple function for scanning a slate_t from a string
 //! (with error trapping)
 static
-slate_t scan_slate
+slate_t
+scan_slate
 (const string_t& s)
 {
   double bl;
@@ -62,7 +47,8 @@ slate_t scan_slate
 //! simple function for scanning a name_t from a string
 //! (with error trapping)
 static
-name_t scan_name
+name_t
+scan_name
 (const string_t& s)
 {
   int d;
@@ -87,7 +73,8 @@ name_t scan_name
 
 //! simple function for scanning the color
 static
-color_t scan_color
+color_t
+scan_color
 (const std::string& s)
 {
   std::string copy(s);
@@ -107,38 +94,27 @@ color_t scan_color
   return col;
 }
 
-//! Scan the label string.
-//! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
-node_t *genealogy_t::scan_branch
+//! Scan the branch string.
+//! This has format %s[&&PhyloPOMP deme=%d type=%s]%s:%f
+node_t*
+genealogy_t::scan_branch
 (string_t::const_iterator b,
  string_t::const_iterator e)
 {
-  color_t col = green;
   name_t deme = 0;
+  color_t col = green;
   slate_t bl = 0;
   if (b != e) {
-    string_t s(b,e);
-    const std::regex wre("^(.*?)(?::([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))?$");
-    std::smatch wm;
-    if (std::regex_match(s,wm,wre)) {
-      const string_t label = wm[1].str();
-      const std::regex dre("^.*?\\[&&PhyloPOMP.+?deme=(\\w+).*?\\].*$");
-      const std::regex tre("^.*?\\[&&PhyloPOMP.+?type=(\\w+).*?\\].*$");
-      std::smatch mm;
-      if (std::regex_match(label,mm,dre)) {
-        deme = scan_name(mm[1].str());
-      }
-      if (std::regex_match(label,mm,tre)) {
-        col = scan_color(mm[1].str());
-      }
-      if (wm[2].str().empty())
-        warn("in '%s': in branch string '%s': no branch-length detected: assuming zero branch length.",
-             __func__,s.c_str());
-      bl = scan_slate(wm[2].str());
-    } else {
-      assert(0);                // #nocov
-      //      err("in '%s': branch-string '%s' is improperly formatted.",__func__,s.c_str()); // unreachable?
-    }
+    std::smatch m;
+    if (std::regex_match(b,e,m,std::regex("^.*?\\[&&PhyloPOMP.+?deme=(\\w+).*?\\].*$")))
+      deme = scan_name(m[1].str());
+    if (std::regex_match(b,e,m,std::regex("^.*?\\[&&PhyloPOMP.+?type=(\\w+).*?\\].*$")))
+      col = scan_color(m[1].str());
+    if (std::regex_match(b,e,m,std::regex("^.*:([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)$")))
+      bl = scan_slate(m[1].str());
+    else
+      warn("in '%s': in branch-string '%s': no branch-length detected: assuming zero branch length.",
+           __func__,string_t(b,e).c_str());
   }
   node_t *q = make_node(deme);
   if (col != green) {
@@ -157,7 +133,7 @@ genealogy_t::parse
   node_t *p = 0, *q;
   slate_t tf = timezero();
   string_t::const_reverse_iterator b = s.crbegin(), e = b;
-  bool open = false;            // open for scanning node specs
+  bool open = false;            // branch-string reading-frame open?
   int stack = 0, sqstack = 0;
   if (!s.empty() && *b != ';')
     err("in '%s': invalid Newick format: no final semicolon.",__func__);
@@ -208,8 +184,8 @@ genealogy_t::parse
       open = false;
       break;
     case ',':                   // tip node, younger sister
-      if (stack == 0)
-        err("in '%s': invalid Newick string: misplaced comma.",__func__);
+      if (stack <= 0)
+        err("in '%s': invalid Newick string: misplaced comma or unbalanced parentheses.",__func__);
       if (open) {
         q = scan_branch(b.base(),e.base());
         q->slate += p->slate;

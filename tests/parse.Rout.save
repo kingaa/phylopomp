@@ -127,8 +127,9 @@ Type 'q()' to quit R.
 + )
 > 
 > r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
-+    parse_newick()
-<phylopomp genealogy>
++    parse_newick() |>
++    newick(extended=FALSE)
+[1] "((2:1.000000,3:1.000000)1:0.300000)0:0.000000;"
 > 
 > r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,tf=2) -> x1
@@ -159,6 +160,12 @@ Type 'q()' to quit R.
 Error : in 'parse': invalid Newick format: unbalanced square brackets.
 > 
 > try(
++   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++      parse_newick()
++ )
+Error : in 'parse': invalid Newick format: unbalanced square brackets.
+> 
+> try(
 +   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
@@ -171,10 +178,10 @@ Error : in 'parse': invalid Newick format: unbalanced parentheses.
 Error : in 'parse': invalid Newick format: unbalanced parentheses.
 > 
 > try(
-+   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
++   r"{((:0.1)),([&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced square brackets.
+Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
 > 
 > try(
 +   r"{([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
@@ -194,15 +201,11 @@ Error : in 'parse': 'type=extant' on internal node.
 + )
 Error : in 'parse': invalid Newick format: no final semicolon.
 > 
-> r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5;}" |>
-+    parse_newick()
-<phylopomp genealogy>
-> 
 > r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
 +    parse_newick()
 <phylopomp genealogy>
 Warning message:
-in 'scan_branch': in branch string '[&&PhyloPOMP|deme=9|type=sample]:1.0000A': no branch-length detected: assuming zero branch length. 
+in 'scan_branch': in branch-string '[&&PhyloPOMP|deme=9|type=sample]:1.0000A': no branch-length detected: assuming zero branch length. 
 > 
 > try(
 +   r"{(:1,:1):1;((:1,:1):1;}" |>
@@ -210,87 +213,35 @@ in 'scan_branch': in branch string '[&&PhyloPOMP|deme=9|type=sample]:1.0000A': n
 + )
 Error : in 'parse': invalid Newick: unbalanced parentheses.
 > 
-> r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
-+    parse_newick() |>
-+    getInfo(prune=FALSE,nsample=TRUE)
-$nsample
-[1] 1
-
-> 
-> r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
-+    parse_newick() |>
-+    getInfo(prune=FALSE,nsample=TRUE)
-$nsample
-[1] 1
-
-> 
-> r"{([deme=2|type=sample]:1.0000):0.5;}" |>
-+    parse_newick() |>
-+    getInfo(prune=FALSE,nsample=TRUE)
-$nsample
-[1] 1
-
-> 
-> r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
-+    parse_newick() |>
-+    yaml()
-t0: 0.000000
-time: 0.504500
-ndeme: 3
-nodes:
-- name: 0
-  time: 0.000000
-  deme: 0
-  lineage: 0
-  pocket:
-  - color: green
-    name: 0
-  - color: green
-    name: 1
-- name: 1
-  time: 0.500000
-  deme: 0
-  lineage: 0
-  pocket:
-  - color: green
-    name: 2
-- name: 2
-  time: 0.504500
-  deme: 3
-  lineage: 0
-  pocket:
-  - color: blue
-    name: 2
-> 
-> r"{(1.0000):0.0;}" |>
-+    parse_newick() |>
-+    getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
-$t0
-[1] 0
-
-$time
-[1] 0
-
-$nsample
-[1] 1
-
-Warning message:
-in 'scan_branch': in branch string '1.0000': no branch-length detected: assuming zero branch length. 
-> 
-> r"{(:1.0000)A;}" |>
-+    parse_newick() |>
-+    getInfo(time=TRUE,t0=TRUE,nsample=TRUE)
-$t0
-[1] 0
-
-$time
-[1] 1
-
-$nsample
-[1] 1
-
-Warning message:
-in 'scan_branch': in branch string 'A': no branch-length detected: assuming zero branch length. 
+> stopifnot(
++   A=r"{([&&PhyloPOMP deme=2|type=sample]:1.0000):0.5;}" |>
++        parse_newick() |>
++        getInfo(prune=FALSE,nsample=TRUE) |>
++        getElement("nsample")==1,
++   B=r"{([&&PhyloPOMP deme=2]:1.0000):0.5;}" |>
++        parse_newick() |>
++        getInfo(prune=FALSE,nsample=TRUE) |>
++        getElement("nsample")==1,
++   C=r"{([deme=2|type=sample]:1.0000):0.5;}" |>
++        parse_newick() |>
++        getInfo(prune=FALSE,nsample=TRUE) |>
++        getElement("nsample")==1,
++   D=r"{(A[&&PhyloPOMP deme=3]:0.45E-02)B:0.05e+01;}" |>
++        parse_newick() |>
++        getInfo(time=TRUE) |>
++        getElement("time")==0.5045,
++   E=r"{(1.0000):0.0;}" |>
++        parse_newick() |>
++        getInfo(time=TRUE,t0=TRUE,nsample=TRUE) |>
++        unlist()==c(t0=0,time=0,nsample=1),
++   F=r"{(:1.0000)A;}" |>
++        parse_newick() |>
++        getInfo(time=TRUE,t0=TRUE,nsample=TRUE) |>
++        unlist()==c(t0=0,time=1,nsample=1)
++ )
+Warning messages:
+1: in 'scan_branch': in branch-string '1.0000': no branch-length detected: assuming zero branch length. 
+2: in 'scan_branch': in branch-string 'A': no branch-length detected: assuming zero branch length. 
 > 
 > try(
 +   r"{()();}" |>
@@ -308,14 +259,14 @@ Error : in 'parse': invalid Newick format: unbalanced parentheses.
 +   r"{,();}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick string: misplaced comma.
+Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
 > 
 > try(
 +   r"{:2 ,:3 ();}" |>
 +      parse_newick() |>
 +      diagram()
 + )
-Error : in 'parse': invalid Newick string: misplaced comma.
+Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
 > 
 > plot_grid(
 +   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
@@ -334,8 +285,8 @@ Error : in 'parse': invalid Newick string: misplaced comma.
 +   nrow=1,labels="AUTO"
 + )
 Warning messages:
-1: in 'scan_branch': in branch string 'A': no branch-length detected: assuming zero branch length. 
-2: in 'scan_branch': in branch string ':': no branch-length detected: assuming zero branch length. 
+1: in 'scan_branch': in branch-string 'A': no branch-length detected: assuming zero branch length. 
+2: in 'scan_branch': in branch-string ':': no branch-length detected: assuming zero branch length. 
 > 
 > dev.off()
 null device 

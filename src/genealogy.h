@@ -362,8 +362,8 @@ public:
     genealogy_t G = other;
     G.reuniqify(_unique);
     merge(G,compare);
-    _t0 = (_t0 > G._t0) ? G._t0 : _t0;
-    _time = (_time < G._time) ? G._time : _time;
+    timezero() = (timezero() > G.timezero()) ? G.timezero() : timezero();
+    time() = (time() < G.time()) ? G.time() : time();
     ndeme() = (ndeme() < G.ndeme()) ? G.ndeme() : ndeme();
     _unique = G._unique;
     repair_roots();
@@ -385,10 +385,25 @@ public:
     }
     sort();
   };
+  //! drop all zero-length branches
+  void drop_zlb (void) {
+    for (node_t *p : *this) {
+      if (!p->holds_own() &&
+          p->slate == p->parent()->slate &&
+          p->deme() == p->parent()->deme()) {
+        while (!p->empty()) {
+          ball_t *b = p->last_ball();
+          p->erase(b); p->parent()->insert(b);
+        }
+        detach(p);
+      }
+    }
+  };
 
 private:
 
-  //! tips without descendants are reclassified as samples
+  //! - tips without descendants are reclassified as samples.
+  //! - tips with black balls are swapped out.
   void repair_tips (void);
   //! roots are added at zero time if needed
   void repair_roots (void) {
