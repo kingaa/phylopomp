@@ -346,10 +346,7 @@ public:
 
 private:
 
-  void reuniqify (name_t shift) {
-    this->_unique += shift;
-    for (node_t *p : *this) p->reuniqify(shift);
-  };
+  void reuniqify (name_t shift);
 
 public:
 
@@ -358,17 +355,7 @@ public:
   //! 2. the root time retreats as necessary;
   //! 3. the current time advances as necessary;
   //! 4. the unique-name stack advances as necessary.
-  genealogy_t& operator+= (const genealogy_t& other) {
-    genealogy_t G = other;
-    G.reuniqify(_unique);
-    merge(G,compare);
-    timezero() = (timezero() > G.timezero()) ? G.timezero() : timezero();
-    time() = (time() < G.time()) ? G.time() : time();
-    ndeme() = (ndeme() < G.ndeme()) ? G.ndeme() : ndeme();
-    _unique = G._unique;
-    repair_roots();
-    return *this;
-  };
+  genealogy_t& operator+= (const genealogy_t& other);
 
   //! insert zero-length branches for all samples
   void insert_zlb (void) {

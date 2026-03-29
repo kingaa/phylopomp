@@ -15,6 +15,9 @@ runSEIR(t0=1,time=4,E0=8,I0=0) -> z
 (x+y) |>
   plot(points=TRUE,ladderize=FALSE,obscure=FALSE)
 
+(y+x) |>
+  plot(points=TRUE,ladderize=FALSE,obscure=FALSE)
+
 (x+y+x) |>
   plot(points=TRUE,ladderize=FALSE,obscure=FALSE)
 
