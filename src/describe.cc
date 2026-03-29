@@ -1,3 +1,7 @@
+#include "ball.h"
+#include "pocket.h"
+#include "node.h"
+#include "nodeseq.h"
 #include "genealogy.h"
 #include "internal.h"
 

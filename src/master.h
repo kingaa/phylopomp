@@ -58,7 +58,7 @@ public:
   // CONSTRUCTORS, ETC.
   //! basic constructor
   //!  t0 = initial time
-  master_t (double t0 = 0) : popul_t(t0), geneal(t0,0,ndeme) {};
+  master_t (double t0 = 0) : popul_t(t0), geneal(t0,ndeme) {};
   //! constructor from serialized binary form
   master_t (raw_t *o) {
     o >> *this;

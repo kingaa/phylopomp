@@ -7,7 +7,7 @@
 #include "ball.h"
 #include "pocket.h"
 #include "node.h"
-#include "nodeseq.h"
+#include "genealogy.h"
 #include "internal.h"
 
 //! Implementation of the inventory process.
@@ -35,19 +35,21 @@ public:
   inventory_t (const inventory_t &) = default;
   //! move constructor
   inventory_t (inventory_t &&) = delete;
-  //! constructs an inventory from a node-sequence
-  inventory_t (const nodeseq_t& s) {
+  //! constructs an inventory from a genealogy
+  inventory_t (const genealogy_t& G) {
+    assert(G.ndeme()==ndeme);
     clean();
-    for (node_t *p : s) {
+    for (node_t *p : G) {
       for (ball_t *b : *p) {
         insert(b);              // 'insert' checks color
       }
     }
   };
-  //! copy an inventory by iterating over a node sequence
-  inventory_t & operator= (const nodeseq_t& s) {
+  //! copy an inventory from a genealogy
+  inventory_t & operator= (const genealogy_t& G) {
+    assert(G.ndeme()==ndeme);
     clean();
-    for (node_t *p : s) {
+    for (node_t *p : G) {
       for (ball_t *b : *p) {
         insert(b);              // 'insert' checks color
       }

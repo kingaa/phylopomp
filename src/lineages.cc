@@ -5,6 +5,7 @@
 //! -  1 = sample
 //! -  2 = non-sample node
 
+#include "node.h"
 #include "genealogy.h"
 #include "internal.h"
 

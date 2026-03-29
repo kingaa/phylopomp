@@ -8,7 +8,6 @@
 #include <stdexcept>
 
 #include "nodeseq.h"
-#include "inventory.h"
 #include "internal.h"
 
 static const size_t MEMORY_MAX = (1<<28); // 256MB
@@ -50,6 +49,7 @@ private:
   //! clean up
   void clean (void) {
     _unique = 0;
+    _ndeme = 0;
     _t0 = _time = R_NaReal;
   };
 
@@ -97,13 +97,12 @@ public:
 public:
   // CONSTRUCTORS
   //! basic constructor for genealogy class
-  //!  t0 = initial time
-  genealogy_t (double t0 = 0, name_t u = 0, size_t nd = 0, double time = 0) {
+  //! - t0 = initial time
+  //! - ndeme = number of demes (excluding the undeme)
+  genealogy_t (double t0 = R_NaReal, size_t ndeme = 0) {
     clean();
-    ndeme() = nd;
-    _unique = u;
-    _t0 = slate_t(t0);
-    _time = slate_t(time);
+    _time = _t0 = slate_t(t0);
+    _ndeme = ndeme;
   };
   //! constructor from serialized binary form
   genealogy_t (raw_t *o) {
