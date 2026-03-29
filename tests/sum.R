@@ -12,6 +12,16 @@ runSEIR(t0=-1,time=2,E0=0,I0=3) -> x
 runSEIR(t0=0,time=3,E0=3,I0=0) -> y
 runSEIR(t0=1,time=4,E0=8,I0=0) -> z
 
+plot_grid(
+  x |> plot(points=TRUE,obscure=FALSE,ladderize=FALSE),
+  y |> plot(points=TRUE,obscure=FALSE,ladderize=FALSE),
+  z |> plot(points=TRUE,obscure=FALSE,ladderize=FALSE),
+  ncol=1
+)
+
+(x+x) |>
+  plot(points=TRUE,ladderize=TRUE,obscure=FALSE)
+
 (x+y) |>
   plot(points=TRUE,ladderize=FALSE,obscure=FALSE)
 
