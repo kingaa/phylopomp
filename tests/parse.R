@@ -107,6 +107,12 @@ plot_grid(
   ncol=1,rel_heights=c(1,1,1)
 )
 
+try(
+  r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
+     parse_newick() |>
+     newick(extended=FALSE,prune=FALSE)
+)
+
 r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
    parse_newick() |>
    newick(extended=FALSE)

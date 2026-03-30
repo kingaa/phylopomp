@@ -81,6 +81,14 @@ library(grid)
 library(scales)
 library(dplyr)
 
+try({
+  pal <- c(`0`="#33333355",`3`="#ffcb0555",`2`="#00274c55")
+  x |>
+    plot(obscure=FALSE,palette=alpha(pal,1),
+      legend.position="none"
+    )
+})
+
 pal <- c(`0`="#33333355",`1`="#ffcb0555",`2`="#00274c55")
 
 png(filename="diagram-07.png",res=100,
