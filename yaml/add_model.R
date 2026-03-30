@@ -110,7 +110,7 @@ GENERICS({%name%},{%gen%})
           render(
             r"{static const int {%name%} = {%number%};}",
             name=d,
-            number=n-1L
+            number=n
           )
         },
         d=model$demes,

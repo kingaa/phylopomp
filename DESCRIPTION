@@ -11,7 +11,7 @@ Depends: R(>= 4.5)
 Remotes: bioc::ggtree
 Imports: grid, ggtree(>= 3.16), yaml, ggplot2, scales, ape, dplyr, tibble, foreach, tidyr, pomp(>= 6.1), cowplot
 LinkingTo: pomp
-Suggests: tidyverse, doFuture, broom
+Suggests: tidyverse, doFuture, broom, gifski
 License: GPL-3
 LazyData: true
 Contact: kingaa at umich dot edu
@@ -23,6 +23,7 @@ Collate:
     'geneal.R'
     'getinfo.R'
     'curtail.R'
+    'treeplot.R'
     'diagram.R'
     'foreach.R'
     'gendat.R'
@@ -46,7 +47,7 @@ Collate:
     'sir_pomp.R'
     'strains.R'
     'strains_pomp.R'
-    'treeplot.R'
+    'sum.R'
     'twospecies.R'
     'twospecies_pomp.R'
     'twoundead.R'

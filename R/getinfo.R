@@ -7,6 +7,7 @@
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
 ##' @param obscure logical; obscure the demes?
+##' @param extended logical; return extended-Newick format?
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param newick logical; return a Newick-format description of the tree?
@@ -15,6 +16,7 @@
 ##' @param structure logical; return the structure in \R list format?
 ##' @param ndeme logical; return the number of demes?
 ##' @param nsample logical; return the number of samples?
+##' @param nroot logical; return the number of roots?
 ##' @param lineages logical; return the lineage-count function?
 ##' @param gendat logical; return the data-frame format?
 ##' @param genealogy logical; return the lineage-traced genealogy?
@@ -27,7 +29,8 @@
 ##'   \item{time}{the final time (a numeric scalar)}
 ##'   \item{ndeme}{the number of demes (an integer)}
 ##'   \item{nsample}{the number of samples (an integer)}
-##'   \item{newick}{the genealogical tree, in Newick format}
+##'   \item{nroot}{the number of roots (an integer)}
+##'   \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
 ##'   \item{description}{a human readable description of the state of the genealogy process}
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
@@ -39,11 +42,11 @@
 ##' @rdname getinfo
 ##' @export
 getInfo <- function (
-  object, prune = TRUE, obscure = TRUE,
+  object, prune = TRUE, obscure = TRUE, extended = TRUE,
   t0 = FALSE, time = FALSE,
   description = FALSE, structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
-  nsample = FALSE, genealogy = FALSE, gendat = FALSE
+  nsample = FALSE, nroot = FALSE, genealogy = FALSE, gendat = FALSE
 ) {
   if (gendat & !prune) {
     warning("pruning since 'gendat=TRUE'",call.=FALSE)
@@ -52,8 +55,9 @@ getInfo <- function (
   x <- .External(
     P_getInfo,
     object=geneal(object),
-    prune=prune,obscure=obscure,
-    t0=t0,time=time,nsample=nsample,ndeme=ndeme,
+    prune=prune,obscure=obscure,extended=extended,
+    t0=t0,time=time,
+    nsample=nsample,nroot=nroot,ndeme=ndeme,
     description=description,yaml=yaml,
     structure=structure,newick=newick,
     lineages=lineages,genealogy=genealogy,

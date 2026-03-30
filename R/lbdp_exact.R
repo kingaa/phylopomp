@@ -14,12 +14,13 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   x |> gendat() -> gi
   n0 <- as.integer(n0)
   if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
-  tf <- gi$nodetime[length(gi$nodetime)] ## final time
-  t <- gi$nodetime[-length(gi$nodetime)] ## node times
-  t0 <- t[1L]                            ## root time
-  tbr <- t[gi$nodetype==2L]              ## coalescence times
+  t0 <- gi$t0                                   ## root time
+  len <- length(gi$nodetime)
+  tf <- gi$nodetime[len]                        ## final time
+  t <- gi$nodetime[-len]                        ## node times
+  tbr <- t[gi$nodetype==2L]                     ## coalescence times
   ttp <- t[gi$nodetype==1L & gi$saturation==0L] ## tip sample times
-  nrt <- sum(gi$nodetype==0L)                   ## number of roots
+  nrt <- gi$nroot                               ## number of roots
   nin <- sum(gi$nodetype==1L & gi$saturation==1L) ## number of inline samples
   if (length(ttp) != length(tbr)+nrt)
     pStop("internal inconsistency in ",sQuote("data"),".") #nocov

@@ -4,9 +4,9 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int host1 = 0;
-static const int host2 = 1;
-static const int outside = 2;
+static const int host1 = 1;
+static const int host2 = 2;
+static const int outside = 3;
 
 //! TwoSpecies process state.
 typedef struct {

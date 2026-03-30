@@ -51,7 +51,6 @@ g |>
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 
@@ -77,7 +76,6 @@ g |>
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 
@@ -89,11 +87,13 @@ freeze(
 x |> gendat(obscure=FALSE) -> g
 stopifnot(identical(g,getInfo(x,obscure=FALSE,gendat=TRUE)$gendat))
 stopifnot(identical(g,getInfo(x,prune=FALSE,obscure=FALSE,gendat=TRUE)$gendat))
+gi <- getInfo(x,nsample=TRUE,nroot=TRUE)
+stopifnot(identical(g$nsample,gi$nsample))
+stopifnot(identical(g$nroot,gi$nroot))
 
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>
-  mutate(name=seq_along(deme)-1) |>
   filter(nodetype==1) |>
   count(deme)
 

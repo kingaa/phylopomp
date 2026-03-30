@@ -4,8 +4,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include <string>
-#include <cstring>
 #include "ball.h"
 #include "pocket.h"
 #include "internal.h"
@@ -59,6 +57,8 @@ public:
     p.repair_holder(&p);
     return o;
   };
+
+  void reuniqify (name_t shift);
 
 public:
 
@@ -148,106 +148,26 @@ public:
   //! - -1 = root
   //! -  1 = sample
   //! -  2 = non-sample node
-  void lineage_incr (int *incr, int *sat, int *etype) const {
-    const name_t d = deme();
-    incr[d]--;
-    for (ball_t *b : *this) {
-      switch (b->color) {
-      case green: case black:
-        incr[b->deme()]++;
-        sat[b->deme()]++;
-        break;
-      default:
-        break;
-      }
-    }
-    if (holds_own()) {
-      sat[d]--;
-      etype[d] = -1;
-    } else if (holds(blue)) {
-      etype[d] = 1;
-    } else {
-      etype[d] = 2;
-    }
-  };
+  void lineage_incr (int *incr, int *sat, int *etype) const;
 
 public:
 
+  //! insert a ball into the pocket of a node
+  void insert (ball_t *a) {
+    a->holder() = this;
+    pocket_t::insert(a);
+  };
+
   //! human-readable info
-  std::string describe (void) const {
-    std::string s = "node("
-      + std::to_string(uniq)
-      + "," + std::to_string(deme()) + ",";
-    if (lineage() != null_lineage) {
-      s += std::to_string(lineage());
-    }
-    s += ")" + pocket_t::describe();
-    s += ", t = " + std::to_string(slate) + "\n";
-    return s;
-  };
+  string_t describe (void) const;
   //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string o = "name: " + std::to_string(uniq) + "\n"
-      + tab + "time: " + std::to_string(slate) + "\n"
-      + tab + "deme: " + std::to_string(deme()) + "\n";
-    if (lineage() != null_lineage) {
-      o += tab + "lineage: " + std::to_string(lineage()) + "\n";
-    }
-    o += tab + "pocket:\n" + pocket_t::yaml(tab);
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
   //! R list description
-  SEXP structure (void) const {
-    SEXP O, On;
-    PROTECT(O = NEW_LIST(4));
-    PROTECT(On = NEW_CHARACTER(4));
-    set_list_elem(O,On,ScalarInteger(int(uniq)),"name",0);
-    set_list_elem(O,On,ScalarReal(double(slate)),"time",1);
-    set_list_elem(O,On,ScalarInteger(int(deme())),"deme",2);
-    set_list_elem(O,On,pocket_t::structure(),"pocket",3);
-    SET_NAMES(O,On);
-    UNPROTECT(2);
-    return O;
-  };
-  //! Newick format
-  std::string newick (const slate_t& tnow, const slate_t& tpar) const {
-    std::string o1 = "", o2 = "", o3 = "";
-    int n = nchildren();
-    if (n > 0) {
-      o1 = "("; o3 = ")";
-    }
-    if (holds(blue)) {
-      o3 += "b_";
-    } else if (holds_own()) {
-      o3 += "m_";
-    } else {
-      o3 += "g_";
-    }
-    n = 0;
-    for (ball_t *b : *this) {
-      node_t *p = 0;
-      switch (b->color) {
-      case green:
-        p = b->child();
-        if (p != this) {
-          if (n++ > 0) o2 += ",";
-          o2 += p->newick(tnow,slate);
-        }
-        break;
-      case black:
-        if (n++ > 0) o2 += ",";
-        o2 += b->newick(tnow-slate);
-        break;
-      case blue:
-        break;
-      }
-    }
-    return o1 + o2 + o3
-      + std::to_string(deme())
-      + "_" + std::to_string(uniq)
-      + ":" + std::to_string(slate - tpar);
-  };
+  SEXP structure (void) const;
+  //! Newick-format output
+  string_t newick (const slate_t& tnow, const slate_t& tpar,
+                   bool showdeme, bool extended) const;
+
 };
 
 #endif

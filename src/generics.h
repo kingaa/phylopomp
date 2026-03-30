@@ -14,6 +14,11 @@ SEXP nsample (TYPE& X) {
 }
 
 template <class TYPE>
+SEXP nroot (TYPE& X) {
+  return ScalarInteger(X.nroot());
+}
+
+template <class TYPE>
 SEXP timezero (TYPE& X) {
   return ScalarReal(X.timezero());
 }
@@ -53,8 +58,8 @@ SEXP structure (const TYPE& X) {
 
 //! tree in newick format
 template <class TYPE>
-SEXP newick (const TYPE& X) {
-  return mkString(X.newick().c_str());
+SEXP newick (const TYPE& X, bool extended) {
+  return mkString(X.newick(extended).c_str());
 }
 
 //! number of lineages through time
@@ -63,7 +68,7 @@ SEXP lineage_count (const TYPE& G) {
   return G.lineage_count();
 }
 
-//! data-frame format 
+//! data-frame format
 template <class TYPE>
 SEXP gendat (const TYPE& G) {
   return G.gendat();

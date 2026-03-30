@@ -74,8 +74,8 @@ rinit: |-
     state.I = params.I0;
     state.R = params.R0;
     state.N = double(params.S0+params.E0+params.I0+params.R0);
-    graft(0,params.E0);
-    graft(1,params.I0);
+    graft(Exposed,params.E0);
+    graft(Infectious,params.I0);
 events:
   infect:
     rate: params.Beta * state.S * state.I / state.N

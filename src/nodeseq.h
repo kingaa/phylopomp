@@ -6,8 +6,6 @@
 
 #include <list>
 #include <unordered_map>
-#include <string>
-#include <cstring>
 #include "node.h"
 #include "internal.h"
 
@@ -89,7 +87,7 @@ private:
     }
   };
 
-private:
+public:
 
   //! Order relation among nodes.
   //! An ancestor node should always come before its descendants.
@@ -99,14 +97,6 @@ private:
       ((p->slate == q->slate) &&
        ((p==q->green_ball()->holder()) ||
         ((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
-  };
-
-public:
-
-  //! merge two node sequences
-  nodeseq_t& operator+= (nodeseq_t& other) {
-    merge(other,compare);
-    return *this;
   };
 
   //! order nodes in order of increasing time
@@ -165,14 +155,29 @@ public:
 
 public:
 
+  //! move ball b from p to q
+  void move (ball_t *b, node_t *p, node_t *q) {
+    assert(b->holder() == p);
+    p->erase(b); q->insert(b);
+  };
   //! swap balls a and b, wherever they lie
   void swap (ball_t *a, ball_t *b) {
     node_t *p = a->holder();
     node_t *q = b->holder();
     if (p != q) {
-      p->erase(a); q->insert(a); a->holder() = q;
-      q->erase(b); p->insert(b); b->holder() = p;
+      p->erase(a); q->insert(a);
+      q->erase(b); p->insert(b);
     }
+  };
+  //! attach node q as descendant of node p.
+  //! note that this does not push q into the nodeseq.
+  void attach (node_t *p, node_t *q) {
+    move(q->green_ball(),q,p);
+  };
+  //! detach node p from its parent.
+  //! note that this does not remove q from the nodeseq.
+  void detach (node_t *p) {
+    move(p->green_ball(),p->parent(),p);
   };
   //! add node p; take as parent the node holding ball a.
   //! the deme of p is changed to match that of a
@@ -226,23 +231,6 @@ public:
     }
     weed();
   };
-  //! drop all zero-length branches
-  void drop_zlb (void) {
-    for (node_t *p : *this) {
-      ball_t *b;
-      if (p->slate == p->parent()->slate) {
-        while (!p->empty()) {
-          b = p->last_ball();
-          p->erase(b);
-          p->parent()->insert(b);
-          //FIXME: do we also need to change ball-demes?
-        }
-        b = p->green_ball();
-        p->parent()->erase(b); p->insert(b);
-      }
-    }
-    weed();
-  };
 
 private:
 
@@ -280,44 +268,14 @@ public:
 public:
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string o = "";
-    for (node_t *p : *this) {
-      o += p->describe();
-    }
-    return o;
-  };
+  string_t describe (void) const;
   //! human- & machine-readable info
-  virtual std::string yaml (std::string tab = "") const {
-    std::string o = "";
-    std::string t = tab + "  ";
-    for (node_t *p : *this) {
-      o += tab + "- " + p->yaml(t);
-    }
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
   //! R list description
-  SEXP structure (void) const {
-    SEXP Nodes;
-    PROTECT(Nodes = NEW_LIST(size()));
-    int k = 0;
-    for (node_t *p : *this) {
-      SET_ELEMENT(Nodes,k++,p->structure());
-    }
-    UNPROTECT(1);
-    return Nodes;
-  };
+  SEXP structure (void) const;
   //! put genealogy at time `t` into Newick format.
-  std::string newick (slate_t t) const {
-    slate_t te = dawn();
-    std::string o = "";
-    for (node_t *p : *this) {
-      if (p->is_root()) {
-        o += p->newick(t,te) + ";";
-      }
-    }
-    return o;
-  };
+  string_t newick (slate_t t, bool showdeme, bool extended) const;
+
 };
 
 #endif

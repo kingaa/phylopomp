@@ -4,13 +4,14 @@
 ##'
 ##' @name treeplot
 ##' @include getinfo.R diagram.R
-##' @param tree character; tree representation in Newick format.
-##' @param t0 numeric; root time.
-##' @param time numeric; time of the genealogy.
-##' @param ladderize Ladderize?
-##' @param points Show nodes and tips?
-##' @param ... \code{plot} passes extra arguments to \code{\link{treeplot}}.
-##' \code{treeplot} passes extra arguments to \code{\link[ggplot2]{theme}}.
+##' @param legend logical; if FALSE, the legend is suppressed.
+##' @param ladderize logical; ladderize?
+##' @param points logical; show nodes and tips?
+##' @param palette color palette for indicating demes.
+##' This can be furnished either as a function or a vector of colors.
+##' If this is a function, it should take a single integer argument, the number of colors required.
+##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
+##' @param ... \code{plot} passes extra arguments to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##' @example examples/movie.R
 ##'
@@ -19,11 +20,16 @@ NULL
 ##' @rdname treeplot
 ##' @inheritParams getInfo
 ##' @param x object of class \sQuote{gpgen}
+##' @importFrom scales hue_pal
 ##' @method plot gpgen
 ##' @export
 plot.gpgen <- function (
-  x, ..., time, t0,
-  prune = TRUE, obscure = TRUE
+  x, ...,
+  prune = TRUE, obscure = TRUE, points = FALSE,
+  ladderize = TRUE,
+  legend = TRUE,
+  palette = scales::hue_pal(l=30,h=c(220,580))
+
 ) {
   x |>
     getInfo(
@@ -31,83 +37,76 @@ plot.gpgen <- function (
       prune=prune,
       obscure=obscure
     ) -> out
-  if (missing(time)) time <- out$time
-  if (missing(t0)) t0 <- out$t0
   treeplot(
     tree=out$newick,
-    time=time,
-    t0=t0,
-    ...
-  )
+    time=out$time,
+    t0=out$t0,
+    legend=legend,
+    ladderize=ladderize,
+    palette=palette,
+    points=points
+  )+
+    theme(...)
 }
 
-##' @rdname treeplot
 ##' @importFrom ape read.tree
 ##' @importFrom ggplot2 ggplot expand_limits scale_x_continuous guides fortify
 ##' @importFrom ggplot2 scale_color_manual scale_alpha_manual
 ##' @importFrom ggtree geom_tree geom_nodepoint geom_tippoint theme_tree2
-##' @importFrom dplyr mutate left_join count coalesce
+##' @importFrom dplyr mutate left_join count coalesce if_else
 ##' @importFrom tibble column_to_rownames
-##' @importFrom tidyr separate unite expand_grid
+##' @importFrom tidyr separate_wider_delim unite expand_grid
 ##' @importFrom scales alpha hue_pal
-##' @param palette color palette for branches.
-##' This can be furnished either as a function or a vector of colors.
-##' If this is a function, it should take a single integer argument, the number of colors required.
-##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
-##' @export
 treeplot <- function (
-  tree, time = NULL, t0 = 0,
-  ladderize = TRUE, points = FALSE, ...,
+  tree, time, t0,
+  legend = TRUE, ladderize = TRUE, points = FALSE,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
 
   if (missing(tree) || is.null(tree))
     pStop(sQuote("tree")," must be specified.")
   t0 <- as.numeric(t0)
+  time <- as.numeric(time)
+  legend <- as.logical(legend)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
   tree |> as.character() -> tree
   if (nchar(tree)==0L) tree <- "i_NA_NA:0.0;"
-  tree |>
-    gsub(";$",")i_NA_NA:0.0",x=_) |>
-    gsub(";",")i_NA_NA:0.0,(",x=_) -> tree
-
   paste0(
     "(i_NA_NA:0.0,i_NA_NA:0.0,(",
-    tree,
+    tree |>
+      gsub(";$",")i_NA_NA:0.0",x=_) |>
+      gsub(";",")i_NA_NA:0.0,(",x=_) |>
+      gsub(r"{\[(&&PhyloPOMP type=(?:sample|extant|node|root))\]}",r"{[\1 deme=0]}",x=_,perl=TRUE) |>
+      gsub(r"{\[&&PhyloPOMP (type=\w+) deme=(\d+)\]}",r"{\1_\2_}",x=_,perl=TRUE) |>
+      gsub(r"{type=sample}",r"{b}",x=_,perl=TRUE) |>
+      gsub(r"{type=extant}",r"{o}",x=_,perl=TRUE) |>
+      gsub(r"{type=node}",r"{g}",x=_,perl=TRUE) |>
+      gsub(r"{type=root}",r"{m}",x=_,perl=TRUE),
     ")i_NA_NA:0.0;"
   ) |>
-  read.tree(text=_) |>
+    read.tree(text=_) |>
     fortify(ladderize=ladderize) |>
-    separate(label,into=c("nodecol","deme","label")) |>
+    separate_wider_delim(
+      cols=label,
+      delim="_",
+      names=c("nodecol","deme",NA),
+      cols_remove=TRUE
+    ) |>
     mutate(
-      deme=if_else(deme=="NA",NA_character_,deme),
-      label=if_else(label=="NA",NA_character_,label),
+      deme=strtoi(deme),
+      vis=nodecol != "i",
+      x=x-min(x)+t0,
       y=y-3
     ) -> dat
 
-  ndeme <- max(1L,length(unique(dat$deme))-1L)
-  if (is.function(palette)) {
-    palette <- palette(ndeme)
-  } else {
-    if (length(palette) < ndeme)
-      pStop("if specified as a vector, ",sQuote("palette"),
-        " must have length at least ",ndeme,".")
-  }
-
-  time <- as.numeric(c(time,max(dat$x)))[1L]
-
-  if (is.na(t0)) { # root time is to be determined from the current time
-    dat |> mutate(x=x-max(x)+time) -> dat
-  } else {
-    dat |> mutate(x=x-min(x)+t0) -> dat
-  }
-  dat |> mutate(vis=nodecol != "i") -> dat
+  demes <- sort(unique(dat$deme))
+  palette <- get_palette(palette,demes,undeme="#000000")
 
   ## number of nodes and tips of each color
   expand_grid(
-    nodecol=c("o","b","r","g","p","m"),
+    nodecol=c("o","b","g","m"),
     isTip=c(TRUE,FALSE)
   ) |>
     left_join(
@@ -126,15 +125,28 @@ treeplot <- function (
 
   dat |>
     ggplot(aes(x=x,y=y))+
-    geom_tree(aes(alpha=vis,color=deme))+
+    geom_tree(
+      aes(
+        alpha=vis,
+        color=factor(deme,levels=demes)
+      )
+    )+
     scale_x_continuous()+
-    scale_color_manual(values=palette,na.value="#ffffff00")+
+    scale_color_manual(
+      values=palette,
+      na.value="gray90",
+      na.translate=FALSE
+    )+
     scale_alpha_manual(values=c(`TRUE`=1,`FALSE`=0))+
     guides(alpha="none",color="none")+
     expand_limits(x=c(dat$x,t0,time))+
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
-    theme_tree2()+
-    theme(...) -> pl
+    theme_tree2() -> pl
+
+  if (length(demes) > 1L && legend) {
+    pl+
+      guides(color=guide_legend(title="deme")) -> pl
+  }
 
   if (points) {
     if (ncolors["m_node",] > 0) {
@@ -184,3 +196,32 @@ ball_colors <- c(
 globalVariables(
   c("time","deme","label","x","y","nodecol","isTip","n","rowname","vis")
 )
+
+##' @importFrom utils head
+get_palette <- function (palette, demes = NULL, undeme = "#000000") {
+  demes <- as.character(demes)
+  if (is.function(palette)) {
+    if (length(demes) > 0L) {
+      palette <- structure(palette(length(demes)),names=demes)
+    } else {
+      palette <- c()
+    }
+  } else {
+    if (length(palette) < length(demes))
+      pStop("if specified as a vector, ",sQuote("palette"),
+        " must have length at least ",length(demes),".",who=NULL)
+    if (is.null(names(palette))) {
+      palette <- structure(head(palette,length(demes)),names=demes)
+    } else if (all(demes %in% names(palette))) {
+      palette <- palette[demes]
+    } else {
+      pStop(
+        "no palette color assigned for deme ",
+        paste(setdiff(demes,names(palette)),sep=","),".",
+        who=NULL
+      )
+    }
+  }
+  if (all(demes != "0")) palette["0"] <- undeme
+  palette
+}

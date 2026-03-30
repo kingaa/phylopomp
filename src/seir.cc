@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int Exposed = 0;
-static const int Infectious = 1;
+static const int Exposed = 1;
+static const int Infectious = 2;
 
 //! SEIR process state.
 typedef struct {
@@ -95,8 +95,8 @@ void seir_genealogy_t::rinit (void) {
   state.I = params.I0;
   state.R = params.R0;
   state.N = double(params.S0+params.E0+params.I0+params.R0);
-  graft(0,params.E0);
-  graft(1,params.I0);
+  graft(Exposed,params.E0);
+  graft(Infectious,params.I0);
 }
 
 template<>

@@ -66,7 +66,7 @@ If it is a vector, it should have at least as many elements as there are demes i
 \item{digits}{non-negative integer;
 number of decimal digits to print in the node time}
 
-\item{x}{ An \R object. }
+\item{x}{an object of class \sQuote{grob} or NULL}
 
 \item{recording}{ A logical value indicating whether a grob
   is being added to the display list or redrawn from the display list. }

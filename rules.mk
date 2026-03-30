@@ -62,7 +62,7 @@ xcheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=TRUE)
 ycheck: CHECK = devtools::check($(COMMON_CHECK_ARGS),cran=TRUE,\
 args=c("--run-dontrun","--run-donttest"))
 
-INSTALLCMD = devtools::install(args=c("--preclean","--html","--library=library"))
+INSTALLCMD = devtools::install(args=c("--preclean","--html","--library=library"),dependencies=FALSE)
 
 check xcheck ycheck qcheck qqcheck: .check
 

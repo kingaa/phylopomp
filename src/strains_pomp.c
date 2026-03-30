@@ -3,9 +3,9 @@
 
 static const int nrate = 6;
 
-#define STRAIN1 0
-#define STRAIN2 1
-#define STRAIN3 2
+#define STRAIN1 1
+#define STRAIN2 2
+#define STRAIN3 3
 
 #define Beta1     (__p[__parindex[0]])
 #define Beta2     (__p[__parindex[1]])
@@ -152,10 +152,14 @@ void strains_gill
   const int *nodetype = get_userdata_int("nodetype");
   const int *sat = get_userdata_int("saturation");
   const int *deme = get_userdata_int("deme");
+  const int *index = get_userdata_int("index");
+  const int *child = get_userdata_int("child");
 
   int parent = (int) nearbyint(node);
+  int c = child[index[parent]];
 
 #ifndef NDEBUG
+  const int *lineage = get_userdata_int("lineage");
   int nnode = *get_userdata_int("nnode");
   assert(parent>=0);
   assert(parent<=nnode);
@@ -168,7 +172,9 @@ void strains_gill
   default:                      // non-genealogical event #nocov
     break;                      // #nocov
   case 0:                       // root
-    switch (deme[parent]) {
+    assert(sat[parent]==1);
+    assert(lineage[parent]==lineage[c]);
+    switch (deme[c]) {
     case STRAIN1:
       ellI1 += 1; break;
     case STRAIN2:

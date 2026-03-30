@@ -4,23 +4,23 @@
 #ifndef _INVENTORY_H_
 #define _INVENTORY_H_
 
-#include <utility>
 #include "ball.h"
 #include "pocket.h"
 #include "node.h"
+#include "genealogy.h"
 #include "internal.h"
 
-//! Representation for the inventory process.
+//! Implementation of the inventory process.
 
 //! An inventory consists of an array of demes.
 //! Each deme is a set of black balls.
-template <size_t NDEME = 1>
+template <size_t NDEME>
 class inventory_t {
 
 private:
 
-  pocket_t _inven[NDEME];
   const static size_t ndeme = NDEME;
+  pocket_t _inven[ndeme];
 
 public:
 
@@ -31,25 +31,26 @@ public:
   inventory_t (raw_t *o) {
     o >> *this;
   };
-  //! constructor from node sequence (via 'extant' operation).
-  //! this constructs an inventory from a genealogy.
-  inventory_t (std::pair<node_it,node_it>&& I) {
-    clean();
-    for (node_it i = I.first; i != I.second; i++) {
-      for (ball_t *b : **i) {
-        insert(b);              // 'insert' checks color
-      }
-    }
-  };
   //! copy constructor
   inventory_t (const inventory_t &) = default;
   //! move constructor
   inventory_t (inventory_t &&) = delete;
-  //! copy an inventory by iterating over a node sequence
-  inventory_t& operator= (std::pair<node_it,node_it>&& I) {
+  //! constructs an inventory from a genealogy
+  inventory_t (const genealogy_t& G) {
+    assert(G.ndeme()==ndeme);
     clean();
-    for (node_it i = I.first; i != I.second; i++) {
-      for (ball_t *b : **i) {
+    for (node_t *p : G) {
+      for (ball_t *b : *p) {
+        insert(b);              // 'insert' checks color
+      }
+    }
+  };
+  //! copy an inventory from a genealogy
+  inventory_t & operator= (const genealogy_t& G) {
+    assert(G.ndeme()==ndeme);
+    clean();
+    for (node_t *p : G) {
+      for (ball_t *b : *p) {
         insert(b);              // 'insert' checks color
       }
     }
@@ -63,6 +64,9 @@ public:
   ~inventory_t (void) {
     clean();
   };
+
+private:
+
   //! memory cleanup
   void clean (void) {
     clear();
@@ -72,6 +76,9 @@ public:
     for (size_t i = 0; i < ndeme; i++)
       _inven[i].clear();
   };
+
+public:
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
@@ -95,6 +102,9 @@ public:
     }
     return o;
   };
+
+public:
+
   //! Total number of balls in an inventory.
   //! i.e., the sum of the sizes of all demes
   size_t size (void) const {
@@ -106,11 +116,48 @@ public:
   };
   //! size of deme
   size_t size (name_t i) const {
-    return _inven[i].size();
+    return inven(i).size();
   };
-  //! return the `n`-th deme
-  pocket_t& operator[] (const name_t n) {
-    return _inven[n];
+  //! return the `i`-th deme
+  const pocket_t& operator[] (const name_t i) const {
+    return inven(i);
+  };
+  //! return the `i`-th deme
+  pocket_t& operator[] (const name_t i) {
+    return inven(i);
+  };
+
+private:
+
+  //! access the `i`-th deme
+  const pocket_t& inven (const name_t i) const {
+    assert(i > 0);
+    return _inven[i-1];
+  };
+  //! access the `i`-th deme
+  pocket_t& inven (const name_t i) {
+    assert(i > 0);
+    return _inven[i-1];
+  };
+
+public:
+
+  //! add a black ball to a deme.
+  //! this checks the color of the ball.
+  //! if it is not black, nothing is done.
+  void insert (ball_t *b) {
+    if (b->is(black)) {
+      inven(b->deme()).insert(b);
+    }
+  };
+  //! remove a black ball from its deme.
+  //! this checks the color of the ball.
+  //! if it is not black, nothing is done.
+  void erase (ball_t *b) {
+    if (b->is(black)) {
+      assert(!inven(b->deme()).empty());
+      inven(b->deme()).erase(b);
+    }
   };
   //! are all demes empty?
   bool empty (void) const {
@@ -121,25 +168,25 @@ public:
     return q;
   };
   //! choose one random ball from deme `i`
-  ball_t* random_ball (name_t i = 0) const {
-    name_t n = _inven[i].size();
+  ball_t* random_ball (name_t i) const {
+    name_t n = inven(i).size();
     assert(n > 0);
     name_t draw = random_integer(n);
-    ball_it k = _inven[i].begin();
+    ball_it k = inven(i).begin();
     while (draw-- > 0) k++;
     return *k;
   };
   //! choose a random set of `n` balls from deme `i`
-  pocket_t* random_balls (name_t i = 0, int n = 1) const {
+  pocket_t* random_balls (name_t i, int n = 1) const {
     pocket_t *p = new pocket_t();
     if (n == 1) {
       ball_t *b = random_ball(i);
       p->insert(b);
     } else if (n > 1) {
-      int N = _inven[i].size();
+      int N = inven(i).size();
       assert(N > 0);
       assert(n <= N);
-      ball_it j = _inven[i].begin();
+      ball_it j = inven(i).begin();
       int k = 0, m = 0;
       while (m < n && k < N) {
         int u = random_integer(N-k);
@@ -153,23 +200,6 @@ public:
       assert(0);                // #nocov
     }
     return p;
-  };
-  //! add a black ball to a deme.
-  //! this checks the color of the ball.
-  //! if it is not black, nothing is done.
-  void insert (ball_t *b) {
-    if (b->is(black)) {
-      _inven[b->deme()].insert(b);
-    }
-  };
-  //! remove a black ball from its deme.
-  //! this checks the color of the ball.
-  //! if it is not black, nothing is done.
-  void erase (ball_t *b) {
-    if (b->is(black)) {
-      assert(!(_inven[b->deme()].empty()));
-      _inven[b->deme()].erase(b);
-    }
   };
 };
 

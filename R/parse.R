@@ -2,22 +2,14 @@
 ##'
 ##' Parses a Newick description and returns a binary version of the genealogy.
 ##'
-##' \code{parse_newick} can only handle a subset of the full Newick specification.
-##' In particular, labels are assumed to be of the form <TYPE>_<DEME>_<LABEL>,
-##' i.e., each label has three parts, separated by underscores (\sQuote{_}).
-##' The parts are as follows.
-##' \itemize{
-##' \item TYPE must be a single character from among the following: \sQuote{b}, \sQuote{g}, \sQuote{m}, \sQuote{o}.
-##' \itemize{
-##' \item \sQuote{b} signifies a sample.
-##' \item \sQuote{g} signifies an internal node.
-##' \item \sQuote{m} signifies a root.
-##' \item \sQuote{o} indicates an extant lineage.
+##' \code{parse_newick} parses a string containing information in an extended Newick format and returns a \pkg{phylopomp} genealogy.
+##'
+##' The extension allows metadata (enclosed by square brackets).
+##' It ignores metadata unless they are specifically flagged as PhyloPOMP metadata, i.e.:
+##' \preformatted{
+##'    [&&PhyloPOMP:...]
 ##' }
-##' \item DEME must be a non-negative integer, specifying the deme in which the branch resides.
-##' If deme information is not present, use 0.
-##' \item LABEL is ignored and may be left out.
-##' }
+##' PhyloPOMP metadata can be used to encode the node type (i.e., \code{type=sample}, \code{type=extant}, \code{type=node}) and/or the deme (given as an integer, e.g., \code{deme=1}).
 ##' @name parse_newick
 ##' @param x character; the Newick description.
 ##' See Details for specifics.

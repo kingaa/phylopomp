@@ -76,8 +76,31 @@ stopifnot(
   llex<llpf[1]+2*llpf[2]
 )
 
+## Example 4
+runLBDP(time=2,lambda=2,mu=1,psi=1,chi=1,n0=10) |>
+  freeze(seed=362430640) -> x
+x |> plot(points=TRUE)
+x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=10) -> llex; llex
+
+x |>
+  lbdp_pomp(lambda=2,mu=1,psi=2,chi=1,n0=10) |>
+  pfilter(Np=10000) |>
+  logLik() |>
+  replicate(n=10) |>
+  logmeanexp(se=TRUE) |>
+  freeze(seed=1569852047) -> llpf; llpf
+
+stopifnot(
+  llex>llpf[1]-2*llpf[2],
+  llex<llpf[1]+2*llpf[2]
+)
+
 try(
   x |> lbdp_pomp(n0=-10)
 )
+
+"" |>
+  parse_newick(tf=2) |>
+  lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=1)
 
 dev.off()

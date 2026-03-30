@@ -30,7 +30,7 @@ stopifnot(
     }() |>
     filter(type==1) |>
     count(deme) |>
-    filter(deme!=1) |>
+    filter(deme!=2) |>
     nrow()==0
 )
 

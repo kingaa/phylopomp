@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -45,9 +45,9 @@ The following object is masked from 'package:stats':
 +     omega1=0.5,omega2=0.5
 +   )
 + )
-in 'update_clocks' (popul_proc.h line 151): invalid event rate[1]=-nan
-in 'update_clocks' (popul_proc.h line 151): invalid event rate[2]=-nan
-Error : in 'update_clocks' (popul_proc.h line 154): invalid total event rate=-nan
+in 'update_clocks': invalid event rate[1]=-nan
+in 'update_clocks': invalid event rate[2]=-nan
+Error : in 'update_clocks': invalid total event rate=-nan
 > 
 > simulate(
 +   "TwoSpecies",

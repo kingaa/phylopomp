@@ -3,8 +3,9 @@
 ##' Produces a diagram of the genealogy process state.
 ##'
 ##' @name diagram
-##' @include getinfo.R
+##' @include getinfo.R treeplot.R
 ##' @inheritParams getInfo
+##' @inheritParams treeplot
 ##' @inheritParams grid::gTree
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
 ##' @param m width of plotting window, in nodes.
@@ -22,10 +23,6 @@ NULL
 
 ##' @rdname diagram
 ##' @importFrom scales hue_pal
-##' @param palette color palette for indicating demes.
-##' This can be furnished either as a function or a vector of colors.
-##' If this is a function, it should take a single integer argument, the number of colors required.
-##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
 ##' @export
 diagram <- function (
   object,
@@ -40,17 +37,13 @@ diagram <- function (
       structure=TRUE,
       ndeme=TRUE
     ) -> info
-  ndeme <- info$ndeme
-  if (is.function(palette)) {
-    if (ndeme > 1L)
-      palette <- c("#FFFFFF",palette(ndeme-1L))
-    else
-      palette <- "#FFFFFF"
-  } else {
-    if (length(palette) < ndeme)
-      pStop("if specified as a vector, ",sQuote("palette"),
-        " must have length at least ",ndeme,".")
-  }
+
+  palette <- get_palette(
+    palette,
+    seq_len(info$ndeme),
+    undeme="#FFFFFF"
+  )
+
   info |>
     getElement("structure") |>
     genealogyGrob(
@@ -58,6 +51,7 @@ diagram <- function (
       palette=palette,
       vp=viewport(height=0.95,width=0.95,gp=gpar(...))
     ) -> x
+
   class(x) <- c("gpdiag",class(x))
   x
 }
@@ -65,6 +59,7 @@ diagram <- function (
 ##' @rdname diagram
 ##' @method print gpdiag
 ##' @param newpage draw new empty page first?
+##' @param x object of class \sQuote{gpdiag}
 ##' @param vp viewport to draw plot in
 ##' @param ... other arguments, ignored.
 ##' @importFrom grid grid.newpage grid.draw seekViewport pushViewport upViewport
@@ -92,7 +87,7 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##'
 ##' Code for the resizing text adapted from a blog post by Mark Heckmann
 ##' (https://ryouready.wordpress.com/2012/08/01/creating-a-text-grob-that-automatically-adjusts-to-viewport-size/).
-##' 
+##'
 ##' @rdname internals
 ##' @name genealogy diagram internals
 ##' @keywords internal
@@ -101,7 +96,7 @@ print.gpdiag <- function (x, newpage = is.null(vp), vp = NULL, ...) {
 ##' @importFrom grid viewport gList gTree
 ##' @inheritParams diagram
 ##' @inheritParams grid::grob
-##' 
+##'
 ##' @export
 genealogyGrob <- function (
   object, m = NULL, n = NULL, vp = NULL,
@@ -150,7 +145,7 @@ genealogyGrob <- function (
 nodeGrob <- function (
   object, digits = 1, palette, n = NULL, vp = NULL
 ) {
-  palcol <- palette[object$deme+1L]
+  palcol <- palette[as.character(object$deme)]
   gTree(
     name=object$name,
     children=gList(
@@ -254,6 +249,7 @@ resizingTextGrob <- function (..., vp = NULL) {
 ##' @keywords internal
 ##' @importFrom grid drawDetails grid.draw
 ##' @inheritParams grid::drawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method drawDetails resizingTextGrob
 ##' @export
 drawDetails.resizingTextGrob <- function (x, recording = TRUE) {
@@ -265,6 +261,7 @@ drawDetails.resizingTextGrob <- function (x, recording = TRUE) {
 ##' @importFrom grid preDrawDetails convertHeight pushViewport viewport gpar
 ##' @importFrom scales rescale
 ##' @inheritParams grid::preDrawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method preDrawDetails resizingTextGrob
 ##' @export
 preDrawDetails.resizingTextGrob <- function (x) {
@@ -277,6 +274,7 @@ preDrawDetails.resizingTextGrob <- function (x) {
 ##' @keywords internal
 ##' @importFrom grid postDrawDetails popViewport
 ##' @inheritParams grid::postDrawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method postDrawDetails resizingTextGrob
 ##' @export
 postDrawDetails.resizingTextGrob <- function (x) {
@@ -287,6 +285,7 @@ postDrawDetails.resizingTextGrob <- function (x) {
 ##' @keywords internal
 ##' @importFrom grid drawDetails grid.draw
 ##' @inheritParams grid::drawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method drawDetails ballGrob
 ##' @export
 drawDetails.ballGrob <- function (x, recording = TRUE) {
@@ -299,6 +298,7 @@ drawDetails.ballGrob <- function (x, recording = TRUE) {
 ##' @importFrom grid preDrawDetails convertHeight pushViewport viewport gpar
 ##' @importFrom scales rescale
 ##' @inheritParams grid::preDrawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method preDrawDetails ballGrob
 ##' @export
 preDrawDetails.ballGrob <- function (x) {
@@ -311,6 +311,7 @@ preDrawDetails.ballGrob <- function (x) {
 ##' @keywords internal
 ##' @importFrom grid postDrawDetails popViewport
 ##' @inheritParams grid::postDrawDetails
+##' @param x an object of class \sQuote{grob} or NULL
 ##' @method postDrawDetails ballGrob
 ##' @export
 postDrawDetails.ballGrob <- function (x) {

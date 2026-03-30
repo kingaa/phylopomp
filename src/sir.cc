@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int Infected = 0;
+static const int Infected = 1;
 
 //! SIR process state.
 typedef struct {

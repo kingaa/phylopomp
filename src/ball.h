@@ -3,8 +3,6 @@
 #ifndef _BALL_H_
 #define _BALL_H_
 
-#include <string>
-#include <cstring>
 #include "internal.h"
 
 //! BALL COLORS
@@ -14,7 +12,7 @@
 typedef enum {green, blue, black} color_t;
 static const char* colores[] = {"green", "blue", "black"};
 static const char* colorsymb[] = {"g", "b", "o"};
-static const name_t undeme = name_t(NA_INTEGER);
+static const name_t undeme = 0;
 
 class node_t;
 
@@ -118,11 +116,11 @@ public:
     return color==c;
   };
   //! human-readable colors
-  std::string color_name (void) const {
+  string_t color_name (void) const {
     return colores[color];
   };
   //! machine-readable color symbols
-  std::string color_symbol (void) const {
+  string_t color_symbol (void) const {
     if (is(green) && _holder==_owner)
       return "m";               // brown balls
     else
@@ -132,54 +130,15 @@ public:
 public:
 
   //! human-readable info
-  std::string describe (void) const {
-    std::string o = color_name()
-      + "(" + std::to_string(uniq) + ",";
-    if (_deme != undeme) {
-      o += std::to_string(_deme);
-    }
-    o += ")";
-    return o;
-  };
+  string_t describe (void) const;
   //! machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string o;
-    o = "color: " + color_name() + "\n"
-      + tab + "name: " + std::to_string(uniq) + "\n";
-    if (color==black) {
-      o += tab + "deme: " + std::to_string(_deme) + "\n";
-    }
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
   //! R list description
-  SEXP structure (void) const {
-    SEXP O, On, Name, Color, Deme;
-    int size = (is(black)) ? 3 : 2;
-    PROTECT(O = NEW_LIST(size));
-    PROTECT(On = NEW_CHARACTER(size));
-    PROTECT(Name = NEW_INTEGER(1));
-    *INTEGER(Name) = int(uniq);
-    PROTECT(Color = NEW_CHARACTER(1));
-    SET_STRING_ELT(Color,0,mkChar(color_symbol().c_str()));
-    set_list_elem(O,On,Name,"name",0);
-    set_list_elem(O,On,Color,"color",1);
-    if (is(black)) {
-      PROTECT(Deme = NEW_INTEGER(1));
-      *INTEGER(Deme) = int(_deme);
-      set_list_elem(O,On,Deme,"deme",2);
-      UNPROTECT(1);
-    }
-    SET_NAMES(O,On);
-    UNPROTECT(4);
-    return O;
-  };
-  //! element of a newick representation
-  std::string newick (const slate_t &t) const {
-    return color_symbol()
-      + "_" + std::to_string(_deme)
-      + "_" + std::to_string(uniq)
-      + ":" + std::to_string(t);
-  };
+  SEXP structure (void) const;
+  //! Element of a Newick representation.
+  //! This should only be called at tip-nodes.
+  string_t newick (const slate_t &t, bool showdeme) const;
+
 };
 
 #endif

@@ -18,10 +18,10 @@ extern "C" {
   //! prune and/or obscure if requested
   SEXP getInfo (SEXP args) {
     const char *argname[] = {
-      "object","prune","obscure",
-      "t0","time","nsample","ndeme",
-      "description","structure","yaml","newick",
-      "lineages","gendat","genealogy"};
+      "object","prune","obscure","extended",
+        "t0","time","nsample","nroot","ndeme",
+        "description","structure","yaml","newick",
+        "lineages","gendat","genealogy"};
     const int narg = sizeof(argname)/sizeof(const char *);
     bool flag[narg];
     SEXP object = R_NilValue;
@@ -38,7 +38,7 @@ extern "C" {
       if (j == 0) {
         object = arg;
         flag[0] = true;
-      } else if (j < 3) {
+      } else if (j < 4) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
       } else if (j < narg) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
@@ -57,6 +57,12 @@ extern "C" {
     if (*(f++)) A.prune();
     if (*(f++)) A.obscure();
     A.trace_lineages();
+    bool extended = false;
+    if (*(f++)) {
+      extended = true;
+    } else {
+      A.insert_zlb();
+    }
 
     SEXP out, outnames;
     PROTECT(out = NEW_LIST(nout));
@@ -71,6 +77,9 @@ extern "C" {
     if (*(f++)) {               // nsample
       k = set_list_elem(out,outnames,nsample(A),"nsample",k);
     }
+    if (*(f++)) {               // nroot
+      k = set_list_elem(out,outnames,nroot(A),"nroot",k);
+    }
     if (*(f++)) {               // ndeme
       k = set_list_elem(out,outnames,ndeme(A),"ndeme",k);
     }
@@ -84,7 +93,7 @@ extern "C" {
       k = set_list_elem(out,outnames,yaml(A),"yaml",k);
     }
     if (*(f++)) {               // newick
-      k = set_list_elem(out,outnames,newick(A),"newick",k);
+      k = set_list_elem(out,outnames,newick(A,extended),"newick",k);
     }
     if (*(f++)) {               // lineages
       k = set_list_elem(out,outnames,lineage_count(A),"lineages",k);

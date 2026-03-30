@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -28,10 +28,14 @@ Type 'q()' to quit R.
 > set.seed(24963811)
 > 
 > runSEIR(time=5,S0=20,omega=2) -> x
+> x |> curtail(troot=3)
+<phylopomp genealogy>
+> x |> curtail(troot=3,time=4)
+<phylopomp genealogy>
 > 
 > plot_grid(
 +   x |>
-+     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE)+
++     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
 +     geom_vline(xintercept=c(1.5,3.5)),
 +   x |>
 +     lineages(obscure=FALSE,prune=FALSE) |>
@@ -41,7 +45,7 @@ Type 'q()' to quit R.
 +     expand_limits(x=c(0,5),y=10),
 +   x |>
 +     curtail(time=3.5) |>
-+     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE)+
++     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
 +     geom_vline(xintercept=3.5)+
 +     expand_limits(x=c(0,5)),
 +   x |>
@@ -52,7 +56,7 @@ Type 'q()' to quit R.
 +     expand_limits(x=c(0,5),y=10),
 +   x |>
 +     curtail(troot=1.5) |>
-+     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE)+
++     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
 +     geom_vline(xintercept=1.5)+
 +     expand_limits(x=c(0,5)),
 +   x |>
@@ -63,7 +67,7 @@ Type 'q()' to quit R.
 +     expand_limits(x=c(0,5),y=10),
 +   x |>
 +     curtail(troot=1.5,time=3.5) |>
-+     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE)+
++     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
 +     geom_vline(xintercept=1.5)+
 +     expand_limits(x=c(0,5)),
 +   x |>
@@ -83,7 +87,7 @@ $time
 [1] 0
 
 $newick
-[1] "(o_1_13:0.000000)m_1_9:0.000000;(o_1_20:0.000000)m_1_8:0.000000;(o_1_47:0.000000)m_1_6:0.000000;(o_0_24:0.000000)m_0_3:0.000000;(o_0_22:0.000000)m_0_1:0.000000;(o_0_50:0.000000)m_0_0:0.000000;"
+[1] "([&&PhyloPOMP type=extant deme=2]13:0.000000)[&&PhyloPOMP type=root deme=0]9:0.000000;([&&PhyloPOMP type=extant deme=2]20:0.000000)[&&PhyloPOMP type=root deme=0]8:0.000000;([&&PhyloPOMP type=extant deme=2]47:0.000000)[&&PhyloPOMP type=root deme=0]6:0.000000;([&&PhyloPOMP type=extant deme=1]24:0.000000)[&&PhyloPOMP type=root deme=0]3:0.000000;([&&PhyloPOMP type=extant deme=1]22:0.000000)[&&PhyloPOMP type=root deme=0]1:0.000000;([&&PhyloPOMP type=extant deme=1]50:0.000000)[&&PhyloPOMP type=root deme=0]0:0.000000;"
 
 > 
 > x |>

@@ -54,7 +54,7 @@ try(
   simulate("SIR",time=1) |> simulate(time=0.1)
 )
 
-pal <- c("#00274c55","#ffcb0555","#00659755")
+pal <- c(`1`="#00274c55",`2`="#ffcb0555")
 
 png(filename="diagram-05.png",res=100,
   width=1000,height=190,units="px")
@@ -74,35 +74,46 @@ png(filename="diagram-06.png",res=100,
   width=760,height=160,units="px")
 x |>
   curtail(time=0.5) |>
-  diagram(obscure=FALSE,palette=pal[c(6,7)])
+  diagram(obscure=FALSE,palette=c(NA,NA,NA))
 dev.off()
 
 library(grid)
 library(scales)
 library(dplyr)
 
+try({
+  pal <- c(`0`="#33333355",`3`="#ffcb0555",`2`="#00274c55")
+  x |>
+    plot(obscure=FALSE,palette=alpha(pal,1),
+      legend.position="none"
+    )
+})
+
+pal <- c(`0`="#33333355",`1`="#ffcb0555",`2`="#00274c55")
+
 png(filename="diagram-07.png",res=100,
   width=8,height=5,units="in")
 plot_grid(
   x |>
-    plot(obscure=FALSE,palette=alpha(pal,1)),
+    plot(obscure=FALSE,palette=alpha(pal,1),
+      legend.position="none"
+    ),
   x |>
     lineages(obscure=FALSE) |>
-    mutate(deme=c("E","I")[deme]) |>
-    plot(legend.position=c(0.2,0.9),palette=alpha(pal,1)),
+    filter(deme > 0) |>
+    plot(legend.position=c(0.2,0.9),palette=alpha(pal[c(2,3)],1)),
   nrow=1,align="hv",axis="tblr",rel_widths=c(2,3)
 ) |>
   print(vp=viewport(height=0.8,y=0.6))
-pushViewport(
-  viewport(x=0.52,y=0.15,width=0.9,height=0.05,name="inset")
-)
-x |> diagram(obscure=FALSE,palette=pal) |> print(vp="inset")
 x |>
-  diagram(obscure=FALSE,palette=pal[c(2,3)]) |>
+  diagram(obscure=FALSE,palette=pal) |>
+  print(vp=viewport(x=0.52,y=0.15,width=0.9,height=0.05))
+x |>
+  diagram(obscure=FALSE,palette=rev(unname(pal[-1L]))) |>
   print(vp=viewport(x=0.52,y=0.1,width=0.9,height=0.05))
 dev.off()
 
-x |> getInfo(obscure=FALSE,nsample=TRUE,ndeme=TRUE) |> unlist()
+x |> getInfo(obscure=FALSE,nsample=TRUE,nroot=TRUE,ndeme=TRUE) |> unlist()
 x |> getInfo(obscure=FALSE,genealogy=TRUE)
 
 try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))

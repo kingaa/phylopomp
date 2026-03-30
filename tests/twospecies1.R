@@ -26,7 +26,7 @@ stopifnot(
     yaml() |>
     textConnection() |>
     readLines() |>
-    length()==3316
+    length()==3317
 )
 
 s |>

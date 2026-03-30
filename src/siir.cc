@@ -4,8 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int strain1 = 0;
-static const int strain2 = 1;
+static const int strain1 = 1;
+static const int strain2 = 2;
 
 //! SIIR process state.
 typedef struct {

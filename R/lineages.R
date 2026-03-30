@@ -8,7 +8,7 @@
 ##'  \item{saturation}{the number of lineages emerging from the event}
 ##'  \item{event_type}{an integer coding the type of event}
 ##' }
-##' 
+##'
 ##' If the genealogy has been obscured (the default), the number in the \code{lineages} returned is the total number of lineages present at the specified time and the saturation is the total saturation.
 ##' If the genealogy has not been obscured (\code{obscure = FALSE}), the deme-specific data are returned.
 ##' In this case, the \code{deme} column specifies the pertinent deme.
@@ -22,14 +22,14 @@
 ##' }
 ##'
 ##' @name lineages
-##' @include getinfo.R
+##' @include getinfo.R treeplot.R
 ##' @inheritParams getInfo
 ##' @return A \code{\link[tibble]{tibble}} containing information about the genealogy.
 ##' See Details for specifics.
 ##' The \code{\link[tibble]{tibble}} returned by \code{lineages} has a \code{\link[=plot.gplin]{plot}} method.
-##' 
+##'
 ##' @example examples/lineages.R
-##' 
+##'
 ##' @rdname lineages
 ##' @export
 lineages <- function (object, prune = TRUE, obscure = TRUE) {
@@ -38,8 +38,10 @@ lineages <- function (object, prune = TRUE, obscure = TRUE) {
 }
 
 ##' @rdname lineages
+##' @details \code{plot} applied to the data frame produced by
+##' \code{lineages} yields a lineage-through-time plot.
 ##' @method plot gplin
-##' @inheritParams treeplot
+##' @inheritParams plot.gpgen
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @importFrom ggplot2 ggplot guides geom_step labs guide_legend
 ##' @importFrom ggplot2 scale_color_manual theme_classic
@@ -52,22 +54,22 @@ plot.gplin <- function (
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
   demes <- sort(unique(x$deme))
-  ndeme <- length(demes)
-  if (is.function(palette)) {
-    palette <- structure(palette(ndeme),names=as.character(demes))
-  } else {
-    if (length(palette) < ndeme)
-      pStop(sQuote("palette")," must have length at least ",ndeme,
-        " if specified as a vector.")
-  }
+  palette <- get_palette(palette,demes,undeme="#333333")
   x |>
-    ggplot(aes(x=time,y=lineages,color=factor(deme),group=factor(deme)))+
+    ggplot(
+      aes(
+        x=time,
+        y=lineages,
+        color=factor(deme,levels=demes),
+        group=deme
+      )
+    )+
     geom_step()+
     scale_color_manual(values=palette)+
     guides(color="none")+
     theme_classic()+
     theme(...) -> pl
-  if (ndeme>1L) {
+  if (length(demes) > 1L) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }

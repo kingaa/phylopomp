@@ -9,16 +9,15 @@
 #ifndef _MASTER_H_
 #define _MASTER_H_
 
-#include <string>
-#include <cstring>
 #include "popul_proc.h"
 #include "genealogy.h"
+#include "inventory.h"
 #include "internal.h"
 
 //! Encodes the master process.
 
 //! This consists of a population process and a genealogy process.
-template <class POPN, size_t NDEME = 1>
+template <class POPN, size_t NDEME>
 class master_t : public POPN {
 
 public:
@@ -29,7 +28,7 @@ public:
 public:
   // DATA MEMBERS
   genealogy_t geneal;
-  inventory_t<ndeme> inventory;
+  inventory_t<NDEME> inventory;
 
 public:
   //! size of serialized binary form
@@ -47,7 +46,7 @@ public:
     A.clean();
     o = (o >> reinterpret_cast<popul_t&>(A));
     o = (o >> A.geneal);
-    A.inventory = A.geneal.extant();
+    A.inventory = A.geneal;
     return o;
   }
 
@@ -59,7 +58,7 @@ public:
   // CONSTRUCTORS, ETC.
   //! basic constructor
   //!  t0 = initial time
-  master_t (double t0 = 0) : popul_t(t0), geneal(t0,0,ndeme) {};
+  master_t (double t0 = 0) : popul_t(t0), geneal(t0,ndeme) {};
   //! constructor from serialized binary form
   master_t (raw_t *o) {
     o >> *this;
@@ -67,8 +66,7 @@ public:
   //! constructor from RAW SEXP (containing binary serialization)
   master_t (SEXP o) {
     if (LENGTH(o)==0)
-      err("in %s (%s line %d): cannot deserialize a NULL.",
-          __func__,__FILE__,__LINE__);
+      err("in %s: cannot deserialize a NULL.",__func__);
     PROTECT(o = AS_RAW(o));
     RAW(o) >> *this;
     UNPROTECT(1);
@@ -114,18 +112,18 @@ public:
     return popul_t::time();
   };
   //! human-readable info
-  std::string describe (void) const {
+  string_t describe (void) const {
     return geneal.describe();
   };
   //! machine/human readable info
-  std::string yaml (std::string tab = "") const {
-    std::string t = tab + "  ";
-    std::string s = popul_t::yaml(tab)
+  string_t yaml (string_t tab = "") const {
+    string_t t = tab + "  ";
+    string_t s = popul_t::yaml(tab)
       + "genealogy:\n" + geneal.yaml(t);
     return s;
   };
   //! tree in Newick format
-  std::string newick (void) const {
+  string_t newick (void) const {
     return geneal.newick();
   };
   //! lineage count table
@@ -139,7 +137,7 @@ public:
 
 public:
   //! n births into deme j with parent in deme i
-  void birth (name_t i = 0, name_t j = 0, int n = 1) {
+  void birth (name_t i = 1, name_t j = 1, int n = 1) {
     ball_t *a = inventory.random_ball(i);
     ball_t *b = geneal.birth(a,time(),j);
     inventory.insert(b);
@@ -150,20 +148,20 @@ public:
     }
   };
   //! death in deme i
-  void death (name_t i = 0) {
+  void death (name_t i = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.death(a,time());
   };
   //! new root in deme i
-  void graft (name_t i = 0, int m = 1) {
+  void graft (name_t i = 1, int m = 1) {
     for (int j = 0; j < m; j++) {
       ball_t *a = geneal.graft(time(),i);
       inventory.insert(a);
     }
   };
   //! sample in deme i
-  void sample (name_t i = 0, int n = 1) {
+  void sample (name_t i = 1, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
     for (ball_t *a : *p) {
       geneal.sample(a,time());
@@ -172,7 +170,7 @@ public:
     delete p;
   };
   //! sample_death in deme i
-  void sample_death (name_t i = 0, int n = 1) {
+  void sample_death (name_t i = 1, int n = 1) {
     pocket_t *p = inventory.random_balls(i,n);
     for (ball_t *a : *p) {
       inventory.erase(a);
@@ -182,14 +180,14 @@ public:
     delete p;
   };
   //! migration from deme i to deme j
-  void migrate (name_t i = 0, name_t j = 0) {
+  void migrate (name_t i = 1, name_t j = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.migrate(a,time(),j);
     inventory.insert(a);
   };
   //! sample_migrate in deme i to deme j
-  void sample_migrate (name_t i = 0, name_t j = 0) {
+  void sample_migrate (name_t i = 1, name_t j = 1) {
     ball_t *a = inventory.random_ball(i);
     inventory.erase(a);
     geneal.sample_migrate(a,time(),j);

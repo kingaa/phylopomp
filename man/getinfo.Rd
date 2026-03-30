@@ -8,6 +8,7 @@ getInfo(
   object,
   prune = TRUE,
   obscure = TRUE,
+  extended = TRUE,
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
@@ -17,6 +18,7 @@ getInfo(
   lineages = FALSE,
   newick = FALSE,
   nsample = FALSE,
+  nroot = FALSE,
   genealogy = FALSE,
   gendat = FALSE
 )
@@ -27,6 +29,8 @@ getInfo(
 \item{prune}{logical; prune the genealogy?}
 
 \item{obscure}{logical; obscure the demes?}
+
+\item{extended}{logical; return extended-Newick format?}
 
 \item{t0}{logical; return the zero-time?}
 
@@ -46,6 +50,8 @@ getInfo(
 
 \item{nsample}{logical; return the number of samples?}
 
+\item{nroot}{logical; return the number of roots?}
+
 \item{genealogy}{logical; return the lineage-traced genealogy?}
 
 \item{gendat}{logical; return the data-frame format?}
@@ -57,7 +63,8 @@ A list containing the requested elements, including any or all of:
   \item{time}{the final time (a numeric scalar)}
   \item{ndeme}{the number of demes (an integer)}
   \item{nsample}{the number of samples (an integer)}
-  \item{newick}{the genealogical tree, in Newick format}
+  \item{nroot}{the number of roots (an integer)}
+  \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
   \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}

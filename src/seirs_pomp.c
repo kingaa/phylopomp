@@ -1,6 +1,9 @@
 #include "pomplink.h"
 #include "internal.h"
 
+#define Exposed  1
+#define Infected 2
+
 static const int nrate = 7;
 
 static inline int random_choice (double n) {
@@ -10,6 +13,7 @@ static inline int random_choice (double n) {
 static void change_color (double *color, int nsample,
                           int n, int from, int to) {
   int i = -1;
+  i = -1;
   while (n >= 0 && i < nsample) {
     i++;
     if (!ISNA(color[i]) && nearbyint(color[i]) == from) n--;
@@ -175,7 +179,7 @@ void seirs_gill
   // singular portion of filter equation
   switch (nodetype[parent]) {
   default:                      // non-genealogical event #nocov
-    break;			// #nocov
+    break;                      // #nocov
   case 0:                       // root
     // color lineages by sampling without replacement
     assert(sat[parent]==1);
@@ -184,11 +188,11 @@ void seirs_gill
     if (E-ellE + I-ellI > 0) {
       double x = (E-ellE)/(E-ellE + I-ellI);
       if (unif_rand() < x) {      // lineage is put into E deme
-        color[lineage[c]] = 0;
+        color[lineage[c]] = Exposed;
         ellE += 1;
         ll -= log(x);
       } else {                    // lineage is put into I deme
-        color[lineage[c]] = 1;
+        color[lineage[c]] = Infected;
         ellI += 1;
         ll -= log(1-x);
       }
@@ -196,11 +200,11 @@ void seirs_gill
       ll += R_NegInf;       // this is incompatible with the genealogy
       // the following keeps the state valid
       if (unif_rand() < 0.5) {  // lineage is put into E deme
-        color[lineage[c]] = 0;
+        color[lineage[c]] = Exposed;
         ellE += 1; E += 1;
         //        ll -= log(0.5);
       } else {                  // lineage is put into I deme
-        color[lineage[c]] = 1;
+        color[lineage[c]] = Infected;
         ellI += 1; I += 1;
         //        ll -= log(0.5);
       }
@@ -208,17 +212,17 @@ void seirs_gill
     break;
   case 1:                       // sample
     // If parent is not in deme I, likelihood = 0.
-    assert(deme==1);
+    assert(deme==Infected);
     if (parcol != deme) {
       ll += R_NegInf;
-      color[parlin] = 1;
+      color[parlin] = Infected;
       // the following keeps the state valid
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
     }
     if (sat[parent] == 1) {     // s=(0,1)
       int c = child[index[parent]];
-      color[lineage[c]] = 1;
+      color[lineage[c]] = Infected;
       ll += log(psi);
     } else if (sat[parent] == 0) { // s=(0,0)
       ellI -= 1;
@@ -231,9 +235,9 @@ void seirs_gill
     break;
   case 2:                       // branch point s=(1,1)
     // If parent is not in deme I, likelihood = 0.
-    if (parcol != 1) {
+    if (parcol != Infected) {
       ll += R_NegInf;
-      color[parlin] = 1;
+      color[parlin] = Infected;
       // the following keeps the state valid
       ellE -= 1; ellI += 1;
       E -= 1; I += 1;
@@ -250,11 +254,11 @@ void seirs_gill
     assert(lineage[c1] != parlin || lineage[c2] != parlin);
     assert(lineage[c1] == parlin || lineage[c2] == parlin);
     if (unif_rand() < 0.5) {
-      color[lineage[c1]] = 0;
-      color[lineage[c2]] = 1;
+      color[lineage[c1]] = Exposed;
+      color[lineage[c2]] = Infected;
     } else {
-      color[lineage[c1]] = 1;
-      color[lineage[c2]] = 0;
+      color[lineage[c1]] = Infected;
+      color[lineage[c2]] = Exposed;
     }
     ll -= log(0.5);
     break;
@@ -291,7 +295,7 @@ void seirs_gill
         break;
       case 2:                   // transmission, s=(1,0)
         assert(S>=1);
-        change_color(color,nsample,random_choice(ellI),1,0);
+        change_color(color,nsample,random_choice(ellI),Infected,Exposed);
         ellE += 1; ellI -= 1;
         S -= 1; E += 1;
         ll += log(1-ellI/I)-log(E);
@@ -305,7 +309,7 @@ void seirs_gill
         break;
       case 4:                   // progression, s=(0,1)
         assert(E>=1);
-        change_color(color,nsample,random_choice(ellE),0,1);
+        change_color(color,nsample,random_choice(ellE),Exposed,Infected);
         ellE -= 1; ellI += 1;
         E -= 1; I += 1;
         ll -= log(I);

@@ -4,7 +4,7 @@
 #include "generics.h"
 #include "internal.h"
 
-static const int deme = 0;
+static const int deme = 1;
 
 //! LBDP process state.
 typedef struct {

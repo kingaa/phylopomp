@@ -4,9 +4,6 @@
 #ifndef _POPUL_PROC_H_
 #define _POPUL_PROC_H_
 
-#include <string>
-#include <cstring>
-
 #include "internal.h"
 
 //! Population process class.
@@ -15,8 +12,7 @@
 //! - STATE is a datatype that holds the state of the Markov process.
 //! - PARAMETERS is a datatype for the model parameters
 //! - NEVENT is the number of event-types
-//! - NDEME is the number of demes
-template <class STATE, class PARAMETERS, size_t NEVENT, size_t NDEME = 1>
+template <class STATE, class PARAMETERS, size_t NEVENT>
 class popul_proc_t  {
 
 protected:
@@ -24,7 +20,6 @@ protected:
   typedef STATE state_t;
   typedef PARAMETERS parameters_t;
   static const size_t nevent = NEVENT;
-  static const size_t ndeme = NDEME;
 
 protected:
   // MEMBER DATA
@@ -113,81 +108,82 @@ public:
     return current;
   };
 
-public:
-
   virtual void valid (void) const {};
 
-public:
-
+  //! initialize the state
+  virtual void rinit (void) = 0;
+  //! makes a jump
+  virtual void jump (int e) = 0;
   //! set parameters
   void update_params (double*, int);
   //! set initial-value parameters
   void update_IVPs (double*, int);
   //! compute event rates
   double event_rates (double *rate, int n) const;
-  //! initialize the state
-  virtual void rinit (void) = 0;
-  //! makes a jump
-  virtual void jump (int e) = 0;
   //! machine/human readable info
-  std::string yaml (std::string tab) const;
-
-public:
+  string_t yaml (string_t tab) const;
 
   //! updates clock and next event
-  void update_clocks (void) {
-    double rate[nevent];
-    double total_rate = event_rates(rate,nevent);
-    if (R_FINITE(total_rate)) {
-      if (total_rate > 0) {
-        next = current+rexp(1/total_rate);
-      } else {
-        next = R_PosInf;
-      }
-    } else {
-      for (event = 0; event < nevent; event++) {
-        if (!R_FINITE(rate[event]))
-          Rprintf("in '%s' (%s line %d): invalid event rate[%zd]=%lg\n",
-                  __func__,__FILE__,__LINE__,event,rate[event]);
-      }
-      err("in '%s' (%s line %d): invalid total event rate=%lg",
-          __func__,__FILE__,__LINE__,total_rate);
-    }
-    double u = runif(0,total_rate);
-    event = 0;
-    while (u > rate[event] && event < nevent) {
-      if (rate[event] < 0)
-        err("in '%s' (%s line %d): invalid rate[%zd]=%lg", // #nocov
-            __func__,__FILE__,__LINE__,event,rate[event]); // #nocov
-      u -= rate[event];
-      event++;
-    }
-    assert(event < nevent);
-  };
-
+  void update_clocks (void);
   //! run process to a specified time.
   //! return number of events that have occurred.
-  int play (double tfin) {
-    int count = 0;
-    if (current > tfin)
-      err("cannot simulate backward! (current t=%lg, requested t=%lg)",current,tfin);
-    while (next < tfin) {
-      current = next;
-      jump(event);
-      update_clocks();
-      count++;
-      R_CheckUserInterrupt();
-    }
-    if (next > tfin) current = tfin; // relies on Markov property
-    return count;
-  };
+  int play (double tfin);
 
 };
 
-#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m];  \
-  m++;
+#define PARAM_SET(X) if (!ISNA(p[m])) params.X = p[m]; m++;
 #define RATE_CALC(X) total += rate[m++] = (X);
 #define YAML_PARAM(X) (t + #X + ": " + std::to_string(params.X) + "\n")
 #define YAML_STATE(X) (t + #X + ": " + std::to_string(state.X) + "\n")
+
+template <class STATE, class PARAMETERS, size_t NEVENT>
+void
+popul_proc_t<STATE,PARAMETERS,NEVENT>::update_clocks
+(void)
+{
+  double rate[nevent];
+  double total_rate = event_rates(rate,nevent);
+  if (R_FINITE(total_rate)) {
+    if (total_rate > 0) {
+      next = current+rexp(1/total_rate);
+    } else {
+      next = R_PosInf;
+    }
+  } else {
+    for (event = 0; event < nevent; event++) {
+      if (!R_FINITE(rate[event]))
+        Rprintf("in '%s': invalid event rate[%zd]=%lg\n",__func__,event,rate[event]);
+    }
+    err("in '%s': invalid total event rate=%lg", __func__,total_rate);
+  }
+  double u = runif(0,total_rate);
+  event = 0;
+  while (u > rate[event] && event < nevent) {
+    if (rate[event] < 0)
+      err("in '%s': negative rate[%zd]=%lg",__func__,event,rate[event]); // #nocov
+    u -= rate[event];
+    event++;
+  }
+  assert(event < nevent);
+}
+
+template <class STATE, class PARAMETERS, size_t NEVENT>
+int
+popul_proc_t<STATE,PARAMETERS,NEVENT>::play
+(double tfin)
+{
+  int count = 0;
+  if (current > tfin)
+    err("cannot simulate backward! (current t=%lg, requested t=%lg)",current,tfin);
+  while (next < tfin) {
+    current = next;
+    jump(event);
+    update_clocks();
+    count++;
+    R_CheckUserInterrupt();
+  }
+  if (next > tfin) current = tfin; // relies on Markov property
+  return count;
+}
 
 #endif

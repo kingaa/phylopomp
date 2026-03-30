@@ -1,6 +1,6 @@
 
-R version 4.5.2 (2025-10-31) -- "[Not] Part in a Rumble"
-Copyright (C) 2025 The R Foundation for Statistical Computing
+R version 4.5.3 (2026-03-11) -- "Reassured Reassurer"
+Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -41,6 +41,9 @@ The following object is masked from 'package:stats':
 > x |> gendat() -> g
 > stopifnot(identical(g,getInfo(x,gendat=TRUE)$gendat))
 > g
+$t0
+[1] 0
+
 $nodetime
  [1] 0.0000 0.0000 0.0031 0.0386 0.3448 0.4203 0.6791 1.0542 1.0608 1.1063
 [11] 1.1456 1.1481 1.2802 1.3197 1.4067 1.5058 1.5311 1.5904 1.8268 2.0049
@@ -50,7 +53,7 @@ $nodetype
  [1] 0 0 1 2 2 2 2 2 1 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 
 $deme
- [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ [1] 0 0 1 0 0 0 0 0 1 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 
 $lineage
  [1]  0  1  0  1  1  1  3  4  1  3  6  9  2  3  4  5  6  7  8  9 10 11 12 13 14
@@ -73,6 +76,9 @@ $ancestor
 
 $nsample
 [1] 18
+
+$nroot
+[1] 2
 
 $nnode
 [1] 28
@@ -113,13 +119,12 @@ $nnode
 > g |>
 +   _[c("nodetype","deme","child","ancestor")] |>
 +   bind_cols() |>
-+   mutate(name=seq_along(deme)-1) |>
 +   filter(nodetype==1) |>
 +   count(deme)
 # A tibble: 1 × 2
    deme     n
   <int> <int>
-1     1   402
+1     2   402
 > 
 > freeze(
 +   seed=540737457,
@@ -143,14 +148,13 @@ $nnode
 > g |>
 +   _[c("nodetype","deme","child","ancestor")] |>
 +   bind_cols() |>
-+   mutate(name=seq_along(deme)-1) |>
 +   filter(nodetype==1) |>
 +   count(deme)
 # A tibble: 2 × 2
    deme     n
   <int> <int>
-1     0    38
-2     1    14
+1     1    38
+2     2    14
 > 
 > freeze(
 +   seed=540737457,
@@ -162,19 +166,21 @@ $nnode
 > stopifnot(identical(g,getInfo(x,prune=FALSE,obscure=FALSE,gendat=TRUE)$gendat))
 Warning message:
 pruning since 'gendat=TRUE' 
+> gi <- getInfo(x,nsample=TRUE,nroot=TRUE)
+> stopifnot(identical(g$nsample,gi$nsample))
+> stopifnot(identical(g$nroot,gi$nroot))
 > 
 > g |>
 +   _[c("nodetype","deme","child","ancestor")] |>
 +   bind_cols() |>
-+   mutate(name=seq_along(deme)-1) |>
 +   filter(nodetype==1) |>
 +   count(deme)
 # A tibble: 3 × 2
    deme     n
   <int> <int>
-1     0   337
-2     1   665
-3     2    91
+1     1   337
+2     2   665
+3     3    91
 > 
 > dev.off()
 null device 

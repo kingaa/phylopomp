@@ -6,8 +6,6 @@
 
 #include <set>
 #include <unordered_map>
-#include <string>
-#include <cstring>
 #include "ball.h"
 #include "internal.h"
 
@@ -147,36 +145,11 @@ public:
     return 0;
   };
   //! human-readable info
-  std::string describe (void) const {
-    std::string s = "{";
-    ball_it i = begin();
-    s += (*i)->describe(); ++i;
-    while (i != end()) {
-      s += ", " + (*i)->describe(); ++i;
-    }
-    s += "}";
-    return s;
-  };
-  //! R list description
-  SEXP structure (void) const {
-    SEXP o;
-    PROTECT(o = NEW_LIST(size()));
-    int k = 0;
-    for (ball_rev_it i = crbegin(); i != crend(); i++) {
-      SET_ELEMENT(o,k++,(*i)->structure());
-    }
-    UNPROTECT(1);
-    return o;
-  };
+  string_t describe (void) const;
   //! human/machine-readable info
-  std::string yaml (std::string tab = "") const {
-    std::string o = "";
-    std::string t = tab + "  ";
-    for (ball_t *b : *this) {
-      o += tab + "- " + b->yaml(t);
-    }
-    return o;
-  };
+  string_t yaml (string_t tab = "") const;
+  //! R list description
+  SEXP structure (void) const;
 };
 
 #endif
