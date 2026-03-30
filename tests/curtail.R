@@ -14,7 +14,7 @@ x |> curtail(troot=3,time=4)
 
 plot_grid(
   x |>
-    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
+    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=c(1.5,3.5)),
   x |>
     lineages(obscure=FALSE,prune=FALSE) |>
@@ -24,7 +24,7 @@ plot_grid(
     expand_limits(x=c(0,5),y=10),
   x |>
     curtail(time=3.5) |>
-    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
+    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=3.5)+
     expand_limits(x=c(0,5)),
   x |>
@@ -35,7 +35,7 @@ plot_grid(
     expand_limits(x=c(0,5),y=10),
   x |>
     curtail(troot=1.5) |>
-    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
+    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=1.5)+
     expand_limits(x=c(0,5)),
   x |>
@@ -46,7 +46,7 @@ plot_grid(
     expand_limits(x=c(0,5),y=10),
   x |>
     curtail(troot=1.5,time=3.5) |>
-    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend=FALSE)+
+    plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=1.5)+
     expand_limits(x=c(0,5)),
   x |>

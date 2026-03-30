@@ -14,19 +14,59 @@ newick(object, prune = TRUE, obscure = TRUE, extended = TRUE)
 \item{obscure}{logical; obscure the demes?}
 
 \item{extended}{logical; if TRUE, an extended-Newick format is used.
-In particular, metadata tags of the form `[&&PhyloPOMP:...]` are inserted.
-These contain information regarding node-type and deme.
-
-If `extended = FALSE`, then the string returned is in ordinary Newick format.
-Deme and node-type information is discarded.
-Note that `extended = FALSE` implies both `prune = TRUE` and `obscure = TRUE`.}
+See Details.}
 }
 \value{
-A string in Newick format.
+A string in (possibly extended) Newick format.
 }
 \description{
 Extract a Newick-format description of a genealogy.
 }
+\details{
+In the extended-Newick format, metadata tags of the form \code{[&&PhyloPOMP ...]} are inserted.
+These contain information regarding node-type and deme.
+See below for more information.
+
+If \code{extended = FALSE}, then the string returned is in ordinary Newick format.
+Deme and node-type information is discarded.
+Every sample becomes a tip (inline samples lie on the ends of branches of zero length).
+Note that \code{extended = FALSE} implies both \code{prune = TRUE} and \code{obscure = TRUE}.
+}
+\section{Metadata tags}{
+
+Metadata tags are of the form
+\preformatted{[&&PhyloPOMP type={node|sample|extant|root|migration|branch} deme=<integer>].}
+Types \sQuote{branch}, \sQuote{node}, \sQuote{migration}, and \sQuote{root} are equivalent on input to \code{\link{parse_newick}};
+\sQuote{type=node} is used in output of \code{\link{newick}}.
+Note that \code{0} is reserved for the \dQuote{undeme}, i.e., unspecified or unknown deme.
+}
+
 \examples{
-simulate("SIIR",time=1) |> newick()
+simulate("SIIR",time=0.3,sigma12=1) -> x
+
+x |> plot(prune=FALSE,obscure=FALSE)
+
+x |> newick(prune=FALSE,obscure=FALSE)
+
+x |> newick()
+
+x |> newick(extended=FALSE)
+
+x |>
+  newick() |>
+  parse_newick(t0=0)
+
+x |>
+  newick(prune=FALSE,obscure=FALSE) |>
+  parse_newick(t0=0)
+
+x |>
+  newick(extended=FALSE) |>
+  parse_newick(t0=0)
+
+"" |> parse_newick() |> newick()
+
+";" |> parse_newick() |> newick()
+
+"((:1,:1):1,:1):1;" |> parse_newick() |> newick()
 }

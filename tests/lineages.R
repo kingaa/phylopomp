@@ -29,7 +29,7 @@ pal <- c("#006597","#ffcb05","#000000")
 plot_grid(
   plot_grid(
     x |> plot(),
-    x |> plot(obscure=FALSE,palette=pal,legend=FALSE),
+    x |> plot(obscure=FALSE,palette=pal,legend.position="none"),
     nrow=1,align="h",axis="l"
   ),
   plot_grid(

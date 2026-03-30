@@ -18,6 +18,7 @@
 ##' @param R1_0,R2_0 initial sizes of immune populations
 ##' @inheritParams sir
 ##' @return \code{runS2I2R2} and \code{continueS2I2R2} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{S2I2R2}.
+##' @example examples/s2i2r2.R
 ##'
 NULL
 

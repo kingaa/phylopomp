@@ -14,3 +14,5 @@
 \newcommand{\King2024}{A. A. King, Q. Lin, and E. L. Ionides. Exact phylodynamic likelihood via structured Markov genealogy processes. \emph{arXiv} 2405.17032, 2024. \doi{10.48550/arxiv.2405.17032}.}
 
 \newcommand{\King2022}{A. A. King, Q. Lin, and E. L. Ionides. Markov genealogy processes. \emph{Theoretical Population Biology} \bold{143}, 77--91, 2022. \doi{10.1016/j.tpb.2021.11.003}.}
+
+\newcommand{\Yu2017}{G. Yu, D. K. Smith, H. Zhu, Y. Guan, T. T. Y. Lam. \pkg{ggtree}: an \R package for visualization and annotation of phylogenetic trees with their covariates and other associated data. \emph{Methods in Ecology and Evolution} \bold{8}, 28--36, 2017. \doi{10.1111/2041-210X.12628}.}

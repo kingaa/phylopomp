@@ -21,12 +21,48 @@ An object of class \dQuote{gpgen}.
 Parses a Newick description and returns a binary version of the genealogy.
 }
 \details{
-\code{parse_newick} parses a string containing information in an extended Newick format and returns a \pkg{phylopomp} genealogy.
+\code{parse_newick} parses a string containing information in a (possibly extended) Newick format and returns a \pkg{phylopomp} genealogy.
 
 The extension allows metadata (enclosed by square brackets).
-It ignores metadata unless they are specifically flagged as PhyloPOMP metadata, i.e.:
-\preformatted{
-   [&&PhyloPOMP:...]
-}
+It ignores metadata unless they are specifically flagged as PhyloPOMP metadata, i.e.: \code{[&&PhyloPOMP ...]}.
 PhyloPOMP metadata can be used to encode the node type (i.e., \code{type=sample}, \code{type=extant}, \code{type=node}) and/or the deme (given as an integer, e.g., \code{deme=1}).
+See below for more information.
+}
+\section{Metadata tags}{
+
+Metadata tags are of the form
+\preformatted{[&&PhyloPOMP type={node|sample|extant|root|migration|branch} deme=<integer>].}
+Types \sQuote{branch}, \sQuote{node}, \sQuote{migration}, and \sQuote{root} are equivalent on input to \code{\link{parse_newick}};
+\sQuote{type=node} is used in output of \code{\link{newick}}.
+Note that \code{0} is reserved for the \dQuote{undeme}, i.e., unspecified or unknown deme.
+}
+
+\examples{
+simulate("SIIR",time=0.3,sigma12=1) -> x
+
+x |> plot(prune=FALSE,obscure=FALSE)
+
+x |> newick(prune=FALSE,obscure=FALSE)
+
+x |> newick()
+
+x |> newick(extended=FALSE)
+
+x |>
+  newick() |>
+  parse_newick(t0=0)
+
+x |>
+  newick(prune=FALSE,obscure=FALSE) |>
+  parse_newick(t0=0)
+
+x |>
+  newick(extended=FALSE) |>
+  parse_newick(t0=0)
+
+"" |> parse_newick() |> newick()
+
+";" |> parse_newick() |> newick()
+
+"((:1,:1):1,:1):1;" |> parse_newick() |> newick()
 }

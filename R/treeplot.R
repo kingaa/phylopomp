@@ -2,9 +2,8 @@
 ##'
 ##' Plots a genealogical tree.
 ##'
-##' @name treeplot
+##' @name plot
 ##' @include getinfo.R diagram.R
-##' @param legend logical; if FALSE, the legend is suppressed.
 ##' @param ladderize logical; ladderize?
 ##' @param points logical; show nodes and tips?
 ##' @param palette color palette for indicating demes.
@@ -13,11 +12,18 @@
 ##' If it is a vector, it should have at least as many elements as there are demes in the genealogy.
 ##' @param ... \code{plot} passes extra arguments to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
+##' @details
+##' Tree-plotting in \pkg{phylopomp} depends on the \pkg{ggtree} package.
+##' @references
+##' \Yu2017
+##' @example examples/seir.R
+##' @example examples/lbdp.R
+##' @example examples/s2i2r2.R
 ##' @example examples/movie.R
 ##'
 NULL
 
-##' @rdname treeplot
+##' @rdname plot
 ##' @inheritParams getInfo
 ##' @param x object of class \sQuote{gpgen}
 ##' @importFrom scales hue_pal
@@ -27,9 +33,7 @@ plot.gpgen <- function (
   x, ...,
   prune = TRUE, obscure = TRUE, points = FALSE,
   ladderize = TRUE,
-  legend = TRUE,
   palette = scales::hue_pal(l=30,h=c(220,580))
-
 ) {
   x |>
     getInfo(
@@ -41,7 +45,6 @@ plot.gpgen <- function (
     tree=out$newick,
     time=out$time,
     t0=out$t0,
-    legend=legend,
     ladderize=ladderize,
     palette=palette,
     points=points
@@ -59,7 +62,7 @@ plot.gpgen <- function (
 ##' @importFrom scales alpha hue_pal
 treeplot <- function (
   tree, time, t0,
-  legend = TRUE, ladderize = TRUE, points = FALSE,
+  ladderize = TRUE, points = FALSE,
   palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
 
@@ -67,7 +70,6 @@ treeplot <- function (
     pStop(sQuote("tree")," must be specified.")
   t0 <- as.numeric(t0)
   time <- as.numeric(time)
-  legend <- as.logical(legend)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
 
@@ -143,7 +145,7 @@ treeplot <- function (
     coord_cartesian(ylim=c(0,NA),expand=TRUE,default=FALSE)+
     theme_tree2() -> pl
 
-  if (length(demes) > 1L && legend) {
+  if (length(demes) > 1L) {
     pl+
       guides(color=guide_legend(title="deme")) -> pl
   }

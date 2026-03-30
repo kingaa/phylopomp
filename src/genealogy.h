@@ -356,7 +356,7 @@ public:
   //! 4. the unique-name stack advances as necessary.
   genealogy_t& operator+= (const genealogy_t& other);
 
-  //! insert zero-length branches for all samples
+  //! insert zero-length branches for samples where needed
   void insert_zlb (void) {
     for (node_t *p : *this) {
       if (p->holds(green) && p->holds(blue)) {

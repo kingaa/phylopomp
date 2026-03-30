@@ -1,5 +1,39 @@
 _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_7:
+
+     This release contains a relatively large refactorization of the
+     C++ library.
+
+        • There is a new facility for summing genealogies together.
+          The sum of two genealogies is defined as the union of all the
+          lineages, curtailed to the intersections of their
+          time-intervals.
+
+        • The default behavior of the ‘newick()’ command is to generate
+          code in an extended Newick format.  Specifically, information
+          on the type and deme of nodes is returned using a
+          ‘phylopomp’-specific metadata tag embedded in each label.
+          Optionally, one can generate ordinary Newick-format, in which
+          case all sample demes are represented as tips, the terminal
+          twigs of inline tips having zero length.  See the manual
+          pages for details.
+
+        • The Newick parser, ‘parse_newick()’ can now read either of
+          these formats.  It interprets all encountered tips to be
+          samples, unless otherwise indicated using the metadata tag
+          mentioned above.  See the manual pages for details.
+
+        • ‘lbdp_exact()’ now gives correct results even for empty
+          genealogies.
+
+        • Internally, ‘phylopomp’ now represents the demes more
+          carefully.  The deme-number 0 is reserved for the ‘undeme’,
+          i.e., nodes or branches with unspecified deme.
+
+        • The use of palettes in the plotting routines is now more
+          consistent.
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_6:
 
         • ‘gendat()’ now returns the deme for samples.

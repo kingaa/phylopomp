@@ -4,7 +4,7 @@
 ##'
 ##' @name geneal
 ##' @include package.R
-##' @param object a \sQuote{gpgen} object.
+##' @param object a \sQuote{gpgen} object, possibly with \sQuote{model} attribute.
 ##' @return A bare genealogy object.
 ##' @rdname geneal
 ##' @export

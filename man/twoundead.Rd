@@ -5,7 +5,7 @@
 \alias{TwoUndead}
 \alias{runTwoUndead}
 \alias{continueTwoUndead}
-\title{Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability. This is identical to the TwoSpecies model with the exception that dead lineages are not pruned. Instead, they become *ghosts*.}
+\title{Two-host infection model with waning, immigration, demography, and spillover. Hosts are culled upon sampling with a given probability. This is identical to the TwoSpecies model with the exception that dead lineages are not pruned. Instead, they become \emph{ghosts}.}
 \usage{
 runTwoUndead(
   time,

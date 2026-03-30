@@ -5,7 +5,7 @@
 ##' @name diagram
 ##' @include getinfo.R treeplot.R
 ##' @inheritParams getInfo
-##' @inheritParams treeplot
+##' @inheritParams plot
 ##' @inheritParams grid::gTree
 ##' @param ... graphical parameter settings, suitable for passing to \code{\link[grid:gpar]{gpar}}.
 ##' @param m width of plotting window, in nodes.

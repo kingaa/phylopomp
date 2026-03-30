@@ -1,5 +1,23 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.17}{
+  This release contains a relatively large refactorization of the C++ library.
+  \itemize{
+    \item There is a new facility for summing genealogies together.
+    The sum of two genealogies is defined as the union of all the lineages, curtailed to the intersections of their time-intervals.
+    \item The default behavior of the \code{newick()} command is to generate code in an extended Newick format.
+    Specifically, information on the type and deme of nodes is returned using a \pkg{phylopomp}-specific metadata tag embedded in each label.
+    Optionally, one can generate ordinary Newick-format, in which case all sample demes are represented as tips, the terminal twigs of inline tips having zero length.
+    See the manual pages for details.
+    \item The Newick parser, \code{parse_newick()} can now read either of these formats.
+    It interprets all encountered tips to be samples, unless otherwise indicated using the metadata tag mentioned above.
+    See the manual pages for details.
+    \item \code{lbdp_exact()} now gives correct results even for empty genealogies.
+    \item Internally, \code{phylopomp} now represents the demes more carefully.
+    The deme-number 0 is reserved for the \sQuote{undeme}, i.e., nodes or branches with unspecified deme.
+    \item The use of palettes in the plotting routines is now more consistent.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.16}{
   \itemize{
     \item \code{gendat()} now returns the deme for samples.
