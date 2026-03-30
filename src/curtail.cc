@@ -1,4 +1,5 @@
-// Bare genealogy
+// Curtail a genealogy
+// i.e., shrink the time-interval on which it is defined.
 
 #include "genealogy.h"
 #include "generics.h"

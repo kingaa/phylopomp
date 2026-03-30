@@ -76,14 +76,14 @@ for (k in seq_len(length(times))) {
     filename=png_files[k],
     plot=plot(
       x, t0=0, time=max(times),
-      points=TRUE, prune=FALSE, obscure=FALSE,
-      palette=c("#ffcb05","#dddddd"),
+      points=FALSE, prune=FALSE, obscure=TRUE,
       axis.line=element_line(color="white"),
       axis.ticks=element_line(color="white"),
       axis.text=element_blank(),
       plot.background=element_rect(fill=NA,color=NA),
       panel.background=element_rect(fill=NA,color=NA)
-    ),
+    )+
+      expand_limits(x=times),
     device="png",dpi=100,
     height=4,width=6,units="in"
   )
@@ -124,14 +124,14 @@ for (k in seq_len(length(times))) {
     filename=png_files[k],
     plot=plot(
       x, t0=0, time=max(times),
-      points=TRUE, prune=FALSE, obscure=FALSE,
-      palette=c("#ffcb05","#dddddd"),
+      points=FALSE, prune=FALSE, obscure=TRUE,
       axis.line=element_line(color="white"),
       axis.ticks=element_line(color="white"),
       axis.text=element_blank(),
       plot.background=element_rect(fill=NA,color=NA),
       panel.background=element_rect(fill=NA,color=NA)
-    ),
+    )+
+      expand_limits(x=times),
     device="png",dpi=100,
     height=4,width=6,units="in"
   )
