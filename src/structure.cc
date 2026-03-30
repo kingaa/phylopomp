@@ -84,18 +84,21 @@ SEXP
 genealogy_t::structure
 (void) const
 {
-  SEXP O, On, T0, Time, Nodes;
-  PROTECT(O = NEW_LIST(3));
-  PROTECT(On = NEW_CHARACTER(3));
+  SEXP O, On, T0, Time, Nodes, Ndeme;
+  PROTECT(O = NEW_LIST(4));
+  PROTECT(On = NEW_CHARACTER(4));
   PROTECT(Time = NEW_NUMERIC(1));
   *REAL(Time) = double(time());
   PROTECT(T0 = NEW_NUMERIC(1));
   *REAL(T0) = double(timezero());
+  PROTECT(Ndeme = NEW_INTEGER(1));
+  *INTEGER(Ndeme) = int(ndeme());
   PROTECT(Nodes = nodeseq_t::structure());
   set_list_elem(O,On,Time,"time",0);
   set_list_elem(O,On,T0,"t0",1);
-  set_list_elem(O,On,Nodes,"nodes",2);
+  set_list_elem(O,On,Ndeme,"ndeme",2);
+  set_list_elem(O,On,Nodes,"nodes",3);
   SET_NAMES(O,On);
-  UNPROTECT(5);
+  UNPROTECT(6);
   return O;
 }

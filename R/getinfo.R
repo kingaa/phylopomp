@@ -11,7 +11,6 @@
 ##' @param time logical; return the current time?
 ##' @param t0 logical; return the zero-time?
 ##' @param newick logical; return a Newick-format description of the tree?
-##' @param description logical; return the description?
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
 ##' @param ndeme logical; return the number of demes?
@@ -31,7 +30,6 @@
 ##'   \item{nsample}{the number of samples (an integer)}
 ##'   \item{nroot}{the number of roots (an integer)}
 ##'   \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
-##'   \item{description}{a human readable description of the state of the genealogy process}
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
@@ -44,7 +42,7 @@
 getInfo <- function (
   object, prune = TRUE, obscure = TRUE, extended = TRUE,
   t0 = FALSE, time = FALSE,
-  description = FALSE, structure = FALSE, yaml = FALSE,
+  structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
   nsample = FALSE, nroot = FALSE, genealogy = FALSE, gendat = FALSE
 ) {
@@ -58,8 +56,7 @@ getInfo <- function (
     prune=prune,obscure=obscure,extended=extended,
     t0=t0,time=time,
     nsample=nsample,nroot=nroot,ndeme=ndeme,
-    description=description,yaml=yaml,
-    structure=structure,newick=newick,
+    yaml=yaml,structure=structure,newick=newick,
     lineages=lineages,genealogy=genealogy,
     gendat=gendat
   )

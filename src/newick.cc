@@ -4,6 +4,10 @@
 #include "genealogy.h"
 #include "internal.h"
 
+#include <R.h>
+#include <Rmath.h>
+#include <Rdefines.h>
+
 //! Element of a Newick representation.
 //! This should only be called at tip-nodes.
 string_t
@@ -90,4 +94,17 @@ genealogy_t::newick
 (bool extended) const
 {
   return nodeseq_t::newick(time(),(ndeme() > 0),extended);
+}
+
+extern "C" {
+
+  //! tree in newick format
+  SEXP newick (SEXP State, SEXP Extended) {
+    PROTECT(Extended = AS_LOGICAL(Extended));
+    bool extended = *LOGICAL(Extended);
+    genealogy_t A(State);
+    UNPROTECT(1);
+    return mkString(A.newick(extended).c_str());
+  }
+
 }

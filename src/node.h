@@ -158,9 +158,7 @@ public:
     pocket_t::insert(a);
   };
 
-  //! human-readable info
-  string_t describe (void) const;
-  //! machine-readable info
+  //! human/machine-readable info
   string_t yaml (string_t tab = "") const;
   //! R list description
   SEXP structure (void) const;

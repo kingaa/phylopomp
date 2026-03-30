@@ -7,7 +7,7 @@
 geneal(object)
 }
 \arguments{
-\item{object}{a \sQuote{gpgen} object.}
+\item{object}{a \sQuote{gpgen} object, possibly with \sQuote{model} attribute.}
 }
 \value{
 A bare genealogy object.

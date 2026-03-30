@@ -22,7 +22,7 @@
 ##' }
 ##'
 ##' @name lineages
-##' @include getinfo.R treeplot.R
+##' @include getinfo.R plot.R
 ##' @inheritParams getInfo
 ##' @return A \code{\link[tibble]{tibble}} containing information about the genealogy.
 ##' See Details for specifics.

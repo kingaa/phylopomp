@@ -30,16 +30,6 @@ freeze(
 ) |> diagram(prune=FALSE,obscure=FALSE)
 dev.off()
 
-simulate("SIIR",time=0.3,sigma12=1,sigma21=0.1,omega=1) |>
-  getInfo(description=TRUE) |>
-  getElement("description") |>
-  cat()
-
-simulate("SIIR",time=0.3,sigma12=0.1,sigma21=1,omega=1) |>
-  getInfo(prune=FALSE,obscure=FALSE,description=TRUE) |>
-  getElement("description") |>
-  cat()
-
 simulate("SIR",time=0.5) |> yaml()
 
 simulate("LBDP",time=0.5) |> yaml()
@@ -117,10 +107,8 @@ x |> getInfo(obscure=FALSE,nsample=TRUE,nroot=TRUE,ndeme=TRUE) |> unlist()
 x |> getInfo(obscure=FALSE,genealogy=TRUE)
 
 try(.External(phylopomp:::P_getInfo,object=x,bob=TRUE))
-attr(x,"model") <- "bob"
-try(x |> geneal())
+x |> geneal()
 
-raw(0) |> geneal()
+try(raw(0) |> geneal())
 try(raw(0) |> newick())
-try(raw(0) |> geneal() |> newick())
 try(raw(10) |> newick())

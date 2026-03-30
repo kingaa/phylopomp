@@ -33,19 +33,19 @@ public:
 public:
   //! size of serialized binary form
   size_t bytesize (void) const {
-    return popul_t::bytesize() + geneal.bytesize();
+    return geneal.bytesize() + popul_t::bytesize();
   };
   //! binary serialization
   friend raw_t* operator>> (const master_t& A, raw_t* o) {
-    o = (reinterpret_cast<const popul_t&>(A) >> o);
     o = (A.geneal >> o);
+    o = (reinterpret_cast<const popul_t&>(A) >> o);
     return o;
   }
   //! binary deserialization
   friend raw_t* operator>> (raw_t* o, master_t& A) {
     A.clean();
-    o = (o >> reinterpret_cast<popul_t&>(A));
     o = (o >> A.geneal);
+    o = (o >> reinterpret_cast<popul_t&>(A));
     A.inventory = A.geneal;
     return o;
   }
@@ -111,11 +111,7 @@ public:
   slate_t time (void) const {
     return popul_t::time();
   };
-  //! human-readable info
-  string_t describe (void) const {
-    return geneal.describe();
-  };
-  //! machine/human readable info
+  //! human/machine readable info
   string_t yaml (string_t tab = "") const {
     string_t t = tab + "  ";
     string_t s = popul_t::yaml(tab)

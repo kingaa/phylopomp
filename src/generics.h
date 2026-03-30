@@ -44,12 +44,6 @@ SEXP yaml (const TYPE& X) {
   return mkString(X.yaml().c_str());
 }
 
-//! human readable output
-template <class TYPE>
-SEXP describe (const TYPE& X) {
-  return mkString(X.describe().c_str());
-}
-
 //! structure in R list format
 template <class TYPE>
 SEXP structure (const TYPE& X) {
@@ -120,17 +114,6 @@ SEXP run (SEXP State, SEXP Tout) {
   return out;
 }
 
-//! extract the bare genealogy
-template <class TYPE>
-SEXP genealogy (SEXP State) {
-  TYPE A = State;
-  SEXP out;
-  PROTECT(out = serial(A.geneal));
-  SET_ATTR(out,install("class"),mkString("gpgen"));
-  UNPROTECT(1);
-  return out;
-}
-
 #define MAKEFN(X,TYPE) SEXP make ## X (SEXP Params, SEXP IVPs, SEXP T0) { \
     return make<TYPE>(Params,IVPs,T0);                                  \
   }                                                                     \
@@ -141,10 +124,6 @@ SEXP genealogy (SEXP State) {
 
 #define RUNFN(X,TYPE) SEXP run ## X (SEXP State, SEXP Times) {  \
     return run<TYPE>(State,Times);                              \
-  }                                                             \
-
-#define GENEALFN(X,TYPE) SEXP geneal ## X (SEXP State) {        \
-    return genealogy<TYPE>(State);                              \
   }                                                             \
 
 #define YAMLFN(X,TYPE) SEXP yaml ## X (SEXP State) {    \
@@ -159,8 +138,6 @@ SEXP genealogy (SEXP State) {
     REVIVEFN(X,TYPE)                            \
                                                 \
     RUNFN(X,TYPE)                               \
-                                                \
-    GENEALFN(X,TYPE)                            \
                                                 \
     YAMLFN(X,TYPE)                              \
                                                 \

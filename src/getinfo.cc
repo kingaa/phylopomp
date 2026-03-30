@@ -20,7 +20,7 @@ extern "C" {
     const char *argname[] = {
       "object","prune","obscure","extended",
         "t0","time","nsample","nroot","ndeme",
-        "description","structure","yaml","newick",
+        "structure","yaml","newick",
         "lineages","gendat","genealogy"};
     const int narg = sizeof(argname)/sizeof(const char *);
     bool flag[narg];
@@ -82,9 +82,6 @@ extern "C" {
     }
     if (*(f++)) {               // ndeme
       k = set_list_elem(out,outnames,ndeme(A),"ndeme",k);
-    }
-    if (*(f++)) {               // description
-      k = set_list_elem(out,outnames,describe(A),"description",k);
     }
     if (*(f++)) {               // structure
       k = set_list_elem(out,outnames,structure(A),"structure",k);

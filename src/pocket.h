@@ -144,8 +144,6 @@ public:
         __func__,__FILE__,__LINE__);                      // # nocov
     return 0;
   };
-  //! human-readable info
-  string_t describe (void) const;
   //! human/machine-readable info
   string_t yaml (string_t tab = "") const;
   //! R list description

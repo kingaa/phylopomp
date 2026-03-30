@@ -23,7 +23,7 @@ Collate:
     'geneal.R'
     'getinfo.R'
     'curtail.R'
-    'treeplot.R'
+    'plot.R'
     'diagram.R'
     'foreach.R'
     'gendat.R'

@@ -11,7 +11,6 @@ getInfo(
   extended = TRUE,
   t0 = FALSE,
   time = FALSE,
-  description = FALSE,
   structure = FALSE,
   yaml = FALSE,
   ndeme = FALSE,
@@ -35,8 +34,6 @@ getInfo(
 \item{t0}{logical; return the zero-time?}
 
 \item{time}{logical; return the current time?}
-
-\item{description}{logical; return the description?}
 
 \item{structure}{logical; return the structure in \R list format?}
 
@@ -65,7 +62,6 @@ A list containing the requested elements, including any or all of:
   \item{nsample}{the number of samples (an integer)}
   \item{nroot}{the number of roots (an integer)}
   \item{newick}{the genealogical tree, in Newick format (extended-Newick if \code{extended=TRUE})}
-  \item{description}{a human readable description of the state of the genealogy process}
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}

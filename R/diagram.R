@@ -3,7 +3,7 @@
 ##' Produces a diagram of the genealogy process state.
 ##'
 ##' @name diagram
-##' @include getinfo.R treeplot.R
+##' @include getinfo.R plot.R
 ##' @inheritParams getInfo
 ##' @inheritParams plot
 ##' @inheritParams grid::gTree
@@ -34,13 +34,12 @@ diagram <- function (
     getInfo(
       prune=prune,
       obscure=obscure,
-      structure=TRUE,
-      ndeme=TRUE
+      structure=TRUE
     ) -> info
 
   palette <- get_palette(
     palette,
-    seq_len(info$ndeme),
+    seq_len(info$structure$ndeme),
     undeme="#FFFFFF"
   )
 
