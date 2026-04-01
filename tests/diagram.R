@@ -48,16 +48,26 @@ pal <- c(`1`="#00274c55",`2`="#ffcb0555")
 
 png(filename="diagram-05.png",res=100,
   width=1000,height=190,units="px")
-freeze(simulate("SEIR",time=1,omega=1),seed=234551276) |>
+simulate(
+  "SEIR",time=1,omega=1,
+  S0=100,E0=5,I0=5,pop=110
+) |>
+  freeze(seed=234551276) |>
   diagram(obscure=FALSE,palette=pal)
 dev.off()
 
 try(
-  simulate("SEIR",time=2,omega=1) |>
+  simulate(
+    "SEIR",time=2,omega=1,
+    S0=100,E0=5,I0=5,pop=110
+  ) |>
     diagram(obscure=FALSE,palette=pal[1])
 )
 
-simulate("SEIR",Beta=10,psi=2,sigma=3,time=1,omega=1) |>
+simulate(
+  "SEIR",Beta=10,psi=2,sigma=3,time=1,omega=1,
+  S0=100,E0=5,I0=5,pop=110
+) |>
   freeze(seed=118551276) -> x
 
 png(filename="diagram-06.png",res=100,

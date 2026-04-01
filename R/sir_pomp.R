@@ -2,6 +2,9 @@
 ##' @rdname sir
 ##' @include sir.R
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
+##' @param S0,I0,R0 initial conditions;
+##' non-negative numbers that specify the relative occupancies of the compartments at the inital time.
+##' @param pop host population size
 ##' @details
 ##' \code{sir_pomp} constructs a \sQuote{pomp} object containing a given set of data and a SIR model.
 ##' @return
@@ -9,19 +12,18 @@
 ##' @importFrom pomp pomp onestep
 ##' @export
 sir_pomp <- function (
-  x, Beta, gamma, psi, omega = 0, S0, I0, R0
+  x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop
 ) {
   x |> gendat() -> gi
-  ic <- as.integer(c(S0,I0,R0))
-  names(ic) <- c("S0","I0","R0")
-  if (any(ic < 0))
-    pStop(paste(sQuote(names(ic)),collapse=","),
-      " must be nonnegative integers.")
+  ivps <- structure(c(S0,I0,R0),names=c("S0","I0","R0"))
+  if (any(ivps < 0))
+    pStop(paste(sQuote(names(ivps)),collapse=","),
+      " must be nonnegative.")
   pomp(
     data=NULL,
     t0=gi$nodetime[1L],
     times=gi$nodetime[-1L],
-    params=c(Beta=Beta,gamma=gamma,psi=psi,omega=omega,ic,N=sum(ic)),
+    params=c(Beta=Beta,gamma=gamma,psi=psi,omega=omega,ivps,pop=pop),
     userdata=gi,
     rinit="sirs_rinit",
     rprocess=onestep("sirs_gill"),
@@ -29,7 +31,7 @@ sir_pomp <- function (
     statenames=c("S","I","R","ll","ell","node"),
     paramnames=c(
       "Beta","gamma","psi","omega",
-      "S0","I0","R0","N"
+      names(ivps),"pop"
     ),
     PACKAGE="phylopomp"
   )

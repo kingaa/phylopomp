@@ -21,7 +21,8 @@ runSIR(
   omega = 0,
   S0 = 100,
   I0 = 2,
-  R0 = 0
+  R0 = 0,
+  pop = 102
 )
 
 runSIRS(
@@ -33,7 +34,8 @@ runSIRS(
   omega = 0,
   S0 = 100,
   I0 = 2,
-  R0 = 0
+  R0 = 0,
+  pop = 102
 )
 
 continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
@@ -47,14 +49,15 @@ runSIRS(
   omega = 0,
   S0 = 100,
   I0 = 2,
-  R0 = 0
+  R0 = 0,
+  pop = 102
 )
 
 continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
 
-sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0)
+sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop)
 
-sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0)
+sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop)
 }
 \arguments{
 \item{time}{final time}
@@ -69,7 +72,10 @@ sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0)
 
 \item{omega}{immunity waning rate}
 
-\item{S0, I0, R0}{initial sizes of susceptible, infected, and recovered populations, respectively.}
+\item{S0, I0, R0}{initial conditions;
+non-negative numbers that specify the relative occupancies of the compartments at the inital time.}
+
+\item{pop}{host population size}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

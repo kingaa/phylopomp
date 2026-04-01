@@ -27,9 +27,9 @@ Type 'q()' to quit R.
 > theme_set(theme_bw())
 > set.seed(847110120)
 > 
-> runSEIR(t0=-1,time=2,E0=0,I0=3) -> x
-> runSEIR(t0=0,time=3,E0=3,I0=0) -> y
-> runSEIR(t0=1,time=4,E0=8,I0=0) -> z
+> runSEIR(t0=-1,time=2,S0=100,E0=0,I0=3,pop=103) -> x
+> runSEIR(t0=0,time=3,S0=100,E0=3,I0=0,pop=103) -> y
+> runSEIR(t0=1,time=4,S0=100,E0=8,I0=0,pop=108) -> z
 > 
 > plot_grid(
 +   x |> plot(points=TRUE,obscure=FALSE,ladderize=FALSE),

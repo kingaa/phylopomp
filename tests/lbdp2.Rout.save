@@ -129,7 +129,7 @@ Type 'q()' to quit R.
 > try(
 +   x |> lbdp_pomp(n0=-10)
 + )
-Error : in 'lbdp_pomp': 'n0' must be a nonnegative integer.
+Error : in 'lbdp_pomp': 'n0' must be nonnegative.
 > 
 > "" |>
 +   parse_newick(tf=2) |>

@@ -28,11 +28,22 @@ Type 'q()' to quit R.
 > theme_set(theme_bw())
 > set.seed(481604604)
 > 
-> runStrains(time=10,psi1=1,psi2=1,S0=100)
+> runStrains(
++   time=10,psi1=1,psi2=1,
++   S0=100,I1_0=10,I2_0=10,I3_0=10,pop=130
++ )
 <gpsim for Strains model>
 > 
+> try(
++   runStrains(
++     time=10,psi1=1,psi2=1,
++     S0=100,I1_0=-10,I2_0=10,I3_0=10,pop=130
++   )
++ )
+Error : in 'runStrains': 'S0','I1_0','I2_0','I3_0','R0' must be nonnegative.
+> 
 > runStrains(
-+   S0=100,
++   S0=100,I1_0=10,I2_0=10,I3_0=10,pop=130,
 +   Beta1=10,Beta2=8,Beta3=5,
 +   gamma=1,
 +   psi1=2,psi2=2,psi3=0.5,
@@ -41,7 +52,7 @@ Type 'q()' to quit R.
 +   plot(points=TRUE,obscure=FALSE)
 > 
 > runStrains(
-+   S0=200,
++   S0=200,I1_0=10,I2_0=10,I3_0=10,pop=230,
 +   Beta1=10,Beta2=8,Beta3=5,
 +   gamma=1,psi1=2,psi2=2,psi3=0.5,
 +   time=1
@@ -66,16 +77,18 @@ Type 'q()' to quit R.
 +   strains_pomp(
 +     Beta1=10,Beta2=8,Beta3=5,
 +     gamma=1,psi1=2,psi2=2,psi3=0.5,
-+     S0=200,I1_0=-10,I2_0=10,I3_0=10,R0=0
++     S0=200,I1_0=-10,I2_0=10,I3_0=10,R0=0,
++     pop=200
 +   ) |>
 +   try()
-Error : in 'strains_pomp': 'S0','I1_0','I2_0','I3_0','R0' must be nonnegative integers.
+Error : in 'strains_pomp': 'S0','I1_0','I2_0','I3_0','R0' must be nonnegative.
 > 
 > x |>
 +   strains_pomp(
 +     Beta1=10,Beta2=8,Beta3=5,
 +     gamma=1,psi1=2,psi2=2,psi3=0.5,
-+     S0=200,I1_0=10,I2_0=10,I3_0=10,R0=0
++     S0=200,I1_0=10,I2_0=10,I3_0=10,R0=0,
++     pop=230
 +   ) |>
 +   pfilter(Np=1000) |>
 +   replicate(n=5) |>
@@ -86,7 +99,7 @@ Error : in 'strains_pomp': 'S0','I1_0','I2_0','I3_0','R0' must be nonnegative in
 +   logLik() |>
 +   logmeanexp(se=TRUE,ess=TRUE)
      est       se      ess 
--294.540    0.233    4.177 
+-293.783    0.463    2.932 
 > 
 > dev.off()
 null device 

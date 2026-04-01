@@ -8,9 +8,12 @@ suppressPackageStartupMessages({
 theme_set(theme_bw())
 set.seed(24963811)
 
-runSEIR(time=5,S0=20,omega=2) -> x
-x |> curtail(troot=3)
-x |> curtail(troot=3,time=4)
+runSEIR(
+  time=5,omega=2,
+  S0=20,E0=5,I0=5,pop=30
+) -> x
+x |> curtail(t0=3)
+x |> curtail(t0=3,time=4)
 
 plot_grid(
   x |>
@@ -34,23 +37,23 @@ plot_grid(
     guides(color="none")+
     expand_limits(x=c(0,5),y=10),
   x |>
-    curtail(troot=1.5) |>
+    curtail(t0=1.5) |>
     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=1.5)+
     expand_limits(x=c(0,5)),
   x |>
-    curtail(troot=1.5) |>
+    curtail(t0=1.5) |>
     lineages(obscure=FALSE,prune=FALSE) |>
     plot()+geom_vline(xintercept=1.5)+
     guides(color="none")+
     expand_limits(x=c(0,5),y=10),
   x |>
-    curtail(troot=1.5,time=3.5) |>
+    curtail(t0=1.5,time=3.5) |>
     plot(points=TRUE,prune=FALSE,obscure=FALSE,ladderize=FALSE,legend.position="none")+
     geom_vline(xintercept=1.5)+
     expand_limits(x=c(0,5)),
   x |>
-    curtail(troot=1.5,time=3.5) |>
+    curtail(t0=1.5,time=3.5) |>
     lineages(obscure=FALSE,prune=FALSE) |>
     plot()+geom_vline(xintercept=1.5)+
     guides(color="none")+
@@ -75,24 +78,30 @@ plot_grid(
     curtail(time=0.5) |>
     diagram(prune=FALSE,obscure=FALSE),
   x |>
-    curtail(troot=4.5) |>
+    curtail(t0=4.5) |>
     diagram(prune=FALSE,obscure=FALSE),
   x |>
-    curtail(troot=0.5,time=1) |>
+    curtail(t0=0.5,time=1) |>
     diagram(prune=FALSE,obscure=FALSE),
   ncol=1
 )
 
-runSEIR(time=3,S0=5,omega=2) -> x
+runSEIR(
+  time=3,omega=2,
+  S0=5,E0=5,I0=5,pop=15
+) -> x
 plot_grid(
   x |> curtail() |> diagram(prune=FALSE,obscure=FALSE),
-  x |> curtail(troot=1) |> diagram(prune=FALSE,obscure=FALSE),
+  x |> curtail(t0=1) |> diagram(prune=FALSE,obscure=FALSE),
   x |> curtail(time=2) |> diagram(prune=FALSE,obscure=FALSE),
-  x |> curtail(time=2,troot=1) |> diagram(prune=FALSE,obscure=FALSE),
+  x |> curtail(time=2,t0=1) |> diagram(prune=FALSE,obscure=FALSE),
   ncol=1
 )
 
-simulate("SEIR",time=0.2) -> x
+simulate(
+  "SEIR",time=0.2,
+  S0=100,E0=5,I0=5,pop=110
+) -> x
 x |> simulate(time=0.4) -> y
 
 plot_grid(

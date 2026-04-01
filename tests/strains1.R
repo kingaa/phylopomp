@@ -9,10 +9,20 @@ suppressPackageStartupMessages({
 theme_set(theme_bw())
 set.seed(481604604)
 
-runStrains(time=10,psi1=1,psi2=1,S0=100)
+runStrains(
+  time=10,psi1=1,psi2=1,
+  S0=100,I1_0=10,I2_0=10,I3_0=10,pop=130
+)
+
+try(
+  runStrains(
+    time=10,psi1=1,psi2=1,
+    S0=100,I1_0=-10,I2_0=10,I3_0=10,pop=130
+  )
+)
 
 runStrains(
-  S0=100,
+  S0=100,I1_0=10,I2_0=10,I3_0=10,pop=130,
   Beta1=10,Beta2=8,Beta3=5,
   gamma=1,
   psi1=2,psi2=2,psi3=0.5,
@@ -21,7 +31,7 @@ runStrains(
   plot(points=TRUE,obscure=FALSE)
 
 runStrains(
-  S0=200,
+  S0=200,I1_0=10,I2_0=10,I3_0=10,pop=230,
   Beta1=10,Beta2=8,Beta3=5,
   gamma=1,psi1=2,psi2=2,psi3=0.5,
   time=1
@@ -46,7 +56,8 @@ x |>
   strains_pomp(
     Beta1=10,Beta2=8,Beta3=5,
     gamma=1,psi1=2,psi2=2,psi3=0.5,
-    S0=200,I1_0=-10,I2_0=10,I3_0=10,R0=0
+    S0=200,I1_0=-10,I2_0=10,I3_0=10,R0=0,
+    pop=200
   ) |>
   try()
 
@@ -54,7 +65,8 @@ x |>
   strains_pomp(
     Beta1=10,Beta2=8,Beta3=5,
     gamma=1,psi1=2,psi2=2,psi3=0.5,
-    S0=200,I1_0=10,I2_0=10,I3_0=10,R0=0
+    S0=200,I1_0=10,I2_0=10,I3_0=10,R0=0,
+    pop=230
   ) |>
   pfilter(Np=1000) |>
   replicate(n=5) |>

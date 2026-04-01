@@ -10,7 +10,7 @@ static const int nrate = 3;
 #define S0        (__p[__parindex[4]])
 #define I0        (__p[__parindex[5]])
 #define R0        (__p[__parindex[6]])
-#define N         (__p[__parindex[7]])
+#define POP       (__p[__parindex[7]])
 #define S         (__x[__stateindex[0]])
 #define I         (__x[__stateindex[1]])
 #define R         (__x[__stateindex[2]])
@@ -42,7 +42,7 @@ static double event_rates
   assert(ellI >= 0);
   assert(S >= 0);
   // 0: transmission with saturation 0 or 1
-  alpha = Beta*S*I/N;
+  alpha = Beta*S*I/POP;
   disc = (I > 0) ? ellI*(ellI-1)/I/(I+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
@@ -75,7 +75,7 @@ void sirs_rinit
  const int *__covindex,
  const double *__covars
  ){
-  double m = N/(S0+I0+R0);
+  double m = POP/(S0+I0+R0);
   S = nearbyint(S0*m);
   I = nearbyint(I0*m);
   R = nearbyint(R0*m);
@@ -137,7 +137,7 @@ void sirs_gill
     assert(I >= 0);
     assert(ellI > 0);
     assert(sat[parent]==2);
-    ll += (I > 0 && I >= ellI) ? log(Beta*S*I/N) : R_NegInf;
+    ll += (I > 0 && I >= ellI) ? log(Beta*S*I/POP) : R_NegInf;
     S -= 1; I += 1;
     ellI += 1;
     ll -= log(I*(I-1)/2);

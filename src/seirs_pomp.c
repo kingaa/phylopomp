@@ -33,7 +33,7 @@ static void change_color (double *color, int nsample,
 #define E0        (__p[__parindex[6]])
 #define I0        (__p[__parindex[7]])
 #define R0        (__p[__parindex[8]])
-#define N         (__p[__parindex[9]])
+#define POP       (__p[__parindex[9]])
 #define S         (__x[__stateindex[0]])
 #define E         (__x[__stateindex[1]])
 #define I         (__x[__stateindex[2]])
@@ -67,7 +67,7 @@ static double event_rates
   *penalty = 0;
   // 0: transmission, s=(0,0)
   assert(S>=0 && I>=0);
-  alpha = (N > 0) ? Beta*S*I/N : 0;
+  alpha = (POP > 0) ? Beta*S*I/POP : 0;
   pi = (I > 0) ? 1-ellI/I : 0;
   assert(I >= ellI);
   event_rate += (*rate = alpha*pi); rate++;
@@ -125,7 +125,7 @@ void seirs_rinit
  const int *__covindex,
  const double *__covars
  ){
-  double adj = N/(S0+E0+I0+R0);
+  double adj = POP/(S0+E0+I0+R0);
   S = nearbyint(S0*adj);
   E = nearbyint(E0*adj);
   I = nearbyint(I0*adj);
@@ -243,7 +243,7 @@ void seirs_gill
       E -= 1; I += 1;
     }
     assert(sat[parent]==2);
-    ll += (S > 0 && I > 0) ? log(Beta*S/N/(E+1)) : R_NegInf;
+    ll += (S > 0 && I > 0) ? log(Beta*S/POP/(E+1)) : R_NegInf;
     S -= 1; E += 1;
     ellE += 1;
     S = (S > 0) ? S : 0;

@@ -8,7 +8,7 @@ suppressPackageStartupMessages({
 theme_set(theme_bw())
 set.seed(4963811)
 
-runSEIR(time=3,I0=3) |>
+runSEIR(time=3,S0=100,I0=3,E0=5,pop=108) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
@@ -19,7 +19,7 @@ plot_grid(
   nrow=1
 )
 
-runSEIR(time=3,I0=3) |>
+runSEIR(time=3,S0=100,I0=3,E0=5,pop=108) |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
@@ -30,7 +30,7 @@ plot_grid(
   nrow=1
 )
 
-runSEIR(time=10,I0=3) |>
+runSEIR(time=10,S0=100,I0=3,E0=5,pop=108) |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=10),
@@ -41,7 +41,7 @@ plot_grid(
   nrow=1
 )
 
-runSEIR(time=3,I0=3) |>
+runSEIR(time=3,S0=100,I0=3,E0=5,pop=108) |>
   newick(prune=TRUE,obscure=FALSE) -> tree
 plot_grid(
   tree |> phylopomp:::treeplot(points=TRUE,t0=0,time=3),
@@ -52,7 +52,7 @@ plot_grid(
   nrow=1
 )
 
-runSEIR(time=5,I0=3) -> x
+runSEIR(time=5,S0=100,I0=3,E0=5,pop=108) -> x
 x |>
   newick(prune=TRUE,obscure=TRUE) -> tree
 plot_grid(
@@ -64,7 +64,7 @@ plot_grid(
   nrow=1
 )
 
-runSEIR(time=5,I0=3) -> x
+runSEIR(time=5,S0=100,I0=3,E0=5,pop=108) -> x
 
 plot_grid(
   x |> plot(prune=TRUE,obscure=FALSE,points=TRUE),
@@ -128,7 +128,7 @@ plot_grid(
   diagram(x2,obscure=FALSE,prune=FALSE)
 )
 
-runSEIR(time=5,I0=3) |>
+runSEIR(time=5,S0=100,I0=3,E0=5,pop=108) |>
   freeze(seed=39585882) -> x
 x |>
   newick(extended=FALSE) |>

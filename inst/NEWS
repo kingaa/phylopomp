@@ -34,6 +34,13 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
         • The use of palettes in the plotting routines is now more
           consistent.
 
+        • The ‘curtail’ now takes arguments ‘t0’ and ‘time’, consistent
+          with the usage in the rest of the package.
+
+        • ‘sir_pomp’, ‘seirs_pomp’, and ‘strains_pomp’ now expect
+          initial conditions expressed as fractions of a specified host
+          population size (‘pop’).
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_6:
 
         • ‘gendat()’ now returns the deme for samples.

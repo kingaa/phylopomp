@@ -18,10 +18,11 @@ runSEIR(
   gamma = 1,
   psi = 1,
   omega = 0,
-  S0 = 100,
-  E0 = 5,
-  I0 = 5,
-  R0 = 0
+  S0 = 0.9,
+  E0 = 0.05,
+  I0 = 0.05,
+  R0 = 0,
+  pop = 100
 )
 
 runSEIRS(
@@ -32,10 +33,11 @@ runSEIRS(
   gamma = 1,
   psi = 1,
   omega = 0,
-  S0 = 100,
-  E0 = 5,
-  I0 = 5,
-  R0 = 0
+  S0 = 0.9,
+  E0 = 0.05,
+  I0 = 0.05,
+  R0 = 0,
+  pop = 100
 )
 
 continueSEIR(
@@ -58,7 +60,7 @@ continueSEIRS(
   omega = NA
 )
 
-seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
+seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0, pop)
 }
 \arguments{
 \item{time}{final time}
@@ -75,7 +77,10 @@ seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0)
 
 \item{omega}{rate of waning of immunity}
 
-\item{S0, E0, I0, R0}{initial sizes of S, E, I, R compartments, respectively.}
+\item{S0, E0, I0, R0}{initial conditions;
+non-negative numbers that specify the relative occupancies of the compartments at the inital time.}
+
+\item{pop}{host population size}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

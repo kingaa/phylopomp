@@ -16,6 +16,8 @@
     \item Internally, \code{phylopomp} now represents the demes more carefully.
     The deme-number 0 is reserved for the \sQuote{undeme}, i.e., nodes or branches with unspecified deme.
     \item The use of palettes in the plotting routines is now more consistent.
+    \item The \code{curtail} now takes arguments \code{t0} and \code{time}, consistent with the usage in the rest of the package.
+    \item \code{sir_pomp}, \code{seirs_pomp}, and \code{strains_pomp} now expect initial conditions expressed as fractions of a specified host population size (\code{pop}).
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.16}{

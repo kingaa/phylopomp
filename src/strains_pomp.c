@@ -19,7 +19,7 @@ static const int nrate = 6;
 #define I2_0      (__p[__parindex[9]])
 #define I3_0      (__p[__parindex[10]])
 #define R_0       (__p[__parindex[11]])
-#define N         (__p[__parindex[12]])
+#define POP       (__p[__parindex[12]])
 #define S         (__x[__stateindex[0]])
 #define I1        (__x[__stateindex[1]])
 #define I2        (__x[__stateindex[2]])
@@ -59,7 +59,7 @@ static double event_rates
   assert(ellI2 >= 0);
   assert(ellI3 >= 0);
   // 0: strain-1 transmission with saturation 0 or 1
-  alpha = Beta1*S*I1/N;
+  alpha = Beta1*S*I1/POP;
   disc = (I1 > 0) ? ellI1*(ellI1-1)/I1/(I1+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
@@ -75,7 +75,7 @@ static double event_rates
   alpha = psi1*I1;
   *penalty += alpha;
   // 2: strain-2 transmission with saturation 0 or 1
-  alpha = Beta2*S*I2/N;
+  alpha = Beta2*S*I2/POP;
   disc = (I2 > 0) ? ellI2*(ellI2-1)/I2/(I2+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
@@ -91,7 +91,7 @@ static double event_rates
   alpha = psi2*I2;
   *penalty += alpha;
   // 4: strain-3 transmission with saturation 0 or 1
-  alpha = Beta3*S*I3/N;
+  alpha = Beta3*S*I3/POP;
   disc = (I3 > 0) ? ellI3*(ellI3-1)/I3/(I3+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
   *penalty += alpha*disc;
@@ -121,7 +121,7 @@ void strains_rinit
  const int *__covindex,
  const double *__covars
  ){
-  double m = N/(S_0+I1_0+I2_0+I3_0+R_0);
+  double m = POP/(S_0+I1_0+I2_0+I3_0+R_0);
   S = nearbyint(S_0*m);
   I1 = nearbyint(I1_0*m);
   I2 = nearbyint(I2_0*m);
@@ -217,21 +217,21 @@ void strains_gill
     case STRAIN1:
       assert(I1 >= 0);
       assert(ellI1 > 0);
-      ll += (I1 > 0 && I1 >= ellI1) ? log(Beta1*S*I1/N) : R_NegInf;
+      ll += (I1 > 0 && I1 >= ellI1) ? log(Beta1*S*I1/POP) : R_NegInf;
       S -= 1; I1 += 1; ellI1 += 1;
       ll -= log(I1*(I1-1)/2);
       break;
     case STRAIN2:
       assert(I2 >= 0);
       assert(ellI2 > 0);
-      ll += (I2 > 0 && I2 >= ellI2) ? log(Beta2*S*I2/N) : R_NegInf;
+      ll += (I2 > 0 && I2 >= ellI2) ? log(Beta2*S*I2/POP) : R_NegInf;
       S -= 1; I2 += 1; ellI2 += 1;
       ll -= log(I2*(I2-1)/2);
       break;
     case STRAIN3:
       assert(I3 >= 0);
       assert(ellI3 > 0);
-      ll += (I3 > 0 && I3 >= ellI3) ? log(Beta3*S*I3/N) : R_NegInf;
+      ll += (I3 > 0 && I3 >= ellI3) ? log(Beta3*S*I3/POP) : R_NegInf;
       S -= 1; I3 += 1; ellI3 += 1;
       ll -= log(I3*(I3-1)/2);
       break;

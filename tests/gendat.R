@@ -29,10 +29,11 @@ g |>
     }
   })
 
-freeze(
-  seed=540737457,
-  runSEIRS(time=40,omega=3,psi=0.3)
+runSEIRS(
+  time=40,omega=3,psi=0.3,
+  S=100,E0=5,I0=5,pop=110
 ) |>
+  freeze(seed=540737457) |>
   gendat(obscure=FALSE) -> g
 
 g |>
@@ -79,10 +80,11 @@ g |>
   filter(nodetype==1) |>
   count(deme)
 
-freeze(
-  seed=540737457,
-  runStrains(time=2,psi1=2,psi2=2,psi3=3)
-) -> x
+runStrains(
+  time=2,psi1=2,psi2=2,psi3=3,
+  S0=10000,I1_0=10,I2_0=10,I3_0=10,pop=10030
+) |>
+  freeze(seed=540737457) -> x
 
 x |> gendat(obscure=FALSE) -> g
 stopifnot(identical(g,getInfo(x,obscure=FALSE,gendat=TRUE)$gendat))

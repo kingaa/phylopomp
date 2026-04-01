@@ -8,9 +8,8 @@
 lbdp_pomp <- function (x, lambda, mu, psi, chi = 0, n0 = 1)
 {
   x |> gendat() -> gi
-  n0 <- round(n0)
-  if (n0 < 0)
-    pStop(sQuote("n0")," must be a nonnegative integer.")
+  if (round(n0) < 0)
+    pStop(sQuote("n0")," must be nonnegative.")
   pomp(
     data=NULL,
     t0=gi$nodetime[1L],

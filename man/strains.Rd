@@ -18,11 +18,12 @@ runStrains(
   psi1 = 1,
   psi2 = 0,
   psi3 = 0,
-  S0 = 10000,
-  I1_0 = 10,
-  I2_0 = 10,
-  I3_0 = 10,
-  R0 = 0
+  S0 = 1,
+  I1_0 = 0.01,
+  I2_0 = 0.01,
+  I3_0 = 0.01,
+  R0 = 0,
+  pop = 10000
 )
 
 continueStrains(
@@ -46,6 +47,7 @@ strains_pomp(
   psi1,
   psi2,
   psi3,
+  pop,
   S0,
   I1_0,
   I2_0,
@@ -64,11 +66,9 @@ strains_pomp(
 
 \item{psi1, psi2, psi3}{sampling rates}
 
-\item{S0}{initial size of susceptible population}
+\item{S0, I1_0, I2_0, I3_0, R0}{initial conditions; non-negative numbers that specify the relative occupancies of the compartments at the inital time.}
 
-\item{I1_0, I2_0, I3_0}{initial numbers of strain-specific infections}
-
-\item{R0}{initial size of immune population}
+\item{pop}{host population size}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}

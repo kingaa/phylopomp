@@ -11,7 +11,7 @@ set.seed(842110120)
 
 simulate("SEIRS",
   Beta=4,sigma=1,gamma=1,psi=1,omega=1,
-  S0=100,E0=3,I0=5,R0=100,
+  S0=100,E0=3,I0=5,R0=100,pop=208,
   time=5
 ) -> G
 G |> plot(prune=FALSE,obscure=FALSE,points=TRUE)
@@ -38,7 +38,7 @@ try(
   G |>
     seirs_pomp(
       Beta=4,sigma=1,gamma=1,psi=1,omega=1,
-      S0=100,E0=3,I0=-5,R0=100
+      S0=100,E0=3,I0=-5,R0=100,pop=10
     ) -> po
 )
 
@@ -46,7 +46,7 @@ G |>
   curtail(time=3) |>
   seirs_pomp(
     Beta=4,sigma=1,gamma=1,psi=1,omega=1,
-    S0=100,E0=3,I0=5,R0=100
+    S0=100,E0=3,I0=5,R0=100,pop=208
   ) -> po
 
 po |> rinit(nsim=5)

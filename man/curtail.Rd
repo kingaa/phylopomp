@@ -4,17 +4,15 @@
 \alias{curtail}
 \title{Curtail a genealogy to the given time}
 \usage{
-curtail(object, time = NA, troot = NA)
+curtail(object, time = NA, t0 = NA)
 }
 \arguments{
 \item{object}{\code{gpsim} object.}
 
-\item{time}{logical; return the current time?}
-
-\item{troot}{new root time for curtailed genealogy}
+\item{t0, time}{numeric scalars; determine the time interval for curtailed genealogy}
 }
 \value{
-A curtailed genealogy object.
+a genealogy object: the curtailed version of the input genealogy.
 }
 \description{
 Discards all nodes beyond the given time.

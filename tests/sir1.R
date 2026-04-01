@@ -12,14 +12,14 @@ set.seed(847110120)
 runSIR(time=10) -> x
 x
 
-runSIR(Beta=3,gamma=1,psi=5,S0=100,I0=5,time=2) |>
+runSIR(Beta=3,gamma=1,psi=5,S0=100,I0=5,pop=105,time=2) |>
   plot(points=TRUE)
 
-runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,time=1) |>
+runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,pop=105,time=1) |>
   simulate(time=10) |>
   plot(points=TRUE)
 
-simulate("SIR",Beta=3,gamma=1,psi=2,omega=1,S0=100,I0=5,time=10) -> x
+simulate("SIR",Beta=3,gamma=1,psi=2,omega=1,S0=100,I0=5,pop=105,time=10) -> x
 x |> yaml() -> y
 x |> lineages() |> plot()
 x |> geneal()
@@ -27,7 +27,7 @@ x |> geneal()
 x |>
   sir_pomp(
     Beta=3,gamma=1,psi=2,omega=1,
-    S0=100,I0=5,R0=0
+    S0=100,I0=5,R0=0,pop=105
   ) |>
   pfilter(Np=5000) -> pf
 
@@ -39,7 +39,7 @@ try(
   x |>
     sir_pomp(
       Beta=3,gamma=1,psi=2,omega=1,
-      S0=-100,I0=5,R0=0
+      S0=-100,I0=5,R0=0,pop=100
     )
 )
 
