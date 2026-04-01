@@ -12,6 +12,14 @@ has not yet been a stable, usable release suitable for the public.](https://www.
 [![pdf-manual](https://img.shields.io/badge/manual-PDF-brown)](https://kingaa.github.io/manuals/phylopomp/pdf/)
 [![doxygen](https://img.shields.io/badge/doxygen-HTML-brown)](https://kingaa.github.io/manuals/phylopomp/source/html/index.html)
 
+### Installation
+
+You can install **phylopomp** in one of three ways:
+
+1. At the **R** prompt, run `install.packages("phylopomp",repos="https:kingaa.github.io")`.
+2. Visit the [latest release](https://github.com/kingaa/phylopomp/releases/latest) and download the archive appropriate for your platform.
+   Then install locally, e.g., by running `install.packages(<path/to/local/file>,repos=NULL)` at the **R** command prompt.
+3. Use **devtools**.
 
 ### Publications
 
