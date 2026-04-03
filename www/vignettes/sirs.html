@@ -385,13 +385,13 @@ induced by the SIRS model.</p>
   runSIR(
     t0=0,time=40,
     Beta=4,gamma=2,psi=1,omega=1,
-    S0=97,I0=3,R0=0
+    pop=100,S0=0.97,I0=0.03,R0=0
   ) -&gt; sim
 ) -&gt; sim</code></pre>
 <pre class="r"><code>sim |&gt;
   sir_pomp(
     Beta=4,gamma=2,psi=1,omega=1,
-    S0=97,I0=3,R0=3
+    pop=100,S0=0.97,I0=0.03,R0=3
   ) -&gt; sirs_pomp</code></pre>
 <pre class="r"><code>bake(
   file=&quot;sirs2.rds&quot;,
@@ -405,13 +405,10 @@ induced by the SIRS model.</p>
     expand_grid(
       Beta=4,gamma=2,psi=1,
       omega=seq(0.5,2,by=0.05),
-      S0=97,I0=3,R0=0,
+      pop=100,S0=97,I0=3,R0=0,
       t0=0,
       rep=1:16,
       Np=5000,
-      ) |&gt;
-      mutate(
-        N=S0+I0+R0
       ) -&gt; params
     foreach (
       p=iter(params,&quot;row&quot;),
@@ -425,7 +422,7 @@ induced by the SIRS model.</p>
     } -&gt; params
   }
 ) -&gt; params</code></pre>
-<p>The above computation took 0.588 min.</p>
+<p>The above computation took 2.98 min.</p>
 <pre class="r"><code>sim |&gt; plot() -&gt; pl1
 
 params |&gt;
