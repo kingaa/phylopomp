@@ -1,50 +1,28 @@
 ---
 title: Comparison of particle-filter likelihood with exact formula for the linear birth-death-sampling process
 author: A.A. King
-output: rmarkdown::html_vignette
 bibliography: phylopomp.bib
 nocite: |
   @King2024, @King2022, @Stadler2010
 csl: jss.csl
-vignette: >
-  %\VignetteIndexEntry{Verification of LBDP computations}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+format:
+  html:
+    embed-resources: true
+knitr:
+  opts_chunk:
+    progress: TRUE
+    prompt: FALSE
+    tidy: FALSE
+    hightlight: TRUE
+    strip.white: TRUE
+    message: FALSE
+    warning: FALSE
+    error: TRUE
+    echo: TRUE
+    cache: TRUE
+    cache.extra: rand_seed
+    results: markup
 ---
-
-```{r knitr_setup}
-#| cache: false
-#| purl: false
-#| include: false
-library(knitr)
-opts_chunk$set(
-             progress=TRUE,
-             prompt=FALSE,
-             tidy=FALSE,
-             highlight=TRUE,
-             strip.white=TRUE,
-             message=FALSE,
-             warning=FALSE,
-             error=TRUE,
-             echo=TRUE,
-             cache=TRUE,
-             cache.extra=rand_seed,
-             results='markup',
-             fig.show='asis',
-             fig.path=paste0("tmp/","lbdp_compar","/"),
-             cache.path=paste0("tmp/","lbdp_compar","/"),
-             size='small',
-             fig.align='center',
-             fig.dim=c(6,6),
-             dpi=100,
-             dev='png',
-             dev.args=list(bg='transparent')
-           )
-options(
-  keep.source=TRUE,
-  encoding="UTF-8"
-)
-```
 
 ```{r packages}
 #| cache: false
@@ -53,9 +31,9 @@ library(tidyverse)
 library(pomp)
 library(phylopomp)
 library(cowplot)
-stopifnot(getRversion() >= "4.3")
-stopifnot(packageVersion("pomp")>="5.7")
-stopifnot(packageVersion("phylopomp")>="0.10.5")
+stopifnot(getRversion() >= "4.5")
+stopifnot(packageVersion("pomp")>="6.4")
+stopifnot(packageVersion("phylopomp")>="0.17.1")
 theme_set(theme_bw(base_family="serif"))
 options(
   dplyr.summarise.inform=FALSE,
@@ -68,11 +46,12 @@ The following codes simulate a realization of the genealogy process induced by a
 
 
 ```{r lbdp1}
-true.params <- data.frame(lambda=1.5,mu=0.8,psi=1,n0=5)
+true.params <- data.frame(lambda=1.5,mu=0.8,psi=1,chi=0.1,n0=5)
 with(
   true.params,
-  runLBDP(lambda=lambda,mu=mu,psi=psi,n0=n0,time=5)
-) -> x
+  runLBDP(lambda=lambda,mu=mu,psi=psi,chi=chi,n0=n0,time=5)
+) |>
+  freeze(seed=1159254136)-> x
 ```
 
 ```{r lbdp1_plot}
@@ -95,6 +74,7 @@ expand_grid(
   lambda=1.5,
   mu=0.8,
   psi=seq(0.5,3,by=0.1),
+  chi=0.1,
   time=5,
   n0=5,
   Np=c(1000,10000,100000)
@@ -119,17 +99,17 @@ foreach (
   with(
     p,
     x |>
-      lbdp_exact(lambda=lambda,mu=mu,psi=psi,n0=n0)
+      lbdp_exact(lambda=lambda,mu=mu,psi=psi,chi=chi,n0=n0)
   ) -> ll1
   with(
     p,
     x |>
-      lbdp_pomp(lambda=lambda,mu=mu,psi=psi,n0=n0) |>
+      lbdp_pomp(lambda=lambda,mu=mu,psi=psi,chi=chi,n0=n0) |>
       pfilter(Np=Np) |>
       logLik()
   ) -> ll2
   bind_cols(p,exact=ll1,pf=ll2)
-}-> params
+} -> params
 ```
 ```{r lbdp3_eval}
 #| include: false
@@ -151,7 +131,7 @@ params |>
     name=if_else(grepl("exact",name),"exact",name),
     name=gsub("pf_","",name)
   ) |>
-  group_by(lambda,mu,psi,time,n0,name) |>
+  group_by(lambda,mu,psi,chi,time,n0,name) |>
   reframe(
     type=c("logLik","logLik_se"),
     value=logmeanexp(value,se=TRUE)
@@ -197,3 +177,5 @@ params |>
 ```
 
 ## References
+
+::: {#refs} :::

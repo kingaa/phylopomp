@@ -1,3 +1,7 @@
 *.gif
 *.mp4
 *.webm
+*_files/**
+*_cache/**
+/.quarto/
+**/*.quarto_ipynb

@@ -1,0 +1,174 @@
+---
+title: Likelihood slice for the SIRS model
+author: A.A. King
+bibliography: phylopomp.bib
+nocite: |
+  @King2024, @King2022
+csl: jss.csl
+vignette: >
+  %\VignetteIndexEntry{SIRS computations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+format:
+  html:
+    code-fold: show
+    embed-resources: true
+knitr:
+  opts_chunk:
+    progress: TRUE
+    prompt: FALSE
+    tidy: FALSE
+    hightlight: TRUE
+    strip.white: TRUE
+    message: FALSE
+    warning: FALSE
+    error: TRUE
+    echo: TRUE
+    cache: TRUE
+    cache.extra: rand_seed
+    results: markup
+---
+
+```{r packages}
+#| include: false
+#| cache: false
+library(tidyverse)
+library(cowplot)
+library(pomp)
+library(phylopomp)
+stopifnot(getRversion() >= "4.5")
+stopifnot(packageVersion("pomp") >= "6.4")
+stopifnot(packageVersion("phylopomp") >= "0.17.1")
+theme_set(theme_bw(base_family = "serif"))
+options(
+  dplyr.summarise.inform = FALSE,
+  pomp_archive_dir = "results/sirs"
+)
+set.seed(1159254136)
+```
+
+The following codes simulate a realization of the genealogy process induced by the SIRS model.
+
+```{r simulate}
+runSIRS(
+  t0 = 0,
+  time = 40,
+  Beta = 4,
+  gamma = 2,
+  psi = 1,
+  omega = 1,
+  pop = 100,
+  S0 = 0.97,
+  I0 = 0.03,
+  R0 = 0
+) |>
+  bake(
+    file = "sirs1.rds",
+    seed = 328168304L
+  ) -> sim
+```
+
+The following constructs a **pomp** object that enables solving the filter equation for the simulated genealogy.
+
+```{r process_data}
+sim |>
+  sir_pomp(
+    Beta = 4,
+    gamma = 2,
+    psi = 1,
+    omega = 1,
+    pop = 100,
+    S0 = 0.97,
+    I0 = 0.03,
+    R0 = 0
+  ) -> sirs_pomp
+```
+
+The following solves the filter equation at each point of a grid.
+
+```{r pfilter1}
+#| code-fold: show
+{
+  library(doParallel)
+  library(doRNG)
+  library(iterators)
+  registerDoParallel()
+  registerDoRNG(728604304)
+
+  expand_grid(
+    Beta = 4,
+    gamma = 2,
+    psi = 1,
+    omega = seq(0.5, 2, by = 0.05),
+    pop = 100,
+    S0 = 97,
+    I0 = 3,
+    R0 = 0,
+    t0 = 0,
+    rep = 1:16,
+    Np = 5000,
+  ) -> params
+
+  foreach(
+    p = iter(params, "row"),
+    .inorder = FALSE,
+    .combine = bind_rows
+  ) %dopar%
+    {
+      sirs_pomp |>
+        pfilter(Np = p$Np, params = p) |>
+        logLik() |>
+        bind_cols(p, logLik = _)
+    } -> params
+} |>
+  bake(
+    file = "sirs2.rds",
+    dependson = sim
+  ) -> params
+```
+
+The above computation took `r signif(attr(params,"system.time")[3]/60,3)`&nbsp;min.
+The results are shown below.
+
+```{r sirs1_plot}
+#| out.width: 100%
+#| fig.height: 8
+#| fig.width: 8
+sim |> plot() -> pl1
+
+params |>
+  group_by(Beta, gamma, psi, omega, S0, I0, R0, Np) |>
+  reframe(
+    name = c("logLik", "logLik_se", "logLik_ess"),
+    value = logmeanexp(logLik, se = TRUE, ess = TRUE)
+  ) |>
+  ungroup() |>
+  pivot_wider() |>
+  mutate(
+    y = logLik,
+    ymax = logLik + 2 * logLik_se,
+    ymin = logLik - 2 * logLik_se
+  ) |>
+  filter(round(Beta, 2) == 4) |>
+  filter(logLik > max(logLik) - 16) |>
+  ggplot(aes(x = omega, group = Np, y = y)) +
+  geom_errorbar(aes(ymin = ymin, ymax = ymax), position = "dodge") +
+  labs(
+    color = character(0),
+    y = "log likelihood",
+    x = expression(omega)
+  ) +
+  theme(
+    legend.position = c(0.5, 0.27)
+  ) -> pl2
+
+plot_grid(
+  A = pl1,
+  B = pl2,
+  labels = "AUTO",
+  ncol = 1,
+  rel_heights = c(1, 1)
+)
+```
+
+## References
