@@ -406,7 +406,7 @@ private:
 
   //! Scan the branch (label+branch-length) string.
   //! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
-  node_t *scan_branch (string_t::const_iterator b, string_t::const_iterator e);
+  node_t *scan_branch (string_t::const_iterator b, string_t::const_iterator e, node_t *p);
 
 public:
 

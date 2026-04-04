@@ -99,7 +99,8 @@ scan_color
 node_t*
 genealogy_t::scan_branch
 (string_t::const_iterator b,
- string_t::const_iterator e)
+ string_t::const_iterator e,
+ node_t* parent)
 {
   name_t deme = 0;
   color_t col = green;
@@ -121,7 +122,10 @@ genealogy_t::scan_branch
     ball_t *b = new ball_t(q,q->uniq,col,deme);
     q->insert(b);
   }
-  q->slate = bl;
+  q->slate = bl+parent->slate;
+  attach(parent,q);
+  push_back(q);
+  ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
   return q;
 }
 
@@ -132,12 +136,12 @@ genealogy_t::parse
 {
   node_t *p = 0, *q;
   slate_t tf = timezero();
-  string_t::const_reverse_iterator b = s.crbegin(), e = b;
+  string_t::const_reverse_iterator f = s.crend(), e = s.crbegin(), b = e;
   bool open = false;            // branch-string reading-frame open?
   int stack = 0, sqstack = 0;
   if (!s.empty() && *b != ';')
     err("in '%s': invalid Newick format: no final semicolon.",__func__);
-  while (b != s.crend()) {
+  while (b != f) {
     switch (*b) {
     case ';':                   // root
       if (stack != 0)
@@ -145,69 +149,53 @@ genealogy_t::parse
       p = make_node();
       p->slate = timezero();
       push_front(p);
-      b++;
-      e = b;
+      b++; e = b;
       open = true;
       break;
     case ')':                   // internal node
       if (open) {
-        q = scan_branch(b.base(),e.base());
+        q = scan_branch(b.base(),e.base(),p);
         if (q->holds(black))
           err("in '%s': 'type=extant' on internal node.",__func__);
-        q->slate += p->slate;
-        attach(p,q);
-        push_back(q);
         tf = (q->slate > tf) ? q->slate : tf;
-        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
         p = q;
       } else {
         err("in '%s': invalid Newick: missing comma or semicolon.",__func__);
       }
+      b++; e = b;
       stack++;
-      b++;
-      e = b;
       open = true;
       break;
     case '(':                   // tip node, eldest sister
       if (open) {
-        q = scan_branch(b.base(),e.base());
-        q->slate += p->slate;
-        attach(p,q);
-        push_back(q);
+        q = scan_branch(b.base(),e.base(),p);
         tf = (q->slate > tf) ? q->slate : tf;
-        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
       }
       p = p->parent();
       b++;
-      stack--;
       e = b;
+      stack--;
       open = false;
       break;
     case ',':                   // tip node, younger sister
       if (stack <= 0)
         err("in '%s': invalid Newick string: misplaced comma or unbalanced parentheses.",__func__);
       if (open) {
-        q = scan_branch(b.base(),e.base());
-        q->slate += p->slate;
-        attach(p,q);
-        push_back(q);
+        q = scan_branch(b.base(),e.base(),p);
         tf = (q->slate > tf) ? q->slate : tf;
-        ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
       }
-      b++;
-      e = b;
+      b++; e = b;
       open = true;
       break;
     case ']':                   // skip metadata
       sqstack++;
-      while (b != s.crend() && sqstack > 0) {
+      while (b != f && sqstack > 0) {
         b++;
         if (*b == ']') sqstack++;
         if (*b == '[') sqstack--;
       }
       if (sqstack != 0)
         err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
-      if (b != s.crend()) b++;
       break;
     default:
       b++;
@@ -217,12 +205,8 @@ genealogy_t::parse
   if (stack != 0)
     err("in '%s': invalid Newick format: unbalanced parentheses.",__func__);
   if (open) {
-    q = scan_branch(b.base(),e.base());
-    q->slate += p->slate;
-    attach(p,q);
-    push_back(q);
+    q = scan_branch(b.base(),e.base(),p);
     tf = (q->slate > tf) ? q->slate : tf;
-    ndeme() = (ndeme() > q->deme()) ? ndeme() : q->deme();
   }
   time() = tf;
   sort(); repair_tips(); drop_zlb(); weed();
