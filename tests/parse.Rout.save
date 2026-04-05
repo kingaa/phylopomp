@@ -275,6 +275,13 @@ Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parenth
 + )
 Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
 > 
+> try(
++   r"{()[bob =3 jack=[4]:0.3;}" |>
++      parse_newick() |>
++      diagram()
++ )
+Error : in 'parse': invalid Newick: unbalanced square brackets.
+> 
 > plot_grid(
 +   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
 +   ";" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),

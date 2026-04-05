@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 void
-genealogy_t::repair_tips
+genealogy_t::cap_tips
 (void)
 {
   for (node_t *p : *this) {
@@ -196,6 +196,11 @@ genealogy_t::parse
       }
       if (sqstack != 0)
         err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
+      else
+	b++;
+      break;
+    case '[':
+      err("in '%s': invalid Newick: unbalanced square brackets.",__func__);
       break;
     default:
       b++;
@@ -209,7 +214,7 @@ genealogy_t::parse
     tf = (q->slate > tf) ? q->slate : tf;
   }
   time() = tf;
-  sort(); repair_tips(); drop_zlb(); weed();
+  sort(); cap_tips(); drop_zlb(); weed();
   return *this;
 }
 

@@ -388,9 +388,9 @@ private:
 
   //! - tips without descendants are reclassified as samples.
   //! - tips with black balls are swapped out.
-  void repair_tips (void);
+  void cap_tips (void);
   //! roots are added at zero time if needed
-  void repair_roots (void) {
+  void cap_roots (void) {
     node_nit j = begin();
     while (j != end()) {
       if ((*j)->holds_own() && (*j)->slate > timezero()) {

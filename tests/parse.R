@@ -235,6 +235,12 @@ try(
      diagram()
 )
 
+try(
+  r"{()[bob =3 jack=[4]:0.3;}" |>
+     parse_newick() |>
+     diagram()
+)
+
 plot_grid(
   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   ";" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
