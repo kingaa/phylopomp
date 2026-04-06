@@ -197,7 +197,7 @@ genealogy_t::parse
       if (sqstack != 0)
         err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
       else
-	b++;
+        b++;
       break;
     case '[':
       err("in '%s': invalid Newick: unbalanced square brackets.",__func__);

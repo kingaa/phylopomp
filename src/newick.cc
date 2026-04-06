@@ -16,7 +16,7 @@ ball_t::newick
 {
   assert(color==black);
   string_t o = "[&&PhyloPOMP type=extant";
-  if (showdeme)
+  if (showdeme && deme() != undeme)
     o += " deme=" + std::to_string(deme());
   o += "]"
     + std::to_string(uniq) +
@@ -44,7 +44,7 @@ node_t::newick
       o3 += "type=root";
     else
       o3 += "type=node";
-    if (showdeme)
+    if (showdeme && deme() != undeme)
       o3 += " deme=" + std::to_string(deme());
     o3 += "]";
   }
