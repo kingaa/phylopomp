@@ -17,6 +17,23 @@ genealogy_t::cap_tips
   }
 }
 
+void
+genealogy_t::clip_zlb
+(void)
+{
+  for (node_t *p : *this) {
+    if (!p->holds_own() &&
+        p->slate == p->parent()->slate &&
+        p->deme() == p->parent()->deme()) {
+      while (!p->empty()) {
+        ball_t *b = p->last_ball();
+        p->erase(b); p->parent()->insert(b);
+      }
+      detach(p);
+    }
+  }
+}
+
 //! simple function for scanning a slate_t from a string
 //! (with error trapping)
 static
@@ -214,7 +231,7 @@ genealogy_t::parse
     tf = (q->slate > tf) ? q->slate : tf;
   }
   time() = tf;
-  sort(); cap_tips(); drop_zlb(); weed();
+  sort(); cap_tips(); clip_zlb(); weed();
   return *this;
 }
 

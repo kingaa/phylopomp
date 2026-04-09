@@ -76,9 +76,8 @@ node_t::newick
 //! put genealogy at time `t` into Newick format.
 string_t
 nodeseq_t::newick
-(slate_t t, bool showdeme, bool extended) const
+(slate_t t, slate_t te, bool showdeme, bool extended) const
 {
-  slate_t te = dawn();
   string_t o = "";
   for (node_t *p : *this) {
     if (p->is_root()) {
@@ -93,7 +92,7 @@ string_t
 genealogy_t::newick
 (bool extended) const
 {
-  return nodeseq_t::newick(time(),(ndeme() > 0),extended);
+  return nodeseq_t::newick(time(),timezero(),(ndeme() > 0),extended);
 }
 
 extern "C" {

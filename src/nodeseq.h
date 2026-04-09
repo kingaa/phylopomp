@@ -104,17 +104,6 @@ public:
     std::list<node_t*>::sort(compare);
   };
 
-private:
-
-  //! Earliest time in the sequence.
-  slate_t dawn (void) const {
-    return (empty()) ? R_NaReal : front()->slate;
-  };
-  //! Latest time in the sequence.
-  slate_t dusk (void) const {
-    return (empty()) ? R_NaReal : back()->slate;
-  }
-
 public:
 
   //! Get all balls of a color.
@@ -272,7 +261,7 @@ public:
   //! R list description
   SEXP structure (void) const;
   //! put genealogy at time `t` into Newick format.
-  string_t newick (slate_t t, bool showdeme, bool extended) const;
+  string_t newick (slate_t t, slate_t te, bool showdeme, bool extended) const;
 
 };
 

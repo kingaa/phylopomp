@@ -369,23 +369,10 @@ public:
     }
     sort();
   };
-  //! drop all zero-length branches
-  void drop_zlb (void) {
-    for (node_t *p : *this) {
-      if (!p->holds_own() &&
-          p->slate == p->parent()->slate &&
-          p->deme() == p->parent()->deme()) {
-        while (!p->empty()) {
-          ball_t *b = p->last_ball();
-          p->erase(b); p->parent()->insert(b);
-        }
-        detach(p);
-      }
-    }
-  };
 
 private:
-
+  //! clip out all zero-length branches
+  void clip_zlb (void);
   //! - tips without descendants are reclassified as samples.
   //! - tips with black balls are swapped out.
   void cap_tips (void);
