@@ -90,7 +90,7 @@ $time
 [1] 0
 
 $newick
-[1] "([&&PhyloPOMP type=extant deme=2]13:0.000000)[&&PhyloPOMP type=root]9:0.000000;([&&PhyloPOMP type=extant deme=2]20:0.000000)[&&PhyloPOMP type=root]8:0.000000;([&&PhyloPOMP type=extant deme=2]47:0.000000)[&&PhyloPOMP type=root]6:0.000000;([&&PhyloPOMP type=extant deme=1]24:0.000000)[&&PhyloPOMP type=root]3:0.000000;([&&PhyloPOMP type=extant deme=1]22:0.000000)[&&PhyloPOMP type=root]1:0.000000;([&&PhyloPOMP type=extant deme=1]50:0.000000)[&&PhyloPOMP type=root]0:0.000000;"
+[1] "([&&PhyloPOMP type=extant deme=2]13:0)[&&PhyloPOMP type=root]9:0;([&&PhyloPOMP type=extant deme=2]20:0)[&&PhyloPOMP type=root]8:0;([&&PhyloPOMP type=extant deme=2]47:0)[&&PhyloPOMP type=root]6:0;([&&PhyloPOMP type=extant deme=1]24:0)[&&PhyloPOMP type=root]3:0;([&&PhyloPOMP type=extant deme=1]22:0)[&&PhyloPOMP type=root]1:0;([&&PhyloPOMP type=extant deme=1]50:0)[&&PhyloPOMP type=root]0:0;"
 
 > 
 > x |>

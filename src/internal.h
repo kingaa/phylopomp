@@ -32,9 +32,9 @@
 #ifdef __cplusplus
 
 #include <string>
-#include <cstring>
 
 typedef std::string string_t;
+std::string double2string(double);
 
 #endif
 

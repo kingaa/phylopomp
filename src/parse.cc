@@ -34,33 +34,6 @@ genealogy_t::clip_zlb
   }
 }
 
-//! simple function for scanning a slate_t from a string
-//! (with error trapping)
-static
-slate_t
-scan_slate
-(const string_t& s)
-{
-  double bl;
-  try {
-    bl = (s.empty()) ? 0.0 : stod(s);
-  }
-  catch (const std::invalid_argument& e) {
-    err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
-  }
-  catch (const std::out_of_range& e) {
-    err("in '%s': invalid Newick format: branch length out of range.",__func__);
-  }
-  catch (const std::exception& e) {
-    err("in '%s': parsing branch-length: %s.",__func__,e.what());
-  }
-  catch (...) {
-    err("in '%s': other branch-length parsing error.",__func__);
-  }
-  if (bl < 0.0) err("in '%s': negative branch length detected.",__func__);
-  return slate_t(bl);
-}
-
 //! simple function for scanning a name_t from a string
 //! (with error trapping)
 static
@@ -111,28 +84,57 @@ scan_color
   return col;
 }
 
+//! Scan the branch length.
+static
+slate_t
+scan_branch_length
+(string_t::const_iterator b,
+ string_t::const_iterator e)
+{
+  double bl = 0.0;
+  if (b != e) {
+    std::smatch m;
+    if (std::regex_match(b,e,m,std::regex("^(?:\\[.*?\\])?([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)(?:\\[.*?\\])?$"))) {
+      try {
+        bl = stod(m[1].str());
+      }
+      catch (const std::invalid_argument& e) {
+        err("in '%s': invalid Newick format: branch length should be a non-negative decimal number.",__func__);
+      }
+      catch (const std::out_of_range& e) {
+        err("in '%s': invalid Newick format: branch length out of range.",__func__);
+      }
+      catch (const std::exception& e) {
+        err("in '%s': parsing branch-length: %s.",__func__,e.what());
+      }
+      catch (...) {
+        err("in '%s': other branch-length parsing error.",__func__);
+      }
+      if (bl < 0.0) err("in '%s': negative branch length detected.",__func__);
+    } else {
+      warn("in '%s': in branch-length spec '%s': no branch-length detected: assuming zero branch length.",__func__,string_t(b,e).c_str());
+    }
+  }
+  return bl;
+}
+
 //! Scan the branch string.
 //! This has format %s[&&PhyloPOMP deme=%d type=%s]%s:%f
 node_t*
-genealogy_t::scan_branch
+genealogy_t::scan_branch_label
 (string_t::const_iterator b,
  string_t::const_iterator e,
- node_t* parent)
+ node_t* parent,
+ slate_t bl)
 {
   name_t deme = 0;
   color_t col = green;
-  slate_t bl = 0;
   if (b != e) {
     std::smatch m;
     if (std::regex_match(b,e,m,std::regex("^.*?\\[&&PhyloPOMP.+?deme=(\\w+).*?\\].*$")))
       deme = scan_name(m[1].str());
     if (std::regex_match(b,e,m,std::regex("^.*?\\[&&PhyloPOMP.+?type=(\\w+).*?\\].*$")))
       col = scan_color(m[1].str());
-    if (std::regex_match(b,e,m,std::regex("^.*:([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)$")))
-      bl = scan_slate(m[1].str());
-    else
-      warn("in '%s': in branch-string '%s': no branch-length detected: assuming zero branch length.",
-           __func__,string_t(b,e).c_str());
   }
   node_t *q = make_node(deme);
   if (col != green) {
@@ -153,6 +155,7 @@ genealogy_t::parse
 {
   node_t *p = 0, *q;
   slate_t tf = timezero();
+  slate_t bl = 0.0;
   string_t::const_reverse_iterator f = s.crend(), e = s.crbegin(), b = e;
   bool open = false;            // branch-string reading-frame open?
   int stack = 0, sqstack = 0;
@@ -168,13 +171,15 @@ genealogy_t::parse
       push_front(p);
       b++; e = b;
       open = true;
+      bl = 0.0;
       break;
     case ')':                   // internal node
       if (open) {
-        q = scan_branch(b.base(),e.base(),p);
+        q = scan_branch_label(b.base(),e.base(),p,bl);
         if (q->holds(black))
           err("in '%s': 'type=extant' on internal node.",__func__);
         tf = (q->slate > tf) ? q->slate : tf;
+        bl = 0.0;
         p = q;
       } else {
         err("in '%s': invalid Newick: missing comma or semicolon.",__func__);
@@ -185,8 +190,9 @@ genealogy_t::parse
       break;
     case '(':                   // tip node, eldest sister
       if (open) {
-        q = scan_branch(b.base(),e.base(),p);
+        q = scan_branch_label(b.base(),e.base(),p,bl);
         tf = (q->slate > tf) ? q->slate : tf;
+        bl = 0.0;
       }
       p = p->parent();
       b++;
@@ -198,11 +204,13 @@ genealogy_t::parse
       if (stack <= 0)
         err("in '%s': invalid Newick string: misplaced comma or unbalanced parentheses.",__func__);
       if (open) {
-        q = scan_branch(b.base(),e.base(),p);
+        q = scan_branch_label(b.base(),e.base(),p,bl);
         tf = (q->slate > tf) ? q->slate : tf;
+        bl = 0.0;
       }
       b++; e = b;
       open = true;
+      bl = 0.0;
       break;
     case ']':                   // skip metadata
       sqstack++;
@@ -219,6 +227,14 @@ genealogy_t::parse
     case '[':
       err("in '%s': invalid Newick: unbalanced square brackets.",__func__);
       break;
+    case ':':
+      if (open) {
+        bl = scan_branch_length(b.base(),e.base());
+        b++; e = b;
+      } else {
+        err("in '%s': invalid Newick format: misplaced colon.",__func__);
+      }
+      break;
     default:
       b++;
       break;
@@ -227,8 +243,9 @@ genealogy_t::parse
   if (stack != 0)
     err("in '%s': invalid Newick format: unbalanced parentheses.",__func__);
   if (open) {
-    q = scan_branch(b.base(),e.base(),p);
+    q = scan_branch_label(b.base(),e.base(),p,bl);
     tf = (q->slate > tf) ? q->slate : tf;
+    bl = 0.0;
   }
   time() = tf;
   sort(); cap_tips(); clip_zlb(); weed();

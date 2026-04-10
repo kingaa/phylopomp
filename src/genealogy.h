@@ -391,9 +391,9 @@ private:
     sort();
   };
 
-  //! Scan the branch (label+branch-length) string.
-  //! This has format [&&PhyloPOMP deme=%d type=%s]%s:%f
-  node_t *scan_branch (string_t::const_iterator b, string_t::const_iterator e, node_t *p);
+  //! Scan the branch-label string.
+  //! This has format %s[&&PhyloPOMP deme=%d type=%s]%s
+  node_t *scan_branch_label (string_t::const_iterator b, string_t::const_iterator e, node_t *p, slate_t bl);
 
 public:
 

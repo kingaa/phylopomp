@@ -79,8 +79,8 @@ state:
   R: 2
   N: 102.000000
 genealogy:
-  t0: 0.000000
-  time: 0.500000
+  t0: 0
+  time: 0.5
   ndeme: 1
   nodes:
 > 
@@ -94,12 +94,12 @@ parameter:
 state:
   n: 10
 genealogy:
-  t0: 0.000000
-  time: 0.500000
+  t0: 0
+  time: 0.5
   ndeme: 1
   nodes:
   - name: 4
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -107,7 +107,7 @@ genealogy:
     - color: green
       name: 11
   - name: 3
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 0
     pocket:
@@ -116,7 +116,7 @@ genealogy:
     - color: green
       name: 5
   - name: 2
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -124,7 +124,7 @@ genealogy:
     - color: green
       name: 18
   - name: 1
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -132,7 +132,7 @@ genealogy:
     - color: green
       name: 19
   - name: 0
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 1
     pocket:
@@ -141,7 +141,7 @@ genealogy:
     - color: green
       name: 7
   - name: 5
-    time: 0.001270
+    time: 0.001270080846734345
     deme: 1
     lineage: 0
     pocket:
@@ -150,21 +150,21 @@ genealogy:
     - color: blue
       name: 5
   - name: 6
-    time: 0.031442
+    time: 0.03144189033191651
     deme: 1
     lineage: 3
     pocket:
     - color: green
       name: 16
   - name: 7
-    time: 0.123191
+    time: 0.12319111055945507
     deme: 1
     lineage: 1
     pocket:
     - color: green
       name: 8
   - name: 8
-    time: 0.197268
+    time: 0.1972677833491782
     deme: 1
     lineage: 1
     pocket:
@@ -173,7 +173,7 @@ genealogy:
     - color: green
       name: 12
   - name: 9
-    time: 0.249760
+    time: 0.24976037602521228
     deme: 1
     lineage: 1
     pocket:
@@ -182,7 +182,7 @@ genealogy:
     - color: green
       name: 14
   - name: 10
-    time: 0.277115
+    time: 0.2771148522986344
     deme: 1
     lineage: 1
     pocket:
@@ -191,28 +191,28 @@ genealogy:
     - color: blue
       name: 10
   - name: 11
-    time: 0.280884
+    time: 0.2808843522636842
     deme: 1
     pocket:
     - color: black
       name: 4
       deme: 1
   - name: 12
-    time: 0.290555
+    time: 0.29055480042552406
     deme: 1
     lineage: 2
     pocket:
     - color: blue
       name: 12
   - name: 13
-    time: 0.327411
+    time: 0.32741119252314665
     deme: 1
     pocket:
     - color: black
       name: 13
       deme: 1
   - name: 14
-    time: 0.333241
+    time: 0.33324079659726485
     deme: 1
     pocket:
     - color: green
@@ -221,7 +221,7 @@ genealogy:
       name: 14
       deme: 1
   - name: 15
-    time: 0.366793
+    time: 0.3667929499684072
     deme: 1
     pocket:
     - color: black
@@ -231,14 +231,14 @@ genealogy:
       name: 15
       deme: 1
   - name: 16
-    time: 0.427442
+    time: 0.4274424395976347
     deme: 1
     lineage: 3
     pocket:
     - color: green
       name: 17
   - name: 17
-    time: 0.437608
+    time: 0.4376079611109382
     deme: 1
     lineage: 3
     pocket:
@@ -248,7 +248,7 @@ genealogy:
       name: 16
       deme: 1
   - name: 18
-    time: 0.482863
+    time: 0.4828634573815149
     deme: 1
     pocket:
     - color: black
@@ -258,7 +258,7 @@ genealogy:
       name: 18
       deme: 1
   - name: 19
-    time: 0.490118
+    time: 0.49011751049570396
     deme: 1
     pocket:
     - color: black
@@ -278,12 +278,12 @@ parameter:
 state:
   n: 20
 genealogy:
-  t0: 0.000000
-  time: 0.500000
+  t0: 0
+  time: 0.5
   ndeme: 1
   nodes:
   - name: 4
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 1
     pocket:
@@ -292,7 +292,7 @@ genealogy:
     - color: green
       name: 9
   - name: 3
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -300,7 +300,7 @@ genealogy:
     - color: green
       name: 17
   - name: 2
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 0
     pocket:
@@ -309,7 +309,7 @@ genealogy:
     - color: green
       name: 5
   - name: 1
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -317,7 +317,7 @@ genealogy:
     - color: green
       name: 12
   - name: 0
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -325,7 +325,7 @@ genealogy:
     - color: green
       name: 18
   - name: 5
-    time: 0.002776
+    time: 0.00277592099737376
     deme: 1
     lineage: 0
     pocket:
@@ -334,7 +334,7 @@ genealogy:
     - color: green
       name: 7
   - name: 6
-    time: 0.009754
+    time: 0.009753603988792747
     deme: 1
     pocket:
     - color: green
@@ -343,7 +343,7 @@ genealogy:
       name: 6
       deme: 1
   - name: 7
-    time: 0.087909
+    time: 0.08790899362921023
     deme: 1
     lineage: 0
     pocket:
@@ -353,7 +353,7 @@ genealogy:
       name: 2
       deme: 1
   - name: 8
-    time: 0.146987
+    time: 0.14698698055009674
     deme: 1
     lineage: 0
     pocket:
@@ -362,7 +362,7 @@ genealogy:
     - color: blue
       name: 8
   - name: 9
-    time: 0.217346
+    time: 0.21734642580265723
     deme: 1
     lineage: 1
     pocket:
@@ -371,7 +371,7 @@ genealogy:
     - color: blue
       name: 9
   - name: 10
-    time: 0.315187
+    time: 0.31518714635221984
     deme: 1
     pocket:
     - color: green
@@ -380,7 +380,7 @@ genealogy:
       name: 7
       deme: 1
   - name: 11
-    time: 0.328338
+    time: 0.32833829608334925
     deme: 1
     pocket:
     - color: black
@@ -390,7 +390,7 @@ genealogy:
       name: 11
       deme: 1
   - name: 12
-    time: 0.348873
+    time: 0.3488725798432341
     deme: 1
     pocket:
     - color: black
@@ -400,7 +400,7 @@ genealogy:
       name: 12
       deme: 1
   - name: 13
-    time: 0.416398
+    time: 0.4163975419453584
     deme: 1
     pocket:
     - color: green
@@ -409,7 +409,7 @@ genealogy:
       name: 10
       deme: 1
   - name: 14
-    time: 0.427279
+    time: 0.4272785645537317
     deme: 1
     pocket:
     - color: green
@@ -418,7 +418,7 @@ genealogy:
       name: 14
       deme: 1
   - name: 15
-    time: 0.444306
+    time: 0.44430558692370586
     deme: 1
     pocket:
     - color: green
@@ -427,7 +427,7 @@ genealogy:
       name: 13
       deme: 1
   - name: 16
-    time: 0.460487
+    time: 0.46048709586403846
     deme: 1
     pocket:
     - color: green
@@ -436,7 +436,7 @@ genealogy:
       name: 16
       deme: 1
   - name: 17
-    time: 0.461172
+    time: 0.46117194066844197
     deme: 1
     pocket:
     - color: green
@@ -445,7 +445,7 @@ genealogy:
       name: 3
       deme: 1
   - name: 18
-    time: 0.473667
+    time: 0.47366733627882585
     deme: 1
     pocket:
     - color: black
@@ -455,7 +455,7 @@ genealogy:
       name: 18
       deme: 1
   - name: 19
-    time: 0.477938
+    time: 0.4779375747181561
     deme: 1
     pocket:
     - color: black
@@ -465,7 +465,7 @@ genealogy:
       name: 19
       deme: 1
   - name: 20
-    time: 0.480735
+    time: 0.4807345949301227
     deme: 1
     pocket:
     - color: black
@@ -475,7 +475,7 @@ genealogy:
       name: 20
       deme: 1
   - name: 21
-    time: 0.496054
+    time: 0.4960535548687165
     deme: 1
     pocket:
     - color: black
@@ -486,12 +486,12 @@ genealogy:
       deme: 1
 > 
 > simulate("LBDP",time=0.5) |> geneal() |> yaml()
-t0: 0.000000
-time: 0.500000
+t0: 0
+time: 0.5
 ndeme: 1
 nodes:
 - name: 3
-  time: 0.000000
+  time: 0
   deme: 0
   lineage: 1
   pocket:
@@ -500,7 +500,7 @@ nodes:
   - color: green
     name: 7
 - name: 2
-  time: 0.000000
+  time: 0
   deme: 0
   lineage: 2
   pocket:
@@ -509,7 +509,7 @@ nodes:
   - color: green
     name: 6
 - name: 1
-  time: 0.000000
+  time: 0
   deme: 0
   pocket:
   - color: green
@@ -518,7 +518,7 @@ nodes:
     name: 1
     deme: 1
 - name: 0
-  time: 0.000000
+  time: 0
   deme: 0
   lineage: 0
   pocket:
@@ -527,14 +527,14 @@ nodes:
   - color: green
     name: 5
 - name: 5
-  time: 0.075698
+  time: 0.07569774174642685
   deme: 1
   lineage: 0
   pocket:
   - color: blue
     name: 5
 - name: 6
-  time: 0.085537
+  time: 0.08553746570412937
   deme: 1
   lineage: 2
   pocket:
@@ -544,7 +544,7 @@ nodes:
     name: 6
     deme: 1
 - name: 7
-  time: 0.217415
+  time: 0.21741529064204082
   deme: 1
   lineage: 1
   pocket:
@@ -554,7 +554,7 @@ nodes:
     name: 3
     deme: 1
 - name: 8
-  time: 0.272939
+  time: 0.2729392256374571
   deme: 1
   lineage: 2
   pocket:
@@ -563,7 +563,7 @@ nodes:
   - color: green
     name: 10
 - name: 9
-  time: 0.277725
+  time: 0.27772535224508765
   deme: 1
   lineage: 2
   pocket:
@@ -572,14 +572,14 @@ nodes:
   - color: blue
     name: 9
 - name: 10
-  time: 0.317371
+  time: 0.3173713134028274
   deme: 1
   lineage: 3
   pocket:
   - color: blue
     name: 10
 - name: 11
-  time: 0.334622
+  time: 0.33462242768003614
   deme: 1
   lineage: 4
   pocket:
@@ -599,12 +599,12 @@ parameter:
 state:
   n: 4
 genealogy:
-  t0: 0.000000
-  time: 0.500000
+  t0: 0
+  time: 0.5
   ndeme: 1
   nodes:
   - name: 4
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -613,7 +613,7 @@ genealogy:
       name: 4
       deme: 1
   - name: 3
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 1
     pocket:
@@ -622,7 +622,7 @@ genealogy:
     - color: green
       name: 6
   - name: 2
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 2
     pocket:
@@ -631,7 +631,7 @@ genealogy:
     - color: green
       name: 8
   - name: 1
-    time: 0.000000
+    time: 0
     deme: 0
     pocket:
     - color: green
@@ -639,7 +639,7 @@ genealogy:
     - color: green
       name: 9
   - name: 0
-    time: 0.000000
+    time: 0
     deme: 0
     lineage: 0
     pocket:
@@ -648,14 +648,14 @@ genealogy:
     - color: green
       name: 5
   - name: 5
-    time: 0.079967
+    time: 0.07996710026216629
     deme: 1
     lineage: 0
     pocket:
     - color: blue
       name: 5
   - name: 6
-    time: 0.085770
+    time: 0.0857695615109888
     deme: 1
     lineage: 1
     pocket:
@@ -665,14 +665,14 @@ genealogy:
       name: 3
       deme: 1
   - name: 7
-    time: 0.153248
+    time: 0.15324820120203966
     deme: 1
     lineage: 1
     pocket:
     - color: blue
       name: 7
   - name: 8
-    time: 0.411534
+    time: 0.41153381341604556
     deme: 1
     lineage: 2
     pocket:
@@ -682,7 +682,7 @@ genealogy:
       name: 2
       deme: 1
   - name: 9
-    time: 0.435175
+    time: 0.43517541689101646
     deme: 1
     pocket:
     - color: black

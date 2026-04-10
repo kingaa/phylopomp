@@ -18,6 +18,7 @@
     \item The use of palettes in the plotting routines is now more consistent.
     \item The \code{curtail} now takes arguments \code{t0} and \code{time}, consistent with the usage in the rest of the package.
     \item \code{sir_pomp}, \code{seirs_pomp}, and \code{strains_pomp} now expect initial conditions expressed as fractions of a specified host population size (\code{pop}).
+    \item When times or branch-lengths are converted to decimal representation (e.g., by \code{newick()} or \code{yaml()}), more care is taken to preserve precision.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.16}{

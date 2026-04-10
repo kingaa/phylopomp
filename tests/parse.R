@@ -182,6 +182,10 @@ try(
 r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
    parse_newick()
 
+r"{([&&NHX:bob=no]:0.2[&&NHX:bob=42],:[&&NHX:bob=maybe]0.1):[&&NHX: bob=yes]0.5;}" |>
+   parse_newick() |>
+   newick(extended=FALSE)
+
 try(
   r"{(:1,:1):1;((:1,:1):1;}" |>
      parse_newick()
@@ -231,15 +235,23 @@ try(
 
 try(
   r"{:2 ,:3 ();}" |>
-     parse_newick() |>
-     diagram()
+     parse_newick()
+)
+
+try(
+  r"{:2 ,3 ();}" |>
+     parse_newick()
 )
 
 try(
   r"{()[bob =3 jack=[4]:0.3;}" |>
-     parse_newick() |>
-     diagram()
+     parse_newick()
 )
+
+try(
+  "A:3();" |> parse_newick()
+)
+
 
 plot_grid(
   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
@@ -250,7 +262,7 @@ plot_grid(
   ":;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   "A:1;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   "();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
-  "A:3();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
+  "A3();" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   "()A:3;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   "(:2):2;" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),
   r"{([&&PhyloPOMP:deme=9|type=extant]:1.0000):0.5;}" |>

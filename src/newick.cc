@@ -8,6 +8,23 @@
 #include <Rmath.h>
 #include <Rdefines.h>
 
+#include <cstring>
+#include <charconv>
+#include <iostream>
+
+std::string
+double2string
+(double value)
+{
+  char buffer[32];
+  auto [ptr, ec] = std::to_chars(buffer,buffer+sizeof(buffer),value);
+  if (ec == std::errc()) {
+    return string_t(buffer,ptr);
+  } else {
+    err("error in %s",__func__); // #nocov
+  }
+}
+
 //! Element of a Newick representation.
 //! This should only be called at tip-nodes.
 string_t
@@ -20,7 +37,7 @@ ball_t::newick
     o += " deme=" + std::to_string(deme());
   o += "]"
     + std::to_string(uniq) +
-    ":" + std::to_string(t);
+    ":" + double2string(t);
   return o;
 }
 
@@ -70,7 +87,7 @@ node_t::newick
   }
   return o1 + o2 + o3
     + std::to_string(uniq)
-    + ":" + std::to_string(slate - tpar);
+    + ":" + double2string(slate - tpar);
 }
 
 //! put genealogy at time `t` into Newick format.

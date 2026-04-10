@@ -38,7 +38,7 @@ node_t::yaml
 {
   string_t t = tab + "  ";
   string_t o = "name: " + std::to_string(uniq) + "\n"
-    + tab + "time: " + std::to_string(slate) + "\n"
+    + tab + "time: " + double2string(slate) + "\n"
     + tab + "deme: " + std::to_string(deme()) + "\n";
   if (lineage() != null_lineage) {
     o += tab + "lineage: " + std::to_string(lineage()) + "\n";
@@ -65,8 +65,8 @@ genealogy_t::yaml
 {
   string_t o;
   string_t t = tab + "  ";
-  o = tab + "t0: " + std::to_string(timezero()) + "\n"
-    + tab + "time: " + std::to_string(time()) + "\n"
+  o = tab + "t0: " + double2string(timezero()) + "\n"
+    + tab + "time: " + double2string(time()) + "\n"
     + tab + "ndeme: " + std::to_string(ndeme()) + "\n"
     + tab + "nodes:\n" + nodeseq_t::yaml(tab);
   return o;
