@@ -1,7 +1,6 @@
 ## **phylopomp**, an *R* package for POMP inference on genealogies
 
-[![Project Status: WIP - Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Development Release](https://img.shields.io/github/release/kingaa/phylopomp.svg)](https://github.com/kingaa/phylopomp/releases/latest)
 [![](https://www.r-pkg.org/badges/version/phylopomp?color=blue)](https://cran.r-project.org/package=phylopomp)
 [![R-CMD-check](https://github.com/kingaa/phylopomp/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/r-cmd-check.yml)
@@ -35,6 +34,7 @@ You can install **phylopomp** in one of three ways:
 
   - [**pomp**](https://github.com/kingaa/pomp/)
   - [**circumstance**](https://github.com/kingaa/circumstance/)
+  - [**PhyloPOMP.jl**](https://github.com/kingaa/PhyloPOMP.jl/)
 
 ### Checklist for adding a new model
 

@@ -11,8 +11,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 format:
   html:
-    code-fold: show
     embed-resources: true
+    code-fold: true
 knitr:
   opts_chunk:
     progress: TRUE
@@ -87,7 +87,6 @@ sim |>
 The following solves the filter equation at each point of a grid.
 
 ```{r pfilter1}
-#| code-fold: show
 {
   library(doParallel)
   library(doRNG)
