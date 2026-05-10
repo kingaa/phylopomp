@@ -20,14 +20,14 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{cowplot}{\code{\link[cowplot]{plot_grid}}}
+  \item{cowplot}{\code{\link[cowplot:plot_grid]{plot_grid()}}}
 
-  \item{foreach}{\code{\link[foreach:foreach]{\%dopar\%}}, \code{\link[foreach]{foreach}}, \code{\link[foreach]{registerDoSEQ}}}
+  \item{foreach}{\code{\link[foreach:\%dopar\%]{\%dopar\%}}, \code{\link[foreach:foreach]{foreach()}}, \code{\link[foreach:registerDoSEQ]{registerDoSEQ()}}}
 
-  \item{grid}{\code{\link[grid]{viewport}}}
+  \item{grid}{\code{\link[grid:viewport]{viewport()}}}
 
-  \item{pomp}{\code{\link[pomp]{bake}}, \code{\link[pomp:bake]{freeze}}, \code{\link[pomp:bake]{stew}}}
+  \item{pomp}{\code{\link[pomp:bake]{bake()}}, \code{\link[pomp:freeze]{freeze()}}, \code{\link[pomp:stew]{stew()}}}
 
-  \item{yaml}{\code{\link[yaml]{as.yaml}}, \code{\link[yaml]{read_yaml}}}
+  \item{yaml}{\code{\link[yaml:as.yaml]{as.yaml()}}, \code{\link[yaml:read_yaml]{read_yaml()}}}
 }}
 

@@ -4,7 +4,7 @@
 #define Exposed  1
 #define Infected 2
 
-static const int nrate = 7;
+static const int nrate = 6;
 
 static inline int random_choice (double n) {
   return floor(R_unif_index(n));
@@ -65,31 +65,29 @@ static double event_rates
   double event_rate = 0;
   double alpha, pi;
   *penalty = 0;
-  // 0: transmission, s=(0,0)
+  // 0: transmission, s=(0,0) or s=(0,1)
   assert(S>=0 && I>=0);
   alpha = (POP > 0) ? Beta*S*I/POP : 0;
   pi = (I > 0) ? 1-ellI/I : 0;
   assert(I >= ellI);
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
-  // 1: transmission, s=(0,1)
-  pi = (1-pi)/2;
+  // 1: transmission, s=(1,0)
+  pi = 1-pi;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ellI); logpi++;
-  // 2: transmission, s=(1,0)
-  event_rate += (*rate = alpha*pi); rate++;
-  *logpi = log(pi)-log(ellI); logpi++;
-  // 3: progression, s=(0,0)
+  // 2: progression, s=(0,0)
   assert(E>=0);
   alpha = sigma*E;
-  pi = (E > 0) ? ellE/E : 1;
+  pi = (E > 0) ? 1-ellE/E : 1;
   assert(E >= ellE);
-  event_rate += (*rate = alpha*(1-pi)); rate++;
-  *logpi = log(1-pi); logpi++;
-  // 4: progression, s=(0,1)
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi); logpi++;
+  // 3: progression, s=(0,1)
+  pi = 1-pi;
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi)-log(ellE); logpi++;
-  // 5: recovery
+  // 4: recovery
   assert(I>=0);
   alpha = gamma*I;
   if (I > ellI) {
@@ -100,7 +98,7 @@ static double event_rates
     *logpi = 0; logpi++;
     *penalty += alpha;
   }
-  // 6: waning
+  // 5: waning
   event_rate += (*rate = omega*R); rate++;
   *logpi = 0; logpi++;
   // sampling (Q = 0)
@@ -281,19 +279,13 @@ void seirs_gill
       assert(event>=0 && event<nrate);
       ll -= penalty*tstep + logpi[event];
       switch (event) {
-      case 0:                   // transmission, s=(0,0)
+      case 0:                   // transmission, s=(0,0) or s=(0,1)
         assert(S>=1);
         S -= 1; E += 1;
-        ll += log(1-ellI/I)+log(1-ellE/E);
+        ll += log(1-ellE/E);
         assert(!ISNAN(ll));
         break;
-      case 1:                   // transmission, s=(0,1)
-        assert(S>=1);
-        S -= 1; E += 1;
-        ll += log(1-ellE/E)-log(I);
-        assert(!ISNAN(ll));
-        break;
-      case 2:                   // transmission, s=(1,0)
+      case 1:                   // transmission, s=(1,0)
         assert(S>=1);
         change_color(color,nsample,random_choice(ellI),Infected,Exposed);
         ellE += 1; ellI -= 1;
@@ -301,13 +293,13 @@ void seirs_gill
         ll += log(1-ellI/I)-log(E);
         assert(!ISNAN(ll));
         break;
-      case 3:                   // progression, s=(0,0)
+      case 2:                   // progression, s=(0,0)
         assert(E>=1);
         E -= 1; I += 1;
         ll += log(1-ellI/I);
         assert(!ISNAN(ll));
         break;
-      case 4:                   // progression, s=(0,1)
+      case 3:                   // progression, s=(0,1)
         assert(E>=1);
         change_color(color,nsample,random_choice(ellE),Exposed,Infected);
         ellE -= 1; ellI += 1;
@@ -315,12 +307,12 @@ void seirs_gill
         ll -= log(I);
         assert(!ISNAN(ll));
         break;
-      case 5:                   // recovery
+      case 4:                   // recovery
         assert(I>=1);
         I -= 1; R += 1;
         assert(!ISNAN(ll));
         break;
-      case 6:                   // waning
+      case 5:                   // waning
         assert(R>=1);
         R -= 1; S += 1;
         assert(!ISNAN(ll));

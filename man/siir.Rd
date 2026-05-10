@@ -91,7 +91,7 @@ More example genealogy processes:
 \code{\link{s2i2r2}},
 \code{\link{seir}},
 \code{\link{si2r}},
-\code{\link{simulate}()},
+\code{\link[=simulate]{simulate()}},
 \code{\link{sir}},
 \code{\link{strains}},
 \code{\link{twospecies}},

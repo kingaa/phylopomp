@@ -53,7 +53,7 @@ More example genealogy processes:
 \code{\link{seir}},
 \code{\link{si2r}},
 \code{\link{siir}},
-\code{\link{simulate}()},
+\code{\link[=simulate]{simulate()}},
 \code{\link{sir}},
 \code{\link{strains}},
 \code{\link{twospecies}},
