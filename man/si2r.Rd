@@ -11,15 +11,16 @@ runSI2R(
   time,
   t0 = 0,
   Beta = 5,
-  mu = 5,
+  kappa = 2,
   gamma = 1,
   omega = 0,
-  psi1 = 1,
-  psi2 = 0,
-  sigma12 = 1,
-  sigma21 = 3,
-  S0 = 500,
-  I0 = 10,
+  psi = 1,
+  etaL = 1,
+  etaH = 3,
+  pop = 500,
+  S0 = 0.98,
+  IL0 = 0.02,
+  IH0 = 0,
   R0 = 0
 )
 
@@ -27,13 +28,12 @@ continueSI2R(
   object,
   time,
   Beta = NA,
-  mu = NA,
+  kappa = NA,
   gamma = NA,
   omega = NA,
-  psi1 = NA,
-  psi2 = NA,
-  sigma12 = NA,
-  sigma21 = NA
+  psi = NA,
+  etaL = NA,
+  etaH = NA
 )
 }
 \arguments{
@@ -43,21 +43,27 @@ continueSI2R(
 
 \item{Beta}{transmission rate}
 
-\item{mu}{mean superspreading-event cluster size}
+\item{kappa}{super-spreading transmission factor}
 
 \item{gamma}{recovery rate}
 
 \item{omega}{rate of waning of immunity}
 
-\item{psi1, psi2}{sampling rates for demes 1 and 2, respectively}
+\item{psi}{sampling rate}
 
-\item{sigma12, sigma21}{movement rates from deme 1 to 2 and 2 to 1, respectively}
+\item{etaL}{rate of transition from low-spreading to super-spreading behavior}
+
+\item{etaH}{rate of transition from super-spreading to low-spreading behavior}
+
+\item{pop}{population size}
 
 \item{S0}{initial size of susceptible population}
 
-\item{I0}{initial size of I1 population (I2 = 0 at t = 0)}
+\item{IL0}{initial size of low-spreading population}
 
-\item{R0}{initial size of recovered population}
+\item{IH0}{initial size of super-spreading population}
+
+\item{R0}{initial size of immune population}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
@@ -66,43 +72,9 @@ continueSI2R(
 \code{runSI2R} and \code{continueSI2R} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{SI2R}.
 }
 \description{
-Deme 2 consists of "superspreaders" who engender clusters
-of infection in "superspreading events".
-}
-\details{
-Superspreaders (deme 2) behave differently than ordinary infections:
-transmission events occur at the same rate (\code{Beta}), but at each event,
-a superspreader infects \eqn{N} individuals, where
-\deqn{N\sim1+\mathrm{Geometric}(1/\mu).}{N~1+Geometric(1/mu).}
-Thus, assuming susceptibles are not limiting, the mean number of infections
-resulting from a superspreading event is \eqn{\mu}{mu}
-and the variance in this number is \eqn{\mu^2-\mu}{mu^2-mu)}.
-If susceptibles are limiting,
-i.e., if the number of susceptibles is not greater than \eqn{N},
-then all remaining susceptibles are infected.
-}
-\examples{
-simulate("SI2R",time=1) |>
-  plot(obscure=FALSE)
-
-runSI2R(Beta=10,S0=2000,time=1,psi1=0) |>
-  simulate(time=2,psi1=1) |>
-  plot(points=TRUE,obscure=FALSE)
-
-simulate("SI2R",time=5) |>
-  lineages() |>
-  plot()
-
-simulate("SI2R",time=2) |>
-  diagram(m=30)
-
-simulate("SI2R",time=20,omega=0.2,mu=20) -> x
-plot_grid(
-  x |> plot(obscure=FALSE),
-  x |> lineages(obscure=FALSE) |> plot(),
-  ncol=1,
-  align="v",axis="b"
-)
+Deme L consists of "low-rate spreaders" that transmit at rate \code{Beta}.
+Deme H consists of "superspreaders" who transmit at a higher rate
+\code{kappa*Beta}.
 }
 \seealso{
 More example genealogy processes:

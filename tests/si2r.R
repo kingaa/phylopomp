@@ -10,7 +10,7 @@ set.seed(481604604)
 
 runSI2R(time=10)
 
-runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2) |>
+runSI2R(time=2,Beta=1,kappa=5,gamma=1,psi=2) |>
   simulate(time=5) |>
   plot(obscure=FALSE,points=TRUE)
 
@@ -19,11 +19,11 @@ x |> plot(prune=FALSE,obscure=FALSE)
 x |> yaml() -> y
 x |> lineages(obscure=FALSE) |> plot()
 
-runSI2R(time=2,Beta=2,mu=3,gamma=1,psi1=2,psi2=2,omega=1) |>
+runSI2R(time=2,Beta=2,gamma=1,psi=2,omega=1) |>
   simulate(time=5) |>
   plot(prune=FALSE,obscure=FALSE,points=TRUE)
 
-runSI2R(time=2,S0=20,mu=10) |>
+runSI2R(time=2,pop=100,kappa=10,IL0=0.05,etaL=3,etaH=0.1) |>
   simulate(time=3) |>
   lineages(obscure=FALSE) |>
   plot()

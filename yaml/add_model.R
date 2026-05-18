@@ -22,6 +22,14 @@ render <- function (template, ...) {
   do.call(paste0,retval)
 }
 
+ml_repair <- function (text) {
+  paste0("##' ",strsplit(text,split="\n")[[1L]],collapse="\n")
+}
+
+oneline <- function (text) {
+  paste0(strsplit(text,split="\n")[[1L]],collapse=" ")
+}
+
 make_model <- function (model) {
 
   ## Render the model-specific C++ file
@@ -186,9 +194,9 @@ GENERICS({%name%},{%gen%})
 
   ## Render the model-specific R file
   ## This should be minimally sufficient, but edits can be made to improve it.
-  r"[##' {%description%}
+  r"[{%description%}
 ##'
-##' {%details%}
+{%details%}
 ##'
 ##' @name {%rdname%}
 ##' @family Genealogy processes
@@ -229,13 +237,13 @@ continue{%name%} <- function (
   render(
     name=model$name,
     rdname=tolower(model$name),
-    description=model$description,
-    details=model$details,
+    description=ml_repair(model$description),
+    details=ml_repair(model$details),
     param_descript=paste(
       lapply(
         c(model$parameter,model$ivp),
         \(p) render(template="##' @param {%name%} {%description%}",
-          name=p$name,description=p$description)
+          name=p$name,description=oneline(p$description))
       ),
       collapse="\n"),
     params=paste(
@@ -389,44 +397,6 @@ print.gpyaml <- function (x, ...) {
   invisible(NULL)
 }
 
-## Render the 'R/geneal.R' file.
-render_geneal_R_file <- function (models) {
-  models <- sapply(models,getElement,"name")
-  lapply(
-    models,
-    \(y) render(
-           r"[    model{%model%} = .Call(P_geneal{%model%},object),]",
-           model=y
-         )
-  ) |>
-    paste(collapse="\n") -> calls
-
-  r"{##' Bare genealogy
-##'
-##' Extracts the bare genealogy from a Markov genealogy process simulation
-##'
-##' @name geneal
-##' @include package.R
-##' @param object a \sQuote{gpgen} object.
-##' @return A bare genealogy object.
-##' @rdname geneal
-##' @export
-geneal <- function (object) {
-  switch(
-    paste0("model",as.character(attr(object,"model"))),
-{%calls%}
-    model = structure(object,class=c("gpgen")),
-    pStop("unrecognized model ",sQuote(attr(object,"model")))
-  )
-}
-}" |>
-  render(
-    calls=calls
-  ) |>
-  cat(file="R/geneal.R")
-  invisible(NULL)
-}
-
 ## Render the 'R/simulate.R' file.
 render_simulate_R_file <- function (models) {
   models |>
@@ -552,5 +522,4 @@ for (f in files) {
 }
 render_init_c_file(models)
 render_yaml_R_file(models)
-render_geneal_R_file(models)
 render_simulate_R_file(models)

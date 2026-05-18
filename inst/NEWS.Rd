@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.18.1}{
+  \itemize{
+    \item The \code{SI2R} model has been completely changed.
+    It now features two demes, one of which transmits at a rate that is a multiple of the other.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.18}{
   \itemize{
     \item The integration of the filter for the SEIRS model has changed.
