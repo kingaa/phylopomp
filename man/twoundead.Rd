@@ -124,6 +124,7 @@ The population is structured by infection progression and host species.
 \seealso{
 More example genealogy processes:
 \code{\link{lbdp}},
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},

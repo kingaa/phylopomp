@@ -29,6 +29,7 @@ simulate.default <- function (object, ...) {
     message(
       "Available phylopomp models:\n",
       "- LBDP: Linear birth-death-sampling model\n",
+      "- MERS: Two-host infection model with spillover and demography. Hosts are culled upon sampling.\n",
       "- Moran: The classical Moran model\n",
       "- S2I2R2: Two-host infection model with waning, immigration, and demography.\n",
       "- SEIR: Classical susceptible-exposed-infected-recovered model\n",
@@ -58,6 +59,7 @@ simulate.character <- function (object, time, ...) {
   switch(
     paste0("model",object),
     modelLBDP = runLBDP(time=time,...),
+    modelMERS = runMERS(time=time,...),
     modelMoran = runMoran(time=time,...),
     modelS2I2R2 = runS2I2R2(time=time,...),
     modelSEIR = runSEIR(time=time,...),
@@ -87,6 +89,7 @@ simulate.gpsim <- function (object, time, ...) {
   switch(
     paste0("model",model),
     modelLBDP = continueLBDP(object,time=time,...),
+    modelMERS = continueMERS(object,time=time,...),
     modelMoran = continueMoran(object,time=time,...),
     modelS2I2R2 = continueS2I2R2(object,time=time,...),
     modelSEIR = continueSEIR(object,time=time,...),

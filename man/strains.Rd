@@ -89,6 +89,7 @@ The three demes are three distinct pathogen strains that compete for susceptible
 \seealso{
 More example genealogy processes:
 \code{\link{lbdp}},
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},

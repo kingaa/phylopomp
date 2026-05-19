@@ -19,6 +19,7 @@ SEXP geneal (SEXP);
 // one DECLARATIONS line and one METHODS line.
 
 DECLARATIONS(LBDP);
+DECLARATIONS(MERS);
 DECLARATIONS(Moran);
 DECLARATIONS(S2I2R2);
 DECLARATIONS(SEIR);
@@ -31,6 +32,7 @@ DECLARATIONS(TwoUndead);
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
+  METHODS(MERS),
   METHODS(Moran),
   METHODS(S2I2R2),
   METHODS(SEIR),

@@ -17,6 +17,7 @@ yaml <- function (object) {
   switch(
     paste0("model",as.character(attr(object,"model"))),
     modelLBDP = .Call(P_yamlLBDP,object),
+    modelMERS = .Call(P_yamlMERS,object),
     modelMoran = .Call(P_yamlMoran,object),
     modelS2I2R2 = .Call(P_yamlS2I2R2,object),
     modelSEIR = .Call(P_yamlSEIR,object),

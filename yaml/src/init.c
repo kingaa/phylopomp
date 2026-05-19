@@ -7,15 +7,19 @@ get_userdata_double_t *get_userdata_double;
 get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
+SEXP newick (SEXP, SEXP);
 SEXP getInfo (SEXP);
+SEXP genealSum (SEXP);
 SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
-SEXP gendat (SEXP);
+SEXP gendat (SEXP, SEXP);
+SEXP geneal (SEXP);
 
 // for each model, there must be
 // one DECLARATIONS line and one METHODS line.
 
 DECLARATIONS(LBDP);
+DECLARATIONS(MERS);
 DECLARATIONS(Moran);
 DECLARATIONS(S2I2R2);
 DECLARATIONS(SEIR);
@@ -28,6 +32,7 @@ DECLARATIONS(TwoUndead);
 
 static const R_CallMethodDef callMethods[] = {
   METHODS(LBDP),
+  METHODS(MERS),
   METHODS(Moran),
   METHODS(S2I2R2),
   METHODS(SEIR),
@@ -38,14 +43,17 @@ static const R_CallMethodDef callMethods[] = {
   METHODS(TwoSpecies),
   METHODS(TwoUndead),
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
+  {"newick", (DL_FUNC) &newick, 2},
   {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
-  {"gendat", (DL_FUNC) &gendat, 1},
+  {"gendat", (DL_FUNC) &gendat, 2},
+  {"geneal", (DL_FUNC) &geneal, 1},
   {NULL, NULL, 0}
 };
 
 static const R_CallMethodDef extMethods[] = {
   {"getInfo", (DL_FUNC) &getInfo, -1},
+  {"genealSum", (DL_FUNC) &genealSum, -1},
   {NULL, NULL, 0}
 };
 

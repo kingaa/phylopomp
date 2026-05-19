@@ -17,36 +17,37 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> png(filename="siir1-%02d.png",res=100)
+> png(filename="mers1-%02d.png",res=100)
 > 
 > options(tidyverse.quiet=TRUE,digits=3)
 > suppressPackageStartupMessages({
-+   library(phylopomp)
 +   library(tidyverse)
++   library(phylopomp)
 + })
 > theme_set(theme_bw())
 > set.seed(481604604)
 > 
-> runSIIR(time=10,psi1=1,psi2=1,S0=100)
-<gpsim for SIIR model>
+> runMERS(time=10)
+<gpsim for MERS model>
 > 
-> runSIIR(Beta1=2,Beta2=4,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=2,time=2) |>
-+   plot(points=TRUE)
+> runMERS(time=1,Ic0=0.0002,Beta_hc=4,Beta_hh=2,chi_h=2) |>
++   simulate(time=2) |>
++   plot(obscure=FALSE)
 > 
-> runSIIR(Beta=2,Beta2=5,gamma=1,psi1=2,psi2=2,S0=100,I1_0=5,I2_0=1,time=1) |>
-+   simulate(time=10,sigma21=1,sigma12=1,omega=1) |>
-+   plot(points=TRUE)
-> 
-> simulate("SIIR",time=2,S0=100,psi1=1,psi2=1) -> x
-> plot_grid(
-+   x |> plot(),
-+   x |> plot(obscure=FALSE),
-+   x |> plot(prune=FALSE),
-+   x |> plot(prune=FALSE,obscure=FALSE),
-+   align="hv",axis="bl"
-+ )
+> simulate("MERS",time=2,Ic0=0.0002,Beta_hc=4,Beta_hh=2,chi_h=2) -> x
+> x |> plot(prune=FALSE,obscure=FALSE)
 > x |> yaml() -> y
-> x |> lineages(prune=FALSE,obscure=FALSE) |> plot()
+> x |> lineages(obscure=FALSE) |> plot()
+> 
+> runMERS(time=2,Ic0=0.0002,Beta_hc=4,Beta_hh=2,chi_h=2,Bh=150,Bc=500) |>
++   simulate(time=5) |>
++   plot(prune=FALSE,obscure=FALSE)
+> 
+> runMERS(time=2,Ic0=0.0005,Beta_hc=0,Beta_hh=5,chi_h=2) |>
++   simulate(time=3,Beta_hc=2,Beta_ch=2) |>
++   simulate(time=5,Beta_hc=4,Beta_ch=0) |>
++   lineages(obscure=FALSE) |>
++   plot()
 > 
 > dev.off()
 null device 

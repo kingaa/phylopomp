@@ -87,6 +87,7 @@ simulate("SIIR",Beta1=2,Beta2=50,gamma=1,psi1=2,
 \seealso{
 More example genealogy processes:
 \code{\link{lbdp}},
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},

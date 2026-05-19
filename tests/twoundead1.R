@@ -21,6 +21,7 @@ simulate(
   omega1=0.5,omega2=0.5
 ) |>
   simulate(time=5,c1=1,c2=1) |>
+  simulate(time=8,iota1=0.1,iota2=0.1) |>
   freeze(seed=747318644) -> s
 
 stopifnot(
@@ -28,10 +29,13 @@ stopifnot(
     yaml() |>
     textConnection() |>
     readLines() |>
-    length()==4562
+    length()==6485
 )
 
-pal <- c("#00274c","#ffcb05","#aaaaaa","#cccccc","#800000")
+pal <- c(
+  `0`="#00274c",`1`="#ffcb05",`2`="#aaaaaa",`3`="#113311",
+  `4`="#800000",`5`="#cccccc"
+)
 
 s |>
   plot()

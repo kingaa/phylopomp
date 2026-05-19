@@ -1,0 +1,151 @@
+name: MERS
+description: |-
+  Two-host infection model with spillover and demography.
+  Hosts are culled upon sampling.
+details: |-
+  The population is structured by infection progression
+  and host species.
+demes:
+  - camel
+  - human
+state:
+  Sc:
+    name: Sc
+    type: int
+  Ic:
+    name: Ic
+    type: int
+  Sh:
+    name: Sh
+    type: int
+  Ih:
+    name: Ih
+    type: int
+parameter:
+  Beta_cc:
+    name: Beta_cc
+    description: transmission rate within camels
+    type: double
+    default: 4
+  Beta_ch:
+    name: Beta_ch
+    description: transmission from human to camel
+    type: double
+    default: 0
+  Beta_hc:
+    name: Beta_hc
+    description: transmission from camel to human
+    type: double
+    default: 0
+  Beta_hh:
+    name: Beta_hh
+    description: transmission rate within humans
+    type: double
+    default: 4
+  gamma_c:
+    name: gamma_c
+    description: removal rate in camels
+    type: double
+    default: 1
+  gamma_h:
+    name: gamma_h
+    description: removal rate in humans
+    type: double
+    default: 1
+  chi_c:
+    name: chi_c
+    description: per capita destructive sampling rate for camels
+    default: 1
+    type: double
+  chi_h:
+    name: chi_h
+    description: per capita destructive sampling rate for humans
+    default: 0
+    type: double
+  Bc:
+    name: Bc
+    description: gross birth rate for camels
+    default: 0
+    type: double
+  Bh:
+    name: Bh
+    description: gross birth rate for humans
+    default: 0
+    type: double
+ivp:
+  Sc0:
+    name: Sc0
+    description: initial susceptible fraction of camel population
+    default: 1
+    type: double
+  Sh0:
+    name: Sh0
+    description: initial susceptible fraction of human population
+    default: 1
+    type: double
+  Ic0:
+    name: Ic0
+    description: initial infected fraction of camel population
+    default: 0.01
+    type: double
+  Ih0:
+    name: Ih0
+    description: initial infected fraction of human population
+    default: 0
+    type: double
+  Nc:
+    name: Nc
+    description: camel population size
+    type: double
+    default: 10000
+  Nh:
+    name: Nh
+    description: human population size
+    type: double
+    default: 10000
+rinit: |-
+  double fc = params.Nc/(params.Sc0+params.Ic0);
+  double fh = params.Nh/(params.Sh0+params.Ih0);
+  state.Sc = nearbyint(fc*params.Sc0);
+  state.Ic = nearbyint(fc*params.Ic0);
+  state.Sh = nearbyint(fh*params.Sh0);
+  state.Ih = nearbyint(fh*params.Ih0);
+  graft(camel,state.Ic);
+  graft(human,state.Ih);
+events:
+  infect_cc:
+    rate: params.Beta_cc * state.Sc * state.Ic / params.Nc
+    jump: state.Sc -= 1; state.Ic += 1; birth(camel,camel);
+  infect_hh:
+    rate: params.Beta_hh * state.Sh * state.Ih / params.Nh
+    jump: state.Sh -= 1; state.Ih += 1; birth(human,human);
+  infect_ch:
+    rate: params.Beta_ch * state.Sc * state.Ih / params.Nh
+    jump: state.Sc -= 1; state.Ic += 1; birth(human,camel);
+  infect_hc:
+    rate: params.Beta_hc * state.Sh * state.Ic / params.Nc
+    jump: state.Sh -= 1; state.Ih += 1; birth(camel,human);
+  remov_c:
+    jump: state.Ic -= 1; death(camel);
+    rate: params.gamma_c * state.Ic
+  remov_h:
+    jump: state.Ih -= 1; death(human);
+    rate: params.gamma_h * state.Ih
+  sample_c:
+    rate: params.chi_c * state.Ic
+    jump: state.Ic -= 1; sample_death(camel);
+  sample_h:
+    rate: params.chi_h * state.Ih
+    jump: state.Ih -= 1; sample_death(human);
+  birth_c:
+    rate: params.Bc
+    jump: state.Sc += 1;
+  birth_h:
+    rate: params.Bh
+    jump: state.Sh += 1;
+  death_c:
+    rate: params.Bc
+    jump: if (state.Sc > 0) state.Sc -= 1;
+  death_h:
+    rate: params.Bh/params.Nh * state.Sh
+    jump: if (state.Sh > 0) state.Sh -= 1;

@@ -122,6 +122,7 @@ plot_grid(
 \seealso{
 More example genealogy processes:
 \code{\link{lbdp}},
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{seir}},
 \code{\link{si2r}},

@@ -106,7 +106,7 @@ GENERICS({%name%},{%gen%})
 }" |>
   render(
     name=model$name,
-    descript=model$description,
+    descript=oneline(model$description),
     gen=paste0(tolower(model$name),"_genealogy_t"),
     proc=paste0(tolower(model$name),"_proc_t"),
     param_type=paste0(tolower(model$name),"_parameters_t"),
@@ -293,10 +293,13 @@ get_userdata_double_t *get_userdata_double;
 get_userdata_int_t *get_userdata_int;
 
 SEXP parse_newick (SEXP, SEXP, SEXP);
+SEXP newick (SEXP, SEXP);
 SEXP getInfo (SEXP);
+SEXP genealSum (SEXP);
 SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
-SEXP gendat (SEXP);
+SEXP gendat (SEXP, SEXP);
+SEXP geneal (SEXP);
 
 // for each model, there must be
 // one DECLARATIONS line and one METHODS line.
@@ -306,14 +309,17 @@ SEXP gendat (SEXP);
 static const R_CallMethodDef callMethods[] = {
 {%methods%}
   {"parse_newick", (DL_FUNC) &parse_newick, 3},
+  {"newick", (DL_FUNC) &newick, 2},
   {"curtail", (DL_FUNC) &curtail, 3},
   {"yaml", (DL_FUNC) &yaml, 1},
-  {"gendat", (DL_FUNC) &gendat, 1},
+  {"gendat", (DL_FUNC) &gendat, 2},
+  {"geneal", (DL_FUNC) &geneal, 1},
   {NULL, NULL, 0}
 };
 
 static const R_CallMethodDef extMethods[] = {
   {"getInfo", (DL_FUNC) &getInfo, -1},
+  {"genealSum", (DL_FUNC) &genealSum, -1},
   {NULL, NULL, 0}
 };
 
@@ -404,7 +410,7 @@ render_simulate_R_file <- function (models) {
       \(y) render(
              r"{      "- {%name%}: {%description%}\\n",}",
              name=y$name,
-             description=y$description
+             description=oneline(y$description)
            )
     ) |>
     paste(collapse="\n") -> descriptions

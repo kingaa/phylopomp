@@ -10,7 +10,7 @@ indent:
 	done
 
 install:
-	cp src/*.cc ../src
+	cp src/*.cc src/*.c ../src
 	cp R/*.R ../R
 
 .PHONY: default process indent install

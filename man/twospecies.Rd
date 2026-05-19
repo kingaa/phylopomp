@@ -159,6 +159,7 @@ Note that, for the moment, \code{twospecies_pomp} assumes that there is no impor
 \seealso{
 More example genealogy processes:
 \code{\link{lbdp}},
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},

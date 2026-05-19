@@ -44,6 +44,7 @@ Error : no model attribute detected.
 > simulate()
 Available phylopomp models:
 - LBDP: Linear birth-death-sampling model
+- MERS: Two-host infection model with spillover and demography. Hosts are culled upon sampling.
 - Moran: The classical Moran model
 - S2I2R2: Two-host infection model with waning, immigration, and demography.
 - SEIR: Classical susceptible-exposed-infected-recovered model

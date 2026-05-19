@@ -76,6 +76,7 @@ simulate("LBDP",time=4) |>
 }
 \seealso{
 More example genealogy processes:
+\code{\link{mers}},
 \code{\link{moran}},
 \code{\link{s2i2r2}},
 \code{\link{seir}},
