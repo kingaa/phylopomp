@@ -3,6 +3,7 @@
 \section{Changes in \pkg{phylopomp} version 0.18.2}{
   \itemize{
     \item There is a new model, \code{MERS}.
+    \item In the \code{SI2R} model, the sampling is assumed to be destructive.
     \item The YAML-translator has been improved and updated.
     \item Improvements to unit testing.
   }

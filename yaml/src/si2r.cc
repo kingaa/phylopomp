@@ -21,7 +21,7 @@ typedef struct {
   double kappa;
   double gamma;
   double omega;
-  double psi;
+  double chi;
   double etaL;
   double etaH;
   double pop;
@@ -42,7 +42,7 @@ std::string si2r_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(kappa)
     + YAML_PARAM(gamma)
     + YAML_PARAM(omega)
-    + YAML_PARAM(psi)
+    + YAML_PARAM(chi)
     + YAML_PARAM(etaL)
     + YAML_PARAM(etaH)
     + YAML_PARAM(pop)
@@ -65,7 +65,7 @@ void si2r_proc_t::update_params (double *p, int n) {
   PARAM_SET(kappa);
   PARAM_SET(gamma);
   PARAM_SET(omega);
-  PARAM_SET(psi);
+  PARAM_SET(chi);
   PARAM_SET(etaL);
   PARAM_SET(etaH);
   if (m != n) err("wrong number of parameters!");
@@ -93,8 +93,8 @@ double si2r_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.gamma * state.IL);
   RATE_CALC(params.gamma * state.IH);
   RATE_CALC(params.omega * state.R);
-  RATE_CALC(params.psi * state.IL);
-  RATE_CALC(params.psi * state.IH);
+  RATE_CALC(params.chi * state.IL);
+  RATE_CALC(params.chi * state.IH);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -102,10 +102,10 @@ double si2r_proc_t::event_rates (double *rate, int n) const {
 template<>
 void si2r_genealogy_t::rinit (void) {
   double f = params.pop/(params.S0+params.IL0+params.IH0+params.R0);
-  state.S = int(f*params.S0);
-  state.IL = int(f*params.IL0);
-  state.IH = int(f*params.IH0);
-  state.R = int(f*params.R0);
+  state.S = nearbyint(f*params.S0);
+  state.IL = nearbyint(f*params.IL0);
+  state.IH = nearbyint(f*params.IH0);
+  state.R = nearbyint(f*params.R0);
   graft(L,state.IL);
   graft(H,state.IH);
 }
@@ -135,10 +135,10 @@ void si2r_genealogy_t::jump (int event) {
     state.R -= 1; state.S += 1;
     break;
   case 7:
-    sample(L);
+    state.IL -= 1; sample_death(L);
     break;
   case 8:
-    sample(H);
+    state.IH -= 1; sample_death(H);
     break;
   default:                      // #nocov
     assert(0);                  // #nocov

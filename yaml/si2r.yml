@@ -4,6 +4,7 @@ details: |-
   Deme L consists of "low-rate spreaders" that transmit at rate \\code{Beta}.
   Deme H consists of "superspreaders" who transmit at a higher rate
   \\code{kappa*Beta}.
+  Sampling is destructive.
 demes: [L, H]
 parameter:
   Beta:
@@ -26,9 +27,9 @@ parameter:
     description: rate of waning of immunity
     default: 0
     type: double
-  psi:
-    name: psi
-    description: sampling rate
+  chi:
+    name: chi
+    description: (destructive) sampling rate
     default: 1
     type: double
   etaL:
@@ -86,10 +87,10 @@ state:
     type: int
 rinit: |-
   double f = params.pop/(params.S0+params.IL0+params.IH0+params.R0);
-  state.S = int(f*params.S0);
-  state.IL = int(f*params.IL0);
-  state.IH = int(f*params.IH0);
-  state.R = int(f*params.R0);
+  state.S = nearbyint(f*params.S0);
+  state.IL = nearbyint(f*params.IL0);
+  state.IH = nearbyint(f*params.IH0);
+  state.R = nearbyint(f*params.R0);
   graft(L,state.IL);
   graft(H,state.IH);
 events:
@@ -115,8 +116,8 @@ events:
     jump: state.R -= 1; state.S += 1;
     rate: params.omega * state.R
   SL:
-    rate: params.psi * state.IL
-    jump: sample(L);
+    rate: params.chi * state.IL
+    jump: state.IL -= 1; sample_death(L);
   SH:
-    rate: params.psi * state.IH
-    jump: sample(H);
+    rate: params.chi * state.IH
+    jump: state.IH -= 1; sample_death(H);

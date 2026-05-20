@@ -3,6 +3,7 @@
 ##' Deme L consists of "low-rate spreaders" that transmit at rate \code{Beta}.
 ##' Deme H consists of "superspreaders" who transmit at a higher rate
 ##' \code{kappa*Beta}.
+##' Sampling is destructive.
 ##'
 ##' @name si2r
 ##' @family Genealogy processes
@@ -12,7 +13,7 @@
 ##' @param kappa super-spreading transmission factor
 ##' @param gamma recovery rate
 ##' @param omega rate of waning of immunity
-##' @param psi sampling rate
+##' @param chi (destructive) sampling rate
 ##' @param etaL rate of transition from low-spreading to super-spreading behavior
 ##' @param etaH rate of transition from super-spreading to low-spreading behavior
 ##' @param pop population size
@@ -29,9 +30,9 @@ NULL
 ##' @export
 runSI2R <- function (
   time, t0 = 0,
-  Beta = 5, kappa = 2, gamma = 1, omega = 0, psi = 1, etaL = 1, etaH = 3, pop = 500, S0 = 0.98, IL0 = 0.02, IH0 = 0, R0 = 0
+  Beta = 5, kappa = 2, gamma = 1, omega = 0, chi = 1, etaL = 1, etaH = 3, pop = 500, S0 = 0.98, IL0 = 0.02, IH0 = 0, R0 = 0
 ) {
-  params <- c(Beta=Beta,kappa=kappa,gamma=gamma,omega=omega,psi=psi,etaL=etaL,etaH=etaH)
+  params <- c(Beta=Beta,kappa=kappa,gamma=gamma,omega=omega,chi=chi,etaL=etaL,etaH=etaH)
   ivps <- c(pop=pop,S0=S0,IL0=IL0,IH0=IH0,R0=R0)
   x <- .Call(P_makeSI2R,params,ivps,t0)
   .Call(P_runSI2R,x,time) |>
@@ -42,10 +43,10 @@ runSI2R <- function (
 ##' @export
 continueSI2R <- function (
   object, time,
-  Beta = NA, kappa = NA, gamma = NA, omega = NA, psi = NA, etaL = NA, etaH = NA
+  Beta = NA, kappa = NA, gamma = NA, omega = NA, chi = NA, etaL = NA, etaH = NA
 ) {
   params <- c(
-    Beta=Beta,kappa=kappa,gamma=gamma,omega=omega,psi=psi,etaL=etaL,etaH=etaH
+    Beta=Beta,kappa=kappa,gamma=gamma,omega=omega,chi=chi,etaL=etaL,etaH=etaH
   )
   x <- .Call(P_reviveSI2R,object,params)
   .Call(P_runSI2R,x,time) |>

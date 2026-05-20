@@ -14,7 +14,7 @@ runSI2R(
   kappa = 2,
   gamma = 1,
   omega = 0,
-  psi = 1,
+  chi = 1,
   etaL = 1,
   etaH = 3,
   pop = 500,
@@ -31,7 +31,7 @@ continueSI2R(
   kappa = NA,
   gamma = NA,
   omega = NA,
-  psi = NA,
+  chi = NA,
   etaL = NA,
   etaH = NA
 )
@@ -49,7 +49,7 @@ continueSI2R(
 
 \item{omega}{rate of waning of immunity}
 
-\item{psi}{sampling rate}
+\item{chi}{(destructive) sampling rate}
 
 \item{etaL}{rate of transition from low-spreading to super-spreading behavior}
 
@@ -75,6 +75,7 @@ continueSI2R(
 Deme L consists of "low-rate spreaders" that transmit at rate \code{Beta}.
 Deme H consists of "superspreaders" who transmit at a higher rate
 \code{kappa*Beta}.
+Sampling is destructive.
 }
 \seealso{
 More example genealogy processes:
