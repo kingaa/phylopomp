@@ -1,7 +1,9 @@
 name: Strains
 description: Three strains compete for a single susceptible pool.
 details: |-
-  The three demes are three distinct pathogen strains that compete for susceptibles.
+  The three demes are three distinct pathogen strains that
+  compete for susceptibles. Sampling is assumed destructive,
+  i.e., sampled individuals are removed from the infectious pool.
 demes:
   - strain1
   - strain2
@@ -27,47 +29,59 @@ parameter:
     description: recovery rate
     type: double
     default: 1
-  psi1:
-    name: psi1
-    description: sampling rate for strain 1
+  chi1:
+    name: chi1
+    description: (destructive) sampling rate for strain 1
     default: 1
     type: double
-  psi2:
-    name: psi2
-    description: sampling rate for strain 2
+  chi2:
+    name: chi2
+    description: (destructive) sampling rate for strain 2
     default: 0
     type: double
-  psi3:
-    name: psi3
-    description: sampling rate for strain 3
+  chi3:
+    name: chi3
+    description: (destructive) sampling rate for strain 3
     default: 0
     type: double
 ivp:
-  S0:
-    name: S0
-    description: initial size of susceptible population
-    default: 10000
-    type: int
+  pop:
+    name: pop
+    description: population size
+    type: double
+    default: 1e5
+  S_0:
+    name: S_0
+    description: initial susceptible fraction
+    default: 0.8
+    type: double
   I1_0:
     name: I1_0
-    description: initial number of strain-1 infections
-    default: 10
-    type: int
+    description: |-
+      initial fraction of population
+      infected by strain 1
+    default: 0.01
+    type: double
   I2_0:
     name: I2_0
-    description: initial number of strain-2 infections
-    default: 10
-    type: int
+    description: |-
+      initial fraction of population
+      infected by strain 2
+    default: 0.01
+    type: double
   I3_0:
     name: I3_0
-    description: initial number of strain-3 infections
-    default: 10
-    type: int
-  R0:
-    name: R0
-    description: initial size of immune population
-    default: 0
-    type: int
+    description: |-
+      initial fraction of population
+      infected by strain 2
+    default: 0.01
+    type: double
+  R_0:
+    name: R_0
+    description: |-
+      initial fraction of population immune
+    default: 0.2
+    type: double
 state:
   S:
     name: S
@@ -84,28 +98,25 @@ state:
   R:
     name: R
     type: int
-  'N':
-    name: 'N'
-    type: double
 rinit: |-
-    state.S = params.S0;
-    state.I1 = params.I1_0;
-    state.I2 = params.I2_0;
-    state.I3 = params.I3_0;
-    state.R = params.R0;
-    state.N = double(params.S0+params.I1_0+params.I3_0+params.I3_0+params.R0);
-    graft(strain1,params.I1_0);
-    graft(strain2,params.I2_0);
-    graft(strain3,params.I3_0);
+  double f = params.pop/(params.S_0+params.I1_0+params.I2_0+params.I3_0+params.R_0);
+  state.S = nearbyint(f*params.S_0);
+  state.I1 = nearbyint(f*params.I1_0);
+  state.I2 = nearbyint(f*params.I2_0);
+  state.I3 = nearbyint(f*params.I3_0);
+  state.R = nearbyint(f*params.R_0);
+  graft(strain1,state.I1);
+  graft(strain2,state.I2);
+  graft(strain3,state.I3);
 events:
   infec1:
-    rate: params.Beta1 * state.S * state.I1 / state.N
+    rate: params.Beta1 * state.S * state.I1 / params.pop
     jump: state.S -= 1; state.I1 += 1; birth(strain1,strain1);
   infec2:
-    rate: params.Beta2 * state.S * state.I2 / state.N
+    rate: params.Beta2 * state.S * state.I2 / params.pop
     jump: state.S -= 1; state.I2 += 1; birth(strain2,strain2);
   infec3:
-    rate: params.Beta3 * state.S * state.I3 / state.N
+    rate: params.Beta3 * state.S * state.I3 / params.pop
     jump: state.S -= 1; state.I3 += 1; birth(strain3,strain3);
   recov1:
     jump: state.I1 -= 1; state.R += 1; death(strain1);
@@ -117,11 +128,11 @@ events:
     jump: state.I3 -= 1; state.R += 1; death(strain3);
     rate: params.gamma * state.I3
   sample1:
-    rate: params.psi1 * state.I1
+    rate: params.chi1 * state.I1
     jump: state.I1 -= 1; state.R += 1; sample_death(strain1);
   sample2:
-    rate: params.psi2 * state.I2
+    rate: params.chi2 * state.I2
     jump: state.I2 -= 1; state.R += 1; sample_death(strain2);
   sample3:
-    rate: params.psi3 * state.I3
+    rate: params.chi3 * state.I3
     jump: state.I3 -= 1; state.R += 1; sample_death(strain3);

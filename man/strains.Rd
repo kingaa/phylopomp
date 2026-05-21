@@ -15,15 +15,15 @@ runStrains(
   Beta2 = 5,
   Beta3 = 5,
   gamma = 1,
-  psi1 = 1,
-  psi2 = 0,
-  psi3 = 0,
-  S0 = 1,
+  chi1 = 1,
+  chi2 = 0,
+  chi3 = 0,
+  pop = 1e+05,
+  S_0 = 0.8,
   I1_0 = 0.01,
   I2_0 = 0.01,
   I3_0 = 0.01,
-  R0 = 0,
-  pop = 10000
+  R_0 = 0.2
 )
 
 continueStrains(
@@ -33,9 +33,9 @@ continueStrains(
   Beta2 = NA,
   Beta3 = NA,
   gamma = NA,
-  psi1 = NA,
-  psi2 = NA,
-  psi3 = NA
+  chi1 = NA,
+  chi2 = NA,
+  chi3 = NA
 )
 
 strains_pomp(
@@ -44,15 +44,15 @@ strains_pomp(
   Beta2,
   Beta3,
   gamma,
-  psi1,
-  psi2,
-  psi3,
+  chi1,
+  chi2,
+  chi3,
   pop,
-  S0,
+  S_0,
   I1_0,
   I2_0,
   I3_0,
-  R0
+  R_0
 )
 }
 \arguments{
@@ -60,15 +60,31 @@ strains_pomp(
 
 \item{t0}{initial time}
 
-\item{Beta1, Beta2, Beta3}{transmission rate for strains 1, 2, 3, respectively}
+\item{Beta1}{transmission rate for strain 1}
+
+\item{Beta2}{transmission rate for strain 2}
+
+\item{Beta3}{transmission rate for strain 3}
 
 \item{gamma}{recovery rate}
 
-\item{psi1, psi2, psi3}{sampling rates}
+\item{chi1}{(destructive) sampling rate for strain 1}
 
-\item{S0, I1_0, I2_0, I3_0, R0}{initial conditions; non-negative numbers that specify the relative occupancies of the compartments at the inital time.}
+\item{chi2}{(destructive) sampling rate for strain 2}
 
-\item{pop}{host population size}
+\item{chi3}{(destructive) sampling rate for strain 3}
+
+\item{pop}{population size}
+
+\item{S_0}{initial susceptible fraction}
+
+\item{I1_0}{initial fraction of population infected by strain 1}
+
+\item{I2_0}{initial fraction of population infected by strain 2}
+
+\item{I3_0}{initial fraction of population infected by strain 2}
+
+\item{R_0}{initial fraction of population immune}
 
 \item{object}{either the name of the model to simulate
 \emph{or} a previously computed \sQuote{gpsim} object}
@@ -81,7 +97,9 @@ strains_pomp(
 \code{strains_pomp} returns a \sQuote{pomp} object.
 }
 \description{
-The three demes are three distinct pathogen strains that compete for susceptibles.
+The three demes are three distinct pathogen strains that
+compete for susceptibles. Sampling is assumed destructive,
+i.e., sampled individuals are removed from the infectious pool.
 }
 \details{
 \code{strains_pomp} constructs a \sQuote{pomp} object containing a given set of data and the Strains model.

@@ -11,9 +11,9 @@ static const int nrate = 6;
 #define Beta2     (__p[__parindex[1]])
 #define Beta3     (__p[__parindex[2]])
 #define gamma     (__p[__parindex[3]])
-#define psi1      (__p[__parindex[4]])
-#define psi2      (__p[__parindex[5]])
-#define psi3      (__p[__parindex[6]])
+#define chi1      (__p[__parindex[4]])
+#define chi2      (__p[__parindex[5]])
+#define chi3      (__p[__parindex[6]])
 #define S_0       (__p[__parindex[7]])
 #define I1_0      (__p[__parindex[8]])
 #define I2_0      (__p[__parindex[9]])
@@ -72,7 +72,7 @@ static double event_rates
     *penalty += alpha;
   }
   // strain 1 sampling
-  alpha = psi1*I1;
+  alpha = chi1*I1;
   *penalty += alpha;
   // 2: strain-2 transmission with saturation 0 or 1
   alpha = Beta2*S*I2/POP;
@@ -88,7 +88,7 @@ static double event_rates
     *penalty += alpha;
   }
   // strain 2 sampling
-  alpha = psi2*I2;
+  alpha = chi2*I2;
   *penalty += alpha;
   // 4: strain-3 transmission with saturation 0 or 1
   alpha = Beta3*S*I3/POP;
@@ -104,7 +104,7 @@ static double event_rates
     *penalty += alpha;
   }
   // strain 3 sampling
-  alpha = psi3*I3;
+  alpha = chi3*I3;
   *penalty += alpha;
   assert(R_FINITE(event_rate));
   return event_rate;
@@ -191,20 +191,20 @@ void strains_gill
     case STRAIN1:
       assert(I1 >= ellI1);
       assert(ellI1 >= 0);
+      ll += log(chi1*I1);
       ellI1 -= 1; I1 -= 1;
-      ll += log(psi1);
       break;
     case STRAIN2:
       assert(I2 >= ellI2);
       assert(ellI2 >= 0);
+      ll += log(chi2*I2);
       ellI2 -= 1; I2 -= 1;
-      ll += log(psi2);
       break;
     case STRAIN3:
       assert(I3 >= ellI3);
       assert(ellI3 >= 0);
+      ll += log(chi3*I3);
       ellI3 -= 1; I3 -= 1;
-      ll += log(psi3);
       break;
     default:                    // #nocov
       assert(0); break;         // #nocov

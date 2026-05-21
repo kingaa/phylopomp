@@ -1,21 +1,24 @@
 _N_e_w_s _f_o_r _p_a_c_k_a_g_e '_p_h_y_l_o_p_o_m_p'
 
+_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_8._3:
+
+        • Breaking changes in the parameterization of the ‘Strains’
+          model.  See the manual page.
+
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_8._2:
 
         • There is a new model, ‘MERS’.
-
-        • In the ‘SI2R’ model, the sampling is assumed to be
-          destructive.
 
         • The YAML-translator has been improved and updated.
 
         • Improvements to unit testing.
 
-_C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_8._1:
-
         • The ‘SI2R’ model has been completely changed.  It now
           features two demes, one of which transmits at a rate that is
           a multiple of the other.
+
+        • In the ‘SI2R’ model, the sampling is assumed to be
+          destructive.
 
 _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n _0._1_8:
 

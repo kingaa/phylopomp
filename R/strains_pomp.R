@@ -2,8 +2,7 @@
 ##' @rdname strains
 ##' @include strains.R
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
-##' @param S0,I1_0,I2_0,I3_0,R0 initial conditions; non-negative numbers that specify the relative occupancies of the compartments at the inital time.
-##' @param pop host population size
+##' @inheritParams strains
 ##' @details
 ##' \code{strains_pomp} constructs a \sQuote{pomp} object containing a given set of data and the Strains model.
 ##' @return
@@ -13,13 +12,13 @@
 strains_pomp <- function (
   x,
   Beta1, Beta2, Beta3, gamma,
-  psi1, psi2, psi3, pop,
-  S0, I1_0, I2_0, I3_0, R0
+  chi1, chi2, chi3, pop,
+  S_0, I1_0, I2_0, I3_0, R_0
 ) {
   x |> gendat(obscure=FALSE) -> gi
   ivps <- structure(
-    c(S0,I1_0,I2_0,I3_0,R0),
-    names=c("S0","I1_0","I2_0","I3_0","R0")
+    c(S_0,I1_0,I2_0,I3_0,R_0),
+    names=c("S_0","I1_0","I2_0","I3_0","R_0")
   )
   if (any(ivps < 0))
     pStop(paste(sQuote(names(ivps)),collapse=","),
@@ -31,7 +30,7 @@ strains_pomp <- function (
     params=c(
       Beta1=Beta1,Beta2=Beta2,Beta3=Beta3,
       gamma=gamma,
-      psi1=psi1,psi2=psi2,psi3=psi3,
+      chi1=chi1,chi2=chi2,chi3=chi3,
       ivps,pop=pop
     ),
     userdata=gi,
@@ -41,7 +40,7 @@ strains_pomp <- function (
     partrans=parameter_trans(
       log=c(
         "Beta1","Beta2","Beta3","gamma",
-        "psi1","psi2","psi3"
+        "chi1","chi2","chi3"
       ),
       barycentric=c(names(ivps))
     ),
@@ -51,7 +50,7 @@ strains_pomp <- function (
     ),
     paramnames=c(
       "Beta1","Beta2","Beta3","gamma",
-      "psi1","psi2","psi3",
+      "chi1","chi2","chi3",
       names(ivps),"pop"
     ),
     PACKAGE="phylopomp"

@@ -1,17 +1,19 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.18.3}{
+  \itemize{
+    \item Breaking changes in the parameterization of the \code{Strains} model.
+    See the manual page.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.18.2}{
   \itemize{
     \item There is a new model, \code{MERS}.
-    \item In the \code{SI2R} model, the sampling is assumed to be destructive.
     \item The YAML-translator has been improved and updated.
     \item Improvements to unit testing.
-  }
-}
-\section{Changes in \pkg{phylopomp} version 0.18.1}{
-  \itemize{
     \item The \code{SI2R} model has been completely changed.
     It now features two demes, one of which transmits at a rate that is a multiple of the other.
+    \item In the \code{SI2R} model, the sampling is assumed to be destructive.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.18}{
