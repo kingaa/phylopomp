@@ -64,7 +64,7 @@ continueSEIRS(
   omega = NA
 )
 
-seirs_pomp(x, Beta, sigma, gamma, psi, omega = 0, S0, E0, I0, R0, pop)
+seirs_pomp(x, Beta, sigma, gamma, psi, chi = 0, omega = 0, S0, E0, I0, R0, pop)
 }
 \arguments{
 \item{time}{end timepoint of simulation}

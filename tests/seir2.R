@@ -45,7 +45,7 @@ try(
 G |>
   curtail(time=3) |>
   seirs_pomp(
-    Beta=4,sigma=1,gamma=1,psi=1,omega=1,
+    Beta=4,sigma=1,gamma=1,psi=0.9,omega=1,chi=0.1,
     S0=100,E0=3,I0=5,R0=100,pop=208
   ) -> po
 
