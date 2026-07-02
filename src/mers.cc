@@ -109,7 +109,7 @@ double mers_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.Bc);
   RATE_CALC(params.Bh);
   RATE_CALC(params.Bc);
-  RATE_CALC(params.Bh/params.Nh * state.Sh);
+  RATE_CALC(params.Bh);
   if (m != n) err("wrong number of events!");
   return total;
 }

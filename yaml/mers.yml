@@ -147,5 +147,5 @@ events:
     rate: params.Bc
     jump: if (state.Sc > 0) state.Sc -= 1;
   death_h:
-    rate: params.Bh/params.Nh * state.Sh
+    rate: params.Bh
     jump: if (state.Sh > 0) state.Sh -= 1;
