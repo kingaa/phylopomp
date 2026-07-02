@@ -32,7 +32,7 @@ static const int nrate = 6;
 #define EVENT_RATES                                     \
   event_rates(__x,__p,t,                                \
               __stateindex,__parindex,__covindex,       \
-              __covars,rate,&penalty)                   \
+              __covars,rate,logpi,&penalty)             \
 
 static double event_rates
 (
@@ -44,10 +44,11 @@ static double event_rates
  const int *__covindex,
  const double *__covars,
  double *rate,
+ double *logpi,
  double *penalty
  ) {
   double event_rate = 0;
-  double alpha, disc;
+  double alpha, pi;
   *penalty = 0;
   assert(S >= 0);
   assert(I1 >= ellI1);
@@ -58,49 +59,46 @@ static double event_rates
   assert(ellI3 >= 0);
   // 0: strain-1 transmission with saturation 0 or 1
   alpha = Beta1*S*I1/POP;
-  disc = (I1 > 0) ? ellI1*(ellI1-1)/I1/(I1+1) : 1;
-  event_rate += (*rate = alpha*(1-disc)); rate++;
-  *penalty += alpha*disc;
+  pi = (I1 > 0) ? 1-ellI1*(ellI1-1)/I1/(I1+1) : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *penalty += alpha*(1-pi);
   // 1: strain 1 recovery
   alpha = gamma*I1;
-  if (I1 > ellI1) {
-    event_rate += (*rate = alpha); rate++;
-  } else {
-    *rate = 0; rate++;
-    *penalty += alpha;
-  }
+  pi = (I1 > ellI1) ? 1 : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi); logpi++;
+  *penalty += alpha*(1-pi);
   // strain 1 sampling
   alpha = chi*I1;
   *penalty += alpha;
   // 2: strain-2 transmission with saturation 0 or 1
   alpha = Beta2*S*I2/POP;
-  disc = (I2 > 0) ? ellI2*(ellI2-1)/I2/(I2+1) : 1;
-  event_rate += (*rate = alpha*(1-disc)); rate++;
-  *penalty += alpha*disc;
+  pi = (I2 > 0) ? 1-ellI2*(ellI2-1)/I2/(I2+1) : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *penalty += alpha*(1-pi);
   // 3: strain 2 recovery
   alpha = gamma*I2;
-  if (I2 > ellI2) {
-    event_rate += (*rate = alpha); rate++;
-  } else {
-    *rate = 0; rate++;
-    *penalty += alpha;
-  }
+  pi = (I2 > ellI2) ? 1 : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi); logpi++;
+  *penalty += alpha*(1-pi);
   // strain 2 sampling
   alpha = chi*I2;
   *penalty += alpha;
   // 4: strain-3 transmission with saturation 0 or 1
   alpha = Beta3*S*I3/POP;
-  disc = (I3 > 0) ? ellI3*(ellI3-1)/I3/(I3+1) : 1;
-  event_rate += (*rate = alpha*(1-disc)); rate++;
-  *penalty += alpha*disc;
+  pi = (I3 > 0) ? 1-ellI3*(ellI3-1)/I3/(I3+1) : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *penalty += alpha*(1-pi);
   // 5: strain 3 recovery
   alpha = gamma*I3;
-  if (I3 > ellI3) {
-    event_rate += (*rate = alpha); rate++;
-  } else {
-    *rate = 0; rate++;
-    *penalty += alpha;
-  }
+  pi = (I3 > ellI3) ? 1 : 0;
+  event_rate += (*rate = alpha*pi); rate++;
+  *logpi = log(pi); logpi++;
+  *penalty += alpha*(1-pi);
   // strain 3 sampling
   alpha = chi*I3;
   *penalty += alpha;
@@ -240,12 +238,12 @@ void strains_gill
     break;
   }
 
-  if (tmax > t) {
+  if (tmax > t && R_FINITE(ll)) {
 
     // take Gillespie steps to the end of the interval:
     int event;
     double penalty = 0;
-    double rate[nrate];
+    double rate[nrate], logpi[nrate];
 
     double event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
@@ -253,7 +251,7 @@ void strains_gill
     while (t + tstep < tmax) {
       event = rcateg(event_rate,rate,nrate);
       assert(event>=0 && event<nrate);
-      ll -= penalty*tstep;
+      ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                     // strain-1 transmission
         S -= 1; I1 += 1;
