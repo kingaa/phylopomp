@@ -2,6 +2,7 @@
 ##' @include lbdp.R lbdp_pomp.R
 ##' @details
 ##' \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process with (optionally destructive) sampling, conditioned on the population size at time 0.
+##' If \code{n0=NA}, then the log likelihood is maximized over the initial population size.
 ##' @return \code{lbdp_exact} returns the log likelihood of the genealogy.
 ##' Note that the time since the most recent sample is informative.
 ##' @param x genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).
@@ -12,8 +13,6 @@
 ##' @export
 lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
   x |> gendat() -> gi
-  n0 <- as.integer(n0)
-  if (n0 < 1) pStop(sQuote("n0")," must be a positive integer.")
   t0 <- gi$t0                                   ## root time
   len <- length(gi$nodetime)
   tf <- gi$nodetime[len]                        ## final time
@@ -41,6 +40,10 @@ lbdp_exact <- function (x, lambda, mu, psi, chi = 0, n0 = 1) {
     g <- cosh(omega)+b/d*sinh(omega)
     1/g/g
   }
+
+  n0 <- as.integer(n0)
+  if (is.na(n0)) n0 <- as.integer(floor(nrt/(1-G(t0))))
+  if (n0 < 0) pStop(sQuote("n0")," must be a positive integer.")
 
   lchoose(n0,nrt)+
     lfactorial(nrt)+

@@ -15,6 +15,9 @@ x |> plot()
 
 x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
 llex
+x |> lbdp_exact(lambda=6,mu=1,psi=1,n0=NA) -> llex1
+llex1
+stopifnot(llex==llex1)
 
 x |>
   lbdp_pomp(lambda=6,mu=1,psi=1) |>
@@ -41,6 +44,8 @@ runLBDP(time=2,lambda=2,mu=1,psi=2,n0=10) |>
   freeze(seed=813057496) -> x
 x |> plot(points=TRUE)
 x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
+x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=NA) -> llex1; llex1
+stopifnot(llex==llex1)
 
 x |>
   lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
@@ -62,6 +67,8 @@ freeze(
 ) -> x
 x |> plot(points=TRUE)
 x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
+x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=NA) -> llex1; llex1
+stopifnot(llex+2 >= llex1, llex1 >= llex)
 
 x |>
   lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
@@ -81,6 +88,8 @@ runLBDP(time=2,lambda=2,mu=1,psi=1,chi=1,n0=10) |>
   freeze(seed=362430640) -> x
 x |> plot(points=TRUE)
 x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=10) -> llex; llex
+x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=NA) -> llex1; llex1
+stopifnot(llex+2 >= llex1, llex1 >= llex)
 
 x |>
   lbdp_pomp(lambda=2,mu=1,psi=2,chi=1,n0=10) |>
@@ -102,5 +111,13 @@ try(
 "" |>
   parse_newick(time=2) |>
   lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=1)
+
+"" |>
+  parse_newick(time=2) |>
+  lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=0)
+
+"" |>
+  parse_newick(time=2) |>
+  lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=NA)
 
 dev.off()

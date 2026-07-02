@@ -55,6 +55,10 @@ plot_grid(
 x |>
   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
 llex
+x |>
+  lbdp_exact(lambda=4,mu=1,psi=2,n0=NA) -> llex1
+llex1
+stopifnot(llex==llex1)
 
 x |>
   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
@@ -70,9 +74,9 @@ stopifnot(
   llex<llpf[1]+2*llpf[2]
 )
 
-try(
-  x |>
-    lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
-)
+x |>
+  lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
+x |>
+  lbdp_exact(lambda=4,mu=1,psi=2,n0=NA)
 
 dev.off()

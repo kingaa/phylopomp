@@ -49,6 +49,7 @@ The genealogy process induced by a simple linear birth-death process with consta
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 
 \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process with (optionally destructive) sampling, conditioned on the population size at time 0.
+If \code{n0=NA}, then the log likelihood is maximized over the initial population size.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)

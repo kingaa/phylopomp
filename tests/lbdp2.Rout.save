@@ -35,6 +35,10 @@ Type 'q()' to quit R.
 > x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
 > llex
 [1] 9.85
+> x |> lbdp_exact(lambda=6,mu=1,psi=1,n0=NA) -> llex1
+> llex1
+[1] 9.85
+> stopifnot(llex==llex1)
 > 
 > x |>
 +   lbdp_pomp(lambda=6,mu=1,psi=1) |>
@@ -64,6 +68,9 @@ Type 'q()' to quit R.
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=10) -> llex; llex
 [1] -7.59
+> x |> lbdp_exact(lambda=2,mu=1,psi=2,n0=NA) -> llex1; llex1
+[1] -7.59
+> stopifnot(llex==llex1)
 > 
 > x |>
 +   lbdp_pomp(lambda=2,mu=1,psi=2,n0=10) |>
@@ -88,6 +95,9 @@ Type 'q()' to quit R.
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=10) -> llex; llex
 [1] 2.2
+> x |> lbdp_exact(lambda=2,mu=1,psi=3,n0=NA) -> llex1; llex1
+[1] 2.96
+> stopifnot(llex+2 >= llex1, llex1 >= llex)
 > 
 > x |>
 +   lbdp_pomp(lambda=2,mu=1,psi=3,n0=10) |>
@@ -110,6 +120,9 @@ Type 'q()' to quit R.
 > x |> plot(points=TRUE)
 > x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=10) -> llex; llex
 [1] -2.12
+> x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=NA) -> llex1; llex1
+[1] -1.36
+> stopifnot(llex+2 >= llex1, llex1 >= llex)
 > 
 > x |>
 +   lbdp_pomp(lambda=2,mu=1,psi=2,chi=1,n0=10) |>
@@ -135,6 +148,16 @@ Error : in 'lbdp_pomp': 'n0' must be nonnegative.
 +   parse_newick(time=2) |>
 +   lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=1)
 [1] -1.52
+> 
+> "" |>
++   parse_newick(time=2) |>
++   lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=0)
+[1] 0
+> 
+> "" |>
++   parse_newick(time=2) |>
++   lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=NA)
+[1] 0
 > 
 > dev.off()
 null device 

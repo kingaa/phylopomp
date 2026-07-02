@@ -77,6 +77,11 @@ Using alpha for a discrete variable is not advised.
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=2) -> llex
 > llex
 [1] 5.23
+> x |>
++   lbdp_exact(lambda=4,mu=1,psi=2,n0=NA) -> llex1
+> llex1
+[1] 5.23
+> stopifnot(llex==llex1)
 > 
 > x |>
 +   lbdp_pomp(lambda=4,mu=1,psi=2,n0=2) |>
@@ -94,11 +99,12 @@ Using alpha for a discrete variable is not advised.
 +   llex<llpf[1]+2*llpf[2]
 + )
 > 
-> try(
-+   x |>
-+     lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
-+ )
-Error : in 'lbdp_exact': 'n0' must be a positive integer.
+> x |>
++   lbdp_exact(lambda=4,mu=1,psi=2,n0=0)
+[1] -Inf
+> x |>
++   lbdp_exact(lambda=4,mu=1,psi=2,n0=NA)
+[1] 5.23
 > 
 > dev.off()
 null device 
