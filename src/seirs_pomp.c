@@ -268,7 +268,7 @@ void seirs_gill
 
   // continuous portion of filter equation:
   // take Gillespie steps to the end of the interval
-  if (tmax > t) {
+  if (tmax > t && R_FINITE(ll)) {
 
     double rate[nrate], logpi[nrate];
     int event;

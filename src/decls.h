@@ -8,6 +8,10 @@ extern void lbdp_dmeas(double *, const double *, const double *, const double *,
 extern void seirs_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
 extern void seirs_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
 extern void seirs_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);
+/* src/si2r_pomp.c */
+extern void si2rs_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
+extern void si2rs_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
+extern void si2rs_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);
 /* src/sirs_pomp.c */
 extern void sirs_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
 extern void sirs_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);

@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.19.4}{
+  \itemize{
+    \item There is a new filter for the SI2R model in \code{si2rs_pomp}.
+    \item Calling \code{ldbp_exact} with \code{n0=NA} returns the likelihood maximized over the initial population size.
+    \item In the MERS model, the handling of births in the human population has changed.
+    \item Some internal changes have been made to the \code{strains_pomp} and \code{seirs_pomp} filters.
+    These may result in numerical differences relative to calculations with previous versions.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.19.3}{
   \itemize{
     \item The parameterization of the Strains model has changed.
