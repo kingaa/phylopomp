@@ -252,6 +252,14 @@ try(
   "A:3();" |> parse_newick()
 )
 
+g1 <- parse_newick("(:3,(:4,(:1,:2,:3):1):1):1;:4;");
+g2 <- parse_newick(":4;(:3,(:4,((:1,:2,:3):1)):1):1;");
+stopifnot(
+  all.equal(
+    lineages(g1),
+    lineages(g2)
+  )
+)
 
 plot_grid(
   "" |> parse_newick() |> diagram(prune=FALSE,obscure=FALSE),

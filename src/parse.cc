@@ -166,6 +166,11 @@ genealogy_t::parse
     case ';':                   // root
       if (stack != 0)
         err("in '%s': invalid Newick: unbalanced parentheses.",__func__);
+      if (open) {
+        q = scan_branch_label(b.base(),e.base(),p,bl);
+        tf = (q->slate > tf) ? q->slate : tf;
+        bl = 0.0;
+      }
       p = make_node();
       p->slate = timezero();
       push_front(p);
