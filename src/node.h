@@ -154,15 +154,15 @@ public:
 
   //! distance along the genealogy from given node back to the nearest
   //! already-visited ancestor.
-  slate_t added_branch_length (const std::unordered_map<name_t, bool>&) const;
+  slate_t joining_branch_length (const std::unordered_map<name_t, bool>&) const;
 
   //! Recursive in-order walk over the subtree rooted at node p.
   //! - at leaf node, push added branch length into x
   //! - at internal node, push height into y
-  void visit (std::vector<slate_t>&, std::vector<slate_t>&,
-	      std::unordered_map<name_t, bool>&,
-	      const std::unordered_map<name_t,std::vector<node_t*>>&,
-	      slate_t) const;
+  void cblv (std::vector<slate_t>&, std::vector<slate_t>&,
+	     std::unordered_map<name_t, bool>&,
+	     const std::unordered_map<name_t,std::vector<node_t*>>&,
+	     slate_t) const;
 
 public:
 

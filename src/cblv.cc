@@ -21,13 +21,14 @@ static R_INLINE SEXP make_matrix (size_t nrow, size_t ncol, const char **names) 
   dimp = INTEGER(dim);
   dimp[0] = nrow; dimp[1] = ncol;
   PROTECT(x = Rf_allocArray(REALSXP,dim));
+  SET_ELEMENT(dimnm,0,R_NilValue);
   SET_ELEMENT(dimnm,1,nm);
   SET_DIMNAMES(x,dimnm);
   UNPROTECT(4);
   return x;
 }
 
-slate_t node_t::added_branch_length
+slate_t node_t::joining_branch_length
 (
  const std::unordered_map<name_t, bool>& memo
  ) const {
@@ -36,7 +37,7 @@ slate_t node_t::added_branch_length
   return slate - p->slate;
 }
 
-void node_t::visit
+void node_t::cblv
 (
  std::vector<slate_t>& x,
  std::vector<slate_t>& y,
@@ -47,18 +48,18 @@ void node_t::visit
   assert(!memo[uniq]);
   const std::vector<node_t*>& ch = children.at(uniq);
   if (ch.empty()) {
-    // leaf node: push added branch length to x
-    x.push_back(added_branch_length(memo));
+    // leaf node: push joining branch length to x
+    x.push_back(joining_branch_length(memo));
     memo[uniq] = true;
   } else {
     // first child: recurse
-    ch[0]->visit(x, y, memo, children, t0);
+    ch[0]->cblv(x, y, memo, children, t0);
     // subsequent children:
     for (size_t i = 1; i < ch.size(); i++) {
       // push the height of current node into y
       y.push_back(slate - t0);
       memo[uniq] = true;
-      ch[i]->visit(x, y, memo, children, t0);
+      ch[i]->cblv(x, y, memo, children, t0);
     }
   }
 }
@@ -75,7 +76,7 @@ genealogy_t::cblv (void) const {
   for (node_t* p : *this) memo[p->uniq] = false;
   slate_t t0 = timezero();
   for (node_t* p : roots) {
-    p->visit(x, y, memo, children, t0);
+    p->cblv(x, y, memo, children, t0);
     y.push_back(slate_t(0));
     memo[p->uniq] = true;
   }

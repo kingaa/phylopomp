@@ -248,14 +248,12 @@ public:
   std::unordered_map<name_t, std::vector<node_t*>>
   children_map (void) const {
     std::unordered_map<name_t, std::vector<node_t*>> children;
-    children.reserve(this->size());
-    // initialise every node with an empty list
-    // FIXME: is this necessary?
+    children.reserve(size());
+    // initialise every node with an empty vector
     for (node_t* p : *this)
       children[p->uniq];
-    // fill children
     for (node_t* p : *this) {
-      if (!p->holds_own())      // not a root
+      if (!p->holds_own())
         children[p->parent()->uniq].push_back(p);
     }
     return children;
@@ -294,15 +292,12 @@ public:
       if (ch.empty()) {
         height[p->uniq] = p->slate;
       } else {
-        slate_t mx = p->slate;
-        for (node_t* c : ch)
-          mx = std::max(mx, height.at(c->uniq));
-        height[p->uniq] = mx;
+        std::sort(ch.begin(), ch.end(),
+                  [&height](node_t* a, node_t* b) {
+                    return height.at(a->uniq) > height.at(b->uniq);
+                  });
+        height[p->uniq] = height.at(ch[0]->uniq);
       }
-      std::sort(ch.begin(), ch.end(),
-                [&height](node_t* a, node_t* b) {
-                  return height.at(a->uniq) > height.at(b->uniq);
-                });
     }
     return sorted_roots(height);
   };
