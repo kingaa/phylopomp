@@ -8,5 +8,10 @@ simulate(
   "SEIR",
   Beta=100,pop=100,
   time=1
-) |>
-  cblv()
+) -> x
+
+x |> cblv() -> y1
+y1
+
+x |> getInfo(cblv=TRUE) -> y2
+stopifnot(y1==y2$cblv)

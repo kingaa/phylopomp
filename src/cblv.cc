@@ -82,30 +82,31 @@ genealogy_t::cblv (void) const {
   return {x, y};
 }
 
+SEXP cblv (genealogy_t& A) {
+  const char *colnames[] = {"tip","node"};
+  double *x, *y;
+  size_t i, n;
+  SEXP S;
+  std::pair<std::vector<slate_t>, std::vector<slate_t>> rep;
+  rep = A.prune().obscure().insert_zlb().cblv();
+  n = rep.first.size();
+  PROTECT(S = make_matrix(n,2,colnames));
+  x = REAL(S);
+  y = REAL(S)+n;
+  for (i = 0; i < n; i++) {
+    x[i] = rep.first[i];
+    y[i] = rep.second[i];
+  }
+  UNPROTECT(1);
+  return S;
+}
+
 extern "C" {
 
   //! construct CBLV representation as a matrix
   SEXP cblv (SEXP State) {
-    const char *colnames[] = {"tip","node"};
-    double *x, *y;
-    size_t i, n;
-    SEXP S;
     genealogy_t A = State;
-    std::pair<std::vector<slate_t>, std::vector<slate_t>> rep;
-    A.prune();
-    A.obscure();
-    A.insert_zlb();
-    rep = A.cblv();
-    n = rep.first.size();
-    PROTECT(S = make_matrix(n,2,colnames));
-    x = REAL(S);
-    y = REAL(S)+n;
-    for (i = 0; i < n; i++) {
-      x[i] = rep.first[i];
-      y[i] = rep.second[i];
-    }
-    UNPROTECT(1);
-    return S;
+    return cblv(A);
   }
 
 }

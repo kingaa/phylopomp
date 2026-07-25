@@ -4,6 +4,8 @@
 #include "generics.h"
 #include "internal.h"
 
+SEXP cblv(genealogy_t& A);
+
 static size_t matchargs (const char *prov, const char **set, size_t n) {
   size_t i;
   for (i = 0; i < n; i++) {
@@ -21,7 +23,7 @@ extern "C" {
       "object","prune","obscure","extended",
         "t0","time","nsample","nroot","ndeme",
         "structure","yaml","newick",
-        "lineages","gendat","genealogy"};
+        "lineages","gendat","genealogy","cblv"};
     const int narg = sizeof(argname)/sizeof(const char *);
     bool flag[narg];
     SEXP object = R_NilValue;
@@ -38,11 +40,9 @@ extern "C" {
       if (j == 0) {
         object = arg;
         flag[0] = true;
-      } else if (j < 4) {
-        flag[j] = *LOGICAL(AS_LOGICAL(arg));
       } else if (j < narg) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
-        if (flag[j]) nout++;
+	if (j > 3 && flag[j]) nout++;
       } else {
         err("unrecognized argument '%s' in '%s'.",name,__func__);
       }
@@ -104,6 +104,9 @@ extern "C" {
       SET_ATTR(S,install("class"),mkString("gpgen"));
       k = set_list_elem(out,outnames,S,"genealogy",k);
       UNPROTECT(1);
+    }
+    if (*(f++)) {               // cblv
+      k = set_list_elem(out,outnames,cblv(A),"cblv",k);
     }
     SET_NAMES(out,outnames);
     UNPROTECT(2);

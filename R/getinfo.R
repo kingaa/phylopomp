@@ -19,6 +19,7 @@
 ##' @param lineages logical; return the lineage-count function?
 ##' @param gendat logical; return the data-frame format?
 ##' @param genealogy logical; return the lineage-traced genealogy?
+##' @param cblv logical; return the cblv representation?
 ##' @include package.R geneal.R
 ##' @importFrom tibble as_tibble
 ##' @return
@@ -35,6 +36,7 @@
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
 ##'   \item{gendat}{a \code{\link[tibble]{tibble}} containing the (obscured) genealogy in a data-frame format}
 ##'   \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
+##'   \item{cblv}{the cblv representation (as a matrix)}
 ##' }
 ##' @example examples/siir.R
 ##' @rdname getinfo
@@ -44,7 +46,8 @@ getInfo <- function (
   t0 = FALSE, time = FALSE,
   structure = FALSE, yaml = FALSE,
   ndeme = FALSE, lineages = FALSE, newick = FALSE,
-  nsample = FALSE, nroot = FALSE, genealogy = FALSE, gendat = FALSE
+  nsample = FALSE, nroot = FALSE, genealogy = FALSE, gendat = FALSE,
+  cblv = FALSE
 ) {
   if (gendat & !prune) {
     warning("pruning since 'gendat=TRUE'",call.=FALSE)
@@ -58,7 +61,7 @@ getInfo <- function (
     nsample=nsample,nroot=nroot,ndeme=ndeme,
     yaml=yaml,structure=structure,newick=newick,
     lineages=lineages,genealogy=genealogy,
-    gendat=gendat
+    gendat=gendat,cblv=cblv
   )
   if (!is.null(x$lineages))
     x$lineages |> reshape_lineages() -> x$lineages

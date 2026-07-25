@@ -27,8 +27,10 @@ Type 'q()' to quit R.
 +   "SEIR",
 +   Beta=100,pop=100,
 +   time=1
-+ ) |>
-+   cblv()
++ ) -> x
+> 
+> x |> cblv() -> y1
+> y1
          tip   node
  [1,] 0.9843 0.1808
  [2,] 0.3413 0.0775
@@ -61,4 +63,7 @@ Type 'q()' to quit R.
 [29,] 0.7756 0.6702
 [30,] 0.0000 0.0000
 [31,] 0.7975 0.0000
+> 
+> x |> getInfo(cblv=TRUE) -> y2
+> stopifnot(y1==y2$cblv)
 > 

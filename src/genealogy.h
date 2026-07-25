@@ -357,7 +357,7 @@ public:
   genealogy_t& operator+= (const genealogy_t& other);
 
   //! insert zero-length branches for samples where needed
-  void insert_zlb (void) {
+  genealogy_t& insert_zlb (void) {
     for (node_t *p : *this) {
       if (p->holds(green) && p->holds(blue)) {
         assert(!p->holds(black)); // genealogy should have already been pruned
@@ -370,6 +370,7 @@ public:
       }
     }
     sort();
+    return *this;
   };
 
 private:

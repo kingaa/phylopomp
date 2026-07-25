@@ -19,7 +19,8 @@ getInfo(
   nsample = FALSE,
   nroot = FALSE,
   genealogy = FALSE,
-  gendat = FALSE
+  gendat = FALSE,
+  cblv = FALSE
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ getInfo(
 \item{genealogy}{logical; return the lineage-traced genealogy?}
 
 \item{gendat}{logical; return the data-frame format?}
+
+\item{cblv}{logical; return the cblv representation?}
 }
 \value{
 A list containing the requested elements, including any or all of:
@@ -67,6 +70,7 @@ A list containing the requested elements, including any or all of:
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
   \item{gendat}{a \code{\link[tibble]{tibble}} containing the (obscured) genealogy in a data-frame format}
   \item{genealogy}{the lineage-traced genealogy (as a raw vector)}
+  \item{cblv}{the cblv representation (as a matrix)}
 }
 }
 \description{
