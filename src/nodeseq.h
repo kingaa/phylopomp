@@ -8,7 +8,6 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-#include <stdexcept>
 #include "node.h"
 #include "internal.h"
 
@@ -82,12 +81,7 @@ private:
   //! Needed in deserialization.
   void repair_owners (const std::unordered_map<name_t,ball_t*>& names) {
     for (node_t *p : *this) {
-      try {
-        p->green_ball() = names.at(p->uniq);
-      } catch (std::out_of_range& e) {
-	err("in '%s' (%s line %d): cannot find node %zd", // #nocov
-	    __func__,__FILE__,__LINE__,p->uniq);          // #nocov
-      }
+      p->green_ball() = names.at(p->uniq);
     }
   };
 
@@ -293,8 +287,8 @@ public:
    std::unordered_map<name_t,std::vector<node_t*>>& children
    ) const {
     std::unordered_map<name_t, slate_t> height;
-    height.reserve(this->size());
-    for (auto it = this->rbegin(); it != this->rend(); ++it) {
+    height.reserve(size());
+    for (auto it = rbegin(); it != rend(); ++it) {
       node_t* p = *it;
       auto& ch = children.at(p->uniq);
       if (ch.empty()) {

@@ -6,7 +6,6 @@
 
 #include <set>
 #include <unordered_map>
-#include <stdexcept>
 #include "ball.h"
 #include "internal.h"
 
@@ -84,14 +83,9 @@ public:
     node_t *p;
     for (ball_t *b : *this) {
       if (b->is(green)) {
-	try {
-	  p = node_name.at(b->uniq);
-          b->owner() = p;
-          (*ball_name)[b->uniq] = b;
-	} catch (const std::out_of_range& e) {
-          err("in '%s' (%s line %d): cannot find ball %zd", // #nocov
-              __func__,__FILE__,__LINE__,b->uniq);          // #nocov
-        }
+	p = node_name.at(b->uniq);
+	b->owner() = p;
+	(*ball_name)[b->uniq] = b;
       }
     }
   };
