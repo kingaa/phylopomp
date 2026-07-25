@@ -6,6 +6,9 @@
 
 #include <list>
 #include <unordered_map>
+#include <vector>
+#include <algorithm>
+#include <stdexcept>
 #include "node.h"
 #include "internal.h"
 
@@ -63,7 +66,7 @@ public:
       node_t *p = new node_t();
       o = (o >> *p);
       G.push_back(p);
-      node_names.insert({p->uniq,p});
+      node_names[p->uniq] = p;
     }
     for (node_t *q : G) {
       q->repair_owners(node_names,&ball_names);
@@ -75,16 +78,27 @@ public:
 
 private:
 
+  //! Repair the links green balls and their names.
   //! Needed in deserialization.
-  //! This function repairs the links green balls and their names.
-  void repair_owners (std::unordered_map<name_t,ball_t*>& names) {
-    std::unordered_map<name_t,ball_t*>::const_iterator n;
+  void repair_owners (const std::unordered_map<name_t,ball_t*>& names) {
     for (node_t *p : *this) {
-      n = names.find(p->uniq);
-      assert(n != names.end());
-      ball_t *b = n->second;
-      p->green_ball() = b;
+      try {
+        p->green_ball() = names.at(p->uniq);
+      } catch (std::out_of_range& e) {
+	err("in '%s' (%s line %d): cannot find node %zd", // #nocov
+	    __func__,__FILE__,__LINE__,p->uniq);          // #nocov
+      }
     }
+  };
+
+  //! map node names onto pointers
+  std::unordered_map<name_t, node_t*>
+  node_map (void) const {
+    std::unordered_map<name_t, node_t*> m;
+    m.reserve(size());
+    for (node_t* p : *this)
+      m[p->uniq] = p;
+    return m;
   };
 
 public:
@@ -232,6 +246,71 @@ private:
       p->lineage() = u;
       p = p->parent();
     }
+  };
+
+public:
+
+  //! map nodes onto vector of children
+  std::unordered_map<name_t, std::vector<node_t*>>
+  children_map (void) const {
+    std::unordered_map<name_t, std::vector<node_t*>> children;
+    children.reserve(this->size());
+    // initialise every node with an empty list
+    // FIXME: is this necessary?
+    for (node_t* p : *this)
+      children[p->uniq];
+    // fill children
+    for (node_t* p : *this) {
+      if (!p->holds_own())      // not a root
+        children[p->parent()->uniq].push_back(p);
+    }
+    return children;
+  };
+
+
+  //! collect root nodes and sort them in order of decreasing subtree height
+  std::vector<node_t*>
+  sorted_roots
+  (
+   const std::unordered_map<name_t, slate_t>& height
+   ) const {
+    std::vector<node_t*> roots;
+    for (node_t* p : *this)
+      if (p->holds_own()) roots.push_back(p);
+    std::sort(roots.begin(), roots.end(),
+              [&height](node_t* a, node_t* b) {
+                return height.at(a->uniq) > height.at(b->uniq);
+              });
+    return roots;
+  };
+
+  //! ladderize the tree by sorting each vector in 'children' according
+  //! to decreasing subtree height. Return the root nodes, sorted in the
+  //! same way.
+  std::vector<node_t*>
+  ladderize
+  (
+   std::unordered_map<name_t,std::vector<node_t*>>& children
+   ) const {
+    std::unordered_map<name_t, slate_t> height;
+    height.reserve(this->size());
+    for (auto it = this->rbegin(); it != this->rend(); ++it) {
+      node_t* p = *it;
+      auto& ch = children.at(p->uniq);
+      if (ch.empty()) {
+        height[p->uniq] = p->slate;
+      } else {
+        slate_t mx = p->slate;
+        for (node_t* c : ch)
+          mx = std::max(mx, height.at(c->uniq));
+        height[p->uniq] = mx;
+      }
+      std::sort(ch.begin(), ch.end(),
+                [&height](node_t* a, node_t* b) {
+                  return height.at(a->uniq) > height.at(b->uniq);
+                });
+    }
+    return sorted_roots(height);
   };
 
 public:

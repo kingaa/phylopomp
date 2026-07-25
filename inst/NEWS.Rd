@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.19.5}{
+  \itemize{
+    \item New \code{cblv()} function for computing the compact, bijective, ladderized vector representation of a pruned, obscured genealogy.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.19.4}{
   \itemize{
     \item Fixed a bug in Newick parser.

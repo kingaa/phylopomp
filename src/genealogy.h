@@ -6,6 +6,8 @@
 
 #include <utility>
 #include <stdexcept>
+#include <vector>
+#include <unordered_map>
 
 #include "nodeseq.h"
 #include "internal.h"
@@ -407,6 +409,11 @@ public:
     }
     time() = scale*(time()-origin);
   };
+
+  //! return the CBLV representation in the vectors x and y
+  //! x[i] = branch length added by the i-th sample leaf
+  //! y[i] = height above t0 of the i-th internal branching event
+  std::pair<std::vector<slate_t>, std::vector<slate_t>> cblv (void) const;
 
 };
 

@@ -4,6 +4,8 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
+#include <unordered_map>
+#include <vector>
 #include "ball.h"
 #include "pocket.h"
 #include "internal.h"
@@ -149,6 +151,18 @@ public:
   //! -  1 = sample
   //! -  2 = non-sample node
   void lineage_incr (int *incr, int *sat, int *etype) const;
+
+  //! distance along the genealogy from given node back to the nearest
+  //! already-visited ancestor.
+  slate_t added_branch_length (const std::unordered_map<name_t, bool>&) const;
+
+  //! Recursive in-order walk over the subtree rooted at node p.
+  //! - at leaf node, push added branch length into x
+  //! - at internal node, push height into y
+  void visit (std::vector<slate_t>&, std::vector<slate_t>&,
+	      std::unordered_map<name_t, bool>&,
+	      const std::unordered_map<name_t,std::vector<node_t*>>&,
+	      slate_t) const;
 
 public:
 

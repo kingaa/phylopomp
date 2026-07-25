@@ -6,6 +6,7 @@
 
 #include <set>
 #include <unordered_map>
+#include <stdexcept>
 #include "ball.h"
 #include "internal.h"
 
@@ -76,19 +77,18 @@ protected:
   };
 
 public:
+  //! Repairs the links green balls and their names.
   //! Needed in deserialization.
-  //! This function repairs the links green balls and their names.
   void repair_owners (const std::unordered_map<name_t,node_t*>& node_name,
                       std::unordered_map<name_t,ball_t*> *ball_name) {
-    std::unordered_map<name_t,node_t*>::const_iterator n;
+    node_t *p;
     for (ball_t *b : *this) {
       if (b->is(green)) {
-        n = node_name.find(b->uniq);
-        if (n != node_name.end()) {
-          node_t *p = n->second;
+	try {
+	  p = node_name.at(b->uniq);
           b->owner() = p;
-          ball_name->insert({b->uniq,b});
-        } else {
+          (*ball_name)[b->uniq] = b;
+	} catch (const std::out_of_range& e) {
           err("in '%s' (%s line %d): cannot find ball %zd", // #nocov
               __func__,__FILE__,__LINE__,b->uniq);          // #nocov
         }
