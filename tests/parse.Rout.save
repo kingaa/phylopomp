@@ -136,7 +136,7 @@ Error : in 'newick': if `extended=FALSE`, both `prune` and `obscure` must be `TR
 > r"{(o_9_1:1.000000,b_1_3:1.000000)m_0_0:0.300000;}" |>
 +    parse_newick() |>
 +    newick(extended=FALSE)
-[1] "((2:1,3:1)1:0.3)0:0;"
+[1] "((:1,:1):0.3):0;"
 > 
 > r"{(((:0.1)),[&&PhyloPOMP:deme=2|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +    parse_newick(t0=0.5,time=2) -> x1
@@ -217,7 +217,7 @@ in 'scan_branch_length': in branch-length spec '1.0000A': no branch-length detec
 > r"{([&&NHX:bob=no]:0.2[&&NHX:bob=42],:[&&NHX:bob=maybe]0.1):[&&NHX: bob=yes]0.5;}" |>
 +    parse_newick() |>
 +    newick(extended=FALSE)
-[1] "((2:0.09999999999999998,3:0.19999999999999996)1:0.5)0:0;"
+[1] "((:0.09999999999999998,:0.19999999999999996):0.5):0;"
 > 
 > try(
 +   r"{(:1,:1):1;((:1,:1):1;}" |>

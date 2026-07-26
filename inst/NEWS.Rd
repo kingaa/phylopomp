@@ -3,6 +3,7 @@
 \section{Changes in \pkg{phylopomp} version 0.19.5}{
   \itemize{
     \item New \code{cblv()} function for computing the compact, bijective, ladderized vector representation of a pruned, obscured genealogy.
+    \item Node names are no longer included in Newick-format output.
   }
 }
 \section{Changes in \pkg{phylopomp} version 0.19.4}{
