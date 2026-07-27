@@ -47,7 +47,7 @@ genealogy_t::curtail
     node_t *q;
     while (!empty() && p->slate < troot) {
       ball_t *b;
-      assert(p->holds_own());
+      assert(p->is_root());
       while (p->size() > 1) {
         b = p->last_ball();
         switch (b->color) {

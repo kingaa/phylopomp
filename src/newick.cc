@@ -55,7 +55,7 @@ node_t::newick
     o3 += "[&&PhyloPOMP ";
     if (holds(blue))
       o3 += "type=sample";
-    else if (holds_own())
+    else if (is_root())
       o3 += "type=root";
     else
       o3 += "type=node";

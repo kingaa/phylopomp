@@ -25,7 +25,7 @@ node_t::lineage_incr
       break;
     }
   }
-  if (holds_own()) {
+  if (is_root()) {
     sat[d]--;
     etype[d] = -1;
   } else if (holds(blue)) {

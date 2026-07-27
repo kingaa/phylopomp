@@ -117,14 +117,11 @@ public:
   node_t* parent (void) const {
     return _green_ball->holder();
   };
-  bool holds_own (void) const {
+  bool is_root (void) const {
     return (_green_ball->holder() == this);
   };
-  bool is_root (void) const {
-    return holds_own();
-  };
   bool dead_root (void) const {
-    return holds_own() && size()==1;
+    return is_root() && size()==1;
   };
 
 public:
@@ -141,7 +138,7 @@ public:
         break;
       }
     }
-    if (holds_own()) n--;
+    if (is_root()) n--;
     return n;
   };
   //! lineage count, saturation, and event-type

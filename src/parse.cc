@@ -22,7 +22,7 @@ genealogy_t::clip_zlb
 (void)
 {
   for (node_t *p : *this) {
-    if (!p->holds_own() &&
+    if (!p->is_root() &&
         p->slate == p->parent()->slate &&
         p->deme() == p->parent()->deme()) {
       while (!p->empty()) {
@@ -47,10 +47,10 @@ scan_name
     if (d < 0) err("in '%s': negative deme number detected.",__func__);
   }
   catch (const std::invalid_argument& e) {
-    err("in '%s': invalid Newick format: deme should be indicated with an integer.",__func__);
+    err("in '%s': invalid Newick: deme should be indicated with an integer.",__func__);
   }
   catch (const std::out_of_range& e) {
-    err("in '%s': invalid Newick format: deme out of range.",__func__);
+    err("in '%s': invalid Newick: deme out of range.",__func__);
   }
   catch (const std::exception& e) {
     err("in '%s': parsing deme label: %s.",__func__,e.what());
@@ -160,7 +160,7 @@ genealogy_t::parse
   bool open = false;            // branch-string reading-frame open?
   int stack = 0, sqstack = 0;
   if (!s.empty() && *b != ';')
-    err("in '%s': invalid Newick format: no final semicolon.",__func__);
+    err("in '%s': invalid Newick: no final semicolon.",__func__);
   while (b != f) {
     switch (*b) {
     case ';':                   // root
@@ -207,7 +207,7 @@ genealogy_t::parse
       break;
     case ',':                   // tip node, younger sister
       if (stack <= 0)
-        err("in '%s': invalid Newick string: misplaced comma or unbalanced parentheses.",__func__);
+        err("in '%s': invalid Newick: misplaced comma or unbalanced parentheses.",__func__);
       if (open) {
         q = scan_branch_label(b.base(),e.base(),p,bl);
         tf = (q->slate > tf) ? q->slate : tf;
@@ -225,7 +225,7 @@ genealogy_t::parse
         if (*b == '[') sqstack--;
       }
       if (sqstack != 0)
-        err("in '%s': invalid Newick format: unbalanced square brackets.",__func__);
+        err("in '%s': invalid Newick: unbalanced square brackets.",__func__);
       else
         b++;
       break;
@@ -237,7 +237,7 @@ genealogy_t::parse
         bl = scan_branch_length(b.base(),e.base());
         b++; e = b;
       } else {
-        err("in '%s': invalid Newick format: misplaced colon.",__func__);
+        err("in '%s': invalid Newick: misplaced colon.",__func__);
       }
       break;
     default:
@@ -246,7 +246,7 @@ genealogy_t::parse
     }
   }
   if (stack != 0)
-    err("in '%s': invalid Newick format: unbalanced parentheses.",__func__);
+    err("in '%s': invalid Newick: unbalanced parentheses.",__func__);
   if (open) {
     q = scan_branch_label(b.base(),e.base(),p,bl);
     tf = (q->slate > tf) ? q->slate : tf;

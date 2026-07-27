@@ -125,8 +125,7 @@ public:
     for (ball_t *b : *this) {
       if (b->color == c) return b;
     }
-    err("in '%s' (%s line %d): no ball of color %s", // # nocov
-        __func__,__FILE__,__LINE__,colores[c]);      // # nocov
+    assert(0);
     return 0;
   };
   //! return a pointer to another ball
@@ -134,8 +133,7 @@ public:
     for (ball_t *a : *this) {
       if (a != b) return a;
     }
-    err("error in '%s' (%s line %d): there is no other.", // # nocov
-        __func__,__FILE__,__LINE__);                      // # nocov
+    assert(0);
     return 0;
   };
   //! human/machine-readable info

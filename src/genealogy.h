@@ -7,7 +7,6 @@
 #include <utility>
 #include <stdexcept>
 #include <vector>
-#include <unordered_map>
 
 #include "nodeseq.h"
 #include "internal.h"
@@ -194,7 +193,7 @@ public:
   size_t nroot (void) const {
     size_t n = 0;
     for (const node_t *p : *this) {
-      if (p->holds_own()) n++;
+      if (p->is_root()) n++;
     }
     return n;
   };
@@ -383,7 +382,7 @@ private:
   void cap_roots (void) {
     node_nit j = begin();
     while (j != end()) {
-      if ((*j)->holds_own() && (*j)->slate > timezero()) {
+      if ((*j)->is_root() && (*j)->slate > timezero()) {
         node_t *q = make_node();
         q->slate = timezero();
         attach(q,*j);
@@ -401,7 +400,7 @@ private:
 public:
 
   //! Parse a Newick string and create the indicated genealogy.
-  genealogy_t& parse (const string_t& s);
+  genealogy_t& parse (const string_t&);
 
   void time_rescale (slate_t scale, slate_t origin = 0) {
     timezero() = scale*(timezero()-origin);
@@ -410,6 +409,11 @@ public:
     }
     time() = scale*(time()-origin);
   };
+
+  //! return the CBLV representation as an R matrix
+  friend SEXP cblv (genealogy_t&);
+
+private:
 
   //! return the CBLV representation in the vectors x and y
   //! x[i] = branch length added by the i-th sample leaf

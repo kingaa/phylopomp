@@ -103,8 +103,8 @@ public:
   static bool compare (node_t* p, node_t* q) {
     return (p->slate < q->slate) ||
       ((p->slate == q->slate) &&
-       ((p==q->green_ball()->holder()) ||
-        ((q!=p->green_ball()->holder()) && (p->uniq < q->uniq))));
+       ((p == q->parent()) ||
+        ((q != p->parent()) && (p->uniq < q->uniq))));
   };
 
   //! order nodes in order of increasing time
@@ -253,12 +253,11 @@ public:
     for (node_t* p : *this)
       children[p->uniq];
     for (node_t* p : *this) {
-      if (!p->holds_own())
+      if (!p->is_root())
         children[p->parent()->uniq].push_back(p);
     }
     return children;
   };
-
 
   //! collect root nodes and sort them in order of decreasing subtree height
   std::vector<node_t*>
@@ -268,7 +267,7 @@ public:
    ) const {
     std::vector<node_t*> roots;
     for (node_t* p : *this)
-      if (p->holds_own()) roots.push_back(p);
+      if (p->is_root()) roots.push_back(p);
     std::sort(roots.begin(), roots.end(),
               [&height](node_t* a, node_t* b) {
                 return height.at(a->uniq) > height.at(b->uniq);

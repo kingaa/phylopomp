@@ -164,31 +164,31 @@ Error : in 'newick': if `extended=FALSE`, both `prune` and `obscure` must be `TR
 +   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1]type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced square brackets.
+Error : in 'parse': invalid Newick: unbalanced square brackets.
 > 
 > try(
 +   r"{yloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced square brackets.
+Error : in 'parse': invalid Newick: unbalanced square brackets.
 > 
 > try(
 +   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=sample]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced parentheses.
+Error : in 'parse': invalid Newick: unbalanced parentheses.
 > 
 > try(
 +   r"{)3:1;(((:0.1)),[&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced parentheses.
+Error : in 'parse': invalid Newick: unbalanced parentheses.
 > 
 > try(
 +   r"{((:0.1)),([&&PhyloPOMP:deme=1|type=extant]:1.00,(((:0.3,:0.1),),):0.3)a:0.5;}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
+Error : in 'parse': invalid Newick: misplaced comma or unbalanced parentheses.
 > 
 > try(
 +   r"{([&&PhyloPOMP:deme=9|type=bob]:1.0000):0.5;}" |>
@@ -206,7 +206,7 @@ Error : in 'parse': 'type=extant' on internal node.
 +   r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000):0.5}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: no final semicolon.
+Error : in 'parse': invalid Newick: no final semicolon.
 > 
 > r"{([&&PhyloPOMP|deme=9|type=sample]:1.0000A):0.5;}" |>
 +    parse_newick()
@@ -262,25 +262,25 @@ Error : in 'parse': invalid Newick: missing comma or semicolon.
 +   r"{(A();}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: unbalanced parentheses.
+Error : in 'parse': invalid Newick: unbalanced parentheses.
 > 
 > try(
 +   r"{,();}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
+Error : in 'parse': invalid Newick: misplaced comma or unbalanced parentheses.
 > 
 > try(
 +   r"{:2 ,:3 ();}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick format: misplaced colon.
+Error : in 'parse': invalid Newick: misplaced colon.
 > 
 > try(
 +   r"{:2 ,3 ();}" |>
 +      parse_newick()
 + )
-Error : in 'parse': invalid Newick string: misplaced comma or unbalanced parentheses.
+Error : in 'parse': invalid Newick: misplaced comma or unbalanced parentheses.
 > 
 > try(
 +   r"{()[bob =3 jack=[4]:0.3;}" |>
@@ -291,7 +291,7 @@ Error : in 'parse': invalid Newick: unbalanced square brackets.
 > try(
 +   "A:3();" |> parse_newick()
 + )
-Error : in 'parse': invalid Newick format: misplaced colon.
+Error : in 'parse': invalid Newick: misplaced colon.
 > 
 > g1 <- parse_newick("(:3,(:4,(:1,:2,:3):1):1):1;:4;");
 > g2 <- parse_newick(":4;(:3,(:4,((:1,:2,:3):1)):1):1;");

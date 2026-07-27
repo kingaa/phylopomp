@@ -8,7 +8,10 @@
 #include <Rdefines.h>
 #include <Rinternals.h>
 
-static R_INLINE SEXP make_matrix (size_t nrow, size_t ncol, const char **names) {
+static R_INLINE SEXP
+make_matrix
+(size_t nrow, size_t ncol, const char **names)
+{
   SEXP dim, x;
   SEXP dimnm, nm;
   int *dimp;
@@ -28,12 +31,12 @@ static R_INLINE SEXP make_matrix (size_t nrow, size_t ncol, const char **names) 
   return x;
 }
 
-slate_t node_t::joining_branch_length
-(
- const std::unordered_map<name_t, bool>& memo
- ) const {
+slate_t
+node_t::joining_branch_length
+(const std::unordered_map<name_t, bool>& memo) const
+{
   const node_t *p = parent();
-  while (!p->holds_own() && !memo.at(p->uniq)) p = p->parent();
+  while (!p->is_root() && !memo.at(p->uniq)) p = p->parent();
   return slate - p->slate;
 }
 
@@ -44,7 +47,8 @@ void node_t::cblv
  std::unordered_map<name_t, bool>& memo,
  const std::unordered_map<name_t, std::vector<node_t*>>& children,
  slate_t t0
- ) const {
+ ) const
+{
   assert(!memo[uniq]);
   const std::vector<node_t*>& ch = children.at(uniq);
   if (ch.empty()) {
@@ -65,7 +69,9 @@ void node_t::cblv
 }
 
 std::pair<std::vector<slate_t>, std::vector<slate_t>>
-genealogy_t::cblv (void) const {
+genealogy_t::cblv
+(void) const
+{
   auto children = children_map();
   auto roots  = ladderize(children);
   std::vector<slate_t> x, y;
@@ -83,7 +89,10 @@ genealogy_t::cblv (void) const {
   return {x, y};
 }
 
-SEXP cblv (genealogy_t& A) {
+SEXP
+cblv
+(genealogy_t& A)
+{
   const char *colnames[] = {"tip","node"};
   double *x, *y;
   size_t i, n;

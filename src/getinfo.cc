@@ -4,8 +4,6 @@
 #include "generics.h"
 #include "internal.h"
 
-SEXP cblv(genealogy_t& A);
-
 static size_t matchargs (const char *prov, const char **set, size_t n) {
   size_t i;
   for (i = 0; i < n; i++) {
@@ -42,7 +40,7 @@ extern "C" {
         flag[0] = true;
       } else if (j < narg) {
         flag[j] = *LOGICAL(AS_LOGICAL(arg));
-	if (j > 3 && flag[j]) nout++;
+        if (j > 3 && flag[j]) nout++;
       } else {
         err("unrecognized argument '%s' in '%s'.",name,__func__);
       }
