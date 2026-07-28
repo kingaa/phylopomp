@@ -2,7 +2,7 @@
 ##'
 ##' Computes the CBLV representation.
 ##'
-##' @name cblv.R
+##' @name cblv
 ##' @include package.R
 ##' @param object a \sQuote{gpgen} object, possibly with \sQuote{model} attribute.
 ##' @return A matrix with two columns.
