@@ -61,7 +61,7 @@ void lbdp_rinit
  const double *__covars
  ){
   n = nearbyint(n0);
-  assert(n>=0);			// #nocov
+  assert(n>=0);                 // #nocov
   ll = 0;
   ell = 0;
   node = 0;

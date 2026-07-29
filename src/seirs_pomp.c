@@ -224,10 +224,10 @@ void seirs_gill
       ellI -= 1;
       ll += log(psi+chi);
       if (unif_rand() < psi/(psi+chi)) { // non-destructive sample
-	ll += log(I-ellI);
-      } else {			// destructive sample
-	ll += log(I);
-	I -= 1;
+        ll += log(I-ellI);
+      } else {                  // destructive sample
+        ll += log(I);
+        I -= 1;
       }
     } else {
       assert(0);                // #nocov

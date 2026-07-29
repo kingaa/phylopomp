@@ -48,7 +48,7 @@ extern "C" {
   //! combine genealogies
   SEXP genealSum (SEXP args) {
     args = CDR(args);
-    genealogy_t A(R_PosInf);	// a "null" genealogy
+    genealogy_t A(R_PosInf);    // a "null" genealogy
     A.time() = R_NegInf;
     while (args != R_NilValue) {
       A += CAR(args);

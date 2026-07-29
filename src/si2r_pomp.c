@@ -291,7 +291,7 @@ void si2rs_gill
           color[lineage[c2]] = Low;
         }
         ll -= log(0.5);
-	assert(!ISNAN(ll));
+        assert(!ISNAN(ll));
       } else {
         ll += R_NegInf;
         IL += 1; ellL += 1;

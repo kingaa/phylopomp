@@ -157,9 +157,9 @@ public:
   //! - at leaf node, push added branch length into x
   //! - at internal node, push height into y
   void cblv (std::vector<slate_t>&, std::vector<slate_t>&,
-	     std::unordered_map<name_t, bool>&,
-	     const std::unordered_map<name_t,std::vector<node_t*>>&,
-	     slate_t) const;
+             std::unordered_map<name_t, bool>&,
+             const std::unordered_map<name_t,std::vector<node_t*>>&,
+             slate_t) const;
 
 public:
 

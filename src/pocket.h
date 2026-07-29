@@ -83,9 +83,9 @@ public:
     node_t *p;
     for (ball_t *b : *this) {
       if (b->is(green)) {
-	p = node_name.at(b->uniq);
-	b->owner() = p;
-	(*ball_name)[b->uniq] = b;
+        p = node_name.at(b->uniq);
+        b->owner() = p;
+        (*ball_name)[b->uniq] = b;
       }
     }
   };

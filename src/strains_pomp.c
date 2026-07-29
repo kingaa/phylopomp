@@ -61,7 +61,7 @@ static double event_rates
   alpha = Beta1*S*I1/POP;
   pi = (I1 > 0) ? 1-ellI1*(ellI1-1)/I1/(I1+1) : 0;
   event_rate += (*rate = alpha*pi); rate++;
-  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *logpi = 0; logpi++;          // this cancels the boost exactly
   *penalty += alpha*(1-pi);
   // 1: strain 1 recovery
   alpha = gamma*I1;
@@ -76,7 +76,7 @@ static double event_rates
   alpha = Beta2*S*I2/POP;
   pi = (I2 > 0) ? 1-ellI2*(ellI2-1)/I2/(I2+1) : 0;
   event_rate += (*rate = alpha*pi); rate++;
-  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *logpi = 0; logpi++;          // this cancels the boost exactly
   *penalty += alpha*(1-pi);
   // 3: strain 2 recovery
   alpha = gamma*I2;
@@ -91,7 +91,7 @@ static double event_rates
   alpha = Beta3*S*I3/POP;
   pi = (I3 > 0) ? 1-ellI3*(ellI3-1)/I3/(I3+1) : 0;
   event_rate += (*rate = alpha*pi); rate++;
-  *logpi = 0; logpi++;		// this cancels the boost exactly
+  *logpi = 0; logpi++;          // this cancels the boost exactly
   *penalty += alpha*(1-pi);
   // 5: strain 3 recovery
   alpha = gamma*I3;
