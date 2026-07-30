@@ -2,16 +2,27 @@
 % Please edit documentation in R/cblv.R
 \name{cblv}
 \alias{cblv}
+\alias{parse_cblv}
 \title{Compact, bijective, ladderized vector representation of a genealogy}
 \usage{
 cblv(object)
+
+parse_cblv(xy, t0, time)
 }
 \arguments{
 \item{object}{a \sQuote{gpgen} object, possibly with \sQuote{model} attribute.}
+
+\item{xy}{CBLV representation, as a 2-column matrix}
+
+\item{t0}{root-time}
+
+\item{time}{genealogy time}
 }
 \value{
-A matrix with two columns.
+\code{cblv} returns a matrix with two columns.
+
+\code{parse_cblv} returns a \sQuote{gpgen} object.
 }
 \description{
-Computes the CBLV representation.
+Puts a genealogy into its CBLV representation and vice-versa.
 }

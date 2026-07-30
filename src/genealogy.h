@@ -413,11 +413,14 @@ public:
   //! return the CBLV representation as an R matrix
   friend SEXP cblv (genealogy_t&);
 
+  //! parse a CBLV representation in the vectors x and y.
+  genealogy_t& parse_cblv (const double *, const double *, int, double);
+
 private:
 
-  //! return the CBLV representation in the vectors x and y
-  //! x[i] = branch length added by the i-th sample leaf
-  //! y[i] = height above t0 of the i-th internal branching event
+  //! return the CBLV representation in the vectors x and y:
+  //! - x[i] = branch length added by the i-th sample leaf
+  //! - y[i] = height above t0 of the i-th internal branching event
   std::pair<std::vector<slate_t>, std::vector<slate_t>> cblv (void) const;
 
 };

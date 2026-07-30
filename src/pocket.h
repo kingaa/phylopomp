@@ -80,11 +80,9 @@ public:
   //! Needed in deserialization.
   void repair_owners (const std::unordered_map<name_t,node_t*>& node_name,
                       std::unordered_map<name_t,ball_t*> *ball_name) {
-    node_t *p;
     for (ball_t *b : *this) {
       if (b->is(green)) {
-        p = node_name.at(b->uniq);
-        b->owner() = p;
+        b->owner() = node_name.at(b->uniq);
         (*ball_name)[b->uniq] = b;
       }
     }
@@ -122,19 +120,12 @@ public:
   };
   //! retrieve the first ball of the specified color.
   ball_t* ball (const color_t c) const {
+    ball_t *a = 0;
     for (ball_t *b : *this) {
-      if (b->color == c) return b;
+      if (b->color == c) a = b;
     }
-    assert(0);
-    return 0;
-  };
-  //! return a pointer to another ball
-  ball_t* other (const ball_t *b) const {
-    for (ball_t *a : *this) {
-      if (a != b) return a;
-    }
-    assert(0);
-    return 0;
+    assert(a != 0);
+    return a;
   };
   //! human/machine-readable info
   string_t yaml (string_t tab = "") const;

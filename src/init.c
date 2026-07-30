@@ -15,6 +15,7 @@ SEXP gendat (SEXP, SEXP);
 SEXP geneal (SEXP);
 SEXP genealScaleShift (SEXP, SEXP, SEXP);
 SEXP cblv (SEXP);
+SEXP parse_cblv (SEXP, SEXP, SEXP);
 
 // for each model, there must be
 // one DECLARATIONS line and one METHODS line.
@@ -54,6 +55,7 @@ static const R_CallMethodDef callMethods[] = {
   {"geneal", (DL_FUNC) &geneal, 1},
   {"geneal_scale", (DL_FUNC) &genealScaleShift, 3},
   {"cblv", (DL_FUNC) &cblv, 1},
+  {"parse_cblv", (DL_FUNC) &parse_cblv, 3},
   {NULL, NULL, 0}
 };
 

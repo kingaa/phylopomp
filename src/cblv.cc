@@ -89,6 +89,63 @@ genealogy_t::cblv
   return {x, y};
 }
 
+genealogy_t&
+genealogy_t::parse_cblv
+(
+ const double *x,
+ const double *y,
+ int nin,
+ double tin
+ )
+{
+  if (nin <= 0) err("invalid CBLV");
+  size_t n = size_t(nin);
+  slate_t t0 = timezero();
+  slate_t t = slate_t(tin);
+  if (t < t0+slate_t(x[0]))
+    err("invalid CBLV: time-t0 = %lg < %lg = x[0]", t-t0, x[0]);
+  time() = t;
+  node_t* p = 0;
+  for (size_t k = 0; k < n; k++) {
+    if (p == 0) {               // new root node at time t0
+      p = make_node();
+      p->slate = t0;
+      push_back(p);
+    }
+    if (x[k] < 0)
+      err("invalid CBLV: negative tip length in position %zu", k+1);
+    node_t* q = make_node();    // new tip node
+    q->slate = p->slate + slate_t(x[k]);
+    attach(p, q);
+    push_back(q);
+    t = t0 + slate_t(y[k]);     // new internal node time
+    if (y[k] < 0)
+      err("invalid CBLV: negative internal length in position %zu", k+1);
+    if (t > t0) {
+      node_t* i = q->parent();  // points to p
+      node_t* j = q;
+      if (j->slate < t) err("invalid CBLV: node %zu cannot attach.", k+1);
+      while (j != i && i->slate > t) {
+        j = i;
+        i = i->parent();
+      }
+      assert(j != i);
+      // Create new internal node at time t
+      node_t* node = make_node();
+      node->slate = t;
+      attach(i, node);
+      move(j->green_ball(), i, node);
+      push_back(node);
+      p = node;
+    } else {
+      p = 0;
+    }
+  }
+  if (p != 0) err("invalid CBLV: last value of y is nonzero.");
+  sort(); cap_tips(); clip_zlb(); weed();
+  return *this;
+}
+
 SEXP
 cblv
 (genealogy_t& A)
@@ -117,6 +174,20 @@ extern "C" {
   SEXP cblv (SEXP State) {
     genealogy_t A = State;
     return cblv(A);
+  }
+
+  //! parse CBLV representation
+  SEXP parse_cblv (SEXP XY, SEXP T0, SEXP Time) {
+    int *n = INTEGER(GET_DIM(XY));
+    if (n[1] != 2)
+      err("in 'parse_cblv': 'xy' must be a two-column matrix.");
+    double *xp = REAL(XY);
+    double *yp = xp+n[0];
+    double *t0 = REAL(T0);
+    double *time = REAL(Time);
+    genealogy_t A(*t0);
+    A.parse_cblv(xp,yp,*n,*time);
+    return serial(A);
   }
 
 }

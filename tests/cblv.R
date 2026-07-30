@@ -12,6 +12,7 @@ simulate(
 
 x |> cblv() -> y1
 y1
+stopifnot(all(cblv(parse_cblv(y1,0,1))==y1))
 
 x |> getInfo(cblv=TRUE) -> y2
 stopifnot(y1==y2$cblv)
@@ -69,5 +70,9 @@ x1 <- cblv(parse_newick(n[1]))
 x2 <- cblv(parse_newick(n[2]))
 x3 <- cblv(parse_newick(n[3]))
 stopifnot(
-  x == rbind(x1,x2,x3)
+  x == rbind(x1,x2,x3),
+  all(cblv(parse_cblv(x,0,1.5))==x),
+  all(cblv(parse_cblv(x1,0,1.5))==x1),
+  all(cblv(parse_cblv(x2,0,1.5))==x2),
+  all(cblv(parse_cblv(x3,0,1.5))==x3)
 )
