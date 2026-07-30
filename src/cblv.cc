@@ -103,7 +103,7 @@ genealogy_t::parse_cblv
   slate_t t0 = timezero();
   slate_t t = slate_t(tin);
   if (t < t0+slate_t(x[0]))
-    err("invalid CBLV: time-t0 = %lg < %lg = x[0]", t-t0, x[0]);
+    err("invalid CBLV: x[0] = %lg > %lg = time-t0", x[0], t-t0);
   time() = t;
   node_t* p = 0;
   for (size_t k = 0; k < n; k++) {
@@ -113,14 +113,14 @@ genealogy_t::parse_cblv
       push_back(p);
     }
     if (x[k] < 0)
-      err("invalid CBLV: negative tip length in position %zu", k+1);
+      err("invalid CBLV: negative tip-edge length in position %zu", k+1);
     node_t* q = make_node();    // new tip node
     q->slate = p->slate + slate_t(x[k]);
     attach(p, q);
     push_back(q);
     t = t0 + slate_t(y[k]);     // new internal node time
     if (y[k] < 0)
-      err("invalid CBLV: negative internal length in position %zu", k+1);
+      err("invalid CBLV: negative internal branch-time in position %zu", k+1);
     if (t > t0) {
       node_t* i = q->parent();  // points to p
       node_t* j = q;

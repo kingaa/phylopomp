@@ -138,3 +138,32 @@ Type 'q()' to quit R.
 +   all(cblv(parse_cblv(x3,0,1.5))==x3)
 + )
 > 
+> x <- matrix(c(3,2,1,1,2,0),3,2)
+> parse_cblv(x,-1,3) |> getInfo(time=TRUE,t0=TRUE)
+$t0
+[1] -1
+
+$time
+[1] 3
+
+> try(parse_cblv(x[,1],0,3))
+Error : in 'parse_cblv': 'xy' must be a two-column matrix.
+> try(parse_cblv(x[1:2,],0,3))
+Error : invalid CBLV: last value of y is nonzero.
+> try(parse_cblv(x,0,2))
+Error : invalid CBLV: x[0] = 3 > 2 = time-t0
+> x <- matrix(c(3,-2,1,1,2,0),3,2)
+> try(parse_cblv(x,0,3))
+Error : invalid CBLV: negative tip-edge length in position 2
+> x <- matrix(c(3,2,1,-1,2,0),3,2)
+> try(parse_cblv(x,0,3))
+Error : invalid CBLV: negative internal branch-time in position 1
+> x <- matrix(c(3,1,0.1,1,2.5,0),3,2)
+> try(parse_cblv(x,0,3))
+Error : invalid CBLV: node 2 cannot attach.
+> 
+> ## FIXME: not ladderized, yet returns result
+> x <- matrix(c(2,1,3,1,2,0),3,2)
+> all(cblv(parse_cblv(x,0,3))==x)
+[1] FALSE
+> 

@@ -76,3 +76,19 @@ stopifnot(
   all(cblv(parse_cblv(x2,0,1.5))==x2),
   all(cblv(parse_cblv(x3,0,1.5))==x3)
 )
+
+x <- matrix(c(3,2,1,1,2,0),3,2)
+parse_cblv(x,-1,3) |> getInfo(time=TRUE,t0=TRUE)
+try(parse_cblv(x[,1],0,3))
+try(parse_cblv(x[1:2,],0,3))
+try(parse_cblv(x,0,2))
+x <- matrix(c(3,-2,1,1,2,0),3,2)
+try(parse_cblv(x,0,3))
+x <- matrix(c(3,2,1,-1,2,0),3,2)
+try(parse_cblv(x,0,3))
+x <- matrix(c(3,1,0.1,1,2.5,0),3,2)
+try(parse_cblv(x,0,3))
+
+## FIXME: not ladderized, yet returns result
+x <- matrix(c(2,1,3,1,2,0),3,2)
+all(cblv(parse_cblv(x,0,3))==x)
