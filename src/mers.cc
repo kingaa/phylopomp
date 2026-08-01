@@ -108,8 +108,8 @@ double mers_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.chi_h * state.Ih);
   RATE_CALC(params.Bc);
   RATE_CALC(params.Bh);
-  RATE_CALC(params.Bc);
-  RATE_CALC(params.Bh);
+  RATE_CALC(params.Bc/params.Nc * state.Sc);
+  RATE_CALC(params.Bh/params.Nh * state.Sh);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -160,10 +160,10 @@ void mers_genealogy_t::jump (int event) {
     state.Sh += 1;
     break;
   case 10:
-    if (state.Sc > 0) state.Sc -= 1;
+    state.Sc -= 1;
     break;
   case 11:
-    if (state.Sh > 0) state.Sh -= 1;
+    state.Sh -= 1;
     break;
   default:                      // #nocov
     assert(0);                  // #nocov

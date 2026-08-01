@@ -35,7 +35,7 @@ NULL
 ##' @export
 runMERS <- function (
   time, t0 = 0,
-  Beta_cc = 4, Beta_ch = 0, Beta_hc = 0, Beta_hh = 4, gamma_c = 1, gamma_h = 1, chi_c = 1, chi_h = 0, Bc = 0, Bh = 0, Sc0 = 1, Sh0 = 1, Ic0 = 0.01, Ih0 = 0, Nc = 10000, Nh = 10000
+  Beta_cc = 4, Beta_ch = 0, Beta_hc = 0, Beta_hh = 4, gamma_c = 1, gamma_h = 1, chi_c = 1, chi_h = 0, Bc = 0.1, Bh = 0.03, Sc0 = 1, Sh0 = 1, Ic0 = 0.01, Ih0 = 0, Nc = 10000, Nh = 10000
 ) {
   params <- c(Beta_cc=Beta_cc,Beta_ch=Beta_ch,Beta_hc=Beta_hc,Beta_hh=Beta_hh,gamma_c=gamma_c,gamma_h=gamma_h,chi_c=chi_c,chi_h=chi_h,Bc=Bc,Bh=Bh)
   ivps <- c(Sc0=Sc0,Sh0=Sh0,Ic0=Ic0,Ih0=Ih0,Nc=Nc,Nh=Nh)
