@@ -30,23 +30,36 @@ ivp:
     description: population size at time t0
     default: 5
     type: int
+  max_sample:
+    name: max_sample
+    description: maximum number of samples
+    default: 10000
+    type: int
 state:
-  'n':
+  popsize:
     name: 'n'
+    type: int
+  nsample:
+    name: nsample
     type: int
 rinit: |-
     state.n = params.n0;
+    state.nsample = 0;
     graft(deme,params.n0);
 events:
   birth:
-    rate: params.lambda * state.n
+    rate: |-
+      (state.nsample < params.max_sample) ? params.lambda * state.n : 0.0
     jump: state.n += 1; birth();
   death:
+    rate: |-
+      (state.nsample < params.max_sample) ? params.mu * state.n : 0.0
     jump: state.n -= 1; death();
-    rate: params.mu * state.n
   sample_death:
-    rate: params.chi * state.n
-    jump: state.n -= 1; sample_death();
+    rate: |-
+      (state.nsample < params.max_sample) ? params.chi * state.n: 0.0
+    jump: state.n -= 1; state.nsample++; sample_death();
   sample:
-    rate: params.psi * state.n
-    jump: sample();
+    rate: |-
+      (state.nsample < params.max_sample) ? params.psi * state.n : 0.0
+    jump: state.nsample++; sample();

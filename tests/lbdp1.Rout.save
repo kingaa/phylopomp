@@ -48,6 +48,10 @@ Error : in 'runLBDP': 'n0' must be a nonnegative integer.
 > simulate("LBDP",lambda=2,mu=1,psi=5,n0=3,time=2) |>
 +   plot(points=TRUE,palette=c("#ff0000"))
 > 
+> simulate("LBDP",lambda=2,mu=1,psi=2,n0=3,time=5,max_sample=60) -> x
+> stopifnot(x |> getInfo(nsample=TRUE)==60)
+> x |> plot(points=TRUE,palette=c("#ff0000"))
+> 
 > dev.off()
 null device 
           1 

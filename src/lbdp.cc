@@ -9,6 +9,7 @@ static const int deme = 1;
 //! LBDP process state.
 typedef struct {
   int n;
+  int nsample;
 } lbdp_state_t;
 
 //! LBDP process parameters.
@@ -18,6 +19,7 @@ typedef struct {
   double psi;
   double chi;
   int n0;
+  int max_sample;
 } lbdp_parameters_t;
 
 using lbdp_proc_t = popul_proc_t<lbdp_state_t,lbdp_parameters_t,4>;
@@ -31,9 +33,11 @@ std::string lbdp_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(mu)
     + YAML_PARAM(psi)
     + YAML_PARAM(chi)
-    + YAML_PARAM(n0);
+    + YAML_PARAM(n0)
+    + YAML_PARAM(max_sample);
   std::string s = tab + "state:\n"
-    + YAML_STATE(n);
+    + YAML_STATE(n)
+    + YAML_STATE(nsample);
   return p+s;
 }
 
@@ -51,6 +55,7 @@ template<>
 void lbdp_proc_t::update_IVPs (double *p, int n) {
   int m = 0;
   PARAM_SET(n0);
+  PARAM_SET(max_sample);
   if (m != n) err("wrong number of initial-value parameters!");
 }
 
@@ -58,10 +63,10 @@ template<>
 double lbdp_proc_t::event_rates (double *rate, int n) const {
   int m = 0;
   double total = 0;
-  RATE_CALC(params.lambda * state.n);
-  RATE_CALC(params.mu * state.n);
-  RATE_CALC(params.chi * state.n);
-  RATE_CALC(params.psi * state.n);
+  RATE_CALC((state.nsample < params.max_sample) ? params.lambda * state.n : 0.0);
+  RATE_CALC((state.nsample < params.max_sample) ? params.mu * state.n : 0.0);
+  RATE_CALC((state.nsample < params.max_sample) ? params.chi * state.n: 0.0);
+  RATE_CALC((state.nsample < params.max_sample) ? params.psi * state.n : 0.0);
   if (m != n) err("wrong number of events!");
   return total;
 }
@@ -69,6 +74,7 @@ double lbdp_proc_t::event_rates (double *rate, int n) const {
 template<>
 void lbdp_genealogy_t::rinit (void) {
   state.n = params.n0;
+  state.nsample = 0;
   graft(deme,params.n0);
 }
 
@@ -82,10 +88,10 @@ void lbdp_genealogy_t::jump (int event) {
     state.n -= 1; death();
     break;
   case 2:
-    state.n -= 1; sample_death();
+    state.n -= 1; state.nsample++; sample_death();
     break;
   case 3:
-    sample();
+    state.nsample++; sample();
     break;
   default:                      // #nocov
     assert(0);                  // #nocov

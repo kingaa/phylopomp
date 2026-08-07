@@ -11,6 +11,7 @@
 ##' @param psi per capita non-destructive sampling rate
 ##' @param chi per capita destructive sampling rate
 ##' @param n0 population size at time t0
+##' @param max_sample maximum number of samples
 ##' @param object a previously computed simulation
 ##' @param time end timepoint of simulation
 ##' @param t0 beginning timepoint of simulation
@@ -22,10 +23,10 @@ NULL
 ##' @export
 runLBDP <- function (
   time, t0 = 0,
-  lambda = 2, mu = 1, psi = 1, chi = 0, n0 = 5
+  lambda = 2, mu = 1, psi = 1, chi = 0, n0 = 5, max_sample = 10000
 ) {
   params <- c(lambda=lambda,mu=mu,psi=psi,chi=chi)
-  ivps <- c(n0=n0)
+  ivps <- c(n0=n0,max_sample=max_sample)
   x <- .Call(P_makeLBDP,params,ivps,t0)
   .Call(P_runLBDP,x,time) |>
     structure(model="LBDP",class=c("gpsim","gpgen"))

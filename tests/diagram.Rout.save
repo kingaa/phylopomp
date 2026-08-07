@@ -421,8 +421,10 @@ parameter:
   psi: 1.000000
   chi: 0.000000
   n0: 5
+  max_sample: 10000
 state:
   n: 8
+  nsample: 4
 genealogy:
   t0: 0
   time: 0.5
@@ -560,8 +562,10 @@ parameter:
   psi: 1.000000
   chi: 0.000000
   n0: 5
+  max_sample: 10000
 state:
   n: 3
+  nsample: 2
 genealogy:
   t0: 0
   time: 0.5
@@ -763,8 +767,10 @@ parameter:
   psi: 1.000000
   chi: 0.000000
   n0: 5
+  max_sample: 10000
 state:
   n: 10
+  nsample: 2
 genealogy:
   t0: 0
   time: 0.5

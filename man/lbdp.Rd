@@ -9,7 +9,16 @@
 \alias{lbdp_exact}
 \title{Linear birth-death-sampling model}
 \usage{
-runLBDP(time, t0 = 0, lambda = 2, mu = 1, psi = 1, chi = 0, n0 = 5)
+runLBDP(
+  time,
+  t0 = 0,
+  lambda = 2,
+  mu = 1,
+  psi = 1,
+  chi = 0,
+  n0 = 5,
+  max_sample = 10000
+)
 
 continueLBDP(object, time, lambda = NA, mu = NA, psi = NA, chi = NA)
 
@@ -31,6 +40,8 @@ lbdp_exact(x, lambda, mu, psi, chi = 0, n0 = 1)
 \item{chi}{per capita destructive sampling rate}
 
 \item{n0}{population size at time t0}
+
+\item{max_sample}{maximum number of samples}
 
 \item{object}{a previously computed simulation}
 
