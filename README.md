@@ -2,7 +2,7 @@
 
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Development Release](https://img.shields.io/github/release/kingaa/phylopomp.svg)](https://github.com/kingaa/phylopomp/releases/latest)
-[![](https://www.r-pkg.org/badges/version/phylopomp?color=blue)](https://cran.r-project.org/package=phylopomp)
+<!-- [![](https://www.r-pkg.org/badges/version/phylopomp?color=blue)](https://cran.r-project.org/package=phylopomp) -->
 [![R-CMD-check](https://github.com/kingaa/phylopomp/actions/workflows/r-cmd-check.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/r-cmd-check.yml)
 [![binary-build](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/binary-build.yml)
 [![test-coverage](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/kingaa/phylopomp/actions/workflows/test-coverage.yml)
@@ -22,13 +22,14 @@ You can install **phylopomp** in one of three ways:
 
 ### Publications
 
-[“Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes” (*arXiv:2405.17032*, 2024)](https://doi.org/10.48550/arxiv.2405.17032)  
+“Exact Phylodynamic Likelihood via Structured Markov Genealogy Processes” (*Theoretical Population Biology* **171**: 79&ndash;105, 2026)  
+[![](https://img.shields.io/badge/doi-10.1016/j.tpb.2026.07.002-green.svg)](https://doi.org/10.1016/j.tpb.2026.07.002)&nbsp;
 [![](https://img.shields.io/badge/doi-10.48550/arxiv.2405.17032-yellow.svg)](https://doi.org/10.48550/arxiv.2405.17032)&nbsp;
 [![](https://img.shields.io/badge/github-kingaa/structured--genealogy--process--paper-blue.svg)](https://github.com/kingaa/structured-genealogy-process-paper)
 
-[“Markov Genealogy Processes” (*Theoretical Population Biology*
-**143**:77–91, 2022)](https://doi.org/10.1016/j.tpb.2021.11.003)  
-[![](https://img.shields.io/badge/doi-10.1016/j.tpb.2021.11.003-yellow.svg)](https://doi.org/10.1016/j.tpb.2021.11.003)
+“Markov Genealogy Processes” (*Theoretical Population Biology* **143**:77–91, 2022)  
+[![](https://img.shields.io/badge/doi-10.1016/j.tpb.2021.11.003-green.svg)](https://doi.org/10.1016/j.tpb.2021.11.003)
+[![](https://img.shields.io/badge/doi-10.48550/arXiv.2105.12730-yellow.svg)](https://doi.org/10.48550/arXiv.2105.12730)
 
 ### Related packages:
 
