@@ -88,69 +88,91 @@ export(yaml)
 import(ggplot2)
 importFrom(ape,read.tree)
 importFrom(cowplot,plot_grid)
-importFrom(dplyr,coalesce)
-importFrom(dplyr,count)
-importFrom(dplyr,if_else)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(foreach,"%dopar%")
-importFrom(foreach,foreach)
-importFrom(foreach,registerDoSEQ)
-importFrom(ggplot2,expand_limits)
-importFrom(ggplot2,fortify)
-importFrom(ggplot2,geom_step)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,guide_legend)
-importFrom(ggplot2,guides)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,scale_alpha_manual)
-importFrom(ggplot2,scale_color_manual)
-importFrom(ggplot2,scale_x_continuous)
-importFrom(ggplot2,theme_classic)
-importFrom(ggtree,geom_nodepoint)
-importFrom(ggtree,geom_tippoint)
-importFrom(ggtree,geom_tree)
-importFrom(ggtree,theme_tree2)
-importFrom(grid,circleGrob)
-importFrom(grid,convertHeight)
-importFrom(grid,drawDetails)
-importFrom(grid,gList)
-importFrom(grid,gTree)
-importFrom(grid,gpar)
-importFrom(grid,grid.draw)
-importFrom(grid,grid.newpage)
-importFrom(grid,grob)
-importFrom(grid,grobTree)
-importFrom(grid,linesGrob)
-importFrom(grid,popViewport)
-importFrom(grid,postDrawDetails)
-importFrom(grid,preDrawDetails)
-importFrom(grid,pushViewport)
-importFrom(grid,roundrectGrob)
-importFrom(grid,seekViewport)
-importFrom(grid,textGrob)
-importFrom(grid,unit)
-importFrom(grid,upViewport)
-importFrom(grid,viewport)
-importFrom(pomp,bake)
-importFrom(pomp,covariate_table)
-importFrom(pomp,freeze)
-importFrom(pomp,onestep)
-importFrom(pomp,parameter_trans)
-importFrom(pomp,pomp)
-importFrom(pomp,stew)
-importFrom(scales,alpha)
-importFrom(scales,hue_pal)
-importFrom(scales,rescale)
-importFrom(tibble,as_tibble)
-importFrom(tibble,column_to_rownames)
-importFrom(tibble,tibble)
-importFrom(tidyr,expand_grid)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,separate_wider_delim)
-importFrom(tidyr,unite)
-importFrom(utils,globalVariables)
-importFrom(utils,head)
-importFrom(yaml,as.yaml)
-importFrom(yaml,read_yaml)
+importFrom(dplyr,
+  coalesce,
+  count,
+  if_else,
+  left_join,
+  mutate
+)
+importFrom(foreach,
+  "%dopar%",
+  foreach,
+  registerDoSEQ
+)
+importFrom(ggplot2,
+  expand_limits,
+  fortify,
+  geom_step,
+  ggplot,
+  guide_legend,
+  guides,
+  labs,
+  scale_alpha_manual,
+  scale_color_manual,
+  scale_x_continuous,
+  theme_classic
+)
+importFrom(ggtree,
+  geom_nodepoint,
+  geom_tippoint,
+  geom_tree,
+  theme_tree2
+)
+importFrom(grid,
+  circleGrob,
+  convertHeight,
+  drawDetails,
+  gList,
+  gTree,
+  gpar,
+  grid.draw,
+  grid.newpage,
+  grob,
+  grobTree,
+  linesGrob,
+  popViewport,
+  postDrawDetails,
+  preDrawDetails,
+  pushViewport,
+  roundrectGrob,
+  seekViewport,
+  textGrob,
+  unit,
+  upViewport,
+  viewport
+)
+importFrom(pomp,
+  bake,
+  covariate_table,
+  freeze,
+  onestep,
+  parameter_trans,
+  pomp,
+  stew
+)
+importFrom(scales,
+  alpha,
+  hue_pal,
+  rescale
+)
+importFrom(tibble,
+  as_tibble,
+  column_to_rownames,
+  tibble
+)
+importFrom(tidyr,
+  expand_grid,
+  pivot_longer,
+  separate_wider_delim,
+  unite
+)
+importFrom(utils,
+  globalVariables,
+  head
+)
+importFrom(yaml,
+  as.yaml,
+  read_yaml
+)
 useDynLib(phylopomp, .registration = TRUE, .fixes="P_")
