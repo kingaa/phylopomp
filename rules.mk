@@ -143,8 +143,7 @@ revdeps: .dist
 
 publish: dist manual htmlhelp www
 	$(REXE) -e 'drat::insertPackage("$(PKGVERS).tar.gz",repodir="$(REPODIR)",action="prune")'
-	-$(REXE) -e 'drat::insertPackage("$(PKGVERS).tgz",repodir="$(REPODIR)",action="prune")'
-	-$(REXE) -e 'drat::insertPackage("$(PKGVERS).zip",repodir="$(REPODIR)",action="prune")'
+	-$(REXE) -e 'drat::insertPackage("$(PKGVERS).zip",repodir="$(REPODIR)",action="prune",type="binary")'
 	$(MAKE) -C www publish
 
 rhub:

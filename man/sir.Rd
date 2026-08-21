@@ -18,6 +18,7 @@ runSIR(
   Beta = 4,
   gamma = 1,
   psi = 1,
+  chi = 0,
   omega = 0,
   pop = 100,
   S0 = 0.95,
@@ -25,7 +26,15 @@ runSIR(
   R0 = 0
 )
 
-continueSIR(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
+continueSIR(
+  object,
+  time,
+  Beta = NA,
+  gamma = NA,
+  psi = NA,
+  chi = NA,
+  omega = NA
+)
 
 runSIRS(
   time,
@@ -33,6 +42,7 @@ runSIRS(
   Beta = 4,
   gamma = 1,
   psi = 1,
+  chi = 0,
   omega = 0,
   pop = 100,
   S0 = 0.95,
@@ -40,11 +50,19 @@ runSIRS(
   R0 = 0
 )
 
-continueSIRS(object, time, Beta = NA, gamma = NA, psi = NA, omega = NA)
+continueSIRS(
+  object,
+  time,
+  Beta = NA,
+  gamma = NA,
+  psi = NA,
+  chi = NA,
+  omega = NA
+)
 
-sir_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop)
+sir_pomp(x, Beta, gamma, psi, chi = 0, omega = 0, S0, I0, R0, pop)
 
-sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop)
+sirs_pomp(x, Beta, gamma, psi, chi = 0, omega = 0, S0, I0, R0, pop)
 }
 \arguments{
 \item{time}{end timepoint of simulation}
@@ -56,6 +74,8 @@ sirs_pomp(x, Beta, gamma, psi, omega = 0, S0, I0, R0, pop)
 \item{gamma}{recovery rate}
 
 \item{psi}{per capita (nondestructive) sampling rate}
+
+\item{chi}{per capita (destructive) sampling rate}
 
 \item{omega}{rate of waning of immunity}
 

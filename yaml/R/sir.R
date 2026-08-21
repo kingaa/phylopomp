@@ -9,6 +9,7 @@
 ##' @param Beta transmission rate
 ##' @param gamma recovery rate
 ##' @param psi per capita (nondestructive) sampling rate
+##' @param chi per capita (destructive) sampling rate
 ##' @param omega rate of waning of immunity
 ##' @param pop size of population
 ##' @param S0 initial size of susceptible population
@@ -25,9 +26,9 @@ NULL
 ##' @export
 runSIR <- function (
   time, t0 = 0,
-  Beta = 4, gamma = 1, psi = 1, omega = 0, pop = 100, S0 = 0.95, I0 = 0.05, R0 = 0
+  Beta = 4, gamma = 1, psi = 1, chi = 0, omega = 0, pop = 100, S0 = 0.95, I0 = 0.05, R0 = 0
 ) {
-  params <- c(Beta=Beta,gamma=gamma,psi=psi,omega=omega)
+  params <- c(Beta=Beta,gamma=gamma,psi=psi,chi=chi,omega=omega)
   ivps <- c(pop=pop,S0=S0,I0=I0,R0=R0)
   x <- .Call(P_makeSIR,params,ivps,t0)
   .Call(P_runSIR,x,time) |>
@@ -38,10 +39,10 @@ runSIR <- function (
 ##' @export
 continueSIR <- function (
   object, time,
-  Beta = NA, gamma = NA, psi = NA, omega = NA
+  Beta = NA, gamma = NA, psi = NA, chi = NA, omega = NA
 ) {
   params <- c(
-    Beta=Beta,gamma=gamma,psi=psi,omega=omega
+    Beta=Beta,gamma=gamma,psi=psi,chi=chi,omega=omega
   )
   x <- .Call(P_reviveSIR,object,params)
   .Call(P_runSIR,x,time) |>

@@ -18,6 +18,7 @@ typedef struct {
   double Beta;
   double gamma;
   double psi;
+  double chi;
   double omega;
   double pop;
   double S0;
@@ -25,7 +26,7 @@ typedef struct {
   double R0;
 } sir_parameters_t;
 
-using sir_proc_t = popul_proc_t<sir_state_t,sir_parameters_t,4>;
+using sir_proc_t = popul_proc_t<sir_state_t,sir_parameters_t,5>;
 using sir_genealogy_t = master_t<sir_proc_t,1>;
 
 template<>
@@ -35,6 +36,7 @@ std::string sir_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(Beta)
     + YAML_PARAM(gamma)
     + YAML_PARAM(psi)
+    + YAML_PARAM(chi)
     + YAML_PARAM(omega)
     + YAML_PARAM(pop)
     + YAML_PARAM(S0)
@@ -53,6 +55,7 @@ void sir_proc_t::update_params (double *p, int n) {
   PARAM_SET(Beta);
   PARAM_SET(gamma);
   PARAM_SET(psi);
+  PARAM_SET(chi);
   PARAM_SET(omega);
   if (m != n) err("wrong number of parameters!");
 }
@@ -74,6 +77,7 @@ double sir_proc_t::event_rates (double *rate, int n) const {
   RATE_CALC(params.Beta * state.S * state.I / params.pop);
   RATE_CALC(params.gamma * state.I);
   RATE_CALC(params.psi * state.I);
+  RATE_CALC(params.chi * state.I);
   RATE_CALC(params.omega * state.R);
   if (m != n) err("wrong number of events!");
   return total;
@@ -101,6 +105,9 @@ void sir_genealogy_t::jump (int event) {
     sample();
     break;
   case 3:
+    state.I -= 1; state.R += 1; sample_death();
+    break;
+  case 4:
     state.R -= 1; state.S += 1;
     break;
   default:                      // #nocov

@@ -19,6 +19,11 @@ parameter:
     description: per capita (nondestructive) sampling rate
     default: 1
     type: double
+  chi:
+    name: chi
+    description: per capita (destructive) sampling rate
+    default: 0
+    type: double
   omega:
     name: omega
     description: rate of waning of immunity
@@ -74,6 +79,9 @@ events:
   sample:
     rate: params.psi * state.I
     jump: sample();
+  dsample:
+    rate: params.chi * state.I
+    jump: state.I -= 1; state.R += 1; sample_death();
   waning:
     jump: state.R -= 1; state.S += 1;
     rate: params.omega * state.R

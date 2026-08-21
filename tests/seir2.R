@@ -79,4 +79,13 @@ plot_grid(
   ncol=1,align="v",rel_heights=c(2,1,1)
 )
 
+po1 <- po
+coef(po1,c("psi","chi")) <- 0
+stopifnot(
+  po1 |>
+    pfilter(Np=100) |>
+    logLik() |>
+    is.infinite()
+)
+
 dev.off()

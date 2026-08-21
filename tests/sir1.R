@@ -12,7 +12,7 @@ set.seed(847110120)
 runSIR(time=10) -> x
 x
 
-runSIR(Beta=3,gamma=1,psi=5,S0=100,I0=5,pop=105,time=2) |>
+runSIR(Beta=4,gamma=1,psi=5,chi=1,S0=100,I0=5,pop=105,time=2) |>
   plot(points=TRUE)
 
 runSIR(Beta=3,gamma=1,psi=2,S0=100,I0=5,pop=105,time=1) |>
@@ -26,7 +26,7 @@ x |> geneal()
 
 x |>
   sir_pomp(
-    Beta=3,gamma=1,psi=2,omega=1,
+    Beta=3,gamma=1,psi=2,omega=1,chi=0.1,
     S0=100,I0=5,R0=0,pop=105
   ) |>
   pfilter(Np=5000) -> pf
@@ -44,5 +44,14 @@ try(
 )
 
 simulate("SIRS",time=10) |> geneal()
+
+pf1 <- pf
+coef(pf1,c("psi","chi")) <- 0
+stopifnot(
+  pf1 |>
+    pfilter(Np=100) |>
+    logLik() |>
+    is.infinite()
+)
 
 dev.off()

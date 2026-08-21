@@ -6,11 +6,12 @@ static const int nrate = 3;
 #define Beta      (__p[__parindex[0]])
 #define gamma     (__p[__parindex[1]])
 #define psi       (__p[__parindex[2]])
-#define omega     (__p[__parindex[3]])
-#define S0        (__p[__parindex[4]])
-#define I0        (__p[__parindex[5]])
-#define R0        (__p[__parindex[6]])
-#define POP       (__p[__parindex[7]])
+#define chi       (__p[__parindex[3]])
+#define omega     (__p[__parindex[4]])
+#define S0        (__p[__parindex[5]])
+#define I0        (__p[__parindex[6]])
+#define R0        (__p[__parindex[7]])
+#define POP       (__p[__parindex[8]])
 #define S         (__x[__stateindex[0]])
 #define I         (__x[__stateindex[1]])
 #define R         (__x[__stateindex[2]])
@@ -58,7 +59,7 @@ static double event_rates
   alpha = omega*R;
   event_rate += (*rate = alpha); rate++;
   // sampling
-  alpha = psi*I;
+  alpha = (psi+chi)*I;
   *penalty += alpha;
   assert(R_FINITE(event_rate));
   return event_rate;
@@ -126,7 +127,15 @@ void sirs_gill
       ll += log(psi);
     } else if (sat[parent] == 0) {
       ellI -= 1;
-      ll += log(psi*(I-ellI));
+      ll += log(psi+chi);
+      if (psi+chi <= 0)
+	ll += R_NegInf;
+      else if (unif_rand() < psi/(psi+chi)) { // non-destructive sample
+	ll += log(I-ellI);
+      } else {			// destructive sample
+	ll += log(I);
+	I -= 1;
+      }
     } else {
       assert(0);                // #nocov
       ll += R_NegInf;           // #nocov

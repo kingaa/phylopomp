@@ -223,7 +223,9 @@ void seirs_gill
     } else if (sat[parent] == 0) { // s=(0,0)
       ellI -= 1;
       ll += log(psi+chi);
-      if (unif_rand() < psi/(psi+chi)) { // non-destructive sample
+      if (psi+chi <= 0)
+	ll += R_NegInf;
+      else if (unif_rand() < psi/(psi+chi)) { // non-destructive sample
         ll += log(I-ellI);
       } else {                  // destructive sample
         ll += log(I);
