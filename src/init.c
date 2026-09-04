@@ -13,6 +13,7 @@ SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
 SEXP gendat (SEXP, SEXP);
 SEXP geneal (SEXP);
+SEXP subsample (SEXP, SEXP);
 SEXP genealScaleShift (SEXP, SEXP, SEXP);
 SEXP cblv (SEXP);
 SEXP parse_cblv (SEXP, SEXP, SEXP);
@@ -53,6 +54,7 @@ static const R_CallMethodDef callMethods[] = {
   {"yaml", (DL_FUNC) &yaml, 1},
   {"gendat", (DL_FUNC) &gendat, 2},
   {"geneal", (DL_FUNC) &geneal, 1},
+  {"subsample", (DL_FUNC) &subsample, 2},
   {"geneal_scale", (DL_FUNC) &genealScaleShift, 3},
   {"cblv", (DL_FUNC) &cblv, 1},
   {"parse_cblv", (DL_FUNC) &parse_cblv, 3},

@@ -93,6 +93,13 @@ gi <- getInfo(x,nsample=TRUE,nroot=TRUE)
 stopifnot(identical(g$nsample,gi$nsample))
 stopifnot(identical(g$nroot,gi$nroot))
 
+x |>
+  getInfo(nsample=TRUE)
+x |>
+  subsample(frac=0.5) |>
+  freeze(seed=49688339) |>
+  getInfo(nsample=TRUE)
+
 g |>
   _[c("nodetype","deme","child","ancestor")] |>
   bind_cols() |>

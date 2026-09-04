@@ -247,41 +247,41 @@ continue{%name%} <- function (
         c(model$parameter,model$ivp),
         \(p) render(template="##' @param {%name%} {%description%}",
           name=p$name,description=oneline(p$description))
-      ),
-      collapse="\n"),
-    params=paste(
-      lapply(
-        c(model$parameter,model$ivp),
-        \(p) render(r"{{%name%} = {%default%}}",
-          name=p$name, default=p$default
-        )
-      ),
-      collapse=", "
     ),
-    params_na=paste(
-      lapply(
-        model$parameter,
-        \(p) render(r"{{%name%} = NA}",name=p$name)
-      ),
-      collapse=", "
+    collapse="\n"),
+  params=paste(
+    lapply(
+      c(model$parameter,model$ivp),
+      \(p) render(r"{{%name%} = {%default%}}",
+        name=p$name, default=p$default
+      )
     ),
-    paramvec=paste(
-      lapply(
-        model$parameter,
-        \(p) render(r"{{%name%}={%name%}}",name=p$name)
-      ),
-      collapse=","
+    collapse=", "
+  ),
+  params_na=paste(
+    lapply(
+      model$parameter,
+      \(p) render(r"{{%name%} = NA}",name=p$name)
     ),
-    ivpvec=paste(
-      lapply(
-        model$ivp,
-        \(p) render(r"{{%name%}={%name%}}",name=p$name)
-      ),
-      collapse=","
-    )
-  ) |>
+    collapse=", "
+  ),
+  paramvec=paste(
+    lapply(
+      model$parameter,
+      \(p) render(r"{{%name%}={%name%}}",name=p$name)
+    ),
+    collapse=","
+  ),
+  ivpvec=paste(
+    lapply(
+      model$ivp,
+      \(p) render(r"{{%name%}={%name%}}",name=p$name)
+    ),
+    collapse=","
+  )
+) |>
   cat(file=sprintf("R/%s.R",tolower(model$name)))
-  invisible(NULL)
+invisible(NULL)
 }
 
 ## Render the package 'init.c' file.
@@ -302,6 +302,7 @@ SEXP curtail (SEXP, SEXP, SEXP);
 SEXP yaml (SEXP);
 SEXP gendat (SEXP, SEXP);
 SEXP geneal (SEXP);
+SEXP subsample (SEXP, SEXP);
 SEXP genealScaleShift (SEXP, SEXP, SEXP);
 SEXP cblv (SEXP);
 SEXP parse_cblv (SEXP, SEXP, SEXP);
@@ -318,6 +319,7 @@ static const R_CallMethodDef callMethods[] = {
   {"yaml", (DL_FUNC) &yaml, 1},
   {"gendat", (DL_FUNC) &gendat, 2},
   {"geneal", (DL_FUNC) &geneal, 1},
+  {"subsample", (DL_FUNC) &subsample, 2},
   {"geneal_scale", (DL_FUNC) &genealScaleShift, 3},
   {"cblv", (DL_FUNC) &cblv, 1},
   {"parse_cblv", (DL_FUNC) &parse_cblv, 3},

@@ -1,5 +1,15 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.19.7}{
+  \itemize{
+    \item The new \code{subsample} function allows randomly subsampling a genealogy.
+  }
+}
+\section{Changes in \pkg{phylopomp} version 0.19.6}{
+  \itemize{
+    \item The SIRS model now allows destructive sampling.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.19.5}{
   \itemize{
     \item New \code{cblv} function for computing the compact, bijective, ladderized vector (CBLV) representation of a pruned, obscured genealogy.

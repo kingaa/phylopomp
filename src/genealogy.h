@@ -372,6 +372,10 @@ public:
     return *this;
   };
 
+  //! randomly discard samples on a genealogy.
+  //! NB: this prunes the genealogy.
+  genealogy_t& subsample (double frac);
+
 private:
   //! clip out all zero-length branches
   void clip_zlb (void);
@@ -380,7 +384,7 @@ private:
   void cap_tips (void);
   //! roots are added at zero time if needed
   void cap_roots (void) {
-    node_nit j = begin();
+    auto j = begin();
     while (j != end()) {
       if ((*j)->is_root() && (*j)->slate > timezero()) {
         node_t *q = make_node();

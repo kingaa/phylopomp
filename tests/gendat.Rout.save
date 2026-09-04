@@ -178,6 +178,19 @@ pruning since 'gendat=TRUE'
 > stopifnot(identical(g$nsample,gi$nsample))
 > stopifnot(identical(g$nroot,gi$nroot))
 > 
+> x |>
++   getInfo(nsample=TRUE)
+$nsample
+[1] 38
+
+> x |>
++   subsample(frac=0.5) |>
++   freeze(seed=49688339) |>
++   getInfo(nsample=TRUE)
+$nsample
+[1] 17
+
+> 
 > g |>
 +   _[c("nodetype","deme","child","ancestor")] |>
 +   bind_cols() |>

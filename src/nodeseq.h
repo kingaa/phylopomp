@@ -142,7 +142,7 @@ public:
   //! traverse to nth node, retrieve pointer
   node_t *position (int n) {
     int i = 0;
-    node_it k = cbegin();
+    auto k = cbegin();
     while (i < n && k != cend()) {
       i++; k++;
     }
@@ -209,7 +209,7 @@ public:
   };
   //! drop all dead roots
   void weed (void) {
-    node_nit j = begin();
+    auto j = begin();
     while (j != end()) {
       if ((*j)->dead_root()) {
         destroy_node(*(j++));
@@ -221,8 +221,11 @@ public:
   //! drop all inline nodes
   //! i.e., those holding just one ball that is green.
   void comb (void) {
-    for (node_t *p : *this) {
-      if (p->size() == 1 && p->holds(green)) {
+    for (auto it = rbegin(); it != rend(); ++it) {
+      node_t *p = *it;
+      if (p->size() == 0) {
+        detach(p);
+      } else if (p->size() == 1 && p->holds(green)) {
         swap(p->last_ball(),p->green_ball());
       }
     }
