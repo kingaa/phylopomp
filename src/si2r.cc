@@ -135,10 +135,10 @@ void si2r_genealogy_t::jump (int event) {
     state.R -= 1; state.S += 1;
     break;
   case 7:
-    state.IL -= 1; sample_death(L);
+    state.IL -= 1; state.R += 1; sample_death(L);
     break;
   case 8:
-    state.IH -= 1; sample_death(H);
+    state.IH -= 1; state.R += 1; sample_death(H);
     break;
   default:                      // #nocov
     assert(0);                  // #nocov

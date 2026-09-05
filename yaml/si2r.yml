@@ -117,7 +117,7 @@ events:
     rate: params.omega * state.R
   SL:
     rate: params.chi * state.IL
-    jump: state.IL -= 1; sample_death(L);
+    jump: state.IL -= 1; state.R += 1; sample_death(L);
   SH:
     rate: params.chi * state.IH
-    jump: state.IH -= 1; sample_death(H);
+    jump: state.IH -= 1; state.R += 1; sample_death(H);

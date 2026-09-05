@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.19.8}{
+  \itemize{
+    \item In the SI2R model, destructive sampling now causes the sampled host to enter the R class.
+    Previously, such hosts were removed from the population.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.19.7}{
   \itemize{
     \item The new \code{subsample} function allows randomly subsampling a genealogy.
