@@ -75,7 +75,7 @@ static double event_rates
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
   assert(R_FINITE(event_rate));
-  // 1: TH, s=(0,0)
+  // 1: TH, s=(0,0) or s=(0,1)
   assert(S>=0 && IH>=0);
   alpha = (POP > 0) ? kappa*Beta*S*IH/POP : 0;
   assert(IH >= ellH);
@@ -271,6 +271,7 @@ void si2rs_gill
         ellL += 1;
         color[lineage[c1]] = Low;
         color[lineage[c2]] = Low;
+	ll -= log(IL*(IL-1)/2);
       } else {
         ll += R_NegInf;
         IL += 1; ellL += 1;
@@ -290,7 +291,7 @@ void si2rs_gill
           color[lineage[c1]] = High;
           color[lineage[c2]] = Low;
         }
-        ll -= log(0.5);
+	ll -= log(IL*IH/2);
         assert(!ISNAN(ll));
       } else {
         ll += R_NegInf;
@@ -326,7 +327,7 @@ void si2rs_gill
         S -= 1; IL += 1;
         ll += log(1-ellL*(ellL-1)/IL/(IL-1));
         break;
-      case 1:                   // TH, s = (0,0)
+      case 1:                   // TH, s=(0,0) or s=(0,1)
         assert(S>=1 && IH >= 1);
         S -= 1; IL += 1;
         ll += log(1-ellL/IL);
@@ -336,7 +337,7 @@ void si2rs_gill
         S -= 1; IL += 1;
         change_color(color,nsample,random_choice(ellH),High,Low);
         ellH -= 1; ellL += 1;
-        ll += log(1-ellH/IH/IL);
+        ll += log((1-ellH/IH)/IL);
         break;
       case 3:                   // L, s=(0,0)
         assert(IL>=1);
