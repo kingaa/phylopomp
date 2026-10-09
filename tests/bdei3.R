@@ -1,0 +1,45 @@
+options(digits=3)
+suppressPackageStartupMessages({
+  library(pomp)
+  library(phylopomp)
+})
+
+## lambda=0, one founding infectious, destructive sampling only:
+## BDEI (any sigma) is exactly LBDP, so bdei_pomp must recover lbdp_exact
+## with no Monte Carlo error.
+freeze(
+  runLBDP(time=1.5, lambda=0, mu=0.2, chi=2, psi=0, n0=1),
+  seed=1
+) -> t0
+stopifnot(getInfo(t0, nsample=TRUE)$nsample >= 1)
+ll_exact0 <- lbdp_exact(t0, lambda=0, mu=0.2, psi=0, chi=2, n0=1)
+po0 <- bdei_pomp(
+  t0, sigma=50, lambda=0, mu=0.2, chi=2, pop=1, E0=0, I0=1
+)
+ll_bdei0 <- replicate(5, logLik(pfilter(po0, Np=20)))
+stopifnot(
+  is.finite(ll_exact0),
+  all(is.finite(ll_bdei0)),
+  all(abs(ll_bdei0 - ll_exact0) < 1e-8)
+)
+
+## sigma -> infinity: an LBDP tree (psi=0, chi>0) evaluated under BDEI
+## with large sigma must recover lbdp_exact to within Monte Carlo error.
+## (Inline E->I nodes are erased by obscuring; the newborn E must progress
+## before the next I-only event, which a large sigma makes immediate.)
+freeze(
+  runLBDP(time=3, lambda=1, mu=0.3, chi=0.3, psi=0, n0=2),
+  seed=2718
+) -> tree
+ll_exact <- lbdp_exact(tree, lambda=1, mu=0.3, psi=0, chi=0.3, n0=2)
+po <- bdei_pomp(
+  tree, sigma=1000, lambda=1, mu=0.3, chi=0.3, pop=2, E0=0, I0=2
+)
+replicate(8, logLik(pfilter(po, Np=4000))) |>
+  logmeanexp(se=TRUE) -> pf_ll
+stopifnot(
+  is.finite(ll_exact),
+  is.finite(pf_ll[1]),
+  pf_ll[1] > ll_exact - 3*pf_ll[2],
+  pf_ll[1] < ll_exact + 3*pf_ll[2]
+)
