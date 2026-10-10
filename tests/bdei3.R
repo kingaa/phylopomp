@@ -72,3 +72,27 @@ stopifnot(
   all(is.finite(exposed_ll)),
   abs(exposed_lr_mean - 1) < 3*exposed_lr_se
 )
+
+## Two exposed founders exercise the progression weight when the tracked
+## lineage enters a population with I=2. With mu=lambda=0, one observed
+## sample can arise from either host; the other host must remain unsampled.
+## For one host, f_E(t) is the density above with mu=0. The other-host
+## no-sample probability is
+##   S_E(t)=exp(-sigma*t)+sigma*(exp(-chi*t)-exp(-sigma*t))/(sigma-chi),
+## so the one-tip likelihood is 2*f_E(t)*S_E(t).
+f_E <- chi*sigma*(exp(-chi*t)-exp(-sigma*t))/(sigma-chi)
+S_E <- exp(-sigma*t)+sigma*(exp(-chi*t)-exp(-sigma*t))/(sigma-chi)
+ll_two_exposed_exact <- log(2*f_E*S_E)
+po_two_exposed <- bdei_pomp(
+  exposed_tree, sigma=sigma, lambda=0, mu=0, chi=chi,
+  pop=2, E0=2, I0=0
+)
+two_exposed_ll <- replicate(20, logLik(pfilter(po_two_exposed, Np=5000)))
+two_exposed_lr <- exp(two_exposed_ll - ll_two_exposed_exact)
+two_exposed_lr_mean <- mean(two_exposed_lr)
+two_exposed_lr_se <- sd(two_exposed_lr)/sqrt(length(two_exposed_lr))
+stopifnot(
+  is.finite(ll_two_exposed_exact),
+  all(is.finite(two_exposed_ll)),
+  abs(two_exposed_lr_mean - 1) < 3*two_exposed_lr_se
+)
