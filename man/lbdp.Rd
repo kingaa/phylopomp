@@ -24,7 +24,15 @@ continueLBDP(object, time, lambda = NA, mu = NA, psi = NA, chi = NA)
 
 lbdp_pomp(x, lambda, mu, psi, chi = 0, n0 = 1)
 
-lbdp_exact(x, lambda, mu, psi, chi = 0, n0 = 1)
+lbdp_exact(
+  x,
+  lambda,
+  mu,
+  psi,
+  chi = 0,
+  n0 = NA,
+  verbose = getOption("verbose", TRUE)
+)
 }
 \arguments{
 \item{time}{end timepoint of simulation}
@@ -46,6 +54,8 @@ lbdp_exact(x, lambda, mu, psi, chi = 0, n0 = 1)
 \item{object}{a previously computed simulation}
 
 \item{x}{genealogy in \pkg{phylopomp} format (i.e., an object that inherits from \sQuote{gpgen}).}
+
+\item{verbose}{If set to \code{TRUE}, the estimated initial population size \code{n0} is reported.}
 }
 \value{
 \code{runLBDP} and \code{continueLBDP} return objects of class \sQuote{gpsim} with \sQuote{model} attribute \dQuote{LBDP}.
@@ -60,7 +70,7 @@ The genealogy process induced by a simple linear birth-death process with consta
 \code{lbdp_pomp} constructs a \pkg{pomp} object containing a given set of data and a linear birth-death-sampling process.
 
 \code{lbdp_exact} gives the exact log likelihood of a linear birth-death process with (optionally destructive) sampling, conditioned on the population size at time 0.
-If \code{n0=NA}, then the log likelihood is maximized over the initial population size.
+If \code{n0=NA} (the default), then the log likelihood is maximized over the initial population size and, if \code{verbose = TRUE}, the estimate is reported via a message.
 }
 \examples{
 simulate("LBDP",time=4) |> plot(points=TRUE)

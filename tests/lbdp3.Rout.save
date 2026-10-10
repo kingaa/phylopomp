@@ -79,6 +79,7 @@ Using alpha for a discrete variable is not advised.
 [1] 5.23
 > x |>
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=NA) -> llex1
+in 'lbdp_exact': estimated n0 = 2
 > llex1
 [1] 5.23
 > stopifnot(llex==llex1)
@@ -104,6 +105,7 @@ Using alpha for a discrete variable is not advised.
 [1] -Inf
 > x |>
 +   lbdp_exact(lambda=4,mu=1,psi=2,n0=NA)
+in 'lbdp_exact': estimated n0 = 2
 [1] 5.23
 > 
 > dev.off()
