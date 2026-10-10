@@ -1,0 +1,116 @@
+
+R version 4.6.0 (2026-04-24) -- "Because it was There"
+Copyright (C) 2026 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> png(filename="bdei2-%02d.png",res=100)
+> 
+> options(tidyverse.quiet=TRUE,digits=3)
+> suppressPackageStartupMessages({
++   library(tidyverse)
++   library(pomp)
++   library(phylopomp)
++ })
+> theme_set(theme_bw())
+> set.seed(20260817)
+> 
+> freeze(
++   simulate(
++     "BDEI",
++     time=2.5, sigma=1, lambda=1.5, mu=0.3, chi=0.6,
++     pop=3, E0=0, I0=3
++   ),
++   seed=20260817
++ ) -> G
+> G |> plot(obscure=FALSE,points=TRUE)
+> 
+> stopifnot(
++   attr(G,"model")=="BDEI",
++   getInfo(G,nsample=TRUE)$nsample>=2
++ )
+> 
+> try(
++   G |>
++     bdei_pomp(
++       sigma=1, lambda=1.5, mu=0.3, chi=0.6,
++       pop=3, E0=-1, I0=3
++     ) -> po
++ )
+Error : in ‘bdei_pomp’: ‘E0’ must be finite, nonnegative numeric scalars.
+> 
+> G |>
++   bdei_pomp(
++     sigma=1, lambda=1.5, mu=0.3, chi=0.6,
++     pop=3, E0=0, I0=3
++   ) -> po
+> 
+> po |> rinit(nsim=5)
+       .id
+name    [,1] [,2] [,3] [,4] [,5]
+  E        0    0    0    0    0
+  I        3    3    3    3    3
+  ll       0    0    0    0    0
+  node     0    0    0    0    0
+  ellE     0    0    0    0    0
+  ellI     0    0    0    0    0
+  color   NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+          NA   NA   NA   NA   NA
+> 
+> po |> pfilter(Np=1) |> cond_logLik()
+ [1]  0.0000  0.0000 -0.3314    -Inf  0.5949 -0.0514    -Inf  0.6320  0.0758
+[10]    -Inf
+> po |> pfilter(Np=1000) |> replicate(n=10) |> concat() -> pf
+> pf[[1]] |> cond_logLik()
+ [1]  0.0000  0.0000 -0.0602  0.1820 -0.3508 -0.6068 -1.0935 -1.0857 -0.4899
+[10] -0.3077
+> pf |> logLik()
+ [1] -3.81 -4.49 -3.87 -3.84 -4.06 -3.82 -3.88 -3.99 -4.54 -4.04
+> pf |> logLik() |> logmeanexp(se=TRUE,ess=TRUE)
+    est      se     ess 
+-4.0056  0.0721  9.5438 
+> 
+> stopifnot(
++   all(is.finite(logLik(pf))),
++   all(logLik(pf) > -Inf)
++ )
+> 
+> plot_grid(
++   G |>
++     plot(points=TRUE)+
++     expand_limits(x=2.5),
++   pf |>
++     cond_logLik(format="d") |>
++     ggplot(aes(x=time,y=cond.logLik,group=.id))+
++     geom_step(direction="vh",alpha=0.3)+
++     labs(x="")+
++     expand_limits(x=2.5),
++   pf |>
++     eff_sample_size(format="d") |>
++     ggplot(aes(x=time,y=eff.sample.size,group=.id))+
++     geom_step(direction="vh",alpha=0.3)+
++     geom_hline(yintercept=100,color="red")+
++     expand_limits(x=2.5),
++   ncol=1,align="v",rel_heights=c(2,1,1)
++ )
+> 
+> dev.off()
+null device 
+          1 
+> 

@@ -1,5 +1,13 @@
 /* src/init.c */
 extern void R_init_phylopomp(DllInfo *);
+/* src/bdei_pomp.c */
+extern void bdei_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
+extern void bdei_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
+extern void bdei_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);
+/* src/bdss_pomp.c */
+extern void bdss_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
+extern void bdss_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
+extern void bdss_dmeas(double *, const double *, const double *, const double *, int, const int *, const int *, const int *, const int *, const double *, double);
 /* src/lbdp_pomp.c */
 extern void lbdp_rinit(double *, const double *, double, const int *, const int *, const int *, const double *);
 extern void lbdp_gill(double *, const double *, const int *, const int *, const int *, const double *, double, double);
