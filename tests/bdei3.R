@@ -43,3 +43,32 @@ stopifnot(
   pf_ll[1] > ll_exact - 3*pf_ll[2],
   pf_ll[1] < ll_exact + 3*pf_ll[2]
 )
+
+## Exposed founder, lambda=0, and one destructive sample at t=1.
+## The root is at t=0. An E founder must progress at rate sigma before the
+## tip can be sampled, and after progression must avoid removal and sampling
+## for the remaining time. Integrating over its progression time gives:
+##   L = chi*sigma*(exp(-(mu+chi)*t)-exp(-sigma*t))/(sigma-(mu+chi)).
+## This is an independent oracle for the E -> I transition and its weighting.
+t <- 1
+sigma <- 1.2
+mu <- 0.3
+chi <- 0.4
+ll_exposed_exact <- log(
+  chi*sigma*(exp(-(mu+chi)*t)-exp(-sigma*t))/(sigma-(mu+chi))
+)
+exposed_tree <- parse_newick("a:1;")
+po_exposed <- bdei_pomp(
+  exposed_tree, sigma=sigma, lambda=0, mu=mu, chi=chi,
+  pop=1, E0=1, I0=0
+)
+set.seed(314159)
+exposed_ll <- replicate(20, logLik(pfilter(po_exposed, Np=5000)))
+exposed_lr <- exp(exposed_ll - ll_exposed_exact)
+exposed_lr_mean <- mean(exposed_lr)
+exposed_lr_se <- sd(exposed_lr)/sqrt(length(exposed_lr))
+stopifnot(
+  is.finite(ll_exposed_exact),
+  all(is.finite(exposed_ll)),
+  abs(exposed_lr_mean - 1) < 3*exposed_lr_se
+)
