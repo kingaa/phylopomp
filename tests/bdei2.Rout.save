@@ -1,5 +1,5 @@
 
-R version 4.6.0 (2026-04-24) -- "Because it was There"
+R version 4.6.1 (2026-06-24) -- "Happy Hop"
 Copyright (C) 2026 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu
 
@@ -50,7 +50,7 @@ Type 'q()' to quit R.
 +       pop=3, E0=-1, I0=3
 +     ) -> po
 + )
-Error : in ‘bdei_pomp’: ‘E0’ must be finite, nonnegative numeric scalars.
+Error : in 'bdei_pomp': 'E0' must be finite, nonnegative numeric scalars.
 > 
 > G |>
 +   bdei_pomp(

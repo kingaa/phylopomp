@@ -7,6 +7,9 @@ _C_h_a_n_g_e_s _i_n '_p_h_y_l_o_p_o_m_p' _v_e_r_s_i_o_n
           maximum likelihood.  If the new option ‘verbose’ is set to
           ‘TRUE’, a message is generated to report this estimate.
 
+        • There are two new filter pomps, for the BDEI and BDSS models,
+          respectively.
+
         • A bug in the filter pomps for the SIRS and SI2R models has
           been fixed.  Thanks to @atpabuser!
 
