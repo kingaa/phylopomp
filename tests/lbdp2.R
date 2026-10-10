@@ -13,7 +13,7 @@ runLBDP(time=2,lambda=4,mu=1,psi=1,n0=1) |>
   freeze(seed=302190821) -> x
 x |> plot()
 
-x |> lbdp_exact(lambda=6,mu=1,psi=1) -> llex
+x |> lbdp_exact(lambda=6,mu=1,psi=1,n0=1) -> llex
 llex
 x |> lbdp_exact(lambda=6,mu=1,psi=1,n0=NA) -> llex1
 llex1

@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{News for package `phylopomp'}
+\section{Changes in \pkg{phylopomp} version 0.19.9}{
+  \itemize{
+    \item In \code{lbdp_exact}, the default value of \code{n0} is now \code{NA}.
+    This causes the initial population size \code{n0} to be estimated by maximum likelihood.
+    If the new option \code{verbose} is set to \code{TRUE}, a message is generated to report this estimate.
+  }
+}
 \section{Changes in \pkg{phylopomp} version 0.19.8}{
   \itemize{
     \item In the SI2R model, destructive sampling now causes the sampled host to enter the R class.
