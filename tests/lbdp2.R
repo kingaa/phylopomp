@@ -108,6 +108,10 @@ try(
   x |> lbdp_pomp(n0=-10)
 )
 
+try(
+  x |> lbdp_exact(lambda=2,mu=1,psi=2,chi=1,n0=-10)
+)
+
 "" |>
   parse_newick(time=2) |>
   lbdp_exact(lambda=2,mu=1,psi=1,chi=1,n0=1)

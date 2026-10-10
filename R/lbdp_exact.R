@@ -50,7 +50,8 @@ lbdp_exact <- function (
     n0 <- as.integer(floor(nrt/(1-G(t0))))
     message("in ",sQuote("lbdp_exact"),": estimated n0 = ",n0)
   }
-  if (n0 < 0) pStop(sQuote("n0")," must be a positive integer.")
+  if (n0 < 0)
+    pStop(sQuote("n0")," must be a nonnegative integer or NA.")
 
   lchoose(n0,nrt)+
     lfactorial(nrt)+
