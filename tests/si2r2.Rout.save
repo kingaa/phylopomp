@@ -44,7 +44,7 @@ Type 'q()' to quit R.
 +       S0=0.98,IL0=-0.02,IH0=0,R0=0
 +     )
 + )
-Error : in ‘si2rs_pomp’: ‘S0’,‘IL0’,‘IH0’,‘R0’ must be nonnegative.
+Error : in 'si2rs_pomp': 'S0','IL0','IH0','R0' must be nonnegative.
 > 
 > G |>
 +   curtail(time=1) |>
