@@ -247,11 +247,11 @@ void si2rs_gill
     if (parcol == Low) {
       assert(ellL>=1 && IL >= ellL);
       ll += log(chi*IL);
-      ellL -= 1; IL -= 1;
+      ellL -= 1; IL -= 1; R += 1;
     } else if (parcol == High) {
       assert(ellH>=1 && IH >= ellH);
       ll += log(chi*IH);
-      ellH -= 1; IH -= 1;
+      ellH -= 1; IH -= 1; R += 1;
     } else {
       assert(0);                // #nocov
     }

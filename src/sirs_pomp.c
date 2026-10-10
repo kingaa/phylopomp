@@ -138,11 +138,11 @@ void sirs_gill
           ellI -= 1;
           ll += log(1-ellI/I);
         } else {                // destructive sample
-          ellI -= 1; I -= 1;
+          ellI -= 1; I -= 1; R += 1;
         }
       } else {
         ll += R_NegInf;
-        ellI -= 1; I -= 1;
+        ellI -= 1; I -= 1; R += 1;
       }
     } else {
       assert(0);                // #nocov
