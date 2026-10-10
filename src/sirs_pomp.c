@@ -22,7 +22,7 @@ static const int nrate = 3;
 #define EVENT_RATES                                     \
   event_rates(__x,__p,t,                                \
               __stateindex,__parindex,__covindex,       \
-              __covars,rate,&penalty)                   \
+              __covars,rate,&decay)                     \
 
 static double event_rates
 (
@@ -34,11 +34,11 @@ static double event_rates
  const int *__covindex,
  const double *__covars,
  double *rate,
- double *penalty
+ double *decay
  ) {
   double event_rate = 0;
   double alpha, disc;
-  *penalty = 0;
+  *decay = 0;
   assert(I >= ellI);
   assert(ellI >= 0);
   assert(S >= 0);
@@ -46,21 +46,21 @@ static double event_rates
   alpha = Beta*S*I/POP;
   disc = (I > 0) ? ellI*(ellI-1)/I/(I+1) : 1;
   event_rate += (*rate = alpha*(1-disc)); rate++;
-  *penalty += alpha*disc;
+  *decay += alpha*disc;
   // 1: recovery
   alpha = gamma*I;
   if (I > ellI) {
     event_rate += (*rate = alpha); rate++;
   } else {
     *rate = 0; rate++;
-    *penalty += alpha;
+    *decay += alpha;
   }
   // 2: loss of immunity
   alpha = omega*R;
   event_rate += (*rate = alpha); rate++;
   // sampling
   alpha = (psi+chi)*I;
-  *penalty += alpha;
+  *decay += alpha;
   assert(R_FINITE(event_rate));
   return event_rate;
 }
@@ -118,7 +118,13 @@ void sirs_gill
   default:                      // non-genealogical event #nocov
     break;                      // #nocov
   case 0:                       // root
-    ellI += 1;
+    if (I - ellI > 0)
+      ellI += 1;
+    else {
+      ellI += 1;
+      I += 1;
+      ll += R_NegInf;
+    }
     break;
   case 1:                       // sample
     assert(I >= ellI);
@@ -129,12 +135,12 @@ void sirs_gill
       ellI -= 1;
       ll += log(psi+chi);
       if (psi+chi <= 0)
-	ll += R_NegInf;
+        ll += R_NegInf;
       else if (unif_rand() < psi/(psi+chi)) { // non-destructive sample
-	ll += log(I-ellI);
-      } else {			// destructive sample
-	ll += log(I);
-	I -= 1; R += 1;
+        ll += log(I-ellI);
+      } else {                  // destructive sample
+        ll += log(I);
+        I -= 1; R += 1;
       }
     } else {
       assert(0);                // #nocov
@@ -158,7 +164,7 @@ void sirs_gill
 
     // take Gillespie steps to the end of the interval:
     int event;
-    double penalty = 0;
+    double decay = 0;
     double rate[nrate];
 
     double event_rate = EVENT_RATES;
@@ -167,7 +173,7 @@ void sirs_gill
     while (t + tstep < tmax) {
       event = rcateg(event_rate,rate,nrate);
       assert(event>=0 && event<nrate);
-      ll -= penalty*tstep;
+      ll -= decay*tstep;
       switch (event) {
       case 0:                     // transmission
         S -= 1; I += 1;
@@ -187,7 +193,7 @@ void sirs_gill
       tstep = exp_rand()/event_rate;
     }
     tstep = tmax - t;
-    ll -= penalty*tstep;
+    ll -= decay*tstep;
   }
   node += 1;
 }
