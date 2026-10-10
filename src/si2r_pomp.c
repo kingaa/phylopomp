@@ -139,10 +139,12 @@ static double event_rates
   }
   assert(R_FINITE(event_rate));
   // 9: W
-  event_rate += (*rate = omega*R); rate++;
+  alpha = omega*R;
+  event_rate += (*rate = alpha); rate++;
   *logpi = 0; logpi++;
   // sampling
-  *decay += chi*(IL+IH);
+  alpha = chi*(IL+IH);
+  *decay += alpha;
   assert(R_FINITE(event_rate));
   return event_rate;
 }
@@ -271,7 +273,7 @@ void si2rs_gill
         ellL += 1;
         color[lineage[c1]] = Low;
         color[lineage[c2]] = Low;
-	ll -= log(IL*(IL-1)/2);
+        ll -= log(IL*(IL-1)/2);
       } else {
         ll += R_NegInf;
         IL += 1; ellL += 1;
@@ -291,7 +293,7 @@ void si2rs_gill
           color[lineage[c1]] = High;
           color[lineage[c2]] = Low;
         }
-	ll -= log(IL*IH/2);
+        ll -= log(IL*IH/2);
         assert(!ISNAN(ll));
       } else {
         ll += R_NegInf;
