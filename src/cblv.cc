@@ -33,11 +33,14 @@ make_matrix
 
 slate_t
 node_t::joining_branch_length
-(const std::unordered_map<name_t, bool>& memo) const
+(const std::unordered_map<name_t, bool>& memo, slate_t t0) const
 {
   const node_t *p = parent();
   while (!p->is_root() && !memo.at(p->uniq)) p = p->parent();
-  return slate - p->slate;
+  if (p->is_root())
+    return slate-t0;
+  else
+    return slate - p->slate;
 }
 
 void node_t::cblv
@@ -46,24 +49,24 @@ void node_t::cblv
  std::vector<slate_t>& y,
  std::unordered_map<name_t, bool>& memo,
  const std::unordered_map<name_t, std::vector<node_t*>>& children,
- slate_t t0
+ slate_t t, slate_t t0
  ) const
 {
   assert(!memo[uniq]);
   const std::vector<node_t*>& ch = children.at(uniq);
   if (ch.empty()) {
     // leaf node: push joining branch length to x
-    x.push_back(joining_branch_length(memo));
+    x.push_back(joining_branch_length(memo,t0));
     memo[uniq] = true;
   } else {
     // first child: recurse
-    ch[0]->cblv(x, y, memo, children, t0);
+    ch[0]->cblv(x, y, memo, children, t, t0);
     // subsequent children:
     for (size_t i = 1; i < ch.size(); i++) {
       // push the height of current node into y
-      y.push_back(slate - t0);
+      y.push_back(slate - t);
       memo[uniq] = true;
-      ch[i]->cblv(x, y, memo, children, t0);
+      ch[i]->cblv(x, y, memo, children, t, t0);
     }
   }
 }
@@ -82,7 +85,7 @@ genealogy_t::cblv
   for (node_t* p : *this) memo[p->uniq] = false;
   slate_t t0 = timezero();
   for (node_t* p : roots) {
-    p->cblv(x, y, memo, children, t0);
+    p->cblv(x, y, memo, children, t0, t0);
     y.push_back(slate_t(0));
     memo[p->uniq] = true;
   }

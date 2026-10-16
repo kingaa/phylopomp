@@ -3,7 +3,8 @@
 ##' A summing operator for genealogies.
 ##'
 ##' @name geneal_sum
-##' @return combined genealogy.
+##' @return The \code{+} operation combines genealogies.
+##' One can also achieve this by appling \code{geneal_sum} to a list of genealogies.
 ##' @example examples/sum.R
 ##' @details
 ##' The sum of genealogies is defined to be the union of all the lineages,

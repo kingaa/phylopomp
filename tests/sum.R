@@ -58,4 +58,11 @@ stopifnot(
   geneal_sum(list()) |> newick()==""
 )
 
+stopifnot(
+  all.equal(
+    cblv(geneal_sum(geneal_split(x+y,obscure=FALSE))),
+    cblv(x+y)
+  )
+)
+
 dev.off()

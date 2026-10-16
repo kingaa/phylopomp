@@ -1,8 +1,8 @@
 Package: phylopomp
 Type: Package
 Title: Phylodynamic Inference for POMP Models
-Version: 0.19.9.2
-Date: 2026-10-10
+Version: 0.19.10.0
+Date: 2026-10-16
 Authors@R: c(person(given=c("Aaron","A."),family="King",role=c("aut","cre"),email="kingaa@umich.edu",comment=c(ORCID="0000-0001-6159-3207")),
 	  person(given=c("Qianying"),family="Lin",role=c("aut"),comment=c(ORCID="0000-0001-8620-9910"))
 	  )
@@ -52,10 +52,11 @@ Collate:
     'siir.R'
     'simulate.R'
     'sir_pomp.R'
+    'sum.R'
+    'split.R'
     'strains.R'
     'strains_pomp.R'
     'subsample.R'
-    'sum.R'
     'twospecies.R'
     'twospecies_pomp.R'
     'twoundead.R'
