@@ -214,21 +214,24 @@ void strains_gill
       assert(I1 >= 0);
       assert(ellI1 > 0);
       ll += (I1 > 0 && I1 >= ellI1) ? log(Beta1*S*I1/POP) : R_NegInf;
-      S -= 1; I1 += 1; ellI1 += 1;
+      // S -= 1; I1 += 1; ellI1 += 1;
+      I1 += 1; ellI1 += 1;
       ll -= log(I1*(I1-1)/2);
       break;
     case STRAIN2:
       assert(I2 >= 0);
       assert(ellI2 > 0);
       ll += (I2 > 0 && I2 >= ellI2) ? log(Beta2*S*I2/POP) : R_NegInf;
-      S -= 1; I2 += 1; ellI2 += 1;
+      // S -= 1; I2 += 1; ellI2 += 1;
+      I2 += 1; ellI2 += 1;
       ll -= log(I2*(I2-1)/2);
       break;
     case STRAIN3:
       assert(I3 >= 0);
       assert(ellI3 > 0);
       ll += (I3 > 0 && I3 >= ellI3) ? log(Beta3*S*I3/POP) : R_NegInf;
-      S -= 1; I3 += 1; ellI3 += 1;
+      // S -= 1; I3 += 1; ellI3 += 1;
+      I3 += 1; ellI3 += 1;
       ll -= log(I3*(I3-1)/2);
       break;
     default:                    // #nocov
@@ -245,6 +248,7 @@ void strains_gill
     double penalty = 0;
     double rate[nrate], logpi[nrate];
 
+    // Rprintf("sanity check: %lg %lg %lg\n",I1,I2,I3);
     double event_rate = EVENT_RATES;
     tstep = exp_rand()/event_rate;
 
@@ -254,19 +258,22 @@ void strains_gill
       ll -= penalty*tstep + logpi[event];
       switch (event) {
       case 0:                     // strain-1 transmission
-        S -= 1; I1 += 1;
+        // S -= 1; I1 += 1;
+        I1 += 1;
         break;
       case 1:                     // strain-1 recovery
-        I1 -= 1; R += 1;
+	I1 -= 1; R += 1;
         break;
       case 2:                     // strain-2 transmission
-        S -= 1; I2 += 1;
+        // S -= 1; I2 += 1;
+        I2 += 1;
         break;
       case 3:                     // strain-2 recovery
         I2 -= 1; R += 1;
         break;
       case 4:                     // strain-3 transmission
-        S -= 1; I3 += 1;
+        // S -= 1; I3 += 1;
+        I3 += 1;
         break;
       case 5:                     // strain-3 recovery
         I3 -= 1; R += 1;
