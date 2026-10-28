@@ -46,7 +46,7 @@ length(n)
 t |>
   sapply(newick,obscure=TRUE,extended=FALSE) |>
   writeLines("strains.nwk")
-  
+
 
 ## add individual trees back together
 geneal_sum(t) -> t.all
@@ -64,6 +64,7 @@ t |>
 
 ## these are the estimated n0
 n0 <- c(322,88,9)
+## n0 <- c(144,46,9)
 
 ## get the exact likelihoods for each strain-specific genealogy
 1:3 |>
@@ -91,7 +92,7 @@ t |>
 ## Here, the multinomial coefficient `( n )` is defined for
 ## integer vector `n = (n1, n2, ..., nk)` by the formula
 ## `( n ) = (n1+...+nk)! / (n1! n2! ... nk!)`.
-## 
+##
 ## Thus `log(( n )) = lfactorial(sum(n))-sum(lfactorial(n))`
 ## where `lfactorial` is R's vectorized function
 ## `x -> log(factorial(x))`.
@@ -139,8 +140,7 @@ foreach (r=iter(grid,"row")) %dofuture% {
 
 pfs1
 
-## Compute likelihoods using LBDP filter
-## Next, filter whole genealogy.
+## Next, filter whole genealogy using LBDP.
 tibble(
   genealogy=list(geneal_sum(t)),
   n0=sum(n0),
@@ -206,7 +206,7 @@ foreach (r=iter(grid,"row")) %dofuture% {
           gamma=gamma,chi=chi,pop=pop,
           S_0=S_0,I1_0=I1_0,I2_0=I2_0,I3_0=I3_0,R_0=R_0
         ) |>
-        pfilter(Np=1e3)
+        pfilter(Np=1e4)
     ) -> pf
   bind_cols(r,tibble(pf=list(pf)))
 } %seed% 139135522 |>
@@ -258,16 +258,21 @@ tibble(
   I1_0=n0[1]/pop,
   I2_0=n0[2]/pop,
   I3_0=n0[3]/pop,
-  R_0=0,
-  S_0=1-(I1_0+I2_0+I3_0),
   gamma=1/7,
   chi=0.0002999,
   psi=0,
   lambda=0.2,
-  Beta1=lambda/S_0,
-  Beta2=lambda/S_0,
-  Beta3=lambda/S_0
-) |>
+  ) |>
+  mutate(
+    I1_0 = if_else(deme=="deme1",I1_0,0),
+    I2_0 = if_else(deme=="deme2",I2_0,0),
+    I3_0 = if_else(deme=="deme3",I3_0,0),
+    R_0=0,
+    S_0=1-(I1_0+I2_0+I3_0),
+    Beta1=lambda/S_0,
+    Beta2=lambda/S_0,
+    Beta3=lambda/S_0
+  ) |>
   expand_grid(
     rep=seq.int(16)
   ) -> grid
@@ -281,7 +286,7 @@ foreach (r=iter(grid,"row")) %dofuture% {
           gamma=gamma,chi=chi,pop=pop,
           S_0=S_0,I1_0=I1_0,I2_0=I2_0,I3_0=I3_0,R_0=R_0
         ) |>
-        wpfilter(Np=1e3,trigger=0.1,target=0.2)
+        wpfilter(Np=1e4,trigger=0.1,target=0.2)
     ) -> pf
   bind_cols(r,tibble(pf=list(pf)))
 } %seed% 139135522 |>
@@ -298,6 +303,7 @@ foreach (r=iter(grid,"row")) %dofuture% {
 
 pfs4
 sum(pfs1$est)+logmf(n0,nr)
+sum(pfs4$est)+logmf(n0,nr)
 
 ################################
 
