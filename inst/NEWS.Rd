@@ -2,6 +2,7 @@
 \title{News for package `phylopomp'}
 \section{Changes in \pkg{phylopomp} version 0.19.9}{
   \itemize{
+    \item A bug in \code{seir_pomp} has been fixed.  Thanks to Simon Frost (@swfrost) for identifying the problem.
     \item In \code{lbdp_exact}, the default value of \code{n0} is now \code{NA}.
     This causes the initial population size \code{n0} to be estimated by maximum likelihood.
     If the new option \code{verbose} is set to \code{TRUE}, a message is generated to report this estimate.

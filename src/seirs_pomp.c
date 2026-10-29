@@ -69,7 +69,7 @@ static double event_rates
   // 0: transmission, s=(0,0) or s=(0,1)
   assert(S>=0 && I>=0);
   alpha = (POP > 0) ? Beta*S*I/POP : 0;
-  pi = (I > 0) ? 1-ellI/I : 0;
+  pi = (I > 0) ? (I+1-ellI)/(I+1) : 0;
   assert(I >= ellI);
   event_rate += (*rate = alpha*pi); rate++;
   *logpi = log(pi); logpi++;
